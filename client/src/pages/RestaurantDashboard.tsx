@@ -10,10 +10,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Edit, Trash2, GripVertical, Settings, Eye, MessageSquare, BarChart3 } from "lucide-react";
+import { Plus, Edit, Trash2, GripVertical, Settings, Eye, MessageSquare, BarChart3, Star } from "lucide-react";
 import { toast } from "sonner";
 import { useTenant } from "@/hooks/useTenant";
 import { useParams } from "wouter";
+import { EmojiPicker } from "@/components/EmojiPicker";
 
 export default function RestaurantDashboard() {
   const params: { slug?: string } = useParams();
@@ -21,8 +22,14 @@ export default function RestaurantDashboard() {
   const slug = params.slug || tenant.slug;
   const [activeTab, setActiveTab] = useState("menu");
   const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
+  const [isEditCategoryOpen, setIsEditCategoryOpen] = useState(false);
   const [isAddItemOpen, setIsAddItemOpen] = useState(false);
+  const [isEditItemOpen, setIsEditItemOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [editingCategory, setEditingCategory] = useState<any>(null);
+  const [editingItem, setEditingItem] = useState<any>(null);
+  const [selectedEmoji, setSelectedEmoji] = useState("🍴");
+  const [categoryImageUrl, setCategoryImageUrl] = useState("");
 
   // Get restaurant data based on slug
   const { data: restaurant } = trpc.public.getRestaurant.useQuery(
@@ -64,6 +71,29 @@ export default function RestaurantDashboard() {
     },
   });
 
+  const updateCategoryMutation = trpc.restaurant.updateCategory.useMutation({
+    onSuccess: () => {
+      toast.success("Catégorie modifiée");
+      setIsEditCategoryOpen(false);
+      refetchCategories();
+    },
+  });
+
+  const updateItemMutation = trpc.restaurant.updateMenuItem.useMutation({
+    onSuccess: () => {
+      toast.success("Plat modifié");
+      setIsEditItemOpen(false);
+      refetchItems();
+    },
+  });
+
+  const deleteItemMutation = trpc.restaurant.deleteMenuItem.useMutation({
+    onSuccess: () => {
+      toast.success("Plat supprimé");
+      refetchItems();
+    },
+  });
+
   const updateChatbotMutation = trpc.restaurant.updateChatbotConfig.useMutation({
     onSuccess: () => {
       toast.success("Configuration chatbot mise à jour");
@@ -78,8 +108,12 @@ export default function RestaurantDashboard() {
       restaurantId: restaurant!.id,
       name: formData.get("name") as string,
       description: formData.get("description") as string,
+      emoji: selectedEmoji,
       imageUrl: imageUrl || undefined,
     });
+    // Reset states
+    setSelectedEmoji("🍴");
+    setCategoryImageUrl("");
   };
 
   const handleCreateItem = (e: React.FormEvent<HTMLFormElement>) => {
@@ -94,6 +128,63 @@ export default function RestaurantDashboard() {
       isVegetarian: formData.get("isVegetarian") === "on",
       isVegan: formData.get("isVegan") === "on",
       isGlutenFree: formData.get("isGlutenFree") === "on",
+    });
+  };
+
+  const handleEditCategory = (category: any) => {
+    setEditingCategory(category);
+    setSelectedEmoji(category.emoji || "🍴");
+    setCategoryImageUrl(category.imageUrl || "");
+    setIsEditCategoryOpen(true);
+  };
+
+  const handleUpdateCategory = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const imageUrl = formData.get("imageUrl") as string;
+    updateCategoryMutation.mutate({
+      id: editingCategory.id,
+      data: {
+        name: formData.get("name") as string,
+        description: formData.get("description") as string,
+        emoji: selectedEmoji,
+        imageUrl: imageUrl || undefined,
+      },
+    });
+  };
+
+  const handleEditItem = (item: any) => {
+    setEditingItem(item);
+    setIsEditItemOpen(true);
+  };
+
+  const handleUpdateItem = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    updateItemMutation.mutate({
+      id: editingItem.id,
+      data: {
+        name: formData.get("name") as string,
+        description: formData.get("description") as string,
+        price: formData.get("price") as string,
+        isVegetarian: formData.get("isVegetarian") === "on",
+        isVegan: formData.get("isVegan") === "on",
+        isGlutenFree: formData.get("isGlutenFree") === "on",
+        isFeatured: formData.get("isFeatured") === "on",
+      },
+    });
+  };
+
+  const handleDeleteItem = (itemId: number) => {
+    if (confirm("\u00cates-vous s\u00fbr de vouloir supprimer ce plat ?")) {
+      deleteItemMutation.mutate({ id: itemId });
+    }
+  };
+
+  const handleToggleFeatured = (itemId: number, currentValue: boolean) => {
+    updateItemMutation.mutate({
+      id: itemId,
+      data: { isFeatured: !currentValue },
     });
   };
 
@@ -170,6 +261,7 @@ export default function RestaurantDashboard() {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <GripVertical className="h-5 w-5 text-muted-foreground cursor-move" />
+                        <div className="text-3xl">{category.emoji || "🍴"}</div>
                         <div>
                           <CardTitle>{category.name}</CardTitle>
                           {category.description && (
@@ -177,16 +269,25 @@ export default function RestaurantDashboard() {
                           )}
                         </div>
                       </div>
-                      <Button
-                        size="sm"
-                        onClick={() => {
-                          setSelectedCategory(category.id);
-                          setIsAddItemOpen(true);
-                        }}
-                      >
-                        <Plus className="mr-2 h-4 w-4" />
-                        Ajouter un plat
-                      </Button>
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleEditCategory(category)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            setSelectedCategory(category.id);
+                            setIsAddItemOpen(true);
+                          }}
+                        >
+                          <Plus className="mr-2 h-4 w-4" />
+                          Ajouter un plat
+                        </Button>
+                      </div>
                     </div>
                   </CardHeader>
                   <CardContent>
@@ -227,10 +328,28 @@ export default function RestaurantDashboard() {
                             <div className="flex items-center gap-4">
                               <span className="font-semibold text-pronto-primary">{item.price}€</span>
                               <div className="flex gap-1">
-                                <Button variant="ghost" size="sm">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleToggleFeatured(item.id, item.isFeatured || false)}
+                                  title={item.isFeatured ? "Retirer des favoris" : "Mettre en favori"}
+                                >
+                                  <Star
+                                    className={`h-4 w-4 ${item.isFeatured ? "fill-yellow-400 text-yellow-400" : ""}`}
+                                  />
+                                </Button>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleEditItem(item)}
+                                >
                                   <Edit className="h-4 w-4" />
                                 </Button>
-                                <Button variant="ghost" size="sm">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => handleDeleteItem(item.id)}
+                                >
                                   <Trash2 className="h-4 w-4 text-destructive" />
                                 </Button>
                               </div>
@@ -422,6 +541,13 @@ export default function RestaurantDashboard() {
                 <Label htmlFor="cat-desc">Description</Label>
                 <Textarea id="cat-desc" name="description" rows={2} />
               </div>
+              <div className="space-y-2">
+                <Label>Emoji de la catégorie</Label>
+                <div className="flex items-center gap-4">
+                  <EmojiPicker value={selectedEmoji} onChange={setSelectedEmoji} />
+                  <span className="text-sm text-muted-foreground">Cliquez pour choisir un emoji</span>
+                </div>
+              </div>
               {restaurant?.subscriptionPlan === 'premium' && (
                 <div className="space-y-2">
                   <Label htmlFor="cat-image">Image de la catégorie (Premium)</Label>
@@ -492,6 +618,161 @@ export default function RestaurantDashboard() {
                 Annuler
               </Button>
               <Button type="submit">Ajouter</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Category Dialog */}
+      <Dialog open={isEditCategoryOpen} onOpenChange={setIsEditCategoryOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Modifier la Catégorie</DialogTitle>
+            <DialogDescription>Modifiez les informations de la catégorie</DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleUpdateCategory}>
+            <div className="space-y-4 py-4">
+              <div className="space-y-2">
+                <Label htmlFor="edit-cat-name">Nom de la catégorie *</Label>
+                <Input
+                  id="edit-cat-name"
+                  name="name"
+                  defaultValue={editingCategory?.name}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-cat-desc">Description</Label>
+                <Textarea
+                  id="edit-cat-desc"
+                  name="description"
+                  defaultValue={editingCategory?.description || ""}
+                  rows={2}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Emoji de la catégorie</Label>
+                <div className="flex items-center gap-4">
+                  <EmojiPicker value={selectedEmoji} onChange={setSelectedEmoji} />
+                  <span className="text-sm text-muted-foreground">Cliquez pour choisir un emoji</span>
+                </div>
+              </div>
+              {restaurant?.subscriptionPlan === 'premium' && (
+                <div className="space-y-2">
+                  <Label htmlFor="edit-cat-image">Image de la catégorie (Premium)</Label>
+                  <Input
+                    id="edit-cat-image"
+                    name="imageUrl"
+                    type="url"
+                    defaultValue={editingCategory?.imageUrl || ""}
+                    placeholder="https://example.com/image.jpg"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Ajoutez une image pour remplacer l'emoji par défaut
+                  </p>
+                </div>
+              )}
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setIsEditCategoryOpen(false)}>
+                Annuler
+              </Button>
+              <Button type="submit">Enregistrer</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Item Dialog */}
+      <Dialog open={isEditItemOpen} onOpenChange={setIsEditItemOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Modifier le Plat</DialogTitle>
+            <DialogDescription>Modifiez les informations du plat</DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleUpdateItem}>
+            <div className="space-y-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-item-name">Nom du plat *</Label>
+                  <Input
+                    id="edit-item-name"
+                    name="name"
+                    defaultValue={editingItem?.name}
+                    required
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-item-price">Prix (€) *</Label>
+                  <Input
+                    id="edit-item-price"
+                    name="price"
+                    type="number"
+                    step="0.01"
+                    defaultValue={editingItem?.price}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="edit-item-desc">Description</Label>
+                <Textarea
+                  id="edit-item-desc"
+                  name="description"
+                  defaultValue={editingItem?.description || ""}
+                  rows={2}
+                />
+              </div>
+
+              <div className="flex gap-4 flex-wrap">
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="edit-veg"
+                    name="isVegetarian"
+                    defaultChecked={editingItem?.isVegetarian}
+                    className="rounded"
+                  />
+                  <Label htmlFor="edit-veg">Végétarien</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="edit-vegan"
+                    name="isVegan"
+                    defaultChecked={editingItem?.isVegan}
+                    className="rounded"
+                  />
+                  <Label htmlFor="edit-vegan">Vegan</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="edit-gf"
+                    name="isGlutenFree"
+                    defaultChecked={editingItem?.isGlutenFree}
+                    className="rounded"
+                  />
+                  <Label htmlFor="edit-gf">Sans gluten</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="edit-featured"
+                    name="isFeatured"
+                    defaultChecked={editingItem?.isFeatured}
+                    className="rounded"
+                  />
+                  <Label htmlFor="edit-featured">⭐ Plat en favori</Label>
+                </div>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setIsEditItemOpen(false)}>
+                Annuler
+              </Button>
+              <Button type="submit">Enregistrer</Button>
             </DialogFooter>
           </form>
         </DialogContent>

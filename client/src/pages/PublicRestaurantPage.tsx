@@ -197,18 +197,8 @@ export default function PublicRestaurantPage() {
           <div className="w-full mb-10">
             <TabsList className="w-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 h-auto bg-transparent p-0">
               {categories.map((category) => {
-                // Icônes pour chaque catégorie (formule Basique)
-                const categoryIcons: Record<string, string> = {
-                  'Entrées': '🥗',
-                  'Plats': '🍽️',
-                  'Desserts': '🍰',
-                  'Boissons': '🍷',
-                  'Vins': '🍾',
-                  'Cocktails': '🍹',
-                  'Apéritifs': '🥂',
-                  'Fromages': '🧀',
-                };
-                const icon = categoryIcons[category.name] || '🍴';
+                // Utiliser l'emoji de la base de données
+                const icon = category.emoji || '🍴';
                 
                 // Afficher image (Premium) ou emoji (Basique)
                 const isPremium = restaurant.subscriptionPlan === 'premium';
@@ -264,7 +254,7 @@ export default function PublicRestaurantPage() {
                     const imageUrl = item.imageUrl || placeholderImages[index % placeholderImages.length];
                     
                     return (
-                    <Card key={item.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-2 border-pronto-beige/20">
+                    <Card key={item.id} className={`overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-2 ${item.isFeatured ? 'border-yellow-400 ring-2 ring-yellow-400/30' : 'border-pronto-beige/20'}`}>
                       {/* Image du plat - correction de la bande blanche */}
                       <div className="relative h-56 bg-gray-100">
                         <img 
@@ -273,6 +263,12 @@ export default function PublicRestaurantPage() {
                           className="w-full h-full object-cover"
                           style={{ display: 'block' }}
                         />
+                        {/* Badge favori */}
+                        {item.isFeatured && (
+                          <div className="absolute top-3 left-3 bg-yellow-400 text-white px-3 py-1.5 rounded-full font-bold text-sm shadow-lg flex items-center gap-1">
+                            ⭐ Favori
+                          </div>
+                        )}
                         {/* Prix en overlay */}
                         <div className="absolute top-3 right-3 bg-pronto-primary text-white px-3 py-1.5 rounded-full font-bold text-lg shadow-lg">
                           {item.price}€

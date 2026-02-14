@@ -116,3 +116,14 @@
 - [x] Adapter l'interface restaurateur pour uploader des images de catégories (Premium)
 - [x] Améliorer le centrage et la largeur des catégories sur les pages publiques
 - [x] Afficher emojis (Basique) ou images (Premium) selon la formule du restaurant
+- [x] Ajouter un sélecteur d'emojis pour les catégories (tous les plans)
+- [x] Permettre l'upload d'images pour les catégories (Premium uniquement)
+- [x] Ajouter la fonctionnalité de modification des catégories existantes
+- [x] Ajouter la fonctionnalité de modification des plats existants
+- [ ] Implémenter le drag & drop pour réorganiser les catégories
+- [ ] Implémenter le drag & drop pour réorganiser les plats dans une catégorie
+- [x] Ajouter un système d'étoiles pour marquer les plats en favoris
+- [x] Mettre en avant les plats favoris sur le menu public
+- [x] Intégrer les plats favoris dans les suggestions du chatbot IA
+- [x] Ajouter la suppression des plats avec confirmation
+- [x] Synchroniser automatiquement les changements avec le chatbot IA (le chatbot lit toujours les données à jour)

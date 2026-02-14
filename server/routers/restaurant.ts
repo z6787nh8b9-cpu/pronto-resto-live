@@ -84,6 +84,7 @@ export const restaurantRouter = router({
         restaurantId: z.number(),
         name: z.string().min(1).max(100),
         description: z.string().optional(),
+        emoji: z.string().optional(),
         imageUrl: z.string().optional(),
         displayOrder: z.number().default(0),
       })
@@ -99,6 +100,8 @@ export const restaurantRouter = router({
         data: z.object({
           name: z.string().min(1).max(100).optional(),
           description: z.string().optional(),
+          emoji: z.string().optional(),
+          imageUrl: z.string().optional(),
           displayOrder: z.number().optional(),
           isActive: z.boolean().optional(),
         }),

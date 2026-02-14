@@ -56,13 +56,25 @@ export const publicRouter = router({
       const items = await getMenuItemsByRestaurantId(input.restaurantId);
 
       // Build context for AI
+      const featuredItems = items.filter((item) => item.isFeatured);
+      const featuredContext = featuredItems.length > 0
+        ? `\n\n⭐ NOS SPÉCIALITÉS (plats favoris à recommander en priorité):\n${featuredItems
+            .map(
+              (item) =>
+                `- ${item.name}: ${item.price}€${item.description ? ` - ${item.description}` : ""}${
+                  item.isVegetarian ? " (Végétarien)" : ""
+                }${item.isVegan ? " (Vegan)" : ""}`
+            )
+            .join("\n")}\n`
+        : "";
+
       const menuContext = categories
         .map((cat) => {
           const catItems = items.filter((item) => item.categoryId === cat.id);
           const itemsList = catItems
             .map(
               (item) =>
-                `- ${item.name}: ${item.price}€${item.description ? ` - ${item.description}` : ""}${
+                `- ${item.isFeatured ? "⭐ " : ""}${item.name}: ${item.price}€${item.description ? ` - ${item.description}` : ""}${
                   item.isVegetarian ? " (Végétarien)" : ""
                 }${item.isVegan ? " (Vegan)" : ""}`
             )
@@ -75,7 +87,7 @@ export const publicRouter = router({
         config.tone === "formal" ? "formel et professionnel" : config.tone === "warm" ? "chaleureux et accueillant" : "décontracté et amical"
       }.
 
-${config.customInfo ? `Informations sur le restaurant:\n${config.customInfo}\n` : ""}
+${config.customInfo ? `Informations sur le restaurant:\n${config.customInfo}\n` : ""}${featuredContext}
 
 Menu du restaurant:
 ${menuContext}
@@ -83,6 +95,7 @@ ${menuContext}
 Instructions:
 - Réponds de manière concise et utile
 - Aide les clients à choisir des plats
+- Recommande en priorité les plats marqués d'une étoile ⭐ (nos spécialités)
 - Fournis des informations sur les allergènes si demandé
 - Propose des recommandations personnalisées
 - Ne réponds qu'aux questions liées au restaurant et au menu
