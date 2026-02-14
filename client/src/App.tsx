@@ -49,10 +49,14 @@ function Router() {
     );
   }
 
-  // Default fallback - Landing page
+  // Default fallback - Landing page with preview routes
   return (
     <Switch>
       <Route path="/" component={LandingPage} />
+      <Route path="/admin" component={SuperAdmin} />
+      <Route path="/admin/manage/:id" component={AdminManageRestaurant} />
+      <Route path="/preview/:slug" component={PublicRestaurantPage} />
+      <Route path="/preview/:slug/dashboard" component={RestaurantDashboard} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

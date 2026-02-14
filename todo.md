@@ -98,3 +98,4 @@
 - [x] Ajouter la section Pricing (19€/29€) à la landing page
 - [x] Ajouter la section Témoignages à la landing page
 - [x] Ajouter le CTA d'inscription à la landing page
+- [x] Créer des routes de prévisualisation sans sous-domaines (/admin, /preview/:slug, /preview/:slug/dashboard)
