@@ -28,6 +28,11 @@ export function getSubdomain(hostname: string): string {
     return 'localhost';
   }
   
+  // For Manus development URLs (e.g., 3000-xxx.us2.manus.computer)
+  if (cleanHostname.includes('.manus.computer')) {
+    return 'localhost';
+  }
+  
   // Extract subdomain (first part before .pronto.page)
   const parts = cleanHostname.split('.');
   if (parts.length >= 3) {
