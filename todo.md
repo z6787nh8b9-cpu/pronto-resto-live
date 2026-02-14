@@ -103,3 +103,7 @@
 - [ ] Ajouter 3 restaurants de démonstration (La Voile Rouge, Bella Vista, Le Bistrot Parisien) - à faire via Super Admin
 - [x] Ajouter des boutons de navigation temporaires dans le Super Admin pour accéder aux pages publiques
 - [x] Corriger les liens de la navigation temporaire (tous en 404)
+- [x] Corriger le dashboard qui reste bloqué en "Chargement..."
+- [x] Ajouter des images placeholder pour chaque plat sur les pages publiques
+- [x] Ajouter des images pour les catégories de plats (icônes dans les onglets)
+- [x] Améliorer le design des pages publiques (plus classe et intuitif)

@@ -31,6 +31,7 @@ export const restaurantRouter = router({
 
   // Get restaurants owned by current user
   getMyRestaurants: restaurateurProcedure.query(async ({ ctx }) => {
+    if (!ctx.user) return [];
     return await getRestaurantsByOwnerId(ctx.user.id);
   }),
 
@@ -57,6 +58,9 @@ export const restaurantRouter = router({
     )
     .mutation(async ({ input, ctx }) => {
       // Verify ownership
+      if (!ctx.user) {
+        throw new Error("Unauthorized");
+      }
       const restaurants = await getRestaurantsByOwnerId(ctx.user.id);
       const ownsRestaurant = restaurants.some((r) => r.id === input.restaurantId);
 

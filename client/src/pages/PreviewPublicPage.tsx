@@ -99,46 +99,52 @@ export default function PreviewPublicPage() {
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
       <section
-        className="relative h-[60vh] bg-cover bg-center"
+        className="relative h-[70vh] bg-cover bg-center"
         style={{
           backgroundColor: restaurant.primaryColor || "#7D3A31",
           backgroundImage: restaurant.heroImageUrl ? `url(${restaurant.heroImageUrl})` : undefined,
         }}
       >
-        <div className="absolute inset-0 bg-black/40" />
-        <div className="relative h-full container flex flex-col justify-center items-center text-center text-white">
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/60" />
+        <div className="relative h-full container flex flex-col justify-center items-center text-center text-white px-4">
           {restaurant.logoUrl && (
-            <img src={restaurant.logoUrl} alt={restaurant.name} className="h-24 mb-6 object-contain" />
+            <div className="mb-8 animate-in fade-in duration-700">
+              <img src={restaurant.logoUrl} alt={restaurant.name} className="h-28 md:h-32 object-contain drop-shadow-2xl" />
+            </div>
           )}
-          <h1 className="text-5xl md:text-6xl font-display font-bold mb-4">{restaurant.name}</h1>
+          <h1 className="text-5xl md:text-7xl font-display font-bold mb-6 tracking-tight animate-in slide-in-from-bottom-4 duration-700 delay-150">
+            {restaurant.name}
+          </h1>
           {restaurant.description && (
-            <p className="text-xl md:text-2xl max-w-2xl opacity-90">{restaurant.description}</p>
+            <p className="text-xl md:text-2xl max-w-3xl leading-relaxed font-light animate-in slide-in-from-bottom-4 duration-700 delay-300">
+              {restaurant.description}
+            </p>
           )}
         </div>
       </section>
 
       {/* Contact Bar */}
-      <section className="bg-card border-b">
-        <div className="container py-4">
-          <div className="flex flex-wrap justify-center gap-6 text-sm">
+      <section className="bg-pronto-beige/20 border-b border-pronto-beige/40 shadow-sm">
+        <div className="container py-6">
+          <div className="flex flex-wrap justify-center gap-8 text-sm">
             {restaurant.address && (
-              <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-pronto-accent" />
-                <span>{restaurant.address}</span>
+              <div className="flex items-center gap-2.5 group">
+                <MapPin className="h-5 w-5 text-pronto-primary group-hover:scale-110 transition-transform" />
+                <span className="font-medium">{restaurant.address}</span>
               </div>
             )}
             {restaurant.phone && (
-              <div className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-pronto-accent" />
-                <a href={`tel:${restaurant.phone}`} className="hover:underline">
+              <div className="flex items-center gap-2.5 group">
+                <Phone className="h-5 w-5 text-pronto-primary group-hover:scale-110 transition-transform" />
+                <a href={`tel:${restaurant.phone}`} className="hover:text-pronto-primary transition-colors font-medium">
                   {restaurant.phone}
                 </a>
               </div>
             )}
             {restaurant.email && (
-              <div className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-pronto-accent" />
-                <a href={`mailto:${restaurant.email}`} className="hover:underline">
+              <div className="flex items-center gap-2.5 group">
+                <Mail className="h-5 w-5 text-pronto-primary group-hover:scale-110 transition-transform" />
+                <a href={`mailto:${restaurant.email}`} className="hover:text-pronto-primary transition-colors font-medium">
                   {restaurant.email}
                 </a>
               </div>
@@ -148,19 +154,20 @@ export default function PreviewPublicPage() {
       </section>
 
       {/* Menu Section */}
-      <section className="container py-12">
-        <div className="text-center mb-8">
-          <h2 className="text-4xl font-display font-bold mb-2">Notre Carte</h2>
-          <p className="text-muted-foreground">Découvrez nos spécialités</p>
+      <section className="container py-16">
+        <div className="text-center mb-12">
+          <h2 className="text-5xl font-display font-bold mb-4 text-pronto-primary">Notre Carte</h2>
+          <div className="w-24 h-1 bg-pronto-accent mx-auto mb-4 rounded-full"></div>
+          <p className="text-lg text-muted-foreground">Découvrez nos spécialités culinaires</p>
         </div>
 
         {/* Filters */}
-        <div className="flex justify-center gap-3 mb-6 flex-wrap">
+        <div className="flex justify-center gap-3 mb-10 flex-wrap">
           <Button
             variant={filters.vegetarian ? "default" : "outline"}
             size="sm"
             onClick={() => toggleFilter("vegetarian")}
-            className="gap-2"
+            className="gap-2 transition-all duration-200 hover:scale-105"
           >
             🌱 Végétarien
           </Button>
@@ -168,7 +175,7 @@ export default function PreviewPublicPage() {
             variant={filters.vegan ? "default" : "outline"}
             size="sm"
             onClick={() => toggleFilter("vegan")}
-            className="gap-2"
+            className="gap-2 transition-all duration-200 hover:scale-105"
           >
             🌿 Vegan
           </Button>
@@ -176,85 +183,130 @@ export default function PreviewPublicPage() {
             variant={filters.glutenFree ? "default" : "outline"}
             size="sm"
             onClick={() => toggleFilter("glutenFree")}
-            className="gap-2"
+            className="gap-2 transition-all duration-200 hover:scale-105"
           >
-            ⚠️ Sans gluten
+            🌾 Sans gluten
           </Button>
           {(filters.vegetarian || filters.vegan || filters.glutenFree) && (
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setFilters({ vegetarian: false, vegan: false, glutenFree: false })}
+              className="text-pronto-primary hover:text-pronto-primary/80"
             >
-              Réinitialiser
+              ✖️ Réinitialiser
             </Button>
           )}
         </div>
 
         <Tabs defaultValue={categories[0]?.id.toString()} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-5 mb-8">
-            {categories.map((category) => (
-              <TabsTrigger key={category.id} value={category.id.toString()}>
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-5 mb-8 bg-pronto-beige/30 p-2 rounded-xl">
+            {categories.map((category) => {
+              // Icônes pour chaque catégorie
+              const categoryIcons: Record<string, string> = {
+                'Entrées': '🥗',
+                'Plats': '🍽️',
+                'Desserts': '🍰',
+                'Boissons': '🍷',
+                'Vins': '🍾',
+                'Cocktails': '🍹',
+                'Apéritifs': '🥂',
+                'Fromages': '🧀',
+              };
+              const icon = categoryIcons[category.name] || '🍴';
+              
+              return (
+              <TabsTrigger 
+                key={category.id} 
+                value={category.id.toString()}
+                className="data-[state=active]:bg-pronto-primary data-[state=active]:text-white font-medium transition-all duration-200"
+              >
+                <span className="mr-1.5">{icon}</span>
                 {category.name}
               </TabsTrigger>
-            ))}
-          </TabsList>
+            )})}          </TabsList>
 
           {categories.map((category) => (
-            <TabsContent key={category.id} value={category.id.toString()}>
+            <TabsContent key={category.id} value={category.id.toString()} className="mt-0">
               {category.description && (
-                <p className="text-center text-muted-foreground mb-6">{category.description}</p>
+                <div className="text-center mb-8">
+                  <p className="text-lg text-muted-foreground italic max-w-2xl mx-auto">{category.description}</p>
+                </div>
               )}
 
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {items
                   .filter((item) => item.categoryId === category.id)
-                  .map((item) => (
-                    <Card key={item.id} className="hover:shadow-lg transition-shadow">
-                      <CardContent className="p-6">
-                        <div className="flex justify-between items-start mb-2">
-                          <h3 className="text-lg font-semibold">{item.name}</h3>
-                          <span className="text-lg font-bold text-pronto-primary">{item.price}€</span>
+                  .map((item, index) => {
+                    // Rotation des images placeholder
+                    const placeholderImages = [
+                      '/images/dishes/W5gXnLrRdPLc.jpg',
+                      '/images/dishes/ogJuaBJP0oQ9.jpg',
+                      '/images/dishes/GvHlZUdia5A7.jpg',
+                      '/images/dishes/D7GUkqsqHopc.jpg',
+                      '/images/dishes/7kjczpWYlPF6.jpg',
+                      '/images/dishes/WoaxiacELVR3.jpg',
+                    ];
+                    const imageUrl = item.imageUrl || placeholderImages[index % placeholderImages.length];
+                    
+                    return (
+                    <Card key={item.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                      {/* Image du plat */}
+                      <div className="relative h-48 overflow-hidden">
+                        <img 
+                          src={imageUrl} 
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                        />
+                        {/* Prix en overlay */}
+                        <div className="absolute top-3 right-3 bg-pronto-primary text-white px-3 py-1.5 rounded-full font-bold text-lg shadow-lg">
+                          {item.price}€
+                        </div>
+                      </div>
+                      
+                      <CardContent className="p-5">
+                        <div className="mb-3">
+                          <h3 className="text-xl font-bold mb-2">{item.name}</h3>
                         </div>
 
                         {item.description && (
-                          <p className="text-sm text-muted-foreground mb-3">{item.description}</p>
+                          <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{item.description}</p>
                         )}
 
                         {/* Ingredients */}
                         {item.ingredients && (
-                          <div className="mb-3 pb-3 border-b">
-                            <p className="text-xs font-semibold text-muted-foreground mb-1">Ingrédients</p>
-                            <p className="text-xs text-muted-foreground italic">{item.ingredients}</p>
+                          <div className="mb-4 pb-4 border-b border-pronto-beige/30">
+                            <p className="text-xs font-semibold text-pronto-primary mb-1.5">🌿 Ingrédients</p>
+                            <p className="text-xs text-muted-foreground leading-relaxed">{item.ingredients}</p>
                           </div>
                         )}
 
                         {/* Dietary Options */}
-                        <div className="flex flex-wrap gap-2 mb-3">
+                        <div className="flex flex-wrap gap-2 mb-4">
                           {item.isVegetarian && (
-                            <Badge variant="outline" className="text-xs bg-green-50">
+                            <Badge variant="outline" className="text-xs bg-green-50 border-green-200 text-green-700">
                               🌱 Végétarien
                             </Badge>
                           )}
                           {item.isVegan && (
-                            <Badge variant="outline" className="text-xs bg-green-50">
+                            <Badge variant="outline" className="text-xs bg-green-100 border-green-300 text-green-800">
                               🌿 Vegan
                             </Badge>
                           )}
                           {item.isGlutenFree && (
-                            <Badge variant="outline" className="text-xs bg-blue-50">
-                              ⚠️ Sans gluten
+                            <Badge variant="outline" className="text-xs bg-amber-50 border-amber-200 text-amber-700">
+                              🌾 Sans gluten
                             </Badge>
                           )}
                         </div>
 
                         {/* Allergens */}
                         {item.allergens && item.allergens.length > 0 && (
-                          <div className="mb-3">
-                            <p className="text-xs font-semibold text-destructive mb-1">⚠️ Allergènes</p>
-                            <div className="flex flex-wrap gap-1">
+                          <div className="mb-4 p-3 bg-red-50 rounded-lg border border-red-100">
+                            <p className="text-xs font-semibold text-red-700 mb-2">⚠️ Allergènes présents</p>
+                            <div className="flex flex-wrap gap-1.5">
                               {item.allergens.map((allergen: string) => (
-                                <Badge key={allergen} variant="destructive" className="text-xs">
+                                <Badge key={allergen} className="text-xs bg-red-100 text-red-800 border-red-200">
                                   {allergen}
                                 </Badge>
                               ))}
@@ -264,31 +316,31 @@ export default function PreviewPublicPage() {
 
                         {/* Nutritional Info */}
                         {item.nutritionalInfo && (
-                          <div className="mt-3 pt-3 border-t">
-                            <p className="text-xs font-semibold text-muted-foreground mb-2">Informations nutritionnelles</p>
-                            <div className="grid grid-cols-4 gap-2 text-xs">
+                          <div className="mt-4 pt-4 border-t border-pronto-beige/30">
+                            <p className="text-xs font-semibold text-pronto-primary mb-3">📊 Valeurs nutritionnelles</p>
+                            <div className="grid grid-cols-4 gap-3 text-xs">
                               {item.nutritionalInfo.calories && (
-                                <div className="text-center">
-                                  <p className="font-semibold">{item.nutritionalInfo.calories}</p>
-                                  <p className="text-muted-foreground">kcal</p>
+                                <div className="text-center bg-pronto-beige/20 rounded-lg p-2">
+                                  <p className="font-bold text-base">{item.nutritionalInfo.calories}</p>
+                                  <p className="text-muted-foreground text-[10px]">kcal</p>
                                 </div>
                               )}
                               {item.nutritionalInfo.protein && (
-                                <div className="text-center">
-                                  <p className="font-semibold">{item.nutritionalInfo.protein}g</p>
-                                  <p className="text-muted-foreground">Prot.</p>
+                                <div className="text-center bg-pronto-beige/20 rounded-lg p-2">
+                                  <p className="font-bold text-base">{item.nutritionalInfo.protein}g</p>
+                                  <p className="text-muted-foreground text-[10px]">Protéines</p>
                                 </div>
                               )}
                               {item.nutritionalInfo.carbs && (
-                                <div className="text-center">
-                                  <p className="font-semibold">{item.nutritionalInfo.carbs}g</p>
-                                  <p className="text-muted-foreground">Gluc.</p>
+                                <div className="text-center bg-pronto-beige/20 rounded-lg p-2">
+                                  <p className="font-bold text-base">{item.nutritionalInfo.carbs}g</p>
+                                  <p className="text-muted-foreground text-[10px]">Glucides</p>
                                 </div>
                               )}
                               {item.nutritionalInfo.fat && (
-                                <div className="text-center">
-                                  <p className="font-semibold">{item.nutritionalInfo.fat}g</p>
-                                  <p className="text-muted-foreground">Lip.</p>
+                                <div className="text-center bg-pronto-beige/20 rounded-lg p-2">
+                                  <p className="font-bold text-base">{item.nutritionalInfo.fat}g</p>
+                                  <p className="text-muted-foreground text-[10px]">Lipides</p>
                                 </div>
                               )}
                             </div>
@@ -296,7 +348,7 @@ export default function PreviewPublicPage() {
                         )}
                       </CardContent>
                     </Card>
-                  ))}
+                  )})}
               </div>
             </TabsContent>
           ))}

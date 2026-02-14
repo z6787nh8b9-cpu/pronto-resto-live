@@ -13,9 +13,12 @@ import { Switch } from "@/components/ui/switch";
 import { Plus, Edit, Trash2, GripVertical, Settings, Eye, MessageSquare, BarChart3 } from "lucide-react";
 import { toast } from "sonner";
 import { useTenant } from "@/hooks/useTenant";
+import { useParams } from "wouter";
 
 export default function RestaurantDashboard() {
+  const params: { slug?: string } = useParams();
   const tenant = useTenant();
+  const slug = params.slug || tenant.slug;
   const [activeTab, setActiveTab] = useState("menu");
   const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
   const [isAddItemOpen, setIsAddItemOpen] = useState(false);
@@ -23,8 +26,8 @@ export default function RestaurantDashboard() {
 
   // Get restaurant data based on slug
   const { data: restaurant } = trpc.public.getRestaurant.useQuery(
-    { slug: tenant.slug || "" },
-    { enabled: !!tenant.slug }
+    { slug: slug || "" },
+    { enabled: !!slug }
   );
 
   // Get menu data
