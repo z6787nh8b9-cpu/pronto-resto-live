@@ -6,6 +6,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { useTenant } from "./hooks/useTenant";
 import SuperAdmin from "./pages/SuperAdmin";
+import AdminManageRestaurant from "./pages/AdminManageRestaurant";
 import RestaurantDashboard from "./pages/RestaurantDashboard";
 import PublicRestaurantPage from "./pages/PublicRestaurantPage";
 import Home from "./pages/Home";
@@ -18,6 +19,7 @@ function Router() {
     return (
       <Switch>
         <Route path="/" component={SuperAdmin} />
+        <Route path="/admin/manage/:id" component={AdminManageRestaurant} />
         <Route path="/404" component={NotFound} />
         <Route component={NotFound} />
       </Switch>

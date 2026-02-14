@@ -9,12 +9,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Edit, Trash2, TrendingUp, Store, MessageSquare } from "lucide-react";
+import { Plus, Edit, Trash2, TrendingUp, Store, MessageSquare, Settings } from "lucide-react";
 import { toast } from "sonner";
+import { useLocation } from "wouter";
 
 export default function SuperAdmin() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingRestaurant, setEditingRestaurant] = useState<any>(null);
+  const [, setLocation] = useLocation();
 
   // Queries
   const { data: stats } = trpc.admin.getStats.useQuery();
@@ -193,6 +195,14 @@ export default function SuperAdmin() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setLocation(`/admin/manage/${restaurant.id}`)}
+                          title="Gérer le dashboard"
+                        >
+                          <Settings className="h-4 w-4" />
+                        </Button>
                         <Button
                           variant="ghost"
                           size="sm"
