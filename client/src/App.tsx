@@ -9,6 +9,7 @@ import SuperAdmin from "./pages/SuperAdmin";
 import AdminManageRestaurant from "./pages/AdminManageRestaurant";
 import RestaurantDashboard from "./pages/RestaurantDashboard";
 import PublicRestaurantPage from "./pages/PublicRestaurantPage";
+import PreviewPublicPage from "./pages/PreviewPublicPage";
 import LandingPage from "./pages/LandingPage";
 
 function Router() {
@@ -55,7 +56,7 @@ function Router() {
       <Route path="/" component={LandingPage} />
       <Route path="/admin" component={SuperAdmin} />
       <Route path="/admin/manage/:id" component={AdminManageRestaurant} />
-      <Route path="/preview/:slug" component={PublicRestaurantPage} />
+      <Route path="/preview/:slug" component={PreviewPublicPage} />
       <Route path="/preview/:slug/dashboard" component={RestaurantDashboard} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />

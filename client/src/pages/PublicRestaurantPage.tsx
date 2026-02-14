@@ -11,9 +11,9 @@ import { useTenant } from "@/hooks/useTenant";
 import { toast } from "sonner";
 import { nanoid } from "nanoid";
 
-export default function PublicRestaurantPage({ previewSlug }: { previewSlug?: string } = {}) {
+export default function PublicRestaurantPage(props?: { previewSlug?: string }) {
   const tenant = useTenant();
-  const slug = previewSlug || tenant.slug || "";
+  const slug = props?.previewSlug || tenant.slug || "";
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
   const [chatInput, setChatInput] = useState("");
