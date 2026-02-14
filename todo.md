@@ -102,3 +102,4 @@
 - [x] Corriger l'erreur 404 sur /preview/:slug (le hook useTenant ne détecte pas le slug depuis l'URL)
 - [ ] Ajouter 3 restaurants de démonstration (La Voile Rouge, Bella Vista, Le Bistrot Parisien) - à faire via Super Admin
 - [x] Ajouter des boutons de navigation temporaires dans le Super Admin pour accéder aux pages publiques
+- [x] Corriger les liens de la navigation temporaire (tous en 404)

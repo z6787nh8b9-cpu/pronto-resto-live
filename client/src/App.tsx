@@ -21,6 +21,8 @@ function Router() {
       <Switch>
         <Route path="/" component={SuperAdmin} />
         <Route path="/admin/manage/:id" component={AdminManageRestaurant} />
+        <Route path="/preview/:slug" component={PreviewPublicPage} />
+        <Route path="/preview/:slug/dashboard" component={RestaurantDashboard} />
         <Route path="/404" component={NotFound} />
         <Route component={NotFound} />
       </Switch>
