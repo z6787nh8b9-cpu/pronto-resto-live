@@ -127,3 +127,10 @@
 - [x] Intégrer les plats favoris dans les suggestions du chatbot IA
 - [x] Ajouter la suppression des plats avec confirmation
 - [x] Synchroniser automatiquement les changements avec le chatbot IA (le chatbot lit toujours les données à jour)
+- [x] Remplacer le confirm() natif par un Dialog élégant pour la suppression de plats
+- [x] Corriger l'affichage des messages utilisateur dans le chatbot (blanc sur blanc)
+- [x] Permettre la sélection du texte dans l'input du chatbot
+- [x] Corriger l'application des couleurs personnalisées depuis le dashboard restaurateur
+- [x] Créer un vrai uploader d'images avec drag & drop et import depuis la pellicule
+- [x] Synchroniser le dashboard accessible depuis la nav temporaire et celui depuis le super admin
+- [ ] Implémenter le drag & drop fonctionnel pour réorganiser les catégories et plats

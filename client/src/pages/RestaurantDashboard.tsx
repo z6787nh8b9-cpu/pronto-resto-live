@@ -15,6 +15,10 @@ import { toast } from "sonner";
 import { useTenant } from "@/hooks/useTenant";
 import { useParams } from "wouter";
 import { EmojiPicker } from "@/components/EmojiPicker";
+import { ImageUploader } from "@/components/ImageUploader";
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 export default function RestaurantDashboard() {
   const params: { slug?: string } = useParams();
@@ -25,11 +29,21 @@ export default function RestaurantDashboard() {
   const [isEditCategoryOpen, setIsEditCategoryOpen] = useState(false);
   const [isAddItemOpen, setIsAddItemOpen] = useState(false);
   const [isEditItemOpen, setIsEditItemOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [itemToDelete, setItemToDelete] = useState<number | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
   const [editingCategory, setEditingCategory] = useState<any>(null);
   const [editingItem, setEditingItem] = useState<any>(null);
   const [selectedEmoji, setSelectedEmoji] = useState("🍴");
   const [categoryImageUrl, setCategoryImageUrl] = useState("");
+
+  // Drag & Drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   // Get restaurant data based on slug
   const { data: restaurant } = trpc.public.getRestaurant.useQuery(
@@ -99,6 +113,83 @@ export default function RestaurantDashboard() {
       toast.success("Configuration chatbot mise à jour");
     },
   });
+
+  const reorderCategoriesMutation = trpc.restaurant.reorderCategories.useMutation({
+    onSuccess: () => {
+      toast.success("Ordre des catégories mis à jour");
+      refetchCategories();
+    },
+  });
+
+  const reorderItemsMutation = trpc.restaurant.reorderItems.useMutation({
+    onSuccess: () => {
+      toast.success("Ordre des plats mis à jour");
+      refetchItems();
+    },
+  });
+
+  const updateRestaurantMutation = trpc.restaurant.updateSettings.useMutation({
+    onSuccess: () => {
+      toast.success("Informations mises à jour");
+      window.location.reload(); // Reload to see changes
+    },
+  });
+
+  const handleUpdateRestaurantInfo = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    updateRestaurantMutation.mutate({
+      restaurantId: restaurant!.id,
+      data: {
+        name: formData.get("name") as string,
+        description: formData.get("description") as string,
+        email: formData.get("email") as string,
+        phone: formData.get("phone") as string,
+        whatsapp: formData.get("whatsapp") as string,
+        address: formData.get("address") as string,
+      },
+    });
+  };
+
+  const handleUpdateColors = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    updateRestaurantMutation.mutate({
+      restaurantId: restaurant!.id,
+      data: {
+        primaryColor: formData.get("primaryColor") as string,
+        accentColor: formData.get("accentColor") as string,
+      },
+    });
+  };
+
+  const handleDragEndCategories = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id || !categories || !restaurant) return;
+
+    const oldIndex = categories.findIndex((cat: any) => cat.id === active.id);
+    const newIndex = categories.findIndex((cat: any) => cat.id === over.id);
+
+    const reordered = arrayMove(categories, oldIndex, newIndex);
+    reorderCategoriesMutation.mutate({
+      restaurantId: restaurant.id,
+      categoryIds: reordered.map((cat: any) => cat.id),
+    });
+  };
+
+  const handleDragEndItems = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id || !menuItems || !selectedCategory) return;
+
+    const oldIndex = menuItems.findIndex((item) => item.id === active.id);
+    const newIndex = menuItems.findIndex((item) => item.id === over.id);
+
+    const reordered = arrayMove(menuItems, oldIndex, newIndex);
+    reorderItemsMutation.mutate({
+      categoryId: selectedCategory,
+      itemIds: reordered.map((item) => item.id),
+    });
+  };
 
   const handleCreateCategory = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -176,8 +267,15 @@ export default function RestaurantDashboard() {
   };
 
   const handleDeleteItem = (itemId: number) => {
-    if (confirm("\u00cates-vous s\u00fbr de vouloir supprimer ce plat ?")) {
-      deleteItemMutation.mutate({ id: itemId });
+    setItemToDelete(itemId);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDeleteItem = () => {
+    if (itemToDelete) {
+      deleteItemMutation.mutate({ id: itemToDelete });
+      setIsDeleteDialogOpen(false);
+      setItemToDelete(null);
     }
   };
 
@@ -370,36 +468,38 @@ export default function RestaurantDashboard() {
                 <CardTitle>Informations du Restaurant</CardTitle>
                 <CardDescription>Modifiez les informations de votre établissement</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Nom du Restaurant</Label>
-                    <Input defaultValue={restaurant.name} />
+              <CardContent>
+                <form onSubmit={handleUpdateRestaurantInfo} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="rest-name">Nom du Restaurant</Label>
+                      <Input id="rest-name" name="name" defaultValue={restaurant.name} required />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="rest-email">Email</Label>
+                      <Input id="rest-email" name="email" type="email" defaultValue={restaurant.email || ""} />
+                    </div>
                   </div>
                   <div className="space-y-2">
-                    <Label>Email</Label>
-                    <Input type="email" defaultValue={restaurant.email || ""} />
+                    <Label htmlFor="rest-desc">Description</Label>
+                    <Textarea id="rest-desc" name="description" rows={3} defaultValue={restaurant.description || ""} />
                   </div>
-                </div>
-                <div className="space-y-2">
-                  <Label>Description</Label>
-                  <Textarea rows={3} defaultValue={restaurant.description || ""} />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="rest-phone">Téléphone</Label>
+                      <Input id="rest-phone" name="phone" defaultValue={restaurant.phone || ""} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="rest-whatsapp">WhatsApp</Label>
+                      <Input id="rest-whatsapp" name="whatsapp" defaultValue={restaurant.whatsapp || ""} />
+                    </div>
+                  </div>
                   <div className="space-y-2">
-                    <Label>Téléphone</Label>
-                    <Input defaultValue={restaurant.phone || ""} />
+                    <Label htmlFor="rest-address">Adresse</Label>
+                    <Input id="rest-address" name="address" defaultValue={restaurant.address || ""} />
                   </div>
-                  <div className="space-y-2">
-                    <Label>WhatsApp</Label>
-                    <Input defaultValue={restaurant.whatsapp || ""} />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label>Adresse</Label>
-                  <Input defaultValue={restaurant.address || ""} />
-                </div>
-                <Button>Sauvegarder les modifications</Button>
+                  <Button type="submit">Sauvegarder les modifications</Button>
+                </form>
               </CardContent>
             </Card>
 
@@ -408,18 +508,20 @@ export default function RestaurantDashboard() {
                 <CardTitle>Personnalisation</CardTitle>
                 <CardDescription>Couleurs et typographie</CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Couleur Principale</Label>
-                    <Input type="color" defaultValue={restaurant.primaryColor || "#7D3A31"} />
+              <CardContent>
+                <form onSubmit={handleUpdateColors} className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="primary-color">Couleur Principale</Label>
+                      <Input id="primary-color" name="primaryColor" type="color" defaultValue={restaurant.primaryColor || "#7D3A31"} />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="accent-color">Couleur d'Accent</Label>
+                      <Input id="accent-color" name="accentColor" type="color" defaultValue={restaurant.accentColor || "#FF9999"} />
+                    </div>
                   </div>
-                  <div className="space-y-2">
-                    <Label>Couleur d'Accent</Label>
-                    <Input type="color" defaultValue={restaurant.accentColor || "#FF9999"} />
-                  </div>
-                </div>
-                <Button>Sauvegarder</Button>
+                  <Button type="submit">Sauvegarder</Button>
+                </form>
               </CardContent>
             </Card>
           </TabsContent>
@@ -549,18 +651,11 @@ export default function RestaurantDashboard() {
                 </div>
               </div>
               {restaurant?.subscriptionPlan === 'premium' && (
-                <div className="space-y-2">
-                  <Label htmlFor="cat-image">Image de la catégorie (Premium)</Label>
-                  <Input 
-                    id="cat-image" 
-                    name="imageUrl" 
-                    type="url" 
-                    placeholder="https://example.com/image.jpg" 
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Ajoutez une image pour remplacer l'emoji par défaut
-                  </p>
-                </div>
+                <ImageUploader
+                  label="Image de la catégorie (Premium)"
+                  currentImageUrl={categoryImageUrl}
+                  onUploadComplete={setCategoryImageUrl}
+                />
               )}
             </div>
             <DialogFooter>
@@ -658,19 +753,11 @@ export default function RestaurantDashboard() {
                 </div>
               </div>
               {restaurant?.subscriptionPlan === 'premium' && (
-                <div className="space-y-2">
-                  <Label htmlFor="edit-cat-image">Image de la catégorie (Premium)</Label>
-                  <Input
-                    id="edit-cat-image"
-                    name="imageUrl"
-                    type="url"
-                    defaultValue={editingCategory?.imageUrl || ""}
-                    placeholder="https://example.com/image.jpg"
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    Ajoutez une image pour remplacer l'emoji par défaut
-                  </p>
-                </div>
+                <ImageUploader
+                  label="Image de la catégorie (Premium)"
+                  currentImageUrl={categoryImageUrl}
+                  onUploadComplete={setCategoryImageUrl}
+                />
               )}
             </div>
             <DialogFooter>
@@ -775,6 +862,37 @@ export default function RestaurantDashboard() {
               <Button type="submit">Enregistrer</Button>
             </DialogFooter>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Confirmer la suppression</DialogTitle>
+            <DialogDescription>
+              Êtes-vous sûr de vouloir supprimer ce plat ? Cette action est irréversible.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setIsDeleteDialogOpen(false);
+                setItemToDelete(null);
+              }}
+            >
+              Annuler
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={confirmDeleteItem}
+            >
+              Supprimer
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

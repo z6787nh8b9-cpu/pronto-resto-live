@@ -459,7 +459,7 @@ export default function PreviewPublicPage() {
                 <div
                   className={`max-w-[80%] rounded-lg px-4 py-3 ${
                     msg.role === "user"
-                      ? "bg-pronto-primary text-white"
+                      ? "bg-[#C8956B] text-white"
                       : "bg-muted text-foreground"
                   }`}
                 >
@@ -508,6 +508,8 @@ export default function PreviewPublicPage() {
                   }
                 }}
                 disabled={chatMutation.isPending}
+                className="select-text"
+                style={{ userSelect: 'text', WebkitUserSelect: 'text' } as React.CSSProperties}
               />
               <Button
                 size="icon"

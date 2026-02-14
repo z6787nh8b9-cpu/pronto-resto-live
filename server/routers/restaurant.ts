@@ -274,4 +274,30 @@ export const restaurantRouter = router({
 
       return { success: true };
     }),
+
+  // Upload image to S3
+  uploadImage: restaurateurProcedure
+    .input(
+      z.object({
+        filename: z.string(),
+        contentType: z.string(),
+        data: z.string(), // base64 encoded
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const { storagePut } = await import("../storage");
+      const { nanoid } = await import("nanoid");
+
+      // Decode base64
+      const buffer = Buffer.from(input.data, "base64");
+
+      // Generate unique filename
+      const ext = input.filename.split(".").pop();
+      const key = `restaurants/${ctx.user!.id}/${nanoid()}.${ext}`;
+
+      // Upload to S3
+      const { url } = await storagePut(key, buffer, input.contentType);
+
+      return { url };
+    }),
 });
