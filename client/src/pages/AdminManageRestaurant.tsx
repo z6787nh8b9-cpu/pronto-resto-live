@@ -15,6 +15,23 @@ import { Plus, Edit, Trash2, GripVertical, ArrowLeft, Eye, MessageSquare, BarCha
 import { toast } from "sonner";
 import { ALLERGENS } from "@shared/allergens";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 export default function AdminManageRestaurant() {
   const params = useParams<{ id: string }>();

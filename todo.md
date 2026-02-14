@@ -83,3 +83,6 @@
 - [x] Corriger l'accès du Super Admin à la page de gestion de restaurant (erreur "Restaurateur access required")
 - [x] Corriger l'erreur "Maximum call stack size exceeded" sur la page /admin/manage/:id
 - [x] Corriger les boutons de modification des plats qui ne fonctionnent pas
+- [x] Afficher les allergènes et ingrédients détaillés sur la page publique
+- [ ] Implémenter le drag & drop réel avec @dnd-kit pour réorganiser catégories et plats (nécessite ajout champ displayOrder)
+- [x] Ajouter des filtres sur la page publique (Végétarien, Vegan, Sans gluten)

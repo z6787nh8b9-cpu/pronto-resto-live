@@ -17,6 +17,11 @@ export default function PublicRestaurantPage() {
   const [chatMessages, setChatMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
   const [chatInput, setChatInput] = useState("");
   const [sessionId] = useState(() => nanoid());
+  const [filters, setFilters] = useState({
+    vegetarian: false,
+    vegan: false,
+    glutenFree: false,
+  });
 
   // Get restaurant data
   const { data: restaurant } = trpc.public.getRestaurant.useQuery(
@@ -75,7 +80,19 @@ export default function PublicRestaurantPage() {
   }
 
   const categories = menuData?.categories || [];
-  const items = menuData?.items || [];
+  const allItems = menuData?.items || [];
+  
+  // Apply filters
+  const items = allItems.filter((item) => {
+    if (filters.vegetarian && !item.isVegetarian) return false;
+    if (filters.vegan && !item.isVegan) return false;
+    if (filters.glutenFree && !item.isGlutenFree) return false;
+    return true;
+  });
+  
+  const toggleFilter = (filterName: keyof typeof filters) => {
+    setFilters((prev) => ({ ...prev, [filterName]: !prev[filterName] }));
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -136,6 +153,43 @@ export default function PublicRestaurantPage() {
           <p className="text-muted-foreground">Découvrez nos spécialités</p>
         </div>
 
+        {/* Filters */}
+        <div className="flex justify-center gap-3 mb-6 flex-wrap">
+          <Button
+            variant={filters.vegetarian ? "default" : "outline"}
+            size="sm"
+            onClick={() => toggleFilter("vegetarian")}
+            className="gap-2"
+          >
+            🌱 Végétarien
+          </Button>
+          <Button
+            variant={filters.vegan ? "default" : "outline"}
+            size="sm"
+            onClick={() => toggleFilter("vegan")}
+            className="gap-2"
+          >
+            🌿 Vegan
+          </Button>
+          <Button
+            variant={filters.glutenFree ? "default" : "outline"}
+            size="sm"
+            onClick={() => toggleFilter("glutenFree")}
+            className="gap-2"
+          >
+            ⚠️ Sans gluten
+          </Button>
+          {(filters.vegetarian || filters.vegan || filters.glutenFree) && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setFilters({ vegetarian: false, vegan: false, glutenFree: false })}
+            >
+              Réinitialiser
+            </Button>
+          )}
+        </div>
+
         <Tabs defaultValue={categories[0]?.id.toString()} className="w-full">
           <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-5 mb-8">
             {categories.map((category) => (
@@ -166,23 +220,79 @@ export default function PublicRestaurantPage() {
                           <p className="text-sm text-muted-foreground mb-3">{item.description}</p>
                         )}
 
-                        <div className="flex flex-wrap gap-2">
+                        {/* Ingredients */}
+                        {item.ingredients && (
+                          <div className="mb-3 pb-3 border-b">
+                            <p className="text-xs font-semibold text-muted-foreground mb-1">Ingrédients</p>
+                            <p className="text-xs text-muted-foreground italic">{item.ingredients}</p>
+                          </div>
+                        )}
+
+                        {/* Dietary Options */}
+                        <div className="flex flex-wrap gap-2 mb-3">
                           {item.isVegetarian && (
-                            <Badge variant="outline" className="text-xs">
+                            <Badge variant="outline" className="text-xs bg-green-50">
                               🌱 Végétarien
                             </Badge>
                           )}
                           {item.isVegan && (
-                            <Badge variant="outline" className="text-xs">
+                            <Badge variant="outline" className="text-xs bg-green-50">
                               🌿 Vegan
                             </Badge>
                           )}
                           {item.isGlutenFree && (
-                            <Badge variant="outline" className="text-xs">
-                              Sans gluten
+                            <Badge variant="outline" className="text-xs bg-blue-50">
+                              ⚠️ Sans gluten
                             </Badge>
                           )}
                         </div>
+
+                        {/* Allergens */}
+                        {item.allergens && item.allergens.length > 0 && (
+                          <div className="mb-3">
+                            <p className="text-xs font-semibold text-destructive mb-1">⚠️ Allergènes</p>
+                            <div className="flex flex-wrap gap-1">
+                              {item.allergens.map((allergen: string) => (
+                                <Badge key={allergen} variant="destructive" className="text-xs">
+                                  {allergen}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Nutritional Info */}
+                        {item.nutritionalInfo && (
+                          <div className="mt-3 pt-3 border-t">
+                            <p className="text-xs font-semibold text-muted-foreground mb-2">Informations nutritionnelles</p>
+                            <div className="grid grid-cols-4 gap-2 text-xs">
+                              {item.nutritionalInfo.calories && (
+                                <div className="text-center">
+                                  <p className="font-semibold">{item.nutritionalInfo.calories}</p>
+                                  <p className="text-muted-foreground">kcal</p>
+                                </div>
+                              )}
+                              {item.nutritionalInfo.protein && (
+                                <div className="text-center">
+                                  <p className="font-semibold">{item.nutritionalInfo.protein}g</p>
+                                  <p className="text-muted-foreground">Prot.</p>
+                                </div>
+                              )}
+                              {item.nutritionalInfo.carbs && (
+                                <div className="text-center">
+                                  <p className="font-semibold">{item.nutritionalInfo.carbs}g</p>
+                                  <p className="text-muted-foreground">Gluc.</p>
+                                </div>
+                              )}
+                              {item.nutritionalInfo.fat && (
+                                <div className="text-center">
+                                  <p className="font-semibold">{item.nutritionalInfo.fat}g</p>
+                                  <p className="text-muted-foreground">Lip.</p>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
                   ))}
