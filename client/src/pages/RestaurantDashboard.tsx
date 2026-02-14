@@ -73,10 +73,12 @@ export default function RestaurantDashboard() {
   const handleCreateCategory = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
+    const imageUrl = formData.get("imageUrl") as string;
     createCategoryMutation.mutate({
       restaurantId: restaurant!.id,
       name: formData.get("name") as string,
       description: formData.get("description") as string,
+      imageUrl: imageUrl || undefined,
     });
   };
 
@@ -420,6 +422,20 @@ export default function RestaurantDashboard() {
                 <Label htmlFor="cat-desc">Description</Label>
                 <Textarea id="cat-desc" name="description" rows={2} />
               </div>
+              {restaurant?.subscriptionPlan === 'premium' && (
+                <div className="space-y-2">
+                  <Label htmlFor="cat-image">Image de la catégorie (Premium)</Label>
+                  <Input 
+                    id="cat-image" 
+                    name="imageUrl" 
+                    type="url" 
+                    placeholder="https://example.com/image.jpg" 
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Ajoutez une image pour remplacer l'emoji par défaut
+                  </p>
+                </div>
+              )}
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setIsAddCategoryOpen(false)}>

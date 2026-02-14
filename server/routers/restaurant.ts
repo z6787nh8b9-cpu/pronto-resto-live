@@ -84,6 +84,7 @@ export const restaurantRouter = router({
         restaurantId: z.number(),
         name: z.string().min(1).max(100),
         description: z.string().optional(),
+        imageUrl: z.string().optional(),
         displayOrder: z.number().default(0),
       })
     )

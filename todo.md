@@ -111,3 +111,8 @@
 - [x] Rendre les catégories de plats beaucoup plus visibles (pas juste de petits boutons avec emojis)
 - [x] Corriger la bande blanche au-dessus des images dans les cartes de plats
 - [x] Peaufiner l'ensemble du design des pages publiques
+- [x] Créer un système de formules (Basique/Premium) dans le schéma de la base de données
+- [x] Ajouter un champ imageUrl pour les catégories de plats (formule Premium)
+- [x] Adapter l'interface restaurateur pour uploader des images de catégories (Premium)
+- [x] Améliorer le centrage et la largeur des catégories sur les pages publiques
+- [x] Afficher emojis (Basique) ou images (Premium) selon la formule du restaurant

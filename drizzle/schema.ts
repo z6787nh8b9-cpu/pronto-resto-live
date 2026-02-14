@@ -66,6 +66,7 @@ export const menuCategories = mysqlTable("menuCategories", {
   restaurantId: int("restaurantId").notNull(),
   name: varchar("name", { length: 100 }).notNull(),
   description: text("description"),
+  imageUrl: text("imageUrl"), // Image pour les catégories (formule Premium)
   displayOrder: int("displayOrder").default(0).notNull(),
   isActive: boolean("isActive").default(true).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),

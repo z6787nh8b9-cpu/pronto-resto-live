@@ -192,38 +192,55 @@ export default function PublicRestaurantPage() {
           )}
         </div>
 
-        <Tabs defaultValue={categories[0]?.id.toString()} className="w-full">
-          {/* Catégories redesignées - beaucoup plus visibles */}
-          <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-10 h-auto bg-transparent p-0">
-            {categories.map((category) => {
-              // Icônes pour chaque catégorie
-              const categoryIcons: Record<string, string> = {
-                'Entrées': '🥗',
-                'Plats': '🍽️',
-                'Desserts': '🍰',
-                'Boissons': '🍷',
-                'Vins': '🍾',
-                'Cocktails': '🍹',
-                'Apéritifs': '🥂',
-                'Fromages': '🧀',
-              };
-              const icon = categoryIcons[category.name] || '🍴';
-              
-              return (
-                <TabsTrigger
-                  key={category.id}
-                  value={category.id.toString()}
-                  className="h-auto py-6 px-4 flex flex-col items-center gap-3 bg-white border-2 border-pronto-beige/40 rounded-2xl shadow-sm hover:shadow-lg hover:scale-105 transition-all duration-300 data-[state=active]:border-pronto-primary data-[state=active]:bg-pronto-primary/5 data-[state=active]:shadow-xl"
-                >
-                  <span className="text-4xl">{icon}</span>
-                  <span className="text-base font-bold text-center leading-tight">{category.name}</span>
-                  {category.description && (
-                    <span className="text-xs text-muted-foreground text-center line-clamp-2">{category.description}</span>
-                  )}
-                </TabsTrigger>
-              );
-            })}
-          </TabsList>
+        <Tabs defaultValue={categories[0]?.id.toString()} className="w-full max-w-7xl mx-auto">
+          {/* Catégories redesignées - centrées et responsive */}
+          <div className="w-full mb-10">
+            <TabsList className="w-full grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 h-auto bg-transparent p-0">
+              {categories.map((category) => {
+                // Icônes pour chaque catégorie (formule Basique)
+                const categoryIcons: Record<string, string> = {
+                  'Entrées': '🥗',
+                  'Plats': '🍽️',
+                  'Desserts': '🍰',
+                  'Boissons': '🍷',
+                  'Vins': '🍾',
+                  'Cocktails': '🍹',
+                  'Apéritifs': '🥂',
+                  'Fromages': '🧀',
+                };
+                const icon = categoryIcons[category.name] || '🍴';
+                
+                // Afficher image (Premium) ou emoji (Basique)
+                const isPremium = restaurant.subscriptionPlan === 'premium';
+                const hasImage = isPremium && category.imageUrl;
+                
+                return (
+                  <TabsTrigger
+                    key={category.id}
+                    value={category.id.toString()}
+                    className="h-auto py-6 px-4 flex flex-col items-center gap-3 bg-white border-2 border-pronto-beige/40 rounded-2xl shadow-sm hover:shadow-lg hover:scale-105 transition-all duration-300 data-[state=active]:border-pronto-primary data-[state=active]:bg-pronto-primary/5 data-[state=active]:shadow-xl"
+                  >
+                    {hasImage ? (
+                      <div className="w-16 h-16 rounded-full overflow-hidden bg-gray-100">
+                        <img 
+                          src={category.imageUrl!} 
+                          alt={category.name}
+                          className="w-full h-full object-cover"
+                          style={{ display: 'block' }}
+                        />
+                      </div>
+                    ) : (
+                      <span className="text-4xl">{icon}</span>
+                    )}
+                    <span className="text-base font-bold text-center leading-tight">{category.name}</span>
+                    {category.description && (
+                      <span className="text-xs text-muted-foreground text-center line-clamp-2">{category.description}</span>
+                    )}
+                  </TabsTrigger>
+                );
+              })}
+            </TabsList>
+          </div>
 
           {categories.map((category) => (
             <TabsContent key={category.id} value={category.id.toString()}>
