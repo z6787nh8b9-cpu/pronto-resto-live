@@ -4,15 +4,54 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { useTenant } from "./hooks/useTenant";
+import SuperAdmin from "./pages/SuperAdmin";
+import RestaurantDashboard from "./pages/RestaurantDashboard";
+import PublicRestaurantPage from "./pages/PublicRestaurantPage";
 import Home from "./pages/Home";
 
 function Router() {
-  // make sure to consider if you need authentication for certain routes
+  const tenant = useTenant();
+
+  // Admin subdomain - show Super Admin dashboard
+  if (tenant.isAdmin) {
+    return (
+      <Switch>
+        <Route path="/" component={SuperAdmin} />
+        <Route path="/404" component={NotFound} />
+        <Route component={NotFound} />
+      </Switch>
+    );
+  }
+
+  // Restaurant subdomain
+  if (tenant.isRestaurant) {
+    // Dashboard route
+    if (tenant.isDashboard) {
+      return (
+        <Switch>
+          <Route path="/dashboard" component={RestaurantDashboard} />
+          <Route path="/404" component={NotFound} />
+          <Route component={NotFound} />
+        </Switch>
+      );
+    }
+
+    // Public page
+    return (
+      <Switch>
+          <Route path="/" component={PublicRestaurantPage} />
+        <Route path="/404" component={NotFound} />
+        <Route component={NotFound} />
+      </Switch>
+    );
+  }
+
+  // Default fallback
   return (
     <Switch>
-      <Route path={"/"} component={Home} />
-      <Route path={"/404"} component={NotFound} />
-      {/* Final fallback route */}
+      <Route path="/" component={Home} />
+      <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
   );

@@ -1,3 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -43,10 +47,18 @@
 }
 
 :root {
-  --primary: var(--color-blue-700);
-  --primary-foreground: var(--color-blue-50);
-  --sidebar-primary: var(--color-blue-600);
-  --sidebar-primary-foreground: var(--color-blue-50);
+  /* PRONTO Brand Colors */
+  --pronto-primary: 11 42% 35%; /* #7D3A31 */
+  --pronto-accent: 0 100% 80%; /* #FF9999 */
+  --pronto-beige: 30 30% 96%; /* #F5EDE4 */
+  --pronto-beige-dark: 30 20% 85%; /* #E0D6CC */
+  --pronto-peach: 30 40% 75%; /* #EBC9A7 */
+  --pronto-taupe: 30 20% 50%; /* #8D7255 */
+  
+  --primary: var(--pronto-primary);
+  --primary-foreground: var(--pronto-beige);
+  --sidebar-primary: var(--pronto-primary);
+  --sidebar-primary-foreground: var(--pronto-beige);
   --chart-1: var(--color-blue-300);
   --chart-2: var(--color-blue-500);
   --chart-3: var(--color-blue-600);
@@ -63,7 +75,7 @@
   --secondary-foreground: oklch(0.4 0.015 65);
   --muted: oklch(0.967 0.001 286.375);
   --muted-foreground: oklch(0.552 0.016 285.938);
-  --accent: oklch(0.967 0.001 286.375);
+  --accent: var(--pronto-accent);
   --accent-foreground: oklch(0.141 0.005 285.823);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.985 0 0);
@@ -119,6 +131,20 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+  }
+  .font-display {
+    font-family: 'Playfair Display', serif;
+  }
+  .font-body {
+    font-family: 'Poppins', sans-serif;
+  }
+  .font-accent {
+    font-family: 'Montserrat', sans-serif;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
