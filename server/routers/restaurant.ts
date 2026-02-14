@@ -17,7 +17,10 @@ import {
   upsertChatbotConfig,
   getPageViewsByRestaurantId,
   getChatbotConversationsByRestaurantId,
+  getDb,
 } from "../db";
+import { menuCategories, menuItems } from "../../drizzle/schema";
+import { eq } from "drizzle-orm";
 
 export const restaurantRouter = router({
   // Get current restaurant (based on tenant context)
@@ -216,5 +219,51 @@ export const restaurantRouter = router({
     .input(z.object({ restaurantId: z.number(), limit: z.number().default(100) }))
     .query(async ({ input }) => {
       return await getChatbotConversationsByRestaurantId(input.restaurantId, input.limit);
+    }),
+
+  // Reorder Categories
+  reorderCategories: restaurateurProcedure
+    .input(
+      z.object({
+        restaurantId: z.number(),
+        categoryIds: z.array(z.number()),
+      })
+    )
+    .mutation(async ({ input }) => {
+      // Update displayOrder for each category
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      for (let i = 0; i < input.categoryIds.length; i++) {
+        await db
+          .update(menuCategories)
+          .set({ displayOrder: i })
+          .where(eq(menuCategories.id, input.categoryIds[i]));
+      }
+
+      return { success: true };
+    }),
+
+  // Reorder Items within a category
+  reorderItems: restaurateurProcedure
+    .input(
+      z.object({
+        categoryId: z.number(),
+        itemIds: z.array(z.number()),
+      })
+    )
+    .mutation(async ({ input }) => {
+      // Update displayOrder for each item
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      for (let i = 0; i < input.itemIds.length; i++) {
+        await db
+          .update(menuItems)
+          .set({ displayOrder: i })
+          .where(eq(menuItems.id, input.itemIds[i]));
+      }
+
+      return { success: true };
     }),
 });

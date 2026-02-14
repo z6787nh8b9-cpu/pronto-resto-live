@@ -86,3 +86,15 @@
 - [x] Afficher les allergènes et ingrédients détaillés sur la page publique
 - [ ] Implémenter le drag & drop réel avec @dnd-kit pour réorganiser catégories et plats (nécessite ajout champ displayOrder)
 - [x] Ajouter des filtres sur la page publique (Végétarien, Vegan, Sans gluten)
+- [ ] Ajouter le champ displayOrder aux tables menuCategories et menuItems
+- [ ] Créer les mutations tRPC pour réorganiser les catégories et plats
+- [ ] Implémenter l'interface drag & drop avec @dnd-kit dans AdminManageRestaurant
+- [x] Créer un composant d'upload d'images avec S3
+- [ ] Ajouter l'upload de logo restaurant dans les paramètres (composant prêt)
+- [ ] Ajouter l'upload de photo hero dans les paramètres (composant prêt)
+- [ ] Ajouter l'upload d'images de plats dans le formulaire d'ajout/édition (composant prêt)
+- [x] Créer la landing page PRONTO avec section Hero
+- [x] Ajouter la section Fonctionnalités à la landing page
+- [x] Ajouter la section Pricing (19€/29€) à la landing page
+- [x] Ajouter la section Témoignages à la landing page
+- [x] Ajouter le CTA d'inscription à la landing page

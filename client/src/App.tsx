@@ -9,7 +9,7 @@ import SuperAdmin from "./pages/SuperAdmin";
 import AdminManageRestaurant from "./pages/AdminManageRestaurant";
 import RestaurantDashboard from "./pages/RestaurantDashboard";
 import PublicRestaurantPage from "./pages/PublicRestaurantPage";
-import Home from "./pages/Home";
+import LandingPage from "./pages/LandingPage";
 
 function Router() {
   const tenant = useTenant();
@@ -49,10 +49,10 @@ function Router() {
     );
   }
 
-  // Default fallback
+  // Default fallback - Landing page
   return (
     <Switch>
-      <Route path="/" component={Home} />
+      <Route path="/" component={LandingPage} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

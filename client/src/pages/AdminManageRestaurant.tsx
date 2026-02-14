@@ -45,6 +45,14 @@ export default function AdminManageRestaurant() {
 
   const restaurantId = parseInt(params.id || "0");
 
+  // Drag & Drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
   // Get restaurant data
   const { data: restaurant } = trpc.admin.getRestaurant.useQuery(
     { id: restaurantId },
@@ -109,6 +117,20 @@ export default function AdminManageRestaurant() {
   const deleteItemMutation = trpc.restaurant.deleteMenuItem.useMutation({
     onSuccess: () => {
       toast.success("Plat supprimé");
+      refetchItems();
+    },
+  });
+
+  const reorderCategoriesMutation = trpc.restaurant.reorderCategories.useMutation({
+    onSuccess: () => {
+      toast.success("Ordre des catégories mis à jour");
+      refetchCategories();
+    },
+  });
+
+  const reorderItemsMutation = trpc.restaurant.reorderItems.useMutation({
+    onSuccess: () => {
+      toast.success("Ordre des plats mis à jour");
       refetchItems();
     },
   });
