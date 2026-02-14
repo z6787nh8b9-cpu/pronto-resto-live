@@ -22,7 +22,9 @@ export default function AdminManageRestaurant() {
   const [activeTab, setActiveTab] = useState("menu");
   const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
   const [isAddItemOpen, setIsAddItemOpen] = useState(false);
+  const [isEditItemOpen, setIsEditItemOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [selectedItem, setSelectedItem] = useState<any | null>(null);
 
   const restaurantId = parseInt(params.id || "0");
 
@@ -75,6 +77,22 @@ export default function AdminManageRestaurant() {
   const updateRestaurantMutation = trpc.admin.updateRestaurant.useMutation({
     onSuccess: () => {
       toast.success("Restaurant mis à jour");
+    },
+  });
+
+  const updateItemMutation = trpc.restaurant.updateMenuItem.useMutation({
+    onSuccess: () => {
+      toast.success("Plat mis à jour");
+      setIsEditItemOpen(false);
+      setSelectedItem(null);
+      refetchItems();
+    },
+  });
+
+  const deleteItemMutation = trpc.restaurant.deleteMenuItem.useMutation({
+    onSuccess: () => {
+      toast.success("Plat supprimé");
+      refetchItems();
     },
   });
 
@@ -276,10 +294,25 @@ export default function AdminManageRestaurant() {
                             <div className="flex items-center gap-4">
                               <span className="font-semibold text-pronto-primary">{item.price}€</span>
                               <div className="flex gap-1">
-                                <Button variant="ghost" size="sm">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => {
+                                    setSelectedItem(item);
+                                    setIsEditItemOpen(true);
+                                  }}
+                                >
                                   <Edit className="h-4 w-4" />
                                 </Button>
-                                <Button variant="ghost" size="sm">
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  onClick={() => {
+                                    if (confirm(`Supprimer "${item.name}" ?`)) {
+                                      deleteItemMutation.mutate({ id: item.id });
+                                    }
+                                  }}
+                                >
                                   <Trash2 className="h-4 w-4 text-destructive" />
                                 </Button>
                               </div>
@@ -586,6 +619,141 @@ export default function AdminManageRestaurant() {
                 Annuler
               </Button>
               <Button type="submit">Ajouter</Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Item Dialog */}
+      <Dialog open={isEditItemOpen} onOpenChange={setIsEditItemOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Éditer le Plat</DialogTitle>
+            <DialogDescription>Modifiez les informations du plat</DialogDescription>
+          </DialogHeader>
+          <form onSubmit={(e) => {
+            e.preventDefault();
+            const formData = new FormData(e.currentTarget);
+            const allergens = formData.getAll("allergens") as string[];
+            const nutritionalInfo: any = {};
+            const calories = formData.get("calories");
+            const protein = formData.get("protein");
+            const carbs = formData.get("carbs");
+            const fat = formData.get("fat");
+            if (calories) nutritionalInfo.calories = parseFloat(calories as string);
+            if (protein) nutritionalInfo.protein = parseFloat(protein as string);
+            if (carbs) nutritionalInfo.carbs = parseFloat(carbs as string);
+            if (fat) nutritionalInfo.fat = parseFloat(fat as string);
+            
+            updateItemMutation.mutate({
+              id: selectedItem.id,
+              data: {
+                name: formData.get("name") as string,
+                description: formData.get("description") as string,
+                price: formData.get("price") as string,
+                isVegetarian: formData.get("isVegetarian") === "on",
+                isVegan: formData.get("isVegan") === "on",
+                isGlutenFree: formData.get("isGlutenFree") === "on",
+                ingredients: formData.get("ingredients") as string,
+                allergens,
+                nutritionalInfo: Object.keys(nutritionalInfo).length > 0 ? nutritionalInfo : undefined,
+              },
+            });
+          }}>
+            <div className="space-y-4 py-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-item-name">Nom du plat *</Label>
+                  <Input id="edit-item-name" name="name" defaultValue={selectedItem?.name} required />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-item-price">Prix (€) *</Label>
+                  <Input id="edit-item-price" name="price" type="number" step="0.01" defaultValue={selectedItem?.price} required />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="edit-item-desc">Description</Label>
+                <Textarea id="edit-item-desc" name="description" rows={2} defaultValue={selectedItem?.description} />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="edit-item-ingredients">Ingrédients</Label>
+                <Textarea
+                  id="edit-item-ingredients"
+                  name="ingredients"
+                  rows={2}
+                  placeholder="Tomates, mozzarella, basilic, huile d'olive..."
+                  defaultValue={selectedItem?.ingredients}
+                />
+              </div>
+
+              <div className="space-y-3">
+                <Label>Options diététiques</Label>
+                <div className="flex gap-4">
+                  <div className="flex items-center space-x-2">
+                    <input type="checkbox" id="edit-veg" name="isVegetarian" className="rounded" defaultChecked={selectedItem?.isVegetarian} />
+                    <Label htmlFor="edit-veg">Végétarien</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <input type="checkbox" id="edit-vegan" name="isVegan" className="rounded" defaultChecked={selectedItem?.isVegan} />
+                    <Label htmlFor="edit-vegan">Vegan</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <input type="checkbox" id="edit-gf" name="isGlutenFree" className="rounded" defaultChecked={selectedItem?.isGlutenFree} />
+                    <Label htmlFor="edit-gf">Sans gluten</Label>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <Label>Allergènes</Label>
+                <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto border rounded-lg p-3">
+                  {ALLERGENS.map((allergen) => (
+                    <div key={allergen.value} className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        id={`edit-allergen-${allergen.value}`}
+                        name="allergens"
+                        value={allergen.value}
+                        className="rounded"
+                        defaultChecked={selectedItem?.allergens?.includes(allergen.value)}
+                      />
+                      <Label htmlFor={`edit-allergen-${allergen.value}`} className="text-sm font-normal">
+                        {allergen.label}
+                      </Label>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <Label>Informations nutritionnelles (optionnel)</Label>
+                <div className="grid grid-cols-4 gap-3">
+                  <div className="space-y-1">
+                    <Label htmlFor="edit-calories" className="text-xs">Calories</Label>
+                    <Input id="edit-calories" name="calories" type="number" placeholder="250" defaultValue={selectedItem?.nutritionalInfo?.calories} />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="edit-protein" className="text-xs">Protéines (g)</Label>
+                    <Input id="edit-protein" name="protein" type="number" step="0.1" placeholder="12" defaultValue={selectedItem?.nutritionalInfo?.protein} />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="edit-carbs" className="text-xs">Glucides (g)</Label>
+                    <Input id="edit-carbs" name="carbs" type="number" step="0.1" placeholder="30" defaultValue={selectedItem?.nutritionalInfo?.carbs} />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="edit-fat" className="text-xs">Lipides (g)</Label>
+                    <Input id="edit-fat" name="fat" type="number" step="0.1" placeholder="8" defaultValue={selectedItem?.nutritionalInfo?.fat} />
+                  </div>
+                </div>
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setIsEditItemOpen(false)}>
+                Annuler
+              </Button>
+              <Button type="submit">Enregistrer</Button>
             </DialogFooter>
           </form>
         </DialogContent>

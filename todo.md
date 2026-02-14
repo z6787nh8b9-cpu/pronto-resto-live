@@ -81,3 +81,5 @@
 - [x] Ajouter un bouton "Gérer" dans le Super Admin pour accéder au dashboard du restaurant sélectionné
 - [x] Ajouter des champs de personnalisation avancée pour les plats (allergènes détaillés, ingrédients, infos nutritionnelles)
 - [x] Corriger l'accès du Super Admin à la page de gestion de restaurant (erreur "Restaurateur access required")
+- [x] Corriger l'erreur "Maximum call stack size exceeded" sur la page /admin/manage/:id
+- [x] Corriger les boutons de modification des plats qui ne fonctionnent pas
