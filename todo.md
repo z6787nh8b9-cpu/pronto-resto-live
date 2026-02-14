@@ -107,3 +107,4 @@
 - [x] Ajouter des images placeholder pour chaque plat sur les pages publiques
 - [x] Ajouter des images pour les catégories de plats (icônes dans les onglets)
 - [x] Améliorer le design des pages publiques (plus classe et intuitif)
+- [x] Améliorer le rendu des messages du chatbot (supprimer les artéfacts Markdown **, -, etc.)

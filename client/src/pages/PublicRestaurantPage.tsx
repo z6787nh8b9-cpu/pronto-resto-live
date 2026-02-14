@@ -10,6 +10,7 @@ import { MessageCircle, Phone, Calendar, MapPin, Mail, X, Send } from "lucide-re
 import { useTenant } from "@/hooks/useTenant";
 import { toast } from "sonner";
 import { nanoid } from "nanoid";
+import ReactMarkdown from "react-markdown";
 
 export default function PublicRestaurantPage() {
   const tenant = useTenant();
@@ -384,13 +385,30 @@ export default function PublicRestaurantPage() {
             {chatMessages.map((msg, idx) => (
               <div key={idx} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                 <div
-                  className={`max-w-[80%] rounded-lg px-4 py-2 ${
+                  className={`max-w-[80%] rounded-lg px-4 py-3 ${
                     msg.role === "user"
                       ? "bg-pronto-primary text-white"
                       : "bg-muted text-foreground"
                   }`}
                 >
-                  <p className="text-sm">{msg.content}</p>
+                  {msg.role === "user" ? (
+                    <p className="text-sm">{msg.content}</p>
+                  ) : (
+                    <div className="text-sm prose prose-sm max-w-none prose-p:my-1 prose-ul:my-1 prose-li:my-0.5">
+                      <ReactMarkdown
+                        components={{
+                          p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                          ul: ({ children }) => <ul className="list-disc pl-4 mb-2 space-y-1">{children}</ul>,
+                          ol: ({ children }) => <ol className="list-decimal pl-4 mb-2 space-y-1">{children}</ol>,
+                          li: ({ children }) => <li className="text-sm">{children}</li>,
+                          strong: ({ children }) => <strong className="font-semibold">{children}</strong>,
+                          em: ({ children }) => <em className="italic">{children}</em>,
+                        }}
+                      >
+                        {msg.content}
+                      </ReactMarkdown>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
