@@ -77,3 +77,4 @@
 
 ## Bugs à corriger
 - [x] Corriger la détection de sous-domaine en environnement de développement (erreur avec slug "3000-i4y3c74twf8t54s78hem8-58a8a8d0")
+- [x] Ajouter un mode développement pour accéder au Super Admin sans authentification

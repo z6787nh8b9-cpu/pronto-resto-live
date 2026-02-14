@@ -45,12 +45,18 @@ export const restaurateurMiddleware = middleware(async (opts) => {
  */
 export const adminMiddleware = middleware(async (opts) => {
   const { ctx, next } = opts;
-  if (!ctx.user) {
-    throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Authentication required' });
-  }
   
-  if (ctx.user.role !== 'admin') {
-    throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
+  // In development mode, allow access without authentication
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  
+  if (!isDevelopment) {
+    if (!ctx.user) {
+      throw new TRPCError({ code: 'UNAUTHORIZED', message: 'Authentication required' });
+    }
+    
+    if (ctx.user.role !== 'admin') {
+      throw new TRPCError({ code: 'FORBIDDEN', message: 'Admin access required' });
+    }
   }
   
   return next({
