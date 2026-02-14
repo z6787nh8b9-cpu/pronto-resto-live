@@ -406,6 +406,45 @@ export default function SuperAdmin() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Temporary Navigation Buttons */}
+      <Card className="mt-8 border-dashed border-2 border-orange-300 bg-orange-50">
+        <CardHeader>
+          <CardTitle className="text-sm">🔧 Navigation Temporaire (Dev)</CardTitle>
+          <CardDescription className="text-xs">
+            Boutons de navigation pour tester les pages en attendant la configuration DNS wildcard
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setLocation("/")}
+            >
+              🏠 Landing Page
+            </Button>
+            {restaurants?.map((restaurant) => (
+              <div key={restaurant.id} className="flex gap-1">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => window.open(`/preview/${restaurant.slug}`, '_blank')}
+                >
+                  🍽️ {restaurant.name} (Public)
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => window.open(`/preview/${restaurant.slug}/dashboard`, '_blank')}
+                >
+                  📊 {restaurant.name} (Dashboard)
+                </Button>
+              </div>
+            ))}
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }

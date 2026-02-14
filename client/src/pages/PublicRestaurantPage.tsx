@@ -11,8 +11,9 @@ import { useTenant } from "@/hooks/useTenant";
 import { toast } from "sonner";
 import { nanoid } from "nanoid";
 
-export default function PublicRestaurantPage() {
+export default function PublicRestaurantPage({ previewSlug }: { previewSlug?: string } = {}) {
   const tenant = useTenant();
+  const slug = previewSlug || tenant.slug || "";
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
   const [chatInput, setChatInput] = useState("");
@@ -25,8 +26,8 @@ export default function PublicRestaurantPage() {
 
   // Get restaurant data
   const { data: restaurant } = trpc.public.getRestaurant.useQuery(
-    { slug: tenant.slug || "" },
-    { enabled: !!tenant.slug }
+    { slug },
+    { enabled: !!slug }
   );
 
   // Get menu data

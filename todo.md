@@ -99,3 +99,5 @@
 - [x] Ajouter la section Témoignages à la landing page
 - [x] Ajouter le CTA d'inscription à la landing page
 - [x] Créer des routes de prévisualisation sans sous-domaines (/admin, /preview/:slug, /preview/:slug/dashboard)
+- [ ] Corriger l'erreur 404 sur /preview/:slug (le hook useTenant ne détecte pas le slug depuis l'URL)
+- [x] Ajouter des boutons de navigation temporaires dans le Super Admin pour accéder aux pages publiques
