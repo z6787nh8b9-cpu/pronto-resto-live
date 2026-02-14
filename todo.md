@@ -108,3 +108,6 @@
 - [x] Ajouter des images pour les catégories de plats (icônes dans les onglets)
 - [x] Améliorer le design des pages publiques (plus classe et intuitif)
 - [x] Améliorer le rendu des messages du chatbot (supprimer les artéfacts Markdown **, -, etc.)
+- [x] Rendre les catégories de plats beaucoup plus visibles (pas juste de petits boutons avec emojis)
+- [x] Corriger la bande blanche au-dessus des images dans les cartes de plats
+- [x] Peaufiner l'ensemble du design des pages publiques

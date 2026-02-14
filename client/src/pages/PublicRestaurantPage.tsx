@@ -193,12 +193,36 @@ export default function PublicRestaurantPage() {
         </div>
 
         <Tabs defaultValue={categories[0]?.id.toString()} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-5 mb-8">
-            {categories.map((category) => (
-              <TabsTrigger key={category.id} value={category.id.toString()}>
-                {category.name}
-              </TabsTrigger>
-            ))}
+          {/* Catégories redesignées - beaucoup plus visibles */}
+          <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-10 h-auto bg-transparent p-0">
+            {categories.map((category) => {
+              // Icônes pour chaque catégorie
+              const categoryIcons: Record<string, string> = {
+                'Entrées': '🥗',
+                'Plats': '🍽️',
+                'Desserts': '🍰',
+                'Boissons': '🍷',
+                'Vins': '🍾',
+                'Cocktails': '🍹',
+                'Apéritifs': '🥂',
+                'Fromages': '🧀',
+              };
+              const icon = categoryIcons[category.name] || '🍴';
+              
+              return (
+                <TabsTrigger
+                  key={category.id}
+                  value={category.id.toString()}
+                  className="h-auto py-6 px-4 flex flex-col items-center gap-3 bg-white border-2 border-pronto-beige/40 rounded-2xl shadow-sm hover:shadow-lg hover:scale-105 transition-all duration-300 data-[state=active]:border-pronto-primary data-[state=active]:bg-pronto-primary/5 data-[state=active]:shadow-xl"
+                >
+                  <span className="text-4xl">{icon}</span>
+                  <span className="text-base font-bold text-center leading-tight">{category.name}</span>
+                  {category.description && (
+                    <span className="text-xs text-muted-foreground text-center line-clamp-2">{category.description}</span>
+                  )}
+                </TabsTrigger>
+              );
+            })}
           </TabsList>
 
           {categories.map((category) => (
@@ -210,16 +234,41 @@ export default function PublicRestaurantPage() {
               <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {items
                   .filter((item) => item.categoryId === category.id)
-                  .map((item) => (
-                    <Card key={item.id} className="hover:shadow-lg transition-shadow">
-                      <CardContent className="p-6">
-                        <div className="flex justify-between items-start mb-2">
-                          <h3 className="text-lg font-semibold">{item.name}</h3>
-                          <span className="text-lg font-bold text-pronto-primary">{item.price}€</span>
+                  .map((item, index) => {
+                    // Rotation des images placeholder
+                    const placeholderImages = [
+                      '/images/dishes/W5gXnLrRdPLc.jpg',
+                      '/images/dishes/ogJuaBJP0oQ9.jpg',
+                      '/images/dishes/GvHlZUdia5A7.jpg',
+                      '/images/dishes/D7GUkqsqHopc.jpg',
+                      '/images/dishes/7kjczpWYlPF6.jpg',
+                      '/images/dishes/WoaxiacELVR3.jpg',
+                    ];
+                    const imageUrl = item.imageUrl || placeholderImages[index % placeholderImages.length];
+                    
+                    return (
+                    <Card key={item.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-2 border-pronto-beige/20">
+                      {/* Image du plat - correction de la bande blanche */}
+                      <div className="relative h-56 bg-gray-100">
+                        <img 
+                          src={imageUrl} 
+                          alt={item.name}
+                          className="w-full h-full object-cover"
+                          style={{ display: 'block' }}
+                        />
+                        {/* Prix en overlay */}
+                        <div className="absolute top-3 right-3 bg-pronto-primary text-white px-3 py-1.5 rounded-full font-bold text-lg shadow-lg">
+                          {item.price}€
+                        </div>
+                      </div>
+                      
+                      <CardContent className="p-5">
+                        <div className="mb-3">
+                          <h3 className="text-xl font-bold mb-2">{item.name}</h3>
                         </div>
 
                         {item.description && (
-                          <p className="text-sm text-muted-foreground mb-3">{item.description}</p>
+                          <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{item.description}</p>
                         )}
 
                         {/* Ingredients */}
@@ -297,7 +346,8 @@ export default function PublicRestaurantPage() {
                         )}
                       </CardContent>
                     </Card>
-                  ))}
+                  );
+                  })}
               </div>
             </TabsContent>
           ))}

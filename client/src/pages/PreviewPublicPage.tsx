@@ -201,7 +201,8 @@ export default function PreviewPublicPage() {
         </div>
 
         <Tabs defaultValue={categories[0]?.id.toString()} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-3 lg:grid-cols-5 mb-8 bg-pronto-beige/30 p-2 rounded-xl">
+          {/* Catégories redesignées - beaucoup plus visibles */}
+          <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-10 h-auto bg-transparent p-0">
             {categories.map((category) => {
               // Icônes pour chaque catégorie
               const categoryIcons: Record<string, string> = {
@@ -217,15 +218,20 @@ export default function PreviewPublicPage() {
               const icon = categoryIcons[category.name] || '🍴';
               
               return (
-              <TabsTrigger 
-                key={category.id} 
-                value={category.id.toString()}
-                className="data-[state=active]:bg-pronto-primary data-[state=active]:text-white font-medium transition-all duration-200"
-              >
-                <span className="mr-1.5">{icon}</span>
-                {category.name}
-              </TabsTrigger>
-            )})}          </TabsList>
+                <TabsTrigger
+                  key={category.id}
+                  value={category.id.toString()}
+                  className="h-auto py-6 px-4 flex flex-col items-center gap-3 bg-white border-2 border-pronto-beige/40 rounded-2xl shadow-sm hover:shadow-lg hover:scale-105 transition-all duration-300 data-[state=active]:border-pronto-primary data-[state=active]:bg-pronto-primary/5 data-[state=active]:shadow-xl"
+                >
+                  <span className="text-4xl">{icon}</span>
+                  <span className="text-base font-bold text-center leading-tight">{category.name}</span>
+                  {category.description && (
+                    <span className="text-xs text-muted-foreground text-center line-clamp-2">{category.description}</span>
+                  )}
+                </TabsTrigger>
+              );
+            })}
+          </TabsList>
 
           {categories.map((category) => (
             <TabsContent key={category.id} value={category.id.toString()} className="mt-0">
@@ -251,13 +257,14 @@ export default function PreviewPublicPage() {
                     const imageUrl = item.imageUrl || placeholderImages[index % placeholderImages.length];
                     
                     return (
-                    <Card key={item.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-                      {/* Image du plat */}
-                      <div className="relative h-48 overflow-hidden">
+                    <Card key={item.id} className="overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-2 border-pronto-beige/20">
+                      {/* Image du plat - correction de la bande blanche */}
+                      <div className="relative h-56 bg-gray-100">
                         <img 
                           src={imageUrl} 
                           alt={item.name}
                           className="w-full h-full object-cover"
+                          style={{ display: 'block' }}
                         />
                         {/* Prix en overlay */}
                         <div className="absolute top-3 right-3 bg-pronto-primary text-white px-3 py-1.5 rounded-full font-bold text-lg shadow-lg">
