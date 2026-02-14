@@ -92,6 +92,8 @@ export const menuItems = mysqlTable("menuItems", {
   isVegan: boolean("isVegan").default(false).notNull(),
   isGlutenFree: boolean("isGlutenFree").default(false).notNull(),
   allergens: json("allergens").$type<string[]>().default([]),
+  ingredients: text("ingredients"), // Liste des ingrédients
+  nutritionalInfo: json("nutritionalInfo").$type<{calories?: number; protein?: number; carbs?: number; fat?: number}>(), // Infos nutritionnelles
   
   // Display
   displayOrder: int("displayOrder").default(0).notNull(),

@@ -133,6 +133,13 @@ export const restaurantRouter = router({
         isVegan: z.boolean().default(false),
         isGlutenFree: z.boolean().default(false),
         allergens: z.array(z.string()).default([]),
+        ingredients: z.string().optional(),
+        nutritionalInfo: z.object({
+          calories: z.number().optional(),
+          protein: z.number().optional(),
+          carbs: z.number().optional(),
+          fat: z.number().optional(),
+        }).optional(),
         displayOrder: z.number().default(0),
       })
     )
@@ -153,6 +160,13 @@ export const restaurantRouter = router({
           isVegan: z.boolean().optional(),
           isGlutenFree: z.boolean().optional(),
           allergens: z.array(z.string()).optional(),
+          ingredients: z.string().optional(),
+          nutritionalInfo: z.object({
+            calories: z.number().optional(),
+            protein: z.number().optional(),
+            carbs: z.number().optional(),
+            fat: z.number().optional(),
+          }).optional(),
           displayOrder: z.number().optional(),
           isActive: z.boolean().optional(),
           isFeatured: z.boolean().optional(),

@@ -13,6 +13,8 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Plus, Edit, Trash2, GripVertical, ArrowLeft, Eye, MessageSquare, BarChart3 } from "lucide-react";
 import { toast } from "sonner";
+import { ALLERGENS } from "@shared/allergens";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function AdminManageRestaurant() {
   const params = useParams<{ id: string }>();
@@ -89,6 +91,22 @@ export default function AdminManageRestaurant() {
   const handleCreateItem = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
+    
+    // Collect selected allergens
+    const allergens = formData.getAll("allergens") as string[];
+    
+    // Collect nutritional info
+    const nutritionalInfo: any = {};
+    const calories = formData.get("calories");
+    const protein = formData.get("protein");
+    const carbs = formData.get("carbs");
+    const fat = formData.get("fat");
+    
+    if (calories) nutritionalInfo.calories = parseFloat(calories as string);
+    if (protein) nutritionalInfo.protein = parseFloat(protein as string);
+    if (carbs) nutritionalInfo.carbs = parseFloat(carbs as string);
+    if (fat) nutritionalInfo.fat = parseFloat(fat as string);
+    
     createItemMutation.mutate({
       categoryId: selectedCategory!,
       restaurantId,
@@ -98,6 +116,9 @@ export default function AdminManageRestaurant() {
       isVegetarian: formData.get("isVegetarian") === "on",
       isVegan: formData.get("isVegan") === "on",
       isGlutenFree: formData.get("isGlutenFree") === "on",
+      ingredients: formData.get("ingredients") as string,
+      allergens,
+      nutritionalInfo: Object.keys(nutritionalInfo).length > 0 ? nutritionalInfo : undefined,
     });
   };
 
@@ -490,18 +511,73 @@ export default function AdminManageRestaurant() {
                 <Textarea id="item-desc" name="description" rows={2} />
               </div>
 
-              <div className="flex gap-4">
-                <div className="flex items-center space-x-2">
-                  <input type="checkbox" id="veg" name="isVegetarian" className="rounded" />
-                  <Label htmlFor="veg">Végétarien</Label>
+              <div className="space-y-2">
+                <Label htmlFor="item-ingredients">Ingrédients</Label>
+                <Textarea
+                  id="item-ingredients"
+                  name="ingredients"
+                  rows={2}
+                  placeholder="Tomates, mozzarella, basilic, huile d'olive..."
+                />
+              </div>
+
+              <div className="space-y-3">
+                <Label>Options diététiques</Label>
+                <div className="flex gap-4">
+                  <div className="flex items-center space-x-2">
+                    <input type="checkbox" id="veg" name="isVegetarian" className="rounded" />
+                    <Label htmlFor="veg">Végétarien</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <input type="checkbox" id="vegan" name="isVegan" className="rounded" />
+                    <Label htmlFor="vegan">Vegan</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <input type="checkbox" id="gf" name="isGlutenFree" className="rounded" />
+                    <Label htmlFor="gf">Sans gluten</Label>
+                  </div>
                 </div>
-                <div className="flex items-center space-x-2">
-                  <input type="checkbox" id="vegan" name="isVegan" className="rounded" />
-                  <Label htmlFor="vegan">Vegan</Label>
+              </div>
+
+              <div className="space-y-3">
+                <Label>Allergènes</Label>
+                <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto border rounded-lg p-3">
+                  {ALLERGENS.map((allergen) => (
+                    <div key={allergen.value} className="flex items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        id={`allergen-${allergen.value}`}
+                        name="allergens"
+                        value={allergen.value}
+                        className="rounded"
+                      />
+                      <Label htmlFor={`allergen-${allergen.value}`} className="text-sm font-normal">
+                        {allergen.label}
+                      </Label>
+                    </div>
+                  ))}
                 </div>
-                <div className="flex items-center space-x-2">
-                  <input type="checkbox" id="gf" name="isGlutenFree" className="rounded" />
-                  <Label htmlFor="gf">Sans gluten</Label>
+              </div>
+
+              <div className="space-y-3">
+                <Label>Informations nutritionnelles (optionnel)</Label>
+                <div className="grid grid-cols-4 gap-3">
+                  <div className="space-y-1">
+                    <Label htmlFor="calories" className="text-xs">Calories</Label>
+                    <Input id="calories" name="calories" type="number" placeholder="250" />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="protein" className="text-xs">Protéines (g)</Label>
+                    <Input id="protein" name="protein" type="number" step="0.1" placeholder="12" />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="carbs" className="text-xs">Glucides (g)</Label>
+                    <Input id="carbs" name="carbs" type="number" step="0.1" placeholder="30" />
+                  </div>
+                  <div className="space-y-1">
+                    <Label htmlFor="fat" className="text-xs">Lipides (g)</Label>
+                    <Input id="fat" name="fat" type="number" step="0.1" placeholder="8" />
+                  </div>
                 </div>
               </div>
             </div>
