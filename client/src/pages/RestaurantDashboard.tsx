@@ -27,6 +27,7 @@ import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSo
 import { CSS } from "@dnd-kit/utilities";
 import { ResponsiveHeader, ResponsiveTabs } from "@/components/responsive";
 import { UpgradeModal } from "@/components/UpgradeModal";
+import { LockedFeatureOverlay } from "@/components/LockedFeatureOverlay";
 
 export default function RestaurantDashboard() {
   const params: { slug?: string } = useParams();
@@ -403,9 +404,7 @@ export default function RestaurantDashboard() {
             <TabsTrigger value="chatbot">Chatbot IA</TabsTrigger>
             <TabsTrigger 
               value="translations" 
-              disabled={!canAccessTranslations}
-              className={!canAccessTranslations ? "opacity-50 cursor-not-allowed relative" : ""}
-              onClick={(e) => !canAccessTranslations && handleLockedTabClick("Traductions automatiques", "pro", e)}
+              className={!canAccessTranslations ? "opacity-50 relative" : ""}
             >
               <Globe className="h-4 w-4 mr-1" />
               Traductions
@@ -413,9 +412,7 @@ export default function RestaurantDashboard() {
             </TabsTrigger>
             <TabsTrigger 
               value="hours"
-              disabled={!canAccessPremiumFeatures}
-              className={!canAccessPremiumFeatures ? "opacity-50 cursor-not-allowed relative" : ""}
-              onClick={(e) => !canAccessPremiumFeatures && handleLockedTabClick("Horaires d'ouverture", "premium", e)}
+              className={!canAccessPremiumFeatures ? "opacity-50 relative" : ""}
             >
               <Clock className="h-4 w-4 mr-1" />
               Horaires
@@ -423,9 +420,7 @@ export default function RestaurantDashboard() {
             </TabsTrigger>
             <TabsTrigger 
               value="reservations"
-              disabled={!canAccessPremiumFeatures}
-              className={!canAccessPremiumFeatures ? "opacity-50 cursor-not-allowed relative" : ""}
-              onClick={(e) => !canAccessPremiumFeatures && handleLockedTabClick("Système de réservations", "premium", e)}
+              className={!canAccessPremiumFeatures ? "opacity-50 relative" : ""}
             >
               <CalendarDays className="h-4 w-4 mr-1" />
               Réservations
@@ -433,9 +428,7 @@ export default function RestaurantDashboard() {
             </TabsTrigger>
             <TabsTrigger 
               value="events"
-              disabled={!canAccessPremiumFeatures}
-              className={!canAccessPremiumFeatures ? "opacity-50 cursor-not-allowed relative" : ""}
-              onClick={(e) => !canAccessPremiumFeatures && handleLockedTabClick("Événements et inscriptions", "premium", e)}
+              className={!canAccessPremiumFeatures ? "opacity-50 relative" : ""}
             >
               <PartyPopper className="h-4 w-4 mr-1" />
               Événements
@@ -443,9 +436,7 @@ export default function RestaurantDashboard() {
             </TabsTrigger>
             <TabsTrigger 
               value="customization"
-              disabled={!canAccessPremiumFeatures}
-              className={!canAccessPremiumFeatures ? "opacity-50 cursor-not-allowed relative" : ""}
-              onClick={(e) => !canAccessPremiumFeatures && handleLockedTabClick("Personnalisation visuelle", "premium", e)}
+              className={!canAccessPremiumFeatures ? "opacity-50 relative" : ""}
             >
               <Star className="h-4 w-4 mr-1" />
               Personnalisation
@@ -453,9 +444,7 @@ export default function RestaurantDashboard() {
             </TabsTrigger>
             <TabsTrigger 
               value="gallery"
-              disabled={!canAccessPremiumFeatures}
-              className={!canAccessPremiumFeatures ? "opacity-50 cursor-not-allowed relative" : ""}
-              onClick={(e) => !canAccessPremiumFeatures && handleLockedTabClick("Galerie photos", "premium", e)}
+              className={!canAccessPremiumFeatures ? "opacity-50 relative" : ""}
             >
               📸 Galerie
               {!canAccessPremiumFeatures && <Lock className="h-3 w-3 ml-1 text-amber-500" />}
@@ -814,12 +803,32 @@ export default function RestaurantDashboard() {
 
           {/* Customization Tab */}
           <TabsContent value="customization" className="space-y-6">
-            {restaurant && <Customization restaurantId={restaurant.id} />}
+            {canAccessPremiumFeatures ? (
+              restaurant && <Customization restaurantId={restaurant.id} />
+            ) : (
+              <LockedFeatureOverlay
+                featureName="Personnalisation visuelle"
+                tier="premium"
+                restaurantName={restaurant?.name || ""}
+              >
+                {restaurant && <Customization restaurantId={restaurant.id} />}
+              </LockedFeatureOverlay>
+            )}
           </TabsContent>
 
           {/* Gallery Tab */}
           <TabsContent value="gallery" className="space-y-6">
-            {restaurant && <Gallery restaurantId={restaurant.id} />}
+            {canAccessPremiumFeatures ? (
+              restaurant && <Gallery restaurantId={restaurant.id} />
+            ) : (
+              <LockedFeatureOverlay
+                featureName="Galerie photos"
+                tier="premium"
+                restaurantName={restaurant?.name || ""}
+              >
+                {restaurant && <Gallery restaurantId={restaurant.id} />}
+              </LockedFeatureOverlay>
+            )}
           </TabsContent>
 
           {/* Analytics Tab */}
@@ -859,22 +868,62 @@ export default function RestaurantDashboard() {
 
           {/* Translations Tab */}
           <TabsContent value="translations">
-            <Translations />
+            {canAccessTranslations ? (
+              <Translations />
+            ) : (
+              <LockedFeatureOverlay
+                featureName="Traductions automatiques"
+                tier="pro"
+                restaurantName={restaurant?.name || ""}
+              >
+                <Translations />
+              </LockedFeatureOverlay>
+            )}
           </TabsContent>
 
           {/* Opening Hours Tab */}
           <TabsContent value="hours">
-            <OpeningHours />
+            {canAccessPremiumFeatures ? (
+              <OpeningHours />
+            ) : (
+              <LockedFeatureOverlay
+                featureName="Horaires d'ouverture"
+                tier="premium"
+                restaurantName={restaurant?.name || ""}
+              >
+                <OpeningHours />
+              </LockedFeatureOverlay>
+            )}
           </TabsContent>
 
           {/* Reservations Tab */}
           <TabsContent value="reservations">
-            {restaurant && <Reservations restaurantId={restaurant.id} />}
+            {canAccessPremiumFeatures ? (
+              restaurant && <Reservations restaurantId={restaurant.id} />
+            ) : (
+              <LockedFeatureOverlay
+                featureName="Système de réservations"
+                tier="premium"
+                restaurantName={restaurant?.name || ""}
+              >
+                {restaurant && <Reservations restaurantId={restaurant.id} />}
+              </LockedFeatureOverlay>
+            )}
           </TabsContent>
 
           {/* Events Tab */}
           <TabsContent value="events">
-            {restaurant && <Events restaurantId={restaurant.id} />}
+            {canAccessPremiumFeatures ? (
+              restaurant && <Events restaurantId={restaurant.id} />
+            ) : (
+              <LockedFeatureOverlay
+                featureName="Gestion d'événements"
+                tier="premium"
+                restaurantName={restaurant?.name || ""}
+              >
+                {restaurant && <Events restaurantId={restaurant.id} />}
+              </LockedFeatureOverlay>
+            )}
           </TabsContent>
         </Tabs>
       </main>

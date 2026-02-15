@@ -385,3 +385,9 @@
 
 ## 🐛 CORRECTION DASHBOARD - CHEVAUCHEMENT ONGLETS DESKTOP
 - [x] Corriger le chevauchement des onglets dans le RestaurantDashboard sur desktop (grille responsive : 5 cols sur tablette, 10 cols sur grand écran)
+
+## ✨ AMÉLIORATION UX - ONGLETS VERROUILLÉS
+- [x] Rendre les onglets verrouillés cliquables
+- [x] Afficher un squelette flouté de l'interface au lieu de bloquer l'accès
+- [x] Ajouter un overlay avec cadenas doré et message "Fonctionnalité PRO/PREMIUM"
+- [x] Ajouter un bouton WhatsApp vers 0749710723 avec message pré-rempli
