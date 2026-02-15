@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Edit, Trash2, GripVertical, Settings, Eye, MessageSquare, BarChart3, Star, Globe, Clock, CalendarDays, PartyPopper } from "lucide-react";
+import { Plus, Edit, Trash2, GripVertical, Settings, Eye, MessageSquare, BarChart3, Star, Globe, Clock, CalendarDays, PartyPopper, Lock } from "lucide-react";
 import { toast } from "sonner";
 
 import { useParams } from "wouter";
@@ -24,6 +24,7 @@ import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, us
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { ResponsiveHeader, ResponsiveTabs } from "@/components/responsive";
+import { UpgradeModal } from "@/components/UpgradeModal";
 
 export default function RestaurantDashboard() {
   const params: { slug?: string } = useParams();
@@ -41,6 +42,8 @@ export default function RestaurantDashboard() {
   const [selectedEmoji, setSelectedEmoji] = useState("🍴");
   const [categoryImageUrl, setCategoryImageUrl] = useState("");
   const [itemImageUrl, setItemImageUrl] = useState("");
+  const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
+  const [upgradeFeature, setUpgradeFeature] = useState<{ name: string; tier: "pro" | "premium" }>({ name: "", tier: "pro" });
 
   // Drag & Drop sensors
   const sensors = useSensors(
@@ -72,6 +75,18 @@ export default function RestaurantDashboard() {
     { restaurantId: restaurant?.id || 0 },
     { enabled: !!restaurant?.id }
   );
+
+  // Check if feature is available
+  const canAccessTranslations = restaurant?.subscriptionTier === "pro" || restaurant?.subscriptionTier === "premium";
+  const canAccessPremiumFeatures = restaurant?.subscriptionTier === "premium";
+
+  // Handle locked tab click
+  const handleLockedTabClick = (featureName: string, requiredTier: "pro" | "premium", e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setUpgradeFeature({ name: featureName, tier: requiredTier });
+    setUpgradeModalOpen(true);
+  };
 
   // Mutations
   const createCategoryMutation = trpc.restaurant.createCategory.useMutation({
@@ -384,21 +399,45 @@ export default function RestaurantDashboard() {
             <TabsTrigger value="menu">Menu</TabsTrigger>
             <TabsTrigger value="settings">Paramètres</TabsTrigger>
             <TabsTrigger value="chatbot">Chatbot IA</TabsTrigger>
-            <TabsTrigger value="translations">
+            <TabsTrigger 
+              value="translations" 
+              disabled={!canAccessTranslations}
+              className={!canAccessTranslations ? "opacity-50 cursor-not-allowed relative" : ""}
+              onClick={(e) => !canAccessTranslations && handleLockedTabClick("Traductions automatiques", "pro", e)}
+            >
               <Globe className="h-4 w-4 mr-1" />
               Traductions
+              {!canAccessTranslations && <Lock className="h-3 w-3 ml-1 text-amber-500" />}
             </TabsTrigger>
-            <TabsTrigger value="hours">
+            <TabsTrigger 
+              value="hours"
+              disabled={!canAccessPremiumFeatures}
+              className={!canAccessPremiumFeatures ? "opacity-50 cursor-not-allowed relative" : ""}
+              onClick={(e) => !canAccessPremiumFeatures && handleLockedTabClick("Horaires d'ouverture", "premium", e)}
+            >
               <Clock className="h-4 w-4 mr-1" />
               Horaires
+              {!canAccessPremiumFeatures && <Lock className="h-3 w-3 ml-1 text-amber-500" />}
             </TabsTrigger>
-            <TabsTrigger value="reservations">
+            <TabsTrigger 
+              value="reservations"
+              disabled={!canAccessPremiumFeatures}
+              className={!canAccessPremiumFeatures ? "opacity-50 cursor-not-allowed relative" : ""}
+              onClick={(e) => !canAccessPremiumFeatures && handleLockedTabClick("Système de réservations", "premium", e)}
+            >
               <CalendarDays className="h-4 w-4 mr-1" />
               Réservations
+              {!canAccessPremiumFeatures && <Lock className="h-3 w-3 ml-1 text-amber-500" />}
             </TabsTrigger>
-            <TabsTrigger value="events">
+            <TabsTrigger 
+              value="events"
+              disabled={!canAccessPremiumFeatures}
+              className={!canAccessPremiumFeatures ? "opacity-50 cursor-not-allowed relative" : ""}
+              onClick={(e) => !canAccessPremiumFeatures && handleLockedTabClick("Événements et inscriptions", "premium", e)}
+            >
               <PartyPopper className="h-4 w-4 mr-1" />
               Événements
+              {!canAccessPremiumFeatures && <Lock className="h-3 w-3 ml-1 text-amber-500" />}
             </TabsTrigger>
             <TabsTrigger value="analytics">Statistiques</TabsTrigger>
           </TabsList>
@@ -1161,6 +1200,15 @@ export default function RestaurantDashboard() {
           </form>
         </DialogContent>
       </Dialog>
+
+      {/* Upgrade Modal */}
+      <UpgradeModal
+        isOpen={upgradeModalOpen}
+        onClose={() => setUpgradeModalOpen(false)}
+        currentTier={restaurant?.subscriptionTier || "menu"}
+        requiredTier={upgradeFeature.tier}
+        featureName={upgradeFeature.name}
+      />
 
       {/* Delete Confirmation Dialog */}
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>

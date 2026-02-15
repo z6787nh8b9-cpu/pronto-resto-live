@@ -1,6 +1,10 @@
 import { z } from "zod";
 import { router } from "../_core/trpc";
 import { adminProcedure } from "../_core/trpc";
+import { TRPCError } from "@trpc/server";
+import { getDb } from "../db";
+import { advertisements } from "../../drizzle/schema";
+import { eq } from "drizzle-orm";
 import {
   getAllRestaurants,
   createRestaurant,
@@ -92,10 +96,81 @@ export const adminRouter = router({
       return { success: true };
     }),
 
-  // Get user by ID (for owner assignment)
+  // Get user by ID (for owner assignm  // Get user by ID
   getUser: adminProcedure
     .input(z.object({ id: z.number() }))
     .query(async ({ input }) => {
       return await getUserById(input.id);
+    }),
+
+  // ===== ADVERTISEMENTS =====
+
+  // List all advertisements
+  listAdvertisements: adminProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+    const ads = await db.select().from(advertisements).orderBy(advertisements.displayOrder);
+    return ads;
+  }),
+
+  // Create advertisement
+  createAdvertisement: adminProcedure
+    .input(
+      z.object({
+        title: z.string(),
+        imageUrl: z.string(),
+        linkUrl: z.string(),
+        displayOrder: z.number().default(0),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const [ad] = await db.insert(advertisements).values({
+        title: input.title,
+        imageUrl: input.imageUrl,
+        linkUrl: input.linkUrl,
+        displayOrder: input.displayOrder,
+        isActive: true,
+      });
+
+      return ad;
+    }),
+
+  // Update advertisement
+  updateAdvertisement: adminProcedure
+    .input(
+      z.object({
+        id: z.number(),
+        data: z.object({
+          title: z.string().optional(),
+          imageUrl: z.string().optional(),
+          linkUrl: z.string().optional(),
+          displayOrder: z.number().optional(),
+          isActive: z.boolean().optional(),
+        }),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      await db.update(advertisements).set(input.data).where(eq(advertisements.id, input.id));
+
+      return { success: true };
+    }),
+
+  // Delete advertisement
+  deleteAdvertisement: adminProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      await db.delete(advertisements).where(eq(advertisements.id, input.id));
+
+      return { success: true };
     }),
 });

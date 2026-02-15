@@ -351,3 +351,11 @@
 - [x] Créer le composant EventRegistrationFlow pour l'inscription
 - [x] Afficher les événements sur RestaurantHomePage
 - [x] Intégrer le système d'inscription en ligne
+
+
+### PHASE 7 : PUBLICITÉS ET RESTRICTIONS VISUELLES
+- [x] Créer l'onglet "Publicités" dans le Super Admin (CRUD complet)
+- [x] Afficher les publicités sur les pages MENU uniquement (bandeau en bas)
+- [x] Implémenter les restrictions visuelles : onglets grisés avec cadenas dorés
+- [x] Créer les modals d'upgrade pour inviter à passer à PRO ou PREMIUM
+- [x] Ajouter les tooltips explicatifs sur les fonctionnalités verrouillées

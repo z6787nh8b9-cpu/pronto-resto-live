@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { router, publicProcedure } from "../_core/trpc";
-
+import { getDb } from "../db";
+import { advertisements } from "../../drizzle/schema";
+import { eq } from "drizzle-orm";
 import {
   getRestaurantBySlug,
   getMenuCategoriesByRestaurantId,
@@ -142,4 +144,18 @@ Instructions:
       await createPageView(input);
       return { success: true };
     }),
+
+  // Get active advertisements (for MENU tier restaurants)
+  getActiveAdvertisements: publicProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) return [];
+
+    const ads = await db
+      .select()
+      .from(advertisements)
+      .where(eq(advertisements.isActive, true))
+      .orderBy(advertisements.displayOrder);
+
+    return ads;
+  }),
 });

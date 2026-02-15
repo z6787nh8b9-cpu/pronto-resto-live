@@ -9,14 +9,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Edit, Trash2, TrendingUp, Store, MessageSquare, Settings } from "lucide-react";
+import { Plus, Edit, Trash2, TrendingUp, Store, MessageSquare, Settings, Megaphone } from "lucide-react";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
 import { ResponsiveHeader, ResponsiveTable } from "@/components/responsive";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Advertisements from "./admin/Advertisements";
 
 export default function SuperAdmin() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingRestaurant, setEditingRestaurant] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState("restaurants");
   const [, setLocation] = useLocation();
 
   // Queries
@@ -107,6 +110,19 @@ export default function SuperAdmin() {
       />
 
       <main className="container px-4 sm:px-6 py-6">
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList className="mb-6">
+            <TabsTrigger value="restaurants">
+              <Store className="h-4 w-4 mr-2" />
+              Restaurants
+            </TabsTrigger>
+            <TabsTrigger value="advertisements">
+              <Megaphone className="h-4 w-4 mr-2" />
+              Publicités
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="restaurants">
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-6">
           <Card>
@@ -268,6 +284,12 @@ export default function SuperAdmin() {
             />
           </CardContent>
         </Card>
+          </TabsContent>
+
+          <TabsContent value="advertisements">
+            <Advertisements />
+          </TabsContent>
+        </Tabs>
       </main>
 
       {/* Create Dialog */}

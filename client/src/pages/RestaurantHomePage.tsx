@@ -54,6 +54,12 @@ export default function RestaurantHomePage() {
     { enabled: !!restaurant?.id && restaurant?.featuresEnabled?.events }
   );
 
+  // Get advertisements (only for MENU tier)
+  const { data: advertisements } = trpc.public.getActiveAdvertisements.useQuery(
+    undefined,
+    { enabled: restaurant?.subscriptionTier === "menu" && restaurant?.showAds }
+  );
+
   // Chat mutation
   const chatMutation = trpc.public.chat.useMutation({
     onSuccess: (data) => {
@@ -550,6 +556,39 @@ export default function RestaurantHomePage() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Advertisement Banner (MENU tier only) */}
+      {restaurant.subscriptionTier === "menu" && restaurant.showAds && advertisements && advertisements.length > 0 && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg z-50">
+          <div className="container max-w-7xl mx-auto px-4 py-3">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex-1 overflow-x-auto">
+                <div className="flex gap-6 items-center">
+                  {advertisements.map((ad) => (
+                    <a
+                      key={ad.id}
+                      href={ad.linkUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 hover:opacity-80 transition-opacity flex-shrink-0"
+                    >
+                      <img
+                        src={ad.imageUrl}
+                        alt={ad.title}
+                        className="h-12 w-12 object-cover rounded"
+                      />
+                      <span className="text-sm font-medium">{ad.title}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+              <Badge variant="outline" className="text-xs flex-shrink-0">
+                Publicité
+              </Badge>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
