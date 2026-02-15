@@ -16,18 +16,18 @@ export function LockedFeatureOverlay({ featureName, tier, restaurantName, childr
   const whatsappUrl = `https://wa.me/33${whatsappNumber.slice(1)}?text=${encodeURIComponent(whatsappMessage)}`;
 
   return (
-    <div className="relative">
+    <div className="relative min-h-[600px]">
       {/* Contenu flouté */}
       <div className="blur-sm pointer-events-none opacity-40">
         {children}
       </div>
 
-      {/* Overlay avec cadenas et CTA */}
-      <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+      {/* Overlay avec cadenas et CTA - Centré fixe */}
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
         <Card className="max-w-md mx-4 border-2 border-amber-500/50 shadow-xl">
           <CardHeader className="text-center">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-amber-600">
-              <Lock className="h-8 w-8 text-white" />
+            <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-amber-600 via-orange-700 to-amber-800 shadow-2xl ring-4 ring-amber-500/20">
+              <Lock className="h-10 w-10 text-amber-50 drop-shadow-lg" strokeWidth={2.5} />
             </div>
             <CardTitle className="text-2xl">Fonctionnalité {tierLabel}</CardTitle>
             <CardDescription className="text-base">
@@ -59,7 +59,7 @@ export function LockedFeatureOverlay({ featureName, tier, restaurantName, childr
             </div>
 
             <Button
-              className="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white"
+              className="w-full bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white shadow-lg hover:shadow-xl transition-all duration-200"
               size="lg"
               onClick={() => window.open(whatsappUrl, "_blank")}
             >

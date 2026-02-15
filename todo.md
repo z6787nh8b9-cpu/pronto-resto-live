@@ -391,3 +391,9 @@
 - [x] Afficher un squelette flouté de l'interface au lieu de bloquer l'accès
 - [x] Ajouter un overlay avec cadenas doré et message "Fonctionnalité PRO/PREMIUM"
 - [x] Ajouter un bouton WhatsApp vers 0749710723 avec message pré-rempli
+
+## 🎨 AMÉLIORATION VISUELLE - LOCKED FEATURE OVERLAY
+- [x] Centrer le pop-up de manière fixe pour qu'il s'affiche toujours au même endroit (position fixed z-50)
+- [x] Changer la couleur du bouton WhatsApp pour un vert plus premium (emerald-600 to teal-700)
+- [x] Remplacer le dégradé par un doré terre cuite italien pour le cadenas (amber-600 via orange-700 to amber-800)
+- [x] Améliorer l'icône du cadenas pour un rendu plus classe (h-20 w-20, shadow-2xl, ring-4)
