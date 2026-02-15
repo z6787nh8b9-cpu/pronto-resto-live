@@ -250,3 +250,59 @@
 - [x] Supprimer le hook useTenant (obsolète avec la nouvelle structure)
 - [x] Automatiser l'attribution des URLs pour les nouveaux restaurants (slug généré automatiquement)
 - [x] Tester toute la navigation
+
+
+---
+
+## 🚀 SYSTÈME D'ABONNEMENTS COMPLET (19€/29€/39€)
+
+### PHASE 1 : INFRASTRUCTURE BDD ET MIDDLEWARE
+- [x] Ajouter les champs d'abonnement à la table `restaurant`
+- [x] Créer la table `advertisements` pour les pubs externes
+- [ ] Créer le middleware tRPC pour vérifier les permissions selon la formule
+- [ ] Créer les procédures tRPC pour gérer les abonnements (Super Admin)
+- [ ] Mettre à jour le Super Admin pour gérer les formules
+- [ ] Mettre à jour le Dashboard restaurateur avec onglets grisés + cadenas doré
+
+### PHASE 2 : SÉPARATION PAGE D'ACCUEIL / MENU
+- [ ] Créer la route `/:slug/menu` (menu complet avec tabs horizontales)
+- [ ] Créer la route `/:slug` (page d'accueil, uniquement si PREMIUM)
+- [ ] Implémenter la redirection automatique MENU/PRO → `/:slug/menu`
+- [ ] Ajouter le champ `featured` à la table `menu_items`
+- [ ] Créer les procédures tRPC pour la page d'accueil
+- [ ] Créer les composants frontend page d'accueil (Hero, Qui sommes-nous, Spécialités, etc.)
+- [ ] Dashboard restaurateur : onglet "Page d'accueil" pour éditer le contenu
+
+### PHASE 3 : SYSTÈME DE TRADUCTION AUTOMATIQUE
+- [ ] Créer la table `translations`
+- [ ] Créer les procédures tRPC (translate, getTranslations, updateTranslation)
+- [ ] Ajouter le sélecteur de langue sticky (FR, EN, IT, DE, ES)
+- [ ] Implémenter la traduction automatique via Manus LLM (lazy loading)
+- [ ] Dashboard restaurateur : page "Traductions" pour corriger manuellement
+
+### PHASE 4 : SYSTÈME DE RÉSERVATIONS MULTI-ZONES
+- [ ] Créer les tables BDD (zones, reservations, reservation_settings)
+- [ ] Créer les procédures tRPC (getAvailableSlots, create, createManual, etc.)
+- [ ] Créer le flow frontend (6 modals)
+- [ ] Intégrer les notifications (Email + WhatsApp)
+- [ ] Dashboard restaurateur : gestion des réservations + zones
+
+### PHASE 5 : SYSTÈME D'ÉVÉNEMENTS
+- [ ] Créer les tables BDD (events, event_registrations)
+- [ ] Créer les procédures tRPC (getByRestaurant, create, register, etc.)
+- [ ] Section "Prochains événements" sur la page d'accueil
+- [ ] Page `/:slug/events` listant tous les événements
+- [ ] Dashboard restaurateur : gestion des événements
+
+### PHASE 6 : PUBLICITÉS ET RESTRICTIONS VISUELLES
+- [ ] Bannière publicité externe (Super Admin) sur forfait 19€
+- [ ] Footer "Propulsé par PRONTO by Altmachine" sur toutes les pages
+- [ ] Bouton WhatsApp flottant configurable
+- [ ] Onglets grisés avec cadenas doré + Modal d'upgrade
+
+### PHASE 7 : TESTS ET AJUSTEMENTS FINAUX
+- [ ] Tester toutes les redirections et restrictions
+- [ ] Tester le système de traduction complet
+- [ ] Tester le flow de réservation complet
+- [ ] Tester la création d'événements et l'inscription
+- [ ] Vérifier le responsive mobile sur toutes les nouvelles pages

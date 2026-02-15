@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { router } from "../_core/trpc";
-import { restaurateurProcedure } from "../_core/tenantMiddleware";
-import { publicProcedure } from "../_core/trpc";
+// Removed obsolete tenantMiddleware import
+import { publicProcedure, protectedProcedure } from "../_core/trpc";
 import {
   getRestaurantsByOwnerId,
   updateRestaurant,
@@ -30,13 +30,13 @@ export const restaurantRouter = router({
   // }),
 
   // Get restaurants owned by current user
-  getMyRestaurants: restaurateurProcedure.query(async ({ ctx }) => {
+  getMyRestaurants: protectedProcedure.query(async ({ ctx }) => {
     if (!ctx.user) return [];
     return await getRestaurantsByOwnerId(ctx.user.id);
   }),
 
   // Update restaurant settings
-  updateSettings: restaurateurProcedure
+  updateSettings: protectedProcedure
     .input(
       z.object({
         restaurantId: z.number(),
@@ -78,7 +78,7 @@ export const restaurantRouter = router({
       return await getMenuCategoriesByRestaurantId(input.restaurantId);
     }),
 
-  createCategory: restaurateurProcedure
+  createCategory: protectedProcedure
     .input(
       z.object({
         restaurantId: z.number(),
@@ -93,7 +93,7 @@ export const restaurantRouter = router({
       return await createMenuCategory(input);
     }),
 
-  updateCategory: restaurateurProcedure
+  updateCategory: protectedProcedure
     .input(
       z.object({
         id: z.number(),
@@ -111,7 +111,7 @@ export const restaurantRouter = router({
       return await updateMenuCategory(input.id, input.data);
     }),
 
-  deleteCategory: restaurateurProcedure
+  deleteCategory: protectedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
       await deleteMenuCategory(input.id);
@@ -131,7 +131,7 @@ export const restaurantRouter = router({
       return await getMenuItemsByCategoryId(input.categoryId);
     }),
 
-  createMenuItem: restaurateurProcedure
+  createMenuItem: protectedProcedure
     .input(
       z.object({
         categoryId: z.number(),
@@ -158,7 +158,7 @@ export const restaurantRouter = router({
       return await createMenuItem(input);
     }),
 
-  updateMenuItem: restaurateurProcedure
+  updateMenuItem: protectedProcedure
     .input(
       z.object({
         id: z.number(),
@@ -188,7 +188,7 @@ export const restaurantRouter = router({
       return await updateMenuItem(input.id, input.data);
     }),
 
-  deleteMenuItem: restaurateurProcedure
+  deleteMenuItem: protectedProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
       await deleteMenuItem(input.id);
@@ -202,7 +202,7 @@ export const restaurantRouter = router({
       return await getChatbotConfigByRestaurantId(input.restaurantId);
     }),
 
-  updateChatbotConfig: restaurateurProcedure
+  updateChatbotConfig: protectedProcedure
     .input(
       z.object({
         restaurantId: z.number(),
@@ -217,20 +217,20 @@ export const restaurantRouter = router({
     }),
 
   // Analytics
-  getPageViews: restaurateurProcedure
+  getPageViews: protectedProcedure
     .input(z.object({ restaurantId: z.number(), limit: z.number().default(1000) }))
     .query(async ({ input }) => {
       return await getPageViewsByRestaurantId(input.restaurantId, input.limit);
     }),
 
-  getChatbotConversations: restaurateurProcedure
+  getChatbotConversations: protectedProcedure
     .input(z.object({ restaurantId: z.number(), limit: z.number().default(100) }))
     .query(async ({ input }) => {
       return await getChatbotConversationsByRestaurantId(input.restaurantId, input.limit);
     }),
 
   // Reorder Categories
-  reorderCategories: restaurateurProcedure
+  reorderCategories: protectedProcedure
     .input(
       z.object({
         restaurantId: z.number(),
@@ -253,7 +253,7 @@ export const restaurantRouter = router({
     }),
 
   // Reorder Items within a category
-  reorderItems: restaurateurProcedure
+  reorderItems: protectedProcedure
     .input(
       z.object({
         categoryId: z.number(),
@@ -276,7 +276,7 @@ export const restaurantRouter = router({
     }),
 
   // Upload image to S3
-  uploadImage: restaurateurProcedure
+  uploadImage: protectedProcedure
     .input(
       z.object({
         filename: z.string(),

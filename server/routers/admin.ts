@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { router } from "../_core/trpc";
-import { adminProcedure } from "../_core/tenantMiddleware";
+import { adminProcedure } from "../_core/trpc";
 import {
   getAllRestaurants,
   createRestaurant,
@@ -47,8 +47,8 @@ export const adminRouter = router({
         primaryColor: z.string().optional(),
         accentColor: z.string().optional(),
         fontFamily: z.string().optional(),
-        subscriptionPlan: z.enum(["basic", "premium"]).optional(),
-        subscriptionStatus: z.enum(["active", "inactive", "trial"]).optional(),
+        subscriptionTier: z.enum(["menu", "pro", "premium"]).optional(),
+        subscriptionStatus: z.enum(["active", "trial", "expired", "cancelled"]).optional(),
       })
     )
     .mutation(async ({ input }) => {
@@ -74,8 +74,8 @@ export const adminRouter = router({
           primaryColor: z.string().optional(),
           accentColor: z.string().optional(),
           fontFamily: z.string().optional(),
-          subscriptionPlan: z.enum(["basic", "premium"]).optional(),
-          subscriptionStatus: z.enum(["active", "inactive", "trial"]).optional(),
+          subscriptionTier: z.enum(["menu", "pro", "premium"]).optional(),
+          subscriptionStatus: z.enum(["active", "trial", "expired", "cancelled"]).optional(),
           isActive: z.boolean().optional(),
         }),
       })

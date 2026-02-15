@@ -238,8 +238,8 @@ export default function AdminManageRestaurant() {
                 <Eye className="mr-2 h-4 w-4" />
                 Voir la page publique
               </Button>
-              <Badge variant={restaurant.subscriptionPlan === "premium" ? "default" : "secondary"}>
-                {restaurant.subscriptionPlan === "premium" ? "Premium" : "Basic"}
+              <Badge variant={restaurant.subscriptionTier === "premium" ? "default" : "secondary"}>
+                {restaurant.subscriptionTier === "premium" ? "Premium" : "Basic"}
               </Badge>
             </div>
           </div>

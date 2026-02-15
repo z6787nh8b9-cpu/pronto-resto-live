@@ -358,8 +358,8 @@ export default function RestaurantDashboard() {
         title={restaurant.name}
         subtitle="Gestion du Restaurant (Super Admin)"
         badge={
-          <Badge variant={restaurant.subscriptionPlan === "premium" ? "default" : "secondary"} className="text-xs px-2 py-0.5">
-            {restaurant.subscriptionPlan === "premium" ? "Premium" : "Basic"}
+          <Badge variant={restaurant.subscriptionTier === "premium" ? "default" : "secondary"} className="text-xs px-2 py-0.5">
+            {restaurant.subscriptionTier === "premium" ? "Premium" : "Basic"}
           </Badge>
         }
         primaryAction={{
@@ -793,7 +793,7 @@ export default function RestaurantDashboard() {
                   <span className="text-sm text-muted-foreground">Cliquez pour choisir un emoji</span>
                 </div>
               </div>
-              {restaurant?.subscriptionPlan === 'premium' && (
+              {restaurant?.subscriptionTier === 'premium' && (
                 <ImageUploader
                   label="Image de la catégorie (Premium)"
                   currentImageUrl={categoryImageUrl}
@@ -933,7 +933,7 @@ export default function RestaurantDashboard() {
                   <span className="text-sm text-muted-foreground">Cliquez pour choisir un emoji</span>
                 </div>
               </div>
-              {restaurant?.subscriptionPlan === 'premium' && (
+              {restaurant?.subscriptionTier === 'premium' && (
                 <ImageUploader
                   label="Image de la catégorie (Premium)"
                   currentImageUrl={categoryImageUrl}

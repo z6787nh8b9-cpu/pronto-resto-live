@@ -36,6 +36,13 @@
       "when": 1771106920143,
       "tag": "0004_motionless_echo",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "5",
+      "when": 1771176112241,
+      "tag": "0005_closed_shaman",
+      "breakpoints": true
     }
   ]
 }

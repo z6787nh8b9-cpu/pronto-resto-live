@@ -69,7 +69,7 @@ export default function SuperAdmin() {
       phone: formData.get("phone") as string,
       whatsapp: formData.get("whatsapp") as string,
       address: formData.get("address") as string,
-      subscriptionPlan: formData.get("subscriptionPlan") as "basic" | "premium",
+      subscriptionTier: formData.get("subscriptionTier") as "menu" | "pro" | "premium",
       subscriptionStatus: "trial",
     });
   };
@@ -87,8 +87,8 @@ export default function SuperAdmin() {
         phone: formData.get("phone") as string,
         whatsapp: formData.get("whatsapp") as string,
         address: formData.get("address") as string,
-        subscriptionPlan: formData.get("subscriptionPlan") as "basic" | "premium",
-        subscriptionStatus: formData.get("subscriptionStatus") as "active" | "inactive" | "trial",
+        subscriptionTier: formData.get("subscriptionTier") as "menu" | "pro" | "premium",
+        subscriptionStatus: formData.get("subscriptionStatus") as "active" | "trial" | "expired" | "cancelled",
       },
     });
   };
@@ -154,7 +154,7 @@ export default function SuperAdmin() {
               columns={[
                 { key: "name", label: "Nom" },
                 { key: "slug", label: "Slug", render: (value) => <code className="text-xs bg-muted px-2 py-1 rounded">{value}</code> },
-                { key: "subscriptionPlan", label: "Plan", render: (value) => (
+                { key: "subscriptionTier", label: "Plan", render: (value) => (
                   <Badge variant={value === "premium" ? "default" : "secondary"}>
                     {value === "premium" ? "Premium" : "Basic"}
                   </Badge>
@@ -206,8 +206,8 @@ export default function SuperAdmin() {
                       <code className="text-xs bg-muted px-2 py-0.5 rounded">{row.slug}</code>
                     </div>
                     <div className="flex flex-col gap-1 items-end">
-                      <Badge variant={row.subscriptionPlan === "premium" ? "default" : "secondary"} className="text-xs">
-                        {row.subscriptionPlan === "premium" ? "Premium" : "Basic"}
+                      <Badge variant={row.subscriptionTier === "premium" ? "default" : "secondary"} className="text-xs">
+                        {row.subscriptionTier === "premium" ? "Premium" : "Basic"}
                       </Badge>
                       <Badge variant={row.subscriptionStatus === "active" ? "default" : row.subscriptionStatus === "trial" ? "secondary" : "destructive"} className="text-xs">
                         {row.subscriptionStatus}
@@ -315,14 +315,14 @@ export default function SuperAdmin() {
                   <Input id="whatsapp" name="whatsapp" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="subscriptionPlan">Plan d'Abonnement</Label>
-                  <Select name="subscriptionPlan" defaultValue="basic">
+                  <Label htmlFor="subscriptionTier">Plan d'Abonnement</Label>
+                  <Select name="subscriptionTier" defaultValue="menu">
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="basic">Basic - 19€/mois</SelectItem>
-                      <SelectItem value="premium">Premium - 29€/mois</SelectItem>
+                      <SelectItem value="menu">Menu - 19€/mois</SelectItem>
+                      <SelectItem value="premium">Pro - 29€/mois</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -396,14 +396,14 @@ export default function SuperAdmin() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="edit-subscriptionPlan">Plan</Label>
-                    <Select name="subscriptionPlan" defaultValue={editingRestaurant.subscriptionPlan}>
+                    <Label htmlFor="edit-subscriptionTier">Plan</Label>
+                    <Select name="subscriptionTier" defaultValue={editingRestaurant.subscriptionTier}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="basic">Basic - 19€/mois</SelectItem>
-                        <SelectItem value="premium">Premium - 29€/mois</SelectItem>
+                        <SelectItem value="menu">Menu - 19€/mois</SelectItem>
+                        <SelectItem value="premium">Pro - 29€/mois</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

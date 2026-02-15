@@ -42,11 +42,12 @@ export const restaurants = mysqlTable("restaurants", {
   accentColor: varchar("accentColor", { length: 7 }).default("#FF9999"),
   fontFamily: varchar("fontFamily", { length: 100 }).default("Playfair Display"),
   
-  // Subscription
-  subscriptionPlan: mysqlEnum("subscriptionPlan", ["basic", "premium"]).default("basic").notNull(),
-  subscriptionStatus: mysqlEnum("subscriptionStatus", ["active", "inactive", "trial"]).default("trial").notNull(),
-  subscriptionStartDate: timestamp("subscriptionStartDate"),
-  subscriptionEndDate: timestamp("subscriptionEndDate"),
+  // Subscription (19€ MENU / 29€ PRO / 39€ PREMIUM)
+  subscriptionTier: mysqlEnum("subscriptionTier", ["menu", "pro", "premium"]).default("menu").notNull(),
+  subscriptionStatus: mysqlEnum("subscriptionStatus", ["active", "trial", "expired", "cancelled"]).default("trial").notNull(),
+  subscriptionExpiresAt: timestamp("subscriptionExpiresAt"),
+  showAds: boolean("showAds").default(true).notNull(), // Publicités externes (forfait MENU uniquement)
+  featuresEnabled: json("featuresEnabled").$type<{events?: boolean; reservations?: boolean; translations?: boolean}>().default({events: true, reservations: true, translations: true}), // Toggle ON/OFF des fonctionnalités
   
   // Status
   isActive: boolean("isActive").default(true).notNull(),
@@ -197,3 +198,21 @@ export const subscriptionTransactions = mysqlTable("subscriptionTransactions", {
 
 export type SubscriptionTransaction = typeof subscriptionTransactions.$inferSelect;
 export type InsertSubscriptionTransaction = typeof subscriptionTransactions.$inferInsert;
+
+/**
+ * Advertisements table - External ads managed by Super Admin
+ * Displayed only on MENU tier (19€/month)
+ */
+export const advertisements = mysqlTable("advertisements", {
+  id: int("id").autoincrement().primaryKey(),
+  title: varchar("title", { length: 255 }).notNull(),
+  imageUrl: text("imageUrl").notNull(),
+  linkUrl: text("linkUrl").notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
+  displayOrder: int("displayOrder").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Advertisement = typeof advertisements.$inferSelect;
+export type InsertAdvertisement = typeof advertisements.$inferInsert;

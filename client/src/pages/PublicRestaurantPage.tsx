@@ -201,7 +201,7 @@ export default function PublicRestaurantPage() {
                 const icon = category.emoji || '🍴';
                 
                 // Afficher image (Premium) ou emoji (Basique)
-                const isPremium = restaurant.subscriptionPlan === 'premium';
+                const isPremium = restaurant.subscriptionTier === 'premium';
                 const hasImage = isPremium && category.imageUrl;
                 
                 return (
@@ -515,7 +515,7 @@ export default function PublicRestaurantPage() {
       </Dialog>
 
       {/* Basic Plan Ad Banner */}
-      {restaurant.subscriptionPlan === "basic" && (
+      {restaurant.subscriptionTier === "menu" && (
         <div className="fixed top-0 left-0 right-0 bg-pronto-accent text-white text-center py-2 text-sm z-50">
           🎉 Passez à Premium pour retirer cette publicité et débloquer plus de fonctionnalités !
         </div>
