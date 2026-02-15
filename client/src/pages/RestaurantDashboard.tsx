@@ -10,12 +10,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Edit, Trash2, GripVertical, Settings, Eye, MessageSquare, BarChart3, Star } from "lucide-react";
+import { Plus, Edit, Trash2, GripVertical, Settings, Eye, MessageSquare, BarChart3, Star, Globe } from "lucide-react";
 import { toast } from "sonner";
 
 import { useParams } from "wouter";
 import { EmojiPicker } from "@/components/EmojiPicker";
 import { ImageUploader } from "@/components/ImageUploader";
+import Translations from "./dashboard/Translations";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -376,10 +377,14 @@ export default function RestaurantDashboard() {
       <main className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
-            <TabsList className="inline-flex sm:grid w-auto sm:w-full grid-cols-4 gap-1 sm:gap-2 min-w-full sm:min-w-0">
+            <TabsList className="inline-flex sm:grid w-auto sm:w-full grid-cols-5 gap-1 sm:gap-2 min-w-full sm:min-w-0">
             <TabsTrigger value="menu">Menu</TabsTrigger>
             <TabsTrigger value="settings">Paramètres</TabsTrigger>
             <TabsTrigger value="chatbot">Chatbot IA</TabsTrigger>
+            <TabsTrigger value="translations">
+              <Globe className="h-4 w-4 mr-1" />
+              Traductions
+            </TabsTrigger>
             <TabsTrigger value="analytics">Statistiques</TabsTrigger>
           </TabsList>
           </div>
@@ -765,6 +770,11 @@ export default function RestaurantDashboard() {
                 </CardContent>
               </Card>
             </div>
+          </TabsContent>
+
+          {/* Translations Tab */}
+          <TabsContent value="translations">
+            <Translations />
           </TabsContent>
         </Tabs>
       </main>

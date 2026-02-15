@@ -10,6 +10,8 @@ import { useParams, useLocation } from "wouter";
 import { toast } from "sonner";
 import { nanoid } from "nanoid";
 import ReactMarkdown from "react-markdown";
+import { LanguageSelector } from "@/components/LanguageSelector";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function RestaurantHomePage() {
   const params: { slug?: string } = useParams();
@@ -25,6 +27,9 @@ export default function RestaurantHomePage() {
     { slug },
     { enabled: !!slug }
   );
+
+  // Translation hook
+  const { currentLanguage, setCurrentLanguage, translate } = useTranslation(restaurant?.id);
 
   // Get menu data (pour afficher les plats signatures)
   const { data: menuData } = trpc.public.getMenu.useQuery(
@@ -110,6 +115,10 @@ export default function RestaurantHomePage() {
           </div>
           
           <nav className="flex items-center gap-4">
+            <LanguageSelector
+              currentLanguage={currentLanguage}
+              onLanguageChange={setCurrentLanguage}
+            />
             <Button variant="ghost" onClick={() => navigate(`/${slug}/menu`)}>
               Menu
             </Button>

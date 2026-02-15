@@ -11,6 +11,8 @@ import { useParams, useLocation } from "wouter";
 import { toast } from "sonner";
 import { nanoid } from "nanoid";
 import ReactMarkdown from "react-markdown";
+import { LanguageSelector } from "@/components/LanguageSelector";
+import { useTranslation } from "@/hooks/useTranslation";
 
 export default function RestaurantMenuPage() {
   const params: { slug?: string } = useParams();
@@ -31,6 +33,9 @@ export default function RestaurantMenuPage() {
     { slug },
     { enabled: !!slug }
   );
+
+  // Translation hook
+  const { currentLanguage, setCurrentLanguage, translate } = useTranslation(restaurant?.id);
 
   // Get menu data
   const { data: menuData } = trpc.public.getMenu.useQuery(
@@ -120,12 +125,22 @@ export default function RestaurantMenuPage() {
             <h1 className="text-xl font-bold">{restaurant.name}</h1>
           </div>
           
-          {/* Bouton retour à l'accueil si PREMIUM */}
-          {restaurant.subscriptionTier === "premium" && (
-            <Button variant="ghost" onClick={() => navigate(`/${slug}`)}>
-              Accueil
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            {/* Sélecteur de langue si PRO ou PREMIUM */}
+            {(restaurant.subscriptionTier === "pro" || restaurant.subscriptionTier === "premium") && (
+              <LanguageSelector
+                currentLanguage={currentLanguage}
+                onLanguageChange={setCurrentLanguage}
+              />
+            )}
+            
+            {/* Bouton retour à l'accueil si PREMIUM */}
+            {restaurant.subscriptionTier === "premium" && (
+              <Button variant="ghost" onClick={() => navigate(`/${slug}`)}>
+                Accueil
+              </Button>
+            )}
+          </div>
         </div>
       </header>
 
