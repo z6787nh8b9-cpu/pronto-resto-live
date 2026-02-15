@@ -9,18 +9,60 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Edit, Trash2, TrendingUp, Store, MessageSquare, Settings, Megaphone } from "lucide-react";
+import { Plus, Edit, Trash2, TrendingUp, Store, MessageSquare, Settings, Megaphone, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
+import { useAuth } from "@/_core/hooks/useAuth";
 import { ResponsiveHeader, ResponsiveTable } from "@/components/responsive";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Advertisements from "./admin/Advertisements";
+import Admins from "./admin/Admins";
 
 export default function SuperAdmin() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingRestaurant, setEditingRestaurant] = useState<any>(null);
   const [activeTab, setActiveTab] = useState("restaurants");
   const [, setLocation] = useLocation();
+  const { user, loading } = useAuth();
+
+  // Redirect if not admin
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Vérification des permissions...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user || user.role !== 'admin') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-muted/20">
+        <Card className="max-w-md">
+          <CardHeader>
+            <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center">
+              <Shield className="h-8 w-8 text-destructive" />
+            </div>
+            <CardTitle className="text-center">Accès Refusé</CardTitle>
+            <CardDescription className="text-center">
+              Vous n'avez pas les permissions nécessaires pour accéder au Super Admin.
+              <br />
+              <span className="text-xs text-muted-foreground mt-2 block">
+                Code erreur : 10002 - Permissions administrateur requises
+              </span>
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="text-center">
+            <Button onClick={() => setLocation('/')} variant="outline" className="w-full">
+              Retour à l'accueil
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   // Queries
   const { data: stats } = trpc.admin.getStats.useQuery();
@@ -119,6 +161,10 @@ export default function SuperAdmin() {
             <TabsTrigger value="advertisements">
               <Megaphone className="h-4 w-4 mr-2" />
               Publicités
+            </TabsTrigger>
+            <TabsTrigger value="admins">
+              <Shield className="h-4 w-4 mr-2" />
+              Admins
             </TabsTrigger>
           </TabsList>
 
@@ -300,6 +346,10 @@ export default function SuperAdmin() {
 
           <TabsContent value="advertisements">
             <Advertisements />
+          </TabsContent>
+
+          <TabsContent value="admins">
+            <Admins />
           </TabsContent>
         </Tabs>
       </main>

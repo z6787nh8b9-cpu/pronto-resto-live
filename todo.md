@@ -408,3 +408,13 @@
 - [x] Corriger le lien du nom du restaurant dans le header pour qu'il pointe vers /:slug
 - [x] Vérifier tous les liens dans l'application (navigation, boutons, redirections)
 - [x] S'assurer que tous les liens utilisent des chemins relatifs cohérents (navigate() au lieu de window.location.href)
+
+## 🐛 CORRECTION - BOUTON PUBLIC SUPER ADMIN
+- [x] Corriger le bouton "Public" dans le Super Admin pour qu'il ouvre /:slug au lieu de l'URL technique manus.computer (déjà correct, l'URL technique apparaît uniquement en dev, sera propre en production)
+
+## ✨ SYSTÈME D'AUTHENTIFICATION ADMIN
+- [x] Créer un onglet "Admins" dans le Super Admin pour gérer les comptes admin
+- [x] Ajouter les procédures tRPC pour lister/ajouter/supprimer des admins
+- [x] Permettre au owner de promouvoir/rétrograder des utilisateurs en admin
+- [x] Protéger la route /admin avec redirection automatique si non-admin
+- [x] Afficher un message clair si l'utilisateur n'est pas admin (code erreur 10002)

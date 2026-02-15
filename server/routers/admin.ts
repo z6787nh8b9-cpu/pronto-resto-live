@@ -3,7 +3,7 @@ import { router } from "../_core/trpc";
 import { adminProcedure } from "../_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { getDb } from "../db";
-import { advertisements } from "../../drizzle/schema";
+import { advertisements, users } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
 import {
   getAllRestaurants,
@@ -173,4 +173,51 @@ export const adminRouter = router({
 
       return { success: true };
     }),
+
+  // ===== ADMIN MANAGEMENT =====
+
+  // List all admins
+  listAdmins: adminProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+    const admins = await db.select().from(users).where(eq(users.role, 'admin'));
+    return admins;
+  }),
+
+  // Promote user to admin
+  promoteToAdmin: adminProcedure
+    .input(z.object({ userId: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      await db.update(users).set({ role: 'admin' }).where(eq(users.id, input.userId));
+      return { success: true };
+    }),
+
+  // Demote admin to user
+  demoteToUser: adminProcedure
+    .input(z.object({ userId: z.number() }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Prevent demoting yourself
+      if (input.userId === ctx.user.id) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Cannot demote yourself" });
+      }
+
+      await db.update(users).set({ role: 'user' }).where(eq(users.id, input.userId));
+      return { success: true };
+    }),
+
+  // List all users (for promoting to admin)
+  listAllUsers: adminProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+    const allUsers = await db.select().from(users);
+    return allUsers;
+  }),
 });
