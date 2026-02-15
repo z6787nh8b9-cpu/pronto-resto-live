@@ -102,14 +102,14 @@ export default function Advertisements() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <CardTitle>Publicités</CardTitle>
               <CardDescription>
                 Gérez les publicités affichées sur les restaurants en forfait MENU (19€/mois)
               </CardDescription>
             </div>
-            <Button onClick={() => setIsCreateDialogOpen(true)}>
+            <Button onClick={() => setIsCreateDialogOpen(true)} className="w-full sm:w-auto">
               <Plus className="h-4 w-4 mr-2" />
               Nouvelle publicité
             </Button>
@@ -121,62 +121,63 @@ export default function Advertisements() {
               {ads.map((ad) => (
                 <Card key={ad.id}>
                   <CardContent className="p-4">
-                    <div className="flex gap-4">
+                    <div className="flex flex-col sm:flex-row gap-4">
                       <img
                         src={ad.imageUrl}
                         alt={ad.title}
-                        className="w-32 h-32 object-cover rounded-lg"
+                        className="w-full sm:w-32 h-32 object-cover rounded-lg flex-shrink-0"
                       />
-                      <div className="flex-1">
-                        <div className="flex items-start justify-between mb-2">
-                          <div>
-                            <h3 className="font-semibold text-lg">{ad.title}</h3>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-2">
+                          <div className="min-w-0">
+                            <h3 className="font-semibold text-lg truncate">{ad.title}</h3>
                             <a
                               href={ad.linkUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-sm text-blue-600 hover:underline"
+                              className="text-sm text-blue-600 hover:underline break-all"
                             >
                               {ad.linkUrl}
                             </a>
                           </div>
-                          <div className="flex gap-2">
+                          <div className="flex gap-2 flex-shrink-0">
                             <Badge variant={ad.isActive ? "default" : "secondary"}>
                               {ad.isActive ? "Active" : "Inactive"}
                             </Badge>
                             <Badge variant="outline">Ordre: {ad.displayOrder}</Badge>
                           </div>
                         </div>
-                        <div className="flex gap-2 mt-4">
+                        <div className="flex flex-wrap gap-2 mt-4">
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => handleToggleActive(ad.id, ad.isActive)}
+                            className="flex-shrink-0"
                           >
                             {ad.isActive ? (
                               <>
-                                <EyeOff className="h-4 w-4 mr-1" />
-                                Désactiver
+                                <EyeOff className="h-4 w-4 sm:mr-1" />
+                                <span className="hidden sm:inline">Désactiver</span>
                               </>
                             ) : (
                               <>
-                                <Eye className="h-4 w-4 mr-1" />
-                                Activer
+                                <Eye className="h-4 w-4 sm:mr-1" />
+                                <span className="hidden sm:inline">Activer</span>
                               </>
                             )}
                           </Button>
-                          <Button variant="outline" size="sm" onClick={() => handleEditAd(ad)}>
-                            <Edit className="h-4 w-4 mr-1" />
-                            Modifier
+                          <Button variant="outline" size="sm" onClick={() => handleEditAd(ad)} className="flex-shrink-0">
+                            <Edit className="h-4 w-4 sm:mr-1" />
+                            <span className="hidden sm:inline">Modifier</span>
                           </Button>
                           <Button
                             variant="outline"
                             size="sm"
                             onClick={() => handleDelete(ad.id)}
-                            className="text-destructive"
+                            className="text-destructive flex-shrink-0"
                           >
-                            <Trash2 className="h-4 w-4 mr-1" />
-                            Supprimer
+                            <Trash2 className="h-4 w-4 sm:mr-1" />
+                            <span className="hidden sm:inline">Supprimer</span>
                           </Button>
                         </div>
                       </div>

@@ -359,3 +359,7 @@
 - [x] Implémenter les restrictions visuelles : onglets grisés avec cadenas dorés
 - [x] Créer les modals d'upgrade pour inviter à passer à PRO ou PREMIUM
 - [x] Ajouter les tooltips explicatifs sur les fonctionnalités verrouillées
+
+
+## 🐛 CORRECTIONS MINEURES
+- [x] Corriger le dépassement mobile dans la page Advertisements (layout responsive, boutons avec icônes uniquement sur mobile)
