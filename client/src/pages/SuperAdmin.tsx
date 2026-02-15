@@ -153,9 +153,8 @@ export default function SuperAdmin() {
             <CardTitle>Liste des Restaurants</CardTitle>
             <CardDescription>Gérez tous les restaurants de la plateforme</CardDescription>
           </CardHeader>
-          <CardContent className="p-0">
-            <div className="overflow-x-auto px-4 sm:px-6 py-4 sm:py-6">
-            <Table className="min-w-[640px]">
+          <CardContent className="overflow-x-auto p-0">
+            <Table className="min-w-[800px]">
               <TableHeader>
                 <TableRow>
                   <TableHead>Nom</TableHead>
@@ -228,7 +227,6 @@ export default function SuperAdmin() {
                 ))}
               </TableBody>
             </Table>
-            </div>
           </CardContent>
         </Card>
       </main>
