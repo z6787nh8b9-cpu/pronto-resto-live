@@ -4,88 +4,49 @@ import NotFound from "@/pages/NotFound";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import { useTenant } from "./hooks/useTenant";
 import SuperAdmin from "./pages/SuperAdmin";
 import AdminManageRestaurant from "./pages/AdminManageRestaurant";
 import RestaurantDashboard from "./pages/RestaurantDashboard";
 import PublicRestaurantPage from "./pages/PublicRestaurantPage";
-import PreviewPublicPage from "./pages/PreviewPublicPage";
-import PreviewRestaurantDashboard from "./pages/PreviewRestaurantDashboard";
 import LandingPage from "./pages/LandingPage";
 
+/**
+ * PRONTO Router - Clean URL Structure
+ * 
+ * Routes:
+ * /                              → Landing page
+ * /admin                         → Super Admin Dashboard
+ * /admin/restaurants/:id         → Admin: Manage specific restaurant
+ * /:slug                         → Public restaurant page
+ * /:slug/dashboard               → Restaurant owner dashboard
+ */
 function Router() {
-  const tenant = useTenant();
-
-  // Admin subdomain - show Super Admin dashboard
-  if (tenant.isAdmin) {
-    return (
-      <Switch>
-        <Route path="/" component={SuperAdmin} />
-        <Route path="/admin/super" component={SuperAdmin} />
-        <Route path="/admin/manage/:id" component={AdminManageRestaurant} />
-        <Route path="/preview/:slug" component={PreviewPublicPage} />
-        <Route path="/preview/:slug/dashboard" component={PreviewRestaurantDashboard} />
-        <Route path="/404" component={NotFound} />
-        <Route component={NotFound} />
-      </Switch>
-    );
-  }
-
-  // Restaurant subdomain
-  if (tenant.isRestaurant) {
-    // Dashboard route
-    if (tenant.isDashboard) {
-      return (
-        <Switch>
-          <Route path="/dashboard" component={RestaurantDashboard} />
-          <Route path="/404" component={NotFound} />
-          <Route component={NotFound} />
-        </Switch>
-      );
-    }
-
-    // Public page
-    return (
-      <Switch>
-          <Route path="/" component={PublicRestaurantPage} />
-        <Route path="/404" component={NotFound} />
-        <Route component={NotFound} />
-      </Switch>
-    );
-  }
-
-  // Default fallback - Landing page with preview routes
   return (
     <Switch>
+      {/* Landing page */}
       <Route path="/" component={LandingPage} />
-      <Route path="/admin/super" component={SuperAdmin} />
-      <Route path="/admin">
-        {() => {
-          window.location.href = "/admin/super";
-          return null;
-        }}
-      </Route>
-      <Route path="/admin/manage/:id" component={AdminManageRestaurant} />
-      <Route path="/preview/:slug" component={PreviewPublicPage} />
-      <Route path="/preview/:slug/dashboard" component={RestaurantDashboard} />
+      
+      {/* Super Admin routes */}
+      <Route path="/admin" component={SuperAdmin} />
+      <Route path="/admin/restaurants/:id" component={AdminManageRestaurant} />
+      
+      {/* Restaurant dashboard - must come before public page to avoid conflict */}
+      <Route path="/:slug/dashboard" component={RestaurantDashboard} />
+      
+      {/* Public restaurant page */}
+      <Route path="/:slug" component={PublicRestaurantPage} />
+      
+      {/* 404 */}
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
   );
 }
 
-// NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
-
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        // switchable
-      >
+      <ThemeProvider defaultTheme="light">
         <TooltipProvider>
           <Toaster />
           <Router />

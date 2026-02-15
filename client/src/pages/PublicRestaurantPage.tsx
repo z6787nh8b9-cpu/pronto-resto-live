@@ -7,14 +7,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MessageCircle, Phone, Calendar, MapPin, Mail, X, Send } from "lucide-react";
-import { useTenant } from "@/hooks/useTenant";
+import { useParams } from "wouter";
 import { toast } from "sonner";
 import { nanoid } from "nanoid";
 import ReactMarkdown from "react-markdown";
 
 export default function PublicRestaurantPage() {
-  const tenant = useTenant();
-  const slug = tenant.slug || "";
+  const params: { slug?: string } = useParams();
+  const slug = params.slug || "";
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
   const [chatInput, setChatInput] = useState("");

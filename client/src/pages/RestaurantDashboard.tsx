@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Plus, Edit, Trash2, GripVertical, Settings, Eye, MessageSquare, BarChart3, Star } from "lucide-react";
 import { toast } from "sonner";
-import { useTenant } from "@/hooks/useTenant";
+
 import { useParams } from "wouter";
 import { EmojiPicker } from "@/components/EmojiPicker";
 import { ImageUploader } from "@/components/ImageUploader";
@@ -23,8 +23,7 @@ import { ResponsiveHeader, ResponsiveTabs } from "@/components/responsive";
 
 export default function RestaurantDashboard() {
   const params: { slug?: string } = useParams();
-  const tenant = useTenant();
-  const slug = params.slug || tenant.slug;
+  const slug = params.slug;
   const [activeTab, setActiveTab] = useState("menu");
   const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
   const [isEditCategoryOpen, setIsEditCategoryOpen] = useState(false);

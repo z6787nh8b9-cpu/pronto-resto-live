@@ -170,7 +170,7 @@ export default function SuperAdmin() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => setLocation(`/admin/manage/${row.id}`)}
+                      onClick={() => setLocation(`/admin/restaurants/${row.id}`)}
                       title="Gérer le dashboard"
                     >
                       <Settings className="h-4 w-4" />
@@ -221,7 +221,7 @@ export default function SuperAdmin() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => window.open(`/preview/${row.slug}`, '_blank')}
+                      onClick={() => window.open(`/${row.slug}`, '_blank')}
                       className="w-full sm:flex-1 text-xs"
                     >
                       🍽️ Public
@@ -229,7 +229,7 @@ export default function SuperAdmin() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => window.open(`/preview/${row.slug}/dashboard`, '_blank')}
+                      onClick={() => window.open(`/${row.slug}/dashboard`, '_blank')}
                       className="w-full sm:flex-1 text-xs"
                     >
                       📊 Dashboard
@@ -237,7 +237,7 @@ export default function SuperAdmin() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setLocation(`/admin/manage/${row.id}`)}
+                      onClick={() => setLocation(`/admin/restaurants/${row.id}`)}
                       className="w-full sm:flex-1 text-xs"
                     >
                       <Settings className="h-3 w-3 mr-1" />
@@ -449,46 +449,7 @@ export default function SuperAdmin() {
         </DialogContent>
       </Dialog>
 
-      {/* Temporary Navigation Buttons */}
-      <Card className="mt-8 border-dashed border-2 border-orange-300 bg-orange-50">
-        <CardHeader>
-          <CardTitle className="text-sm">🔧 Navigation Temporaire (Dev)</CardTitle>
-          <CardDescription className="text-xs">
-            Boutons de navigation pour tester les pages en attendant la configuration DNS wildcard
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-wrap gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setLocation("/")}
-            >
-              🏠 Landing Page
-            </Button>
-            {restaurants?.map((restaurant) => (
-              <div key={restaurant.id} className="flex flex-col sm:flex-row gap-1 w-full sm:w-auto">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full sm:w-auto"
-                  onClick={() => window.open(`/preview/${restaurant.slug}`, '_blank')}
-                >
-                  🍽️ {restaurant.name} (Public)
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="w-full sm:w-auto"
-                  onClick={() => window.open(`/preview/${restaurant.slug}/dashboard`, '_blank')}
-                >
-                  📊 {restaurant.name} (Dashboard)
-                </Button>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
+
     </div>
   );
 }

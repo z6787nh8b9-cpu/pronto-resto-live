@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { router, publicProcedure } from "../_core/trpc";
-import { restaurantProcedure } from "../_core/tenantMiddleware";
+
 import {
   getRestaurantBySlug,
   getMenuCategoriesByRestaurantId,
@@ -20,7 +20,7 @@ export const publicRouter = router({
     }),
 
   // Get restaurant menu
-  getMenu: restaurantProcedure
+  getMenu: publicProcedure
     .input(z.object({ restaurantId: z.number() }))
     .query(async ({ input }) => {
       const categories = await getMenuCategoriesByRestaurantId(input.restaurantId);

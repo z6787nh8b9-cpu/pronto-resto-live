@@ -235,3 +235,18 @@
 ## REDIRECTION /admin VERS /admin/super
 - [x] Ajouter une route /admin qui redirige automatiquement vers /admin/super
 - [x] Éviter l'erreur 404 quand on accède directement à /admin
+
+## NETTOYAGE COMPLET DE L'ARCHITECTURE DES URLs (CRITIQUE)
+- [ ] Analyser toutes les routes actuelles et identifier les pages obsolètes
+- [x] Concevoir la nouvelle structure d'URLs avec pronto.page
+- [x] Définir les chemins pour : Super Admin, Dashboards restaurants, Pages publiques
+- [x] Supprimer le système de sous-domaines et de preview
+- [x] Implémenter la nouvelle structure de routage dans App.tsx
+- [x] Mettre à jour tous les liens dans SuperAdmin.tsx
+- [x] Mettre à jour tous les liens dans RestaurantDashboard.tsx
+- [x] Mettre à jour tous les liens dans AdminManageRestaurant.tsx
+- [x] Nettoyer les fils d'ariane et navigation
+- [x] Supprimer les pages obsolètes (PreviewPublicPage, PreviewRestaurantDashboard, etc.)
+- [x] Supprimer le hook useTenant (obsolète avec la nouvelle structure)
+- [x] Automatiser l'attribution des URLs pour les nouveaux restaurants (slug généré automatiquement)
+- [x] Tester toute la navigation

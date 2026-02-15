@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { router } from "../_core/trpc";
-import { restaurantProcedure, restaurateurProcedure } from "../_core/tenantMiddleware";
+import { restaurateurProcedure } from "../_core/tenantMiddleware";
+import { publicProcedure } from "../_core/trpc";
 import {
   getRestaurantsByOwnerId,
   updateRestaurant,
@@ -23,11 +24,10 @@ import { menuCategories, menuItems } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
 
 export const restaurantRouter = router({
-  // Get current restaurant (based on tenant context)
-  getCurrent: restaurantProcedure.query(async ({ ctx }) => {
-    // @ts-ignore - restaurant is added by middleware
-    return ctx.restaurant;
-  }),
+  // Get current restaurant (based on tenant context) - DEPRECATED
+  // getCurrent: publicProcedure.query(async ({ ctx }) => {
+  //   return null;
+  // }),
 
   // Get restaurants owned by current user
   getMyRestaurants: restaurateurProcedure.query(async ({ ctx }) => {
@@ -72,7 +72,7 @@ export const restaurantRouter = router({
     }),
 
   // Menu Categories
-  getCategories: restaurantProcedure
+  getCategories: publicProcedure
     .input(z.object({ restaurantId: z.number() }))
     .query(async ({ input }) => {
       return await getMenuCategoriesByRestaurantId(input.restaurantId);
@@ -119,13 +119,13 @@ export const restaurantRouter = router({
     }),
 
   // Menu Items
-  getMenuItems: restaurantProcedure
+  getMenuItems: publicProcedure
     .input(z.object({ restaurantId: z.number() }))
     .query(async ({ input }) => {
       return await getMenuItemsByRestaurantId(input.restaurantId);
     }),
 
-  getItemsByCategory: restaurantProcedure
+  getItemsByCategory: publicProcedure
     .input(z.object({ categoryId: z.number() }))
     .query(async ({ input }) => {
       return await getMenuItemsByCategoryId(input.categoryId);
@@ -196,7 +196,7 @@ export const restaurantRouter = router({
     }),
 
   // Chatbot Configuration
-  getChatbotConfig: restaurantProcedure
+  getChatbotConfig: publicProcedure
     .input(z.object({ restaurantId: z.number() }))
     .query(async ({ input }) => {
       return await getChatbotConfigByRestaurantId(input.restaurantId);
