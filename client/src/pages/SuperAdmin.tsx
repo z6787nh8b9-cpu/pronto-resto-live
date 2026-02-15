@@ -187,30 +187,42 @@ export default function SuperAdmin() {
                 { key: "actions", label: "Actions", render: (_, row) => (
                   <div className="flex justify-end gap-2">
                     <Button
-                      variant="ghost"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => window.open(`/${row.slug}`, '_blank')}
+                      className="text-xs"
+                    >
+                      🍽️ Public
+                    </Button>
+                    <Button
+                      variant="outline"
                       size="sm"
                       onClick={() => setLocation(`/${row.slug}/dashboard`)}
-                      title="Ouvrir le dashboard"
+                      className="text-xs"
                     >
-                      <Settings className="h-4 w-4" />
+                      📊 Dashboard
                     </Button>
                     <Button
-                      variant="ghost"
+                      variant="outline"
                       size="sm"
                       onClick={() => setEditingRestaurant(row)}
+                      className="text-xs"
                     >
-                      <Edit className="h-4 w-4" />
+                      <Edit className="h-3 w-3 mr-1" />
+                      Modifier
                     </Button>
                     <Button
-                      variant="ghost"
+                      variant="outline"
                       size="sm"
                       onClick={() => {
                         if (confirm("Êtes-vous sûr de vouloir supprimer ce restaurant ?")) {
                           deleteMutation.mutate({ id: row.id });
                         }
                       }}
+                      className="text-xs"
                     >
-                      <Trash2 className="h-4 w-4 text-destructive" />
+                      <Trash2 className="h-3 w-3 mr-1 text-destructive" />
+                      Supprimer
                     </Button>
                   </div>
                 ) },

@@ -363,3 +363,4 @@
 
 ## 🐛 CORRECTIONS MINEURES
 - [x] Corriger le dépassement mobile dans la page Advertisements (layout responsive, boutons avec icônes uniquement sur mobile)
+- [x] Uniformiser les boutons du tableau SuperAdmin (desktop = mobile avec emojis et textes)
