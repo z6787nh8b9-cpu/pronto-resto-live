@@ -418,3 +418,9 @@
 - [x] Permettre au owner de promouvoir/rétrograder des utilisateurs en admin
 - [x] Protéger la route /admin avec redirection automatique si non-admin
 - [x] Afficher un message clair si l'utilisateur n'est pas admin (code erreur 10002)
+
+
+## 🐛 CORRECTION URGENTE - ERREUR HOOKS REACT SUPERADMIN
+- [x] Corriger l'erreur "Rendered more hooks than during the previous render" dans SuperAdmin
+- [x] Déplacer les hooks tRPC avant les conditions de retour (loading/non-admin)
+- [x] Ajouter enabled: !!user && user.role === 'admin' aux queries pour éviter les appels inutiles

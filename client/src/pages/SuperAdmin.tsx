@@ -25,7 +25,44 @@ export default function SuperAdmin() {
   const [, setLocation] = useLocation();
   const { user, loading } = useAuth();
 
-  // Redirect if not admin
+  // Queries - MUST be before any conditional returns (React hooks rules)
+  const { data: stats } = trpc.admin.getStats.useQuery(undefined, { enabled: !!user && user.role === 'admin' });
+  const { data: restaurants, refetch } = trpc.admin.listRestaurants.useQuery(undefined, { enabled: !!user && user.role === 'admin' });
+
+  // Mutations
+  const createMutation = trpc.admin.createRestaurant.useMutation({
+    onSuccess: () => {
+      toast.success("Restaurant créé avec succès");
+      setIsCreateDialogOpen(false);
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(`Erreur: ${error.message}`);
+    },
+  });
+
+  const updateMutation = trpc.admin.updateRestaurant.useMutation({
+    onSuccess: () => {
+      toast.success("Restaurant mis à jour");
+      setEditingRestaurant(null);
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(`Erreur: ${error.message}`);
+    },
+  });
+
+  const deleteMutation = trpc.admin.deleteRestaurant.useMutation({
+    onSuccess: () => {
+      toast.success("Restaurant supprimé");
+      refetch();
+    },
+    onError: (error) => {
+      toast.error(`Erreur: ${error.message}`);
+    },
+  });
+
+  // Redirect if not admin - AFTER all hooks
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -63,43 +100,6 @@ export default function SuperAdmin() {
       </div>
     );
   }
-
-  // Queries
-  const { data: stats } = trpc.admin.getStats.useQuery();
-  const { data: restaurants, refetch } = trpc.admin.listRestaurants.useQuery();
-
-  // Mutations
-  const createMutation = trpc.admin.createRestaurant.useMutation({
-    onSuccess: () => {
-      toast.success("Restaurant créé avec succès");
-      setIsCreateDialogOpen(false);
-      refetch();
-    },
-    onError: (error) => {
-      toast.error(`Erreur: ${error.message}`);
-    },
-  });
-
-  const updateMutation = trpc.admin.updateRestaurant.useMutation({
-    onSuccess: () => {
-      toast.success("Restaurant mis à jour");
-      setEditingRestaurant(null);
-      refetch();
-    },
-    onError: (error) => {
-      toast.error(`Erreur: ${error.message}`);
-    },
-  });
-
-  const deleteMutation = trpc.admin.deleteRestaurant.useMutation({
-    onSuccess: () => {
-      toast.success("Restaurant supprimé");
-      refetch();
-    },
-    onError: (error) => {
-      toast.error(`Erreur: ${error.message}`);
-    },
-  });
 
   const handleCreateSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
