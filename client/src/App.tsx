@@ -9,6 +9,8 @@ import AdminManageRestaurant from "./pages/AdminManageRestaurant";
 import RestaurantDashboard from "./pages/RestaurantDashboard";
 import PublicRestaurantPage from "./pages/PublicRestaurantPage";
 import LandingPage from "./pages/LandingPage";
+import RestaurantHomePage from "./pages/RestaurantHomePage";
+import RestaurantMenuPage from "./pages/RestaurantMenuPage";
 
 /**
  * PRONTO Router - Clean URL Structure
@@ -17,7 +19,8 @@ import LandingPage from "./pages/LandingPage";
  * /                              → Landing page
  * /admin                         → Super Admin Dashboard
  * /admin/restaurants/:id         → Admin: Manage specific restaurant
- * /:slug                         → Public restaurant page
+ * /:slug                         → Restaurant home page (PREMIUM only, redirects to /menu otherwise)
+ * /:slug/menu                    → Restaurant menu (all tiers)
  * /:slug/dashboard               → Restaurant owner dashboard
  */
 function Router() {
@@ -33,8 +36,11 @@ function Router() {
       {/* Restaurant dashboard - must come before public page to avoid conflict */}
       <Route path="/:slug/dashboard" component={RestaurantDashboard} />
       
-      {/* Public restaurant page */}
-      <Route path="/:slug" component={PublicRestaurantPage} />
+      {/* Restaurant menu page (all tiers) */}
+      <Route path="/:slug/menu" component={RestaurantMenuPage} />
+      
+      {/* Restaurant home page (PREMIUM only, auto-redirects to /menu for MENU/PRO) */}
+      <Route path="/:slug" component={RestaurantHomePage} />
       
       {/* 404 */}
       <Route path="/404" component={NotFound} />

@@ -261,16 +261,16 @@
 - [x] Créer la table `advertisements` pour les pubs externes
 - [ ] Créer le middleware tRPC pour vérifier les permissions selon la formule
 - [ ] Créer les procédures tRPC pour gérer les abonnements (Super Admin)
-- [ ] Mettre à jour le Super Admin pour gérer les formules
+- [x] Mettre à jour le Super Admin pour gérer les 3 formules (MENU 19€, PRO 29€, PREMIUM 39€)
 - [ ] Mettre à jour le Dashboard restaurateur avec onglets grisés + cadenas doré
 
 ### PHASE 2 : SÉPARATION PAGE D'ACCUEIL / MENU
-- [ ] Créer la route `/:slug/menu` (menu complet avec tabs horizontales)
-- [ ] Créer la route `/:slug` (page d'accueil, uniquement si PREMIUM)
-- [ ] Implémenter la redirection automatique MENU/PRO → `/:slug/menu`
+- [x] Créer la route `/:slug/menu` (menu complet avec tabs horizontales)
+- [x] Créer la route `/:slug` (page d'accueil, uniquement si PREMIUM)
+- [x] Implémenter la redirection automatique MENU/PRO → `/:slug/menu`
 - [ ] Ajouter le champ `featured` à la table `menu_items`
 - [ ] Créer les procédures tRPC pour la page d'accueil
-- [ ] Créer les composants frontend page d'accueil (Hero, Qui sommes-nous, Spécialités, etc.)
+- [x] Créer les composants frontend page d'accueil (Hero, Qui sommes-nous, Spécialités, etc.)
 - [ ] Dashboard restaurateur : onglet "Page d'accueil" pour éditer le contenu
 
 ### PHASE 3 : SYSTÈME DE TRADUCTION AUTOMATIQUE

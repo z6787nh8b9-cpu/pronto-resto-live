@@ -155,8 +155,11 @@ export default function SuperAdmin() {
                 { key: "name", label: "Nom" },
                 { key: "slug", label: "Slug", render: (value) => <code className="text-xs bg-muted px-2 py-1 rounded">{value}</code> },
                 { key: "subscriptionTier", label: "Plan", render: (value) => (
-                  <Badge variant={value === "premium" ? "default" : "secondary"}>
-                    {value === "premium" ? "Premium" : "Basic"}
+                  <Badge 
+                    variant={value === "premium" ? "default" : value === "pro" ? "outline" : "secondary"} 
+                    className="text-xs"
+                  >
+                    {value === "premium" ? "Premium - 39€" : value === "pro" ? "Pro - 29€" : "Menu - 19€"}
                   </Badge>
                 ) },
                 { key: "subscriptionStatus", label: "Statut", render: (value) => (
@@ -206,8 +209,11 @@ export default function SuperAdmin() {
                       <code className="text-xs bg-muted px-2 py-0.5 rounded">{row.slug}</code>
                     </div>
                     <div className="flex flex-col gap-1 items-end">
-                      <Badge variant={row.subscriptionTier === "premium" ? "default" : "secondary"} className="text-xs">
-                        {row.subscriptionTier === "premium" ? "Premium" : "Basic"}
+                      <Badge 
+                    variant={row.subscriptionTier === "premium" ? "default" : row.subscriptionTier === "pro" ? "outline" : "secondary"} 
+                    className="text-xs"
+                  >
+                        {row.subscriptionTier === "premium" ? "Premium - 39€" : row.subscriptionTier === "pro" ? "Pro - 29€" : "Menu - 19€"}
                       </Badge>
                       <Badge variant={row.subscriptionStatus === "active" ? "default" : row.subscriptionStatus === "trial" ? "secondary" : "destructive"} className="text-xs">
                         {row.subscriptionStatus}
@@ -322,7 +328,8 @@ export default function SuperAdmin() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="menu">Menu - 19€/mois</SelectItem>
-                      <SelectItem value="premium">Pro - 29€/mois</SelectItem>
+                      <SelectItem value="pro">Pro - 29€/mois</SelectItem>
+                      <SelectItem value="premium">Premium - 39€/mois</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
