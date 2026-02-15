@@ -137,7 +137,7 @@ export default function RestaurantHomePage() {
       {/* Header avec logo et navigation */}
       <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 cursor-pointer" onClick={() => navigate(`/${slug}`)}>
             {restaurant.logoUrl && (
               <img src={restaurant.logoUrl} alt={restaurant.name} className="h-10 w-auto object-contain" />
             )}

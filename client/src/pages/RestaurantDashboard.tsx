@@ -13,7 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { Plus, Edit, Trash2, GripVertical, Settings, Eye, MessageSquare, BarChart3, Star, Globe, Clock, CalendarDays, PartyPopper, Lock } from "lucide-react";
 import { toast } from "sonner";
 
-import { useParams } from "wouter";
+import { useParams, useLocation } from "wouter";
 import { EmojiPicker } from "@/components/EmojiPicker";
 import { ImageUploader } from "@/components/ImageUploader";
 import Translations from "./dashboard/Translations";
@@ -32,6 +32,7 @@ import { LockedFeatureOverlay } from "@/components/LockedFeatureOverlay";
 export default function RestaurantDashboard() {
   const params: { slug?: string } = useParams();
   const slug = params.slug;
+  const [, navigate] = useLocation();
   const [activeTab, setActiveTab] = useState("menu");
   const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
   const [isEditCategoryOpen, setIsEditCategoryOpen] = useState(false);
@@ -391,7 +392,7 @@ export default function RestaurantDashboard() {
         }}
         backButton={{
           label: "Super Admin",
-          onClick: () => window.location.href = '/admin',
+          onClick: () => navigate('/admin'),
         }}
       />
 

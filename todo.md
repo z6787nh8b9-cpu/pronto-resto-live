@@ -402,3 +402,9 @@
 - [x] Revenir à un overlay relatif au lieu de fixed pour ne pas bloquer toute la page (absolute inset-0)
 - [x] Garder le centrage visuel dans la zone de l'onglet (flex items-center justify-center)
 - [x] S'assurer que l'utilisateur peut toujours naviguer vers d'autres onglets
+
+## 🐛 CORRECTION - LIENS PROPRES ET COHÉRENTS
+- [x] Bannir tous les liens manus.computer du site (uniquement des chemins relatifs propres)
+- [x] Corriger le lien du nom du restaurant dans le header pour qu'il pointe vers /:slug
+- [x] Vérifier tous les liens dans l'application (navigation, boutons, redirections)
+- [x] S'assurer que tous les liens utilisent des chemins relatifs cohérents (navigate() au lieu de window.location.href)
