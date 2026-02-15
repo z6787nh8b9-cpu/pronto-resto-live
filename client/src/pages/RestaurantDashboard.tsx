@@ -19,6 +19,7 @@ import { ImageUploader } from "@/components/ImageUploader";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { ResponsiveHeader, ResponsiveTabs } from "@/components/responsive";
 
 export default function RestaurantDashboard() {
   const params: { slug?: string } = useParams();
@@ -353,62 +354,41 @@ export default function RestaurantDashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-card">
-        <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
-          {/* Mobile: tout en vertical */}
-          <div className="flex flex-col gap-3 sm:hidden">
-            <div className="flex items-start justify-between gap-2">
-              <div className="flex-1 min-w-0">
-                <h1 className="text-base font-display font-bold text-pronto-primary break-words leading-tight">{restaurant.name}</h1>
-                <p className="text-xs text-muted-foreground mt-1">Dashboard Restaurateur</p>
-              </div>
-              <Badge variant={restaurant.subscriptionPlan === "premium" ? "default" : "secondary"} className="flex-shrink-0 text-xs px-2 py-0.5">
-                {restaurant.subscriptionPlan === "premium" ? "Premium" : "Basic"}
-              </Badge>
-            </div>
-            <Button variant="outline" size="sm" className="w-full" onClick={() => window.open(`/${restaurant.slug}`, '_blank')}>
-              <Eye className="mr-2 h-4 w-4" />
-              <span className="text-xs">Voir la page publique</span>
-            </Button>
-          </div>
-
-          {/* Desktop: layout horizontal */}
-          <div className="hidden sm:flex flex-col gap-3">
-            <div className="flex items-center justify-between gap-4">
-              <div className="flex-1 min-w-0">
-                <h1 className="text-xl md:text-2xl font-display font-bold text-pronto-primary truncate">{restaurant.name}</h1>
-                <p className="text-sm text-muted-foreground">Gestion du Restaurant (Super Admin)</p>
-              </div>
-              <Badge variant={restaurant.subscriptionPlan === "premium" ? "default" : "secondary"} className="flex-shrink-0">
-                {restaurant.subscriptionPlan === "premium" ? "Premium" : "Basic"}
-              </Badge>
-            </div>
-            <Button variant="outline" size="sm" className="w-fit" onClick={() => window.open(`/${restaurant.slug}`, '_blank')}>
-              <Eye className="mr-2 h-4 w-4" />
-              Voir la page publique
-            </Button>
-          </div>
-        </div>
-      </header>
+      {/* Header avec ResponsiveHeader */}
+      <ResponsiveHeader
+        title={restaurant.name}
+        subtitle="Gestion du Restaurant (Super Admin)"
+        badge={
+          <Badge variant={restaurant.subscriptionPlan === "premium" ? "default" : "secondary"} className="text-xs px-2 py-0.5">
+            {restaurant.subscriptionPlan === "premium" ? "Premium" : "Basic"}
+          </Badge>
+        }
+        primaryAction={{
+          label: "Voir la page publique",
+          onClick: () => window.open(`/${restaurant.slug}`, '_blank'),
+          icon: <Eye className="h-4 w-4" />,
+        }}
+      />
 
       <main className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 gap-2">
+          <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
+            <TabsList className="inline-flex sm:grid w-auto sm:w-full grid-cols-4 gap-1 sm:gap-2 min-w-full sm:min-w-0">
             <TabsTrigger value="menu">Menu</TabsTrigger>
             <TabsTrigger value="settings">Paramètres</TabsTrigger>
             <TabsTrigger value="chatbot">Chatbot IA</TabsTrigger>
             <TabsTrigger value="analytics">Statistiques</TabsTrigger>
           </TabsList>
+          </div>
 
           {/* Menu Tab */}
           <TabsContent value="menu" className="space-y-6">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
               <div>
-                <h2 className="text-2xl font-bold">Gestion du Menu</h2>
-                <p className="text-muted-foreground">Organisez vos catégories et plats</p>
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold">Gestion du Menu</h2>
+                <p className="text-xs sm:text-sm text-muted-foreground">Organisez vos catégories et plats</p>
               </div>
-              <Button onClick={() => setIsAddCategoryOpen(true)} className="w-full sm:w-auto">
+              <Button onClick={() => setIsAddCategoryOpen(true)} size="sm" className="w-full sm:w-auto text-xs sm:text-sm">
                 <Plus className="mr-2 h-4 w-4" />
                 Nouvelle Catégorie
               </Button>
@@ -418,8 +398,45 @@ export default function RestaurantDashboard() {
             <div className="space-y-4">
               {categories?.map((category) => (
                 <Card key={category.id}>
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
+                  <CardHeader className="p-3 sm:p-6">
+                    {/* Mobile: Layout vertical */}
+                    <div className="flex flex-col gap-3 sm:hidden">
+                      <div className="flex items-center gap-2">
+                        <GripVertical className="h-4 w-4 text-muted-foreground cursor-move shrink-0" />
+                        <div className="text-2xl shrink-0">{category.emoji || "🍴"}</div>
+                        <div className="min-w-0 flex-1">
+                          <CardTitle className="text-base truncate">{category.name}</CardTitle>
+                          {category.description && (
+                            <CardDescription className="text-xs truncate">{category.description}</CardDescription>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleEditCategory(category)}
+                          className="flex-1"
+                        >
+                          <Edit className="h-3 w-3 mr-1" />
+                          <span className="text-xs">Modifier</span>
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={() => {
+                            setSelectedCategory(category.id);
+                            setIsAddItemOpen(true);
+                          }}
+                          className="flex-1"
+                        >
+                          <Plus className="h-3 w-3 mr-1" />
+                          <span className="text-xs">Ajouter</span>
+                        </Button>
+                      </div>
+                    </div>
+                    
+                    {/* Desktop: Layout horizontal */}
+                    <div className="hidden sm:flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <GripVertical className="h-5 w-5 text-muted-foreground cursor-move" />
                         <div className="text-3xl">{category.emoji || "🍴"}</div>
@@ -451,7 +468,7 @@ export default function RestaurantDashboard() {
                       </div>
                     </div>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="p-2 sm:p-6">
                     <div className="space-y-2">
                       {menuItems
                         ?.filter((item) => item.categoryId === category.id)

@@ -47,6 +47,28 @@
 }
 
 :root {
+  /* Mobile-First Responsive Tokens */
+  --spacing-mobile: 0.5rem; /* 8px */
+  --spacing-tablet: 1rem; /* 16px */
+  --spacing-desktop: 1.5rem; /* 24px */
+  
+  --text-xs-mobile: 0.625rem; /* 10px */
+  --text-sm-mobile: 0.75rem; /* 12px */
+  --text-base-mobile: 0.875rem; /* 14px */
+  --text-lg-mobile: 1rem; /* 16px */
+  
+  --header-height-mobile: 3.5rem; /* 56px */
+  --header-height-tablet: 4rem; /* 64px */
+  --header-height-desktop: 5rem; /* 80px */
+  
+  --card-padding-mobile: 0.75rem; /* 12px */
+  --card-padding-tablet: 1rem; /* 16px */
+  --card-padding-desktop: 1.5rem; /* 24px */
+  
+  --gap-mobile: 0.5rem; /* 8px */
+  --gap-tablet: 1rem; /* 16px */
+  --gap-desktop: 1.5rem; /* 24px */
+  
   /* PRONTO Brand Colors */
   --pronto-primary: 11 42% 35%; /* #7D3A31 */
   --pronto-accent: 0 100% 80%; /* #FF9999 */

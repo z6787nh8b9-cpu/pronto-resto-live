@@ -187,3 +187,14 @@
 - [x] Mettre les boutons Navigation Temporaire en vertical sur mobile (flex-col sm:flex-row)
 - [x] Ajouter w-full sm:w-auto sur les boutons pour qu'ils prennent toute la largeur mobile
 - [ ] Tester sur mobile réel (en attente de test utilisateur)
+
+## SYSTÈME MOBILE-FIRST UNIVERSEL (TERMINÉ)
+- [x] Créer les tokens CSS responsive dans index.css (spacing, text, heights)
+- [x] Créer le composant ResponsiveHeader (header compact mobile avec menu hamburger)
+- [x] Créer le composant ResponsiveTabs (tabs → select sur mobile)
+- [x] Créer le composant ResponsiveTable (table → cards sur mobile)
+- [x] Créer le composant ResponsiveGrid (grid adaptatif automatique)
+- [x] Refactoriser RestaurantDashboard avec ResponsiveHeader et optimisations mobile
+- [x] Refactoriser SuperAdmin avec ResponsiveHeader et ResponsiveTable
+- [ ] Tester sur mobile réel (en attente de test utilisateur)
+- [x] Documenter le système (commentaires dans les composants)

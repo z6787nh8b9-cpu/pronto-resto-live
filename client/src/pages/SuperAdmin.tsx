@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Plus, Edit, Trash2, TrendingUp, Store, MessageSquare, Settings } from "lucide-react";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
+import { ResponsiveHeader, ResponsiveTable } from "@/components/responsive";
 
 export default function SuperAdmin() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -94,21 +95,16 @@ export default function SuperAdmin() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-card">
-        <div className="container px-4 sm:px-6 py-4 sm:py-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-display font-bold text-pronto-primary">PRONTO</h1>
-              <p className="text-muted-foreground">Super Admin Dashboard</p>
-            </div>
-            <Button onClick={() => setIsCreateDialogOpen(true)}>
-              <Plus className="mr-2 h-4 w-4" />
-              Nouveau Restaurant
-            </Button>
-          </div>
-        </div>
-      </header>
+      {/* Header avec ResponsiveHeader */}
+      <ResponsiveHeader
+        title="PRONTO"
+        subtitle="Super Admin Dashboard"
+        primaryAction={{
+          label: "Nouveau Restaurant",
+          onClick: () => setIsCreateDialogOpen(true),
+          icon: <Plus className="h-4 w-4" />,
+        }}
+      />
 
       <main className="container px-4 sm:px-6 py-6">
         {/* Stats Cards */}
@@ -147,86 +143,116 @@ export default function SuperAdmin() {
           </Card>
         </div>
 
-        {/* Restaurants Table */}
+        {/* Restaurants Table avec ResponsiveTable */}
         <Card>
-          <CardHeader>
-            <CardTitle>Liste des Restaurants</CardTitle>
-            <CardDescription>Gérez tous les restaurants de la plateforme</CardDescription>
+          <CardHeader className="p-4 sm:p-6">
+            <CardTitle className="text-lg sm:text-xl">Liste des Restaurants</CardTitle>
+            <CardDescription className="text-xs sm:text-sm">Gérez tous les restaurants de la plateforme</CardDescription>
           </CardHeader>
-          <CardContent className="overflow-x-auto p-0">
-            <Table className="min-w-[800px]">
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nom</TableHead>
-                  <TableHead>Slug</TableHead>
-                  <TableHead>Plan</TableHead>
-                  <TableHead>Statut</TableHead>
-                  <TableHead>Contact</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {restaurants?.map((restaurant) => (
-                  <TableRow key={restaurant.id}>
-                    <TableCell className="font-medium">{restaurant.name}</TableCell>
-                    <TableCell>
-                      <code className="text-xs bg-muted px-2 py-1 rounded">{restaurant.slug}</code>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={restaurant.subscriptionPlan === "premium" ? "default" : "secondary"}>
-                        {restaurant.subscriptionPlan === "premium" ? "Premium" : "Basic"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={
-                          restaurant.subscriptionStatus === "active"
-                            ? "default"
-                            : restaurant.subscriptionStatus === "trial"
-                            ? "secondary"
-                            : "destructive"
+          <CardContent className="p-0 sm:p-6">
+            <ResponsiveTable
+              columns={[
+                { key: "name", label: "Nom" },
+                { key: "slug", label: "Slug", render: (value) => <code className="text-xs bg-muted px-2 py-1 rounded">{value}</code> },
+                { key: "subscriptionPlan", label: "Plan", render: (value) => (
+                  <Badge variant={value === "premium" ? "default" : "secondary"}>
+                    {value === "premium" ? "Premium" : "Basic"}
+                  </Badge>
+                ) },
+                { key: "subscriptionStatus", label: "Statut", render: (value) => (
+                  <Badge variant={value === "active" ? "default" : value === "trial" ? "secondary" : "destructive"}>
+                    {value}
+                  </Badge>
+                ) },
+                { key: "contact", label: "Contact", render: (_, row) => row.email || row.phone || "-" },
+                { key: "actions", label: "Actions", render: (_, row) => (
+                  <div className="flex justify-end gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setLocation(`/admin/manage/${row.id}`)}
+                      title="Gérer le dashboard"
+                    >
+                      <Settings className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setEditingRestaurant(row)}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        if (confirm("Êtes-vous sûr de vouloir supprimer ce restaurant ?")) {
+                          deleteMutation.mutate({ id: row.id });
                         }
-                      >
-                        {restaurant.subscriptionStatus}
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4 text-destructive" />
+                    </Button>
+                  </div>
+                ) },
+              ]}
+              data={restaurants || []}
+              keyExtractor={(row) => row.id}
+              mobileCardRender={(row) => (
+                <div className="space-y-3">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <div className="font-semibold text-sm">{row.name}</div>
+                      <code className="text-xs bg-muted px-2 py-0.5 rounded">{row.slug}</code>
+                    </div>
+                    <div className="flex flex-col gap-1 items-end">
+                      <Badge variant={row.subscriptionPlan === "premium" ? "default" : "secondary"} className="text-xs">
+                        {row.subscriptionPlan === "premium" ? "Premium" : "Basic"}
                       </Badge>
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {restaurant.email || restaurant.phone || "-"}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setLocation(`/admin/manage/${restaurant.id}`)}
-                          title="Gérer le dashboard"
-                        >
-                          <Settings className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setEditingRestaurant(restaurant)}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => {
-                            if (confirm("Êtes-vous sûr de vouloir supprimer ce restaurant ?")) {
-                              deleteMutation.mutate({ id: restaurant.id });
-                            }
-                          }}
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                      <Badge variant={row.subscriptionStatus === "active" ? "default" : row.subscriptionStatus === "trial" ? "secondary" : "destructive"} className="text-xs">
+                        {row.subscriptionStatus}
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {row.email || row.phone || "-"}
+                  </div>
+                  <div className="flex gap-2 pt-2 border-t">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setLocation(`/admin/manage/${row.id}`)}
+                      className="flex-1 text-xs"
+                    >
+                      <Settings className="h-3 w-3 mr-1" />
+                      Gérer
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setEditingRestaurant(row)}
+                      className="flex-1 text-xs"
+                    >
+                      <Edit className="h-3 w-3 mr-1" />
+                      Modifier
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        if (confirm("Êtes-vous sûr de vouloir supprimer ce restaurant ?")) {
+                          deleteMutation.mutate({ id: row.id });
+                        }
+                      }}
+                      className="flex-1 text-xs"
+                    >
+                      <Trash2 className="h-3 w-3 mr-1 text-destructive" />
+                      Supprimer
+                    </Button>
+                  </div>
+                </div>
+              )}
+            />
           </CardContent>
         </Card>
       </main>
