@@ -254,3 +254,88 @@ export const openingHours = mysqlTable("opening_hours", {
 
 export type OpeningHour = typeof openingHours.$inferSelect;
 export type InsertOpeningHour = typeof openingHours.$inferInsert;
+
+/**
+ * Reservation zones table - PREMIUM feature
+ * Allows restaurants to define different zones (e.g., terrace, indoor, bar)
+ */
+export const reservationZones = mysqlTable("reservation_zones", {
+  id: int("id").autoincrement().primaryKey(),
+  restaurantId: int("restaurantId").notNull(),
+  name: varchar("name", { length: 100 }).notNull(), // e.g., "Terrasse", "Salle principale"
+  capacity: int("capacity").notNull(), // Maximum number of people
+  isActive: boolean("isActive").default(true).notNull(),
+  displayOrder: int("displayOrder").default(0).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ReservationZone = typeof reservationZones.$inferSelect;
+export type InsertReservationZone = typeof reservationZones.$inferInsert;
+
+/**
+ * Reservation settings table - PREMIUM feature
+ * Global settings for the reservation system per restaurant
+ */
+export const reservationSettings = mysqlTable("reservation_settings", {
+  id: int("id").autoincrement().primaryKey(),
+  restaurantId: int("restaurantId").notNull().unique(),
+  
+  // Time settings
+  slotDuration: int("slotDuration").default(30).notNull(), // Duration of each time slot in minutes
+  advanceBookingDays: int("advanceBookingDays").default(30).notNull(), // How many days in advance can customers book
+  minAdvanceHours: int("minAdvanceHours").default(2).notNull(), // Minimum hours in advance required
+  
+  // Capacity settings
+  defaultTableSize: int("defaultTableSize").default(4).notNull(), // Default table size
+  maxPartySize: int("maxPartySize").default(12).notNull(), // Maximum party size
+  
+  // Notifications
+  notifyByEmail: boolean("notifyByEmail").default(true).notNull(),
+  notifyByWhatsApp: boolean("notifyByWhatsApp").default(true).notNull(),
+  autoConfirm: boolean("autoConfirm").default(false).notNull(), // Auto-confirm or require manual approval
+  
+  // Messages
+  confirmationMessage: text("confirmationMessage"), // Custom confirmation message
+  cancellationPolicy: text("cancellationPolicy"), // Cancellation policy text
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ReservationSetting = typeof reservationSettings.$inferSelect;
+export type InsertReservationSetting = typeof reservationSettings.$inferInsert;
+
+/**
+ * Reservations table - PREMIUM feature
+ */
+export const reservations = mysqlTable("reservations", {
+  id: int("id").autoincrement().primaryKey(),
+  restaurantId: int("restaurantId").notNull(),
+  zoneId: int("zoneId"), // Optional: specific zone requested
+  
+  // Customer information
+  customerName: varchar("customerName", { length: 255 }).notNull(),
+  customerEmail: varchar("customerEmail", { length: 320 }).notNull(),
+  customerPhone: varchar("customerPhone", { length: 20 }).notNull(),
+  
+  // Reservation details
+  reservationDate: timestamp("reservationDate").notNull(), // Date and time of reservation
+  partySize: int("partySize").notNull(), // Number of people
+  specialRequests: text("specialRequests"), // Special requests or notes
+  
+  // Status
+  status: mysqlEnum("status", ["pending", "confirmed", "cancelled", "completed", "no_show"]).default("pending").notNull(),
+  
+  // Confirmation
+  confirmationToken: varchar("confirmationToken", { length: 100 }), // Token for email confirmation
+  confirmedAt: timestamp("confirmedAt"),
+  cancelledAt: timestamp("cancelledAt"),
+  cancellationReason: text("cancellationReason"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Reservation = typeof reservations.$inferSelect;
+export type InsertReservation = typeof reservations.$inferInsert;

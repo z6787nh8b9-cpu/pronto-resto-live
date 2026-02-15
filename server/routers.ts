@@ -8,6 +8,7 @@ import { publicRouter } from "./routers/public";
 import { uploadRouter } from "./routers/upload";
 import { translationsRouter } from "./routers/translations";
 import { openingHoursRouter } from "./routers/openingHours";
+import { reservationsRouter } from "./routes/reservations";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -40,6 +41,9 @@ export const appRouter = router({
 
   // Opening hours routes
   openingHours: openingHoursRouter,
+
+  // Reservations routes
+  reservations: reservationsRouter,
 });
 
 export type AppRouter = typeof appRouter;

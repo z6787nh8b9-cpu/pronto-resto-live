@@ -5,19 +5,21 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { MessageCircle, Phone, MapPin, Mail, Clock, Calendar, X, Send, ChevronRight } from "lucide-react";
+import { MessageCircle, Phone, MapPin, Mail, Clock, Calendar, X, Send, ChevronRight, CalendarDays } from "lucide-react";
 import { useParams, useLocation } from "wouter";
 import { toast } from "sonner";
 import { nanoid } from "nanoid";
 import ReactMarkdown from "react-markdown";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { useTranslation } from "@/hooks/useTranslation";
+import { ReservationFlow } from "@/components/ReservationFlow";
 
 export default function RestaurantHomePage() {
   const params: { slug?: string } = useParams();
   const [, navigate] = useLocation();
   const slug = params.slug || "";
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isReservationOpen, setIsReservationOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
   const [chatInput, setChatInput] = useState("");
   const [sessionId] = useState(() => nanoid());
@@ -159,8 +161,19 @@ export default function RestaurantHomePage() {
             <Button size="lg" onClick={() => navigate(`/${slug}/menu`)} style={{ backgroundColor: primaryColor }}>
               Voir le menu
             </Button>
+            {restaurant.featuresEnabled?.reservations && (
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="bg-white/10 backdrop-blur text-white border-white hover:bg-white/20"
+                onClick={() => setIsReservationOpen(true)}
+              >
+                <CalendarDays className="mr-2 h-5 w-5" />
+                Réserver une table
+              </Button>
+            )}
             {restaurant.reservationUrl && (
-              <Button size="lg" variant="outline" className="bg-white/10 backdrop-blur text-white border-white hover:bg-white/20">
+              <Button size="lg" variant="outline" className="bg-white/10 backdrop-blur text-white border-white hover:bg-white/20" asChild>
                 Réserver
               </Button>
             )}
@@ -415,6 +428,20 @@ export default function RestaurantHomePage() {
               </Button>
             </form>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Reservation Dialog */}
+      <Dialog open={isReservationOpen} onOpenChange={setIsReservationOpen}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Réserver une table</DialogTitle>
+          </DialogHeader>
+          <ReservationFlow 
+            restaurantId={restaurant.id} 
+            restaurantName={restaurant.name}
+            onClose={() => setIsReservationOpen(false)}
+          />
         </DialogContent>
       </Dialog>
     </div>

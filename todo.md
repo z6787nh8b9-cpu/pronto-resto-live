@@ -320,6 +320,15 @@
 - [x] Dashboard restaurateur : onglet "Horaires" pour configurer les horaires d'ouverture
 - [x] Afficher les horaires sur la page d'accueil (RestaurantHomePage)
 
+### PHASE 5 : SYSTÈME DE RÉSERVATIONS (PREMIUM)
+- [x] Créer les tables (reservation_zones, reservation_settings, reservations)
+- [x] Créer le router tRPC pour les réservations
+- [x] Créer la page de gestion des réservations dans le dashboard (zones, paramètres, liste)
+- [x] Créer le composant ReservationFlow (flux en 6 étapes)
+- [x] Intégrer le bouton de réservation sur RestaurantHomePage
+- [ ] Implémenter les notifications WhatsApp/Email pour les réservations
+- [ ] Améliorer la logique de disponibilité des créneaux horaires
+
 ### PHASE 8 : DASHBOARD PREMIUM - GESTION COMPLÈTE DU MINI-SITE
 - [ ] Onglet "Page d'accueil" : éditer le contenu du hero, qui sommes-nous, etc.
 - [ ] Onglet "Horaires" : gérer les horaires d'ouverture (déjà dans Phase 4)
