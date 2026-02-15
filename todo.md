@@ -213,3 +213,8 @@
 - [x] Ajouter bouton "🍽️ Public" → ouvrir `/preview/${restaurant.slug}` (page publique)
 - [x] Ajouter bouton "📊 Dashboard" → ouvrir `/preview/${restaurant.slug}/dashboard` (dashboard restaurant)
 - [x] Conserver les boutons "Gérer" et "Modifier" existants
+
+## CORRECTION DÉBORDEMENT BOUTONS SUPERADMIN MOBILE
+- [x] Les 5 boutons (Public, Dashboard, Gérer, Modifier, Supprimer) dépassent sur mobile dans les cards
+- [x] Passer en layout vertical (flex-col) sur mobile, horizontal (flex-row) sur desktop
+- [x] Ajouter w-full sm:flex-1 pour que les boutons prennent toute la largeur sur mobile

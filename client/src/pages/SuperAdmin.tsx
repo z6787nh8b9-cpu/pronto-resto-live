@@ -217,12 +217,12 @@ export default function SuperAdmin() {
                   <div className="text-xs text-muted-foreground">
                     {row.email || row.phone || "-"}
                   </div>
-                  <div className="flex gap-2 pt-2 border-t">
+                  <div className="flex flex-col sm:flex-row gap-2 pt-2 border-t">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => window.open(`/preview/${row.slug}`, '_blank')}
-                      className="flex-1 text-xs"
+                      className="w-full sm:flex-1 text-xs"
                     >
                       🍽️ Public
                     </Button>
@@ -230,7 +230,7 @@ export default function SuperAdmin() {
                       variant="outline"
                       size="sm"
                       onClick={() => window.open(`/preview/${row.slug}/dashboard`, '_blank')}
-                      className="flex-1 text-xs"
+                      className="w-full sm:flex-1 text-xs"
                     >
                       📊 Dashboard
                     </Button>
@@ -238,7 +238,7 @@ export default function SuperAdmin() {
                       variant="outline"
                       size="sm"
                       onClick={() => setLocation(`/admin/manage/${row.id}`)}
-                      className="flex-1 text-xs"
+                      className="w-full sm:flex-1 text-xs"
                     >
                       <Settings className="h-3 w-3 mr-1" />
                       Gérer
@@ -247,7 +247,7 @@ export default function SuperAdmin() {
                       variant="outline"
                       size="sm"
                       onClick={() => setEditingRestaurant(row)}
-                      className="flex-1 text-xs"
+                      className="w-full sm:flex-1 text-xs"
                     >
                       <Edit className="h-3 w-3 mr-1" />
                       Modifier
@@ -260,7 +260,7 @@ export default function SuperAdmin() {
                           deleteMutation.mutate({ id: row.id });
                         }
                       }}
-                      className="flex-1 text-xs"
+                      className="w-full sm:flex-1 text-xs"
                     >
                       <Trash2 className="h-3 w-3 mr-1 text-destructive" />
                       Supprimer
