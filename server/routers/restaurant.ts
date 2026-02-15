@@ -20,7 +20,7 @@ import {
   getChatbotConversationsByRestaurantId,
   getDb,
 } from "../db";
-import { menuCategories, menuItems } from "../../drizzle/schema";
+import { menuCategories, menuItems, restaurants } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
 
 export const restaurantRouter = router({
@@ -299,5 +299,50 @@ export const restaurantRouter = router({
       const { url } = await storagePut(key, buffer, input.contentType);
 
       return { url };
+    }),
+
+  // Get restaurant by ID
+  getById: publicProcedure
+    .input(z.object({ id: z.number() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      const [restaurant] = await db
+        .select()
+        .from(restaurants)
+        .where(eq(restaurants.id, input.id))
+        .limit(1);
+
+      return restaurant || null;
+    }),
+
+  // Update customization (logo, colors, fonts)
+  updateCustomization: protectedProcedure
+    .input(
+      z.object({
+        restaurantId: z.number(),
+        logoUrl: z.string().optional(),
+        primaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+        accentColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
+        fontFamily: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+
+      await db
+        .update(restaurants)
+        .set({
+          logoUrl: input.logoUrl,
+          primaryColor: input.primaryColor,
+          accentColor: input.accentColor,
+          fontFamily: input.fontFamily,
+          updatedAt: new Date(),
+        })
+        .where(eq(restaurants.id, input.restaurantId));
+
+      return { success: true };
     }),
 });

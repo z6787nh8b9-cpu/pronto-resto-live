@@ -20,6 +20,8 @@ import Translations from "./dashboard/Translations";
 import OpeningHours from "./dashboard/OpeningHours";
 import Reservations from "./dashboard/Reservations";
 import Events from "./dashboard/Events";
+import Customization from "./dashboard/Customization";
+import Gallery from "./dashboard/Gallery";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -395,7 +397,7 @@ export default function RestaurantDashboard() {
       <main className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
-            <TabsList className="inline-flex sm:grid w-auto sm:w-full grid-cols-8 gap-1 sm:gap-2 min-w-full sm:min-w-0">
+            <TabsList className="inline-flex sm:grid w-auto sm:w-full grid-cols-10 gap-1 sm:gap-2 min-w-full sm:min-w-0">
             <TabsTrigger value="menu">Menu</TabsTrigger>
             <TabsTrigger value="settings">Paramètres</TabsTrigger>
             <TabsTrigger value="chatbot">Chatbot IA</TabsTrigger>
@@ -437,6 +439,25 @@ export default function RestaurantDashboard() {
             >
               <PartyPopper className="h-4 w-4 mr-1" />
               Événements
+              {!canAccessPremiumFeatures && <Lock className="h-3 w-3 ml-1 text-amber-500" />}
+            </TabsTrigger>
+            <TabsTrigger 
+              value="customization"
+              disabled={!canAccessPremiumFeatures}
+              className={!canAccessPremiumFeatures ? "opacity-50 cursor-not-allowed relative" : ""}
+              onClick={(e) => !canAccessPremiumFeatures && handleLockedTabClick("Personnalisation visuelle", "premium", e)}
+            >
+              <Star className="h-4 w-4 mr-1" />
+              Personnalisation
+              {!canAccessPremiumFeatures && <Lock className="h-3 w-3 ml-1 text-amber-500" />}
+            </TabsTrigger>
+            <TabsTrigger 
+              value="gallery"
+              disabled={!canAccessPremiumFeatures}
+              className={!canAccessPremiumFeatures ? "opacity-50 cursor-not-allowed relative" : ""}
+              onClick={(e) => !canAccessPremiumFeatures && handleLockedTabClick("Galerie photos", "premium", e)}
+            >
+              📸 Galerie
               {!canAccessPremiumFeatures && <Lock className="h-3 w-3 ml-1 text-amber-500" />}
             </TabsTrigger>
             <TabsTrigger value="analytics">Statistiques</TabsTrigger>
@@ -789,6 +810,16 @@ export default function RestaurantDashboard() {
                 </form>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* Customization Tab */}
+          <TabsContent value="customization" className="space-y-6">
+            {restaurant && <Customization restaurantId={restaurant.id} />}
+          </TabsContent>
+
+          {/* Gallery Tab */}
+          <TabsContent value="gallery" className="space-y-6">
+            {restaurant && <Gallery restaurantId={restaurant.id} />}
           </TabsContent>
 
           {/* Analytics Tab */}

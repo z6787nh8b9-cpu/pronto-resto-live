@@ -417,3 +417,20 @@ export const eventRegistrations = mysqlTable("event_registrations", {
 
 export type EventRegistration = typeof eventRegistrations.$inferSelect;
 export type InsertEventRegistration = typeof eventRegistrations.$inferInsert;
+
+/**
+ * Gallery photos table (PREMIUM feature)
+ */
+export const galleryPhotos = mysqlTable("gallery_photos", {
+  id: int("id").autoincrement().primaryKey(),
+  restaurantId: int("restaurantId").notNull(),
+  imageUrl: text("imageUrl").notNull(),
+  caption: text("caption"),
+  displayOrder: int("displayOrder").default(0).notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type GalleryPhoto = typeof galleryPhotos.$inferSelect;
+export type InsertGalleryPhoto = typeof galleryPhotos.$inferInsert;

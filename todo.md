@@ -364,3 +364,16 @@
 ## 🐛 CORRECTIONS MINEURES
 - [x] Corriger le dépassement mobile dans la page Advertisements (layout responsive, boutons avec icônes uniquement sur mobile)
 - [x] Uniformiser les boutons du tableau SuperAdmin (desktop = mobile avec emojis et textes)
+
+
+### PHASE 8 : DASHBOARD PREMIUM - GESTION COMPLÈTE DU MINI-SITE
+- [x] Ajouter les champs de personnalisation dans la table restaurants (primaryColor, secondaryColor, logoUrl)
+- [x] Créer l'onglet "Personnalisation" dans le dashboard PREMIUM
+- [x] Implémenter l'upload de logo
+- [x] Implémenter le sélecteur de couleurs (primaire, secondaire)
+- [x] Appliquer les couleurs personnalisées sur la page d'accueil du restaurant
+- [x] Créer la table gallery_photos pour la galerie photos
+- [x] Créer l'onglet "Galerie" dans le dashboard PREMIUM
+- [x] Implémenter l'upload et la gestion des photos
+- [x] Afficher la galerie photos sur la page d'accueil (section dédiée)
+- [x] Ajouter les métadonnées SEO (meta description, keywords, Open Graph)

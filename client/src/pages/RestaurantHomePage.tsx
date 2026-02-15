@@ -60,6 +60,12 @@ export default function RestaurantHomePage() {
     { enabled: restaurant?.subscriptionTier === "menu" && restaurant?.showAds }
   );
 
+  // Get gallery photos (PREMIUM feature)
+  const { data: galleryPhotos } = trpc.gallery.getGalleryPhotos.useQuery(
+    { restaurantId: restaurant?.id || 0 },
+    { enabled: !!restaurant?.id && restaurant?.subscriptionTier === "premium" }
+  );
+
   // Chat mutation
   const chatMutation = trpc.public.chat.useMutation({
     onSuccess: (data) => {
@@ -121,12 +127,13 @@ export default function RestaurantHomePage() {
 
   const primaryColor = restaurant.primaryColor || "#ef4444";
   const accentColor = restaurant.accentColor || "#fbbf24";
+  const fontFamily = restaurant.fontFamily || "Playfair Display";
   
   // Récupérer 4-6 plats signatures (les premiers de chaque catégorie)
   const signatureDishes = menuData?.items?.slice(0, 6) || [];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background" style={{ fontFamily }}>
       {/* Header avec logo et navigation */}
       <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between">
@@ -170,7 +177,7 @@ export default function RestaurantHomePage() {
         )}
         <div className="absolute inset-0 bg-black/40" />
         <div className="relative container h-full flex flex-col justify-center items-center text-center text-white">
-          <h2 className="text-4xl md:text-6xl font-bold mb-4">{restaurant.name}</h2>
+          <h2 className="text-4xl md:text-6xl font-bold mb-4" style={{ color: accentColor }}>{restaurant.name}</h2>
           <p className="text-xl md:text-2xl mb-8 max-w-2xl">{restaurant.description}</p>
           <div className="flex gap-4">
             <Button size="lg" onClick={() => navigate(`/${slug}/menu`)} style={{ backgroundColor: primaryColor }}>
@@ -201,7 +208,7 @@ export default function RestaurantHomePage() {
         <div className="container max-w-4xl">
           <div className="text-center mb-12">
             <Badge variant="outline" className="mb-4">Qui sommes-nous ?</Badge>
-            <h3 className="text-3xl md:text-4xl font-bold mb-6">Bienvenue chez {restaurant.name}</h3>
+            <h3 className="text-3xl md:text-4xl font-bold mb-6" style={{ color: primaryColor }}>Bienvenue chez {restaurant.name}</h3>
             <p className="text-lg text-muted-foreground leading-relaxed">
               {restaurant.description || "Découvrez notre univers culinaire unique, où tradition et innovation se rencontrent pour vous offrir une expérience gastronomique inoubliable."}
             </p>
@@ -215,7 +222,7 @@ export default function RestaurantHomePage() {
           <div className="container">
             <div className="text-center mb-12">
               <Badge variant="outline" className="mb-4">Nos Spécialités</Badge>
-              <h3 className="text-3xl md:text-4xl font-bold mb-4">Quelques-uns de nos plats</h3>
+              <h3 className="text-3xl md:text-4xl font-bold mb-4" style={{ color: primaryColor }}>Quelques-uns de nos plats</h3>
               <p className="text-lg text-muted-foreground">Découvrez une sélection de nos créations signatures</p>
             </div>
 
@@ -260,7 +267,7 @@ export default function RestaurantHomePage() {
           <div className="container">
             <div className="text-center mb-12">
               <Badge variant="outline" className="mb-4">Événements à venir</Badge>
-              <h3 className="text-3xl md:text-4xl font-bold mb-4">Rejoignez-nous</h3>
+              <h3 className="text-3xl md:text-4xl font-bold mb-4" style={{ color: primaryColor }}>Rejoignez-nous</h3>
               <p className="text-muted-foreground max-w-2xl mx-auto">
                 Découvrez nos événements spéciaux et réservez votre place
               </p>
@@ -334,12 +341,42 @@ export default function RestaurantHomePage() {
         </section>
       )}
 
+      {/* Galerie Photos (PREMIUM) */}
+      {galleryPhotos && galleryPhotos.length > 0 && (
+        <section className="py-16 bg-muted/30">
+          <div className="container">
+            <div className="text-center mb-12">
+              <Badge variant="outline" className="mb-4">Notre univers</Badge>
+              <h3 className="text-3xl md:text-4xl font-bold mb-4" style={{ color: primaryColor }}>Galerie photos</h3>
+              <p className="text-lg text-muted-foreground">Découvrez l'ambiance de notre établissement</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+              {galleryPhotos.map((photo) => (
+                <div key={photo.id} className="group relative overflow-hidden rounded-lg aspect-square">
+                  <img
+                    src={photo.imageUrl}
+                    alt={photo.caption || "Photo du restaurant"}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                  />
+                  {photo.caption && (
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                      <p className="text-white p-4 text-sm">{photo.caption}</p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
       {/* Informations Pratiques */}
       <section id="contact" className="py-16 md:py-24">
         <div className="container max-w-4xl">
           <div className="text-center mb-12">
             <Badge variant="outline" className="mb-4">Informations Pratiques</Badge>
-            <h3 className="text-3xl md:text-4xl font-bold mb-4">Nous trouver</h3>
+            <h3 className="text-3xl md:text-4xl font-bold mb-4" style={{ color: primaryColor }}>Nous trouver</h3>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
