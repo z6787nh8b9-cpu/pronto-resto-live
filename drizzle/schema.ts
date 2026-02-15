@@ -237,3 +237,20 @@ export const translations = mysqlTable("translations", {
 
 export type Translation = typeof translations.$inferSelect;
 export type InsertTranslation = typeof translations.$inferInsert;
+
+/**
+ * Opening hours table - PREMIUM feature
+ */
+export const openingHours = mysqlTable("opening_hours", {
+  id: int("id").autoincrement().primaryKey(),
+  restaurantId: int("restaurantId").notNull(),
+  dayOfWeek: int("dayOfWeek").notNull(), // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  openTime: varchar("openTime", { length: 5 }), // Format: "HH:MM" (e.g., "09:00")
+  closeTime: varchar("closeTime", { length: 5 }), // Format: "HH:MM" (e.g., "22:00")
+  isClosed: boolean("isClosed").default(false).notNull(), // true if restaurant is closed this day
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type OpeningHour = typeof openingHours.$inferSelect;
+export type InsertOpeningHour = typeof openingHours.$inferInsert;

@@ -37,6 +37,12 @@ export default function RestaurantHomePage() {
     { enabled: !!restaurant?.id }
   );
 
+  // Get opening hours
+  const { data: openingHours } = trpc.openingHours.getOpeningHours.useQuery(
+    { restaurantId: restaurant?.id || 0 },
+    { enabled: !!restaurant?.id }
+  );
+
   // Chat mutation
   const chatMutation = trpc.public.chat.useMutation({
     onSuccess: (data) => {
@@ -229,6 +235,37 @@ export default function RestaurantHomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Horaires d'ouverture */}
+            {openingHours && openingHours.length > 0 && (
+              <Card>
+                <CardContent className="p-6 space-y-4">
+                  <h4 className="text-xl font-semibold mb-4 flex items-center gap-2">
+                    <Clock className="h-5 w-5" />
+                    Horaires d'ouverture
+                  </h4>
+                  <div className="space-y-2">
+                    {["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"].map((day, index) => {
+                      const dayHours = openingHours.find((h) => h.dayOfWeek === index);
+                      return (
+                        <div key={index} className="flex justify-between items-center">
+                          <span className="font-medium">{day}</span>
+                          {dayHours?.isClosed ? (
+                            <span className="text-muted-foreground">Fermé</span>
+                          ) : dayHours?.openTime && dayHours?.closeTime ? (
+                            <span className="text-muted-foreground">
+                              {dayHours.openTime} - {dayHours.closeTime}
+                            </span>
+                          ) : (
+                            <span className="text-muted-foreground">Non défini</span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Contact */}
             <Card>
               <CardContent className="p-6 space-y-4">

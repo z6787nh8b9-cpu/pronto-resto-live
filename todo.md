@@ -315,10 +315,10 @@
 
 
 ### PHASE 4 : GESTION DES HORAIRES (PREMIUM)
-- [ ] Créer la table `opening_hours` (restaurant_id, day_of_week, open_time, close_time, is_closed)
-- [ ] Créer les procédures tRPC pour gérer les horaires
-- [ ] Dashboard restaurateur : onglet "Horaires" pour configurer les horaires d'ouverture
-- [ ] Afficher les horaires sur la page d'accueil (RestaurantHomePage)
+- [x] Créer la table `opening_hours` (restaurant_id, day_of_week, open_time, close_time, is_closed)
+- [x] Créer les procédures tRPC pour gérer les horaires
+- [x] Dashboard restaurateur : onglet "Horaires" pour configurer les horaires d'ouverture
+- [x] Afficher les horaires sur la page d'accueil (RestaurantHomePage)
 
 ### PHASE 8 : DASHBOARD PREMIUM - GESTION COMPLÈTE DU MINI-SITE
 - [ ] Onglet "Page d'accueil" : éditer le contenu du hero, qui sommes-nous, etc.
