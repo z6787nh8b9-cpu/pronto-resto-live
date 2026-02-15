@@ -141,3 +141,7 @@
 - [x] Ajouter l'upload d'images pour les plats (comme pour les catégories)
 - [ ] Ajouter la sélection d'emojis pour les plats (optionnel, comme alternative aux images)
 - [x] S'assurer que TOUT est strictement identique entre le dashboard et l'affichage public
+- [x] Corriger le responsive du dashboard (marges strictes)
+- [x] Ajouter une croix de fermeture dans le dialog de modification des plats
+- [x] Vérifier que l'upload d'images fonctionne dans le dialog de modification (ImageUploader présent ligne 1015-1019)
+- [x] S'assurer que le bouton Sauvegarder est visible dans le dialog de modification (bouton Enregistrer présent ligne 1025)

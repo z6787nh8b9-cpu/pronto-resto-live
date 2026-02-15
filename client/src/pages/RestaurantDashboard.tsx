@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Plus, Edit, Trash2, GripVertical, Settings, Eye, MessageSquare, BarChart3, Star } from "lucide-react";
@@ -355,7 +355,7 @@ export default function RestaurantDashboard() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b bg-card">
-        <div className="container py-4">
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-display font-bold text-pronto-primary">{restaurant.name}</h1>
@@ -374,9 +374,9 @@ export default function RestaurantDashboard() {
         </div>
       </header>
 
-      <main className="container py-6">
+      <main className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 gap-2">
             <TabsTrigger value="menu">Menu</TabsTrigger>
             <TabsTrigger value="settings">Paramètres</TabsTrigger>
             <TabsTrigger value="chatbot">Chatbot IA</TabsTrigger>
@@ -385,12 +385,12 @@ export default function RestaurantDashboard() {
 
           {/* Menu Tab */}
           <TabsContent value="menu" className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
                 <h2 className="text-2xl font-bold">Gestion du Menu</h2>
                 <p className="text-muted-foreground">Organisez vos catégories et plats</p>
               </div>
-              <Button onClick={() => setIsAddCategoryOpen(true)}>
+              <Button onClick={() => setIsAddCategoryOpen(true)} className="w-full sm:w-auto">
                 <Plus className="mr-2 h-4 w-4" />
                 Nouvelle Catégorie
               </Button>
@@ -859,6 +859,10 @@ export default function RestaurantDashboard() {
           <DialogHeader>
             <DialogTitle>Modifier le Plat</DialogTitle>
             <DialogDescription>Modifiez les informations du plat</DialogDescription>
+            <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+              <span className="sr-only">Fermer</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </DialogClose>
           </DialogHeader>
           <form onSubmit={handleUpdateItem}>
             <div className="space-y-4 py-4">
