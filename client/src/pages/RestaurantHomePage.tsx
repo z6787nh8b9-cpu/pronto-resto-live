@@ -88,12 +88,8 @@ export default function RestaurantHomePage() {
     }
   }, [restaurant?.id]);
 
-  // Redirection automatique si pas PREMIUM
-  useEffect(() => {
-    if (restaurant && restaurant.subscriptionTier !== "premium") {
-      navigate(`/${slug}/menu`);
-    }
-  }, [restaurant, slug, navigate]);
+  // Tous les tiers ont accès à la page d'accueil
+  // Les fonctionnalités affichées dépendent du tier (conditions dans le JSX)
 
   const handleSendMessage = () => {
     if (!chatInput.trim() || !restaurant) return;

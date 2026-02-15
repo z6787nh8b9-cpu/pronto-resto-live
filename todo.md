@@ -424,3 +424,12 @@
 - [x] Corriger l'erreur "Rendered more hooks than during the previous render" dans SuperAdmin
 - [x] Déplacer les hooks tRPC avant les conditions de retour (loading/non-admin)
 - [x] Ajouter enabled: !!user && user.role === 'admin' aux queries pour éviter les appels inutiles
+
+
+## ✨ REFONTE STRUCTURE URL - PAGE D'ACCUEIL POUR TOUS LES TIERS
+- [x] Supprimer la redirection automatique vers /menu dans RestaurantHomePage
+- [x] Tous les restaurants (BASIC/PRO/PREMIUM) ont une page d'accueil à /:slug
+- [x] La page d'accueil affiche les fonctionnalités selon le tier (conditions déjà en place)
+- [x] BASIC : description, chatbot, contact, publicités + bouton "Voir le menu"
+- [x] PRO : BASIC + horaires + traductions
+- [x] PREMIUM : PRO + réservations + événements + galerie + personnalisation
