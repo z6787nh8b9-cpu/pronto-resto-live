@@ -181,8 +181,9 @@
 - [x] Badge compact sur mobile (text-xs px-2 py-0.5)
 - [x] Bouton pleine largeur sur mobile (w-full), fit sur desktop (w-fit)
 
-## CORRECTION SCROLL TABLEAU (EN COURS)
-- [x] Corriger le scroll horizontal du tableau Super Admin qui déborde toujours sur mobile
-- [x] Enlever les paddings du CardContent et les mettre dans la div overflow-x-auto
-- [x] Ajouter min-w-[640px] sur le Table pour forcer une largeur minimale
-- [ ] Tester le scroll sur mobile réel (en attente de test utilisateur)
+## CORRECTION SCROLL TABLEAU ET BOUTONS
+- [x] Corriger le scroll horizontal du tableau Super Admin (overflow-x-auto sur CardContent, min-w-800px)
+- [x] Simplifier la structure du tableau (supprimer div intermédiaire)
+- [x] Mettre les boutons Navigation Temporaire en vertical sur mobile (flex-col sm:flex-row)
+- [x] Ajouter w-full sm:w-auto sur les boutons pour qu'ils prennent toute la largeur mobile
+- [ ] Tester sur mobile réel (en attente de test utilisateur)

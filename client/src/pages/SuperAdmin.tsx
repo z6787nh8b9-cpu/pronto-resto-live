@@ -425,10 +425,11 @@ export default function SuperAdmin() {
               🏠 Landing Page
             </Button>
             {restaurants?.map((restaurant) => (
-              <div key={restaurant.id} className="flex gap-1">
+              <div key={restaurant.id} className="flex flex-col sm:flex-row gap-1 w-full sm:w-auto">
                 <Button
                   variant="outline"
                   size="sm"
+                  className="w-full sm:w-auto"
                   onClick={() => window.open(`/preview/${restaurant.slug}`, '_blank')}
                 >
                   🍽️ {restaurant.name} (Public)
@@ -436,6 +437,7 @@ export default function SuperAdmin() {
                 <Button
                   variant="outline"
                   size="sm"
+                  className="w-full sm:w-auto"
                   onClick={() => window.open(`/preview/${restaurant.slug}/dashboard`, '_blank')}
                 >
                   📊 {restaurant.name} (Dashboard)
