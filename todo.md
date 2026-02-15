@@ -397,3 +397,8 @@
 - [x] Changer la couleur du bouton WhatsApp pour un vert plus premium (emerald-600 to teal-700)
 - [x] Remplacer le dégradé par un doré terre cuite italien pour le cadenas (amber-600 via orange-700 to amber-800)
 - [x] Améliorer l'icône du cadenas pour un rendu plus classe (h-20 w-20, shadow-2xl, ring-4)
+
+## 🐛 CORRECTION - OVERLAY BLOQUANT
+- [x] Revenir à un overlay relatif au lieu de fixed pour ne pas bloquer toute la page (absolute inset-0)
+- [x] Garder le centrage visuel dans la zone de l'onglet (flex items-center justify-center)
+- [x] S'assurer que l'utilisateur peut toujours naviguer vers d'autres onglets

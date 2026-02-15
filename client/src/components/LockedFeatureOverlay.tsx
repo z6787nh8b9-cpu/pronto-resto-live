@@ -22,8 +22,8 @@ export function LockedFeatureOverlay({ featureName, tier, restaurantName, childr
         {children}
       </div>
 
-      {/* Overlay avec cadenas et CTA - Centré fixe */}
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
+      {/* Overlay avec cadenas et CTA - Centré dans la zone */}
+      <div className="absolute inset-0 flex items-center justify-center bg-background/90 backdrop-blur-sm">
         <Card className="max-w-md mx-4 border-2 border-amber-500/50 shadow-xl">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-amber-600 via-orange-700 to-amber-800 shadow-2xl ring-4 ring-amber-500/20">
