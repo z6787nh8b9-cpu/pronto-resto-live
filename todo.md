@@ -145,3 +145,6 @@
 - [x] Ajouter une croix de fermeture dans le dialog de modification des plats
 - [x] Vérifier que l'upload d'images fonctionne dans le dialog de modification (ImageUploader présent ligne 1015-1019)
 - [x] S'assurer que le bouton Sauvegarder est visible dans le dialog de modification (bouton Enregistrer présent ligne 1025)
+- [x] Corriger l'erreur API getChatbotConfig qui retourne undefined
+- [x] Améliorer le responsive du header du dashboard (chevauchement sur mobile)
+- [x] Améliorer le responsive général pour rendre le dashboard parfait sur mobile

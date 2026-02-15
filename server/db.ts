@@ -289,12 +289,41 @@ export async function deleteMenuItem(id: number): Promise<void> {
 
 // ===== CHATBOT CONFIG FUNCTIONS =====
 
-export async function getChatbotConfigByRestaurantId(restaurantId: number): Promise<ChatbotConfig | undefined> {
+export async function getChatbotConfigByRestaurantId(restaurantId: number): Promise<ChatbotConfig> {
   const db = await getDb();
-  if (!db) return undefined;
+  if (!db) {
+    // Return default config when DB is not available
+    return {
+      id: 0,
+      restaurantId,
+      isEnabled: true,
+      tone: "warm" as const,
+      customInfo: null,
+      welcomeMessage: null,
+      totalConversations: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+  }
 
   const result = await db.select().from(chatbotConfigs).where(eq(chatbotConfigs.restaurantId, restaurantId)).limit(1);
-  return result.length > 0 ? result[0] : undefined;
+  
+  // Return default config if none exists
+  if (result.length === 0) {
+    return {
+      id: 0,
+      restaurantId,
+      isEnabled: true,
+      tone: "warm" as const,
+      customInfo: null,
+      welcomeMessage: null,
+      totalConversations: 0,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
+  }
+  
+  return result[0];
 }
 
 export async function upsertChatbotConfig(config: InsertChatbotConfig): Promise<ChatbotConfig> {

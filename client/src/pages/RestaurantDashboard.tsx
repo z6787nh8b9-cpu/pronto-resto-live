@@ -356,17 +356,18 @@ export default function RestaurantDashboard() {
       {/* Header */}
       <header className="border-b bg-card">
         <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-display font-bold text-pronto-primary">{restaurant.name}</h1>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl sm:text-2xl font-display font-bold text-pronto-primary truncate">{restaurant.name}</h1>
               <p className="text-sm text-muted-foreground">Dashboard Restaurateur</p>
             </div>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm">
+            <div className="flex flex-wrap gap-2 w-full sm:w-auto">
+              <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
                 <Eye className="mr-2 h-4 w-4" />
-                Voir la page publique
+                <span className="hidden sm:inline">Voir la page publique</span>
+                <span className="sm:hidden">Aperçu</span>
               </Button>
-              <Badge variant={restaurant.subscriptionPlan === "premium" ? "default" : "secondary"}>
+              <Badge variant={restaurant.subscriptionPlan === "premium" ? "default" : "secondary"} className="flex-shrink-0">
                 {restaurant.subscriptionPlan === "premium" ? "Premium" : "Basic"}
               </Badge>
             </div>
@@ -515,7 +516,7 @@ export default function RestaurantDashboard() {
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleUpdateRestaurantInfo} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="rest-name">Nom du Restaurant</Label>
                       <Input id="rest-name" name="name" defaultValue={restaurant.name} required />
@@ -555,7 +556,7 @@ export default function RestaurantDashboard() {
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleUpdateColors} className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="primary-color">Couleur Principale</Label>
                       <Input id="primary-color" name="primaryColor" type="color" defaultValue={restaurant.primaryColor || "#7D3A31"} />
