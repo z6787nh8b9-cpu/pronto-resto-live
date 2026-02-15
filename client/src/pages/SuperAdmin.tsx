@@ -435,7 +435,8 @@ export default function SuperAdmin() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="menu">Menu - 19€/mois</SelectItem>
-                        <SelectItem value="premium">Pro - 29€/mois</SelectItem>
+                        <SelectItem value="pro">Pro - 29€/mois</SelectItem>
+                        <SelectItem value="premium">Premium - 39€/mois</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>

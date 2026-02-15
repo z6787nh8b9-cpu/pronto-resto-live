@@ -377,3 +377,8 @@
 - [x] Implémenter l'upload et la gestion des photos
 - [x] Afficher la galerie photos sur la page d'accueil (section dédiée)
 - [x] Ajouter les métadonnées SEO (meta description, keywords, Open Graph)
+
+
+## 🐛 CORRECTION SUPER ADMIN - OFFRE PREMIUM MANQUANTE
+- [x] Ajouter l'option PREMIUM (39€) dans le sélecteur d'abonnement du Super Admin
+- [x] Vérifier que toutes les fonctionnalités PREMIUM sont bien accessibles lors de la sélection
