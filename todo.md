@@ -137,3 +137,7 @@
 - [x] Restaurer tous les champs de personnalisation des plats (ingrédients, allergènes, badges diététiques, valeurs nutritionnelles)
 - [x] Vérifier que les dashboards super admin et restaurateur sont identiques (PreviewRestaurantDashboard redirige vers RestaurantDashboard)
 - [x] S'assurer que le super admin peut gérer tous les éléments à la place du restaurateur (même composant utilisé)
+- [x] Vérifier que les allergènes, ingrédients et valeurs nutritionnelles s'affichent correctement sur les pages publiques
+- [x] Ajouter l'upload d'images pour les plats (comme pour les catégories)
+- [ ] Ajouter la sélection d'emojis pour les plats (optionnel, comme alternative aux images)
+- [x] S'assurer que TOUT est strictement identique entre le dashboard et l'affichage public

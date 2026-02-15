@@ -36,6 +36,7 @@ export default function RestaurantDashboard() {
   const [editingItem, setEditingItem] = useState<any>(null);
   const [selectedEmoji, setSelectedEmoji] = useState("🍴");
   const [categoryImageUrl, setCategoryImageUrl] = useState("");
+  const [itemImageUrl, setItemImageUrl] = useState("");
 
   // Drag & Drop sensors
   const sensors = useSensors(
@@ -233,6 +234,7 @@ export default function RestaurantDashboard() {
       name: formData.get("name") as string,
       description: formData.get("description") as string,
       price: formData.get("price") as string,
+      imageUrl: itemImageUrl || undefined,
       isVegetarian: formData.get("isVegetarian") === "on",
       isVegan: formData.get("isVegan") === "on",
       isGlutenFree: formData.get("isGlutenFree") === "on",
@@ -240,6 +242,7 @@ export default function RestaurantDashboard() {
       allergens,
       nutritionalInfo,
     });
+    setItemImageUrl(""); // Reset after creation
   };
 
   const handleEditCategory = (category: any) => {
@@ -266,6 +269,7 @@ export default function RestaurantDashboard() {
 
   const handleEditItem = (item: any) => {
     setEditingItem(item);
+    setItemImageUrl(item.imageUrl || "");
     setIsEditItemOpen(true);
   };
 
@@ -295,6 +299,7 @@ export default function RestaurantDashboard() {
         name: formData.get("name") as string,
         description: formData.get("description") as string,
         price: formData.get("price") as string,
+        imageUrl: itemImageUrl || undefined,
         isVegetarian: formData.get("isVegetarian") === "on",
         isVegan: formData.get("isVegan") === "on",
         isGlutenFree: formData.get("isGlutenFree") === "on",
@@ -779,6 +784,12 @@ export default function RestaurantDashboard() {
                   </div>
                 </div>
               </div>
+
+              <ImageUploader
+                label="Image du plat"
+                currentImageUrl={itemImageUrl}
+                onUploadComplete={setItemImageUrl}
+              />
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setIsAddItemOpen(false)}>
@@ -996,6 +1007,12 @@ export default function RestaurantDashboard() {
                   </div>
                 </div>
               </div>
+
+              <ImageUploader
+                label="Image du plat"
+                currentImageUrl={itemImageUrl}
+                onUploadComplete={setItemImageUrl}
+              />
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setIsEditItemOpen(false)}>
