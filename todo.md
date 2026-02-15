@@ -312,3 +312,19 @@
 - [x] Vérifier que les nouveaux champs existent bien dans la BDD
 - [x] Corriger la requête SQL qui échoue dans le Super Admin (colonne featuresEnabled manquante)
 - [x] Tester l'accès au Super Admin
+
+
+### PHASE 4 : GESTION DES HORAIRES (PREMIUM)
+- [ ] Créer la table `opening_hours` (restaurant_id, day_of_week, open_time, close_time, is_closed)
+- [ ] Créer les procédures tRPC pour gérer les horaires
+- [ ] Dashboard restaurateur : onglet "Horaires" pour configurer les horaires d'ouverture
+- [ ] Afficher les horaires sur la page d'accueil (RestaurantHomePage)
+
+### PHASE 8 : DASHBOARD PREMIUM - GESTION COMPLÈTE DU MINI-SITE
+- [ ] Onglet "Page d'accueil" : éditer le contenu du hero, qui sommes-nous, etc.
+- [ ] Onglet "Horaires" : gérer les horaires d'ouverture (déjà dans Phase 4)
+- [ ] Onglet "Réservations" : gérer les zones, voir les réservations (déjà dans Phase 5)
+- [ ] Onglet "Événements" : créer et gérer les événements (déjà dans Phase 6)
+- [ ] Onglet "Traductions" : corriger les traductions automatiques (déjà dans Phase 3)
+- [ ] Restrictions visuelles : griser les onglets inaccessibles avec cadenas doré
+- [ ] Toggle ON/OFF pour activer/désactiver les fonctionnalités (ex: événements)

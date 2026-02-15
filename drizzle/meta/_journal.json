@@ -43,6 +43,13 @@
       "when": 1771176112241,
       "tag": "0005_closed_shaman",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "5",
+      "when": 1771177558623,
+      "tag": "0006_opposite_kronos",
+      "breakpoints": true
     }
   ]
 }

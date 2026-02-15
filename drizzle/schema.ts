@@ -216,3 +216,24 @@ export const advertisements = mysqlTable("advertisements", {
 
 export type Advertisement = typeof advertisements.$inferSelect;
 export type InsertAdvertisement = typeof advertisements.$inferInsert;
+
+
+/**
+ * Translations table - stores translations for menu items, categories, and restaurant info
+ */
+export const translations = mysqlTable("translations", {
+  id: int("id").autoincrement().primaryKey(),
+  restaurantId: int("restaurantId").notNull(), // Reference to restaurants table
+  entityType: mysqlEnum("entityType", ["restaurant", "category", "item"]).notNull(), // Type d'entité traduite
+  entityId: int("entityId").notNull(), // ID de l'entité (restaurant, category, ou item)
+  field: varchar("field", { length: 100 }).notNull(), // Champ traduit (name, description, etc.)
+  language: mysqlEnum("language", ["fr", "en", "it", "de", "es"]).notNull(), // Langue cible
+  originalText: text("originalText").notNull(), // Texte original (français)
+  translatedText: text("translatedText").notNull(), // Texte traduit
+  isAutoTranslated: boolean("isAutoTranslated").default(true).notNull(), // Traduit automatiquement ou manuellement corrigé
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Translation = typeof translations.$inferSelect;
+export type InsertTranslation = typeof translations.$inferInsert;
