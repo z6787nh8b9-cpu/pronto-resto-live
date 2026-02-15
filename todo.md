@@ -148,3 +148,8 @@
 - [x] Corriger l'erreur API getChatbotConfig qui retourne undefined
 - [x] Améliorer le responsive du header du dashboard (chevauchement sur mobile)
 - [x] Améliorer le responsive général pour rendre le dashboard parfait sur mobile
+- [x] CRITIQUE : Ajouter bouton de fermeture (X) visible dans le dialog de modification de plat
+- [x] CRITIQUE : Rendre le bouton "Enregistrer" visible et accessible en bas du dialog de modification de plat
+- [x] CRITIQUE : Corriger le responsive mobile du header (chevauchement titre/boutons)
+- [x] CRITIQUE : Corriger le responsive mobile de tous les éléments (textes coupés, layout cassé)
+- [x] CRITIQUE : Tester tous les dialogs sur desktop et mobile avant livraison

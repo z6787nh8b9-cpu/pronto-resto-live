@@ -355,21 +355,22 @@ export default function RestaurantDashboard() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b bg-card">
-        <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div className="flex-1 min-w-0">
-              <h1 className="text-xl sm:text-2xl font-display font-bold text-pronto-primary truncate">{restaurant.name}</h1>
-              <p className="text-sm text-muted-foreground">Dashboard Restaurateur</p>
-            </div>
-            <div className="flex flex-wrap gap-2 w-full sm:w-auto">
-              <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
-                <Eye className="mr-2 h-4 w-4" />
-                <span className="hidden sm:inline">Voir la page publique</span>
-                <span className="sm:hidden">Aperçu</span>
-              </Button>
-              <Badge variant={restaurant.subscriptionPlan === "premium" ? "default" : "secondary"} className="flex-shrink-0">
+        <div className="container max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-4">
+          <div className="flex flex-col gap-3">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex-1 min-w-0">
+                <h1 className="text-lg sm:text-xl md:text-2xl font-display font-bold text-pronto-primary truncate">{restaurant.name}</h1>
+                <p className="text-xs sm:text-sm text-muted-foreground">Dashboard Restaurateur</p>
+              </div>
+              <Badge variant={restaurant.subscriptionPlan === "premium" ? "default" : "secondary"} className="flex-shrink-0 text-xs">
                 {restaurant.subscriptionPlan === "premium" ? "Premium" : "Basic"}
               </Badge>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
+                <Eye className="mr-1 sm:mr-2 h-4 w-4" />
+                <span className="text-xs sm:text-sm">Aperçu</span>
+              </Button>
             </div>
           </div>
         </div>
@@ -766,7 +767,7 @@ export default function RestaurantDashboard() {
 
               <div className="space-y-2">
                 <Label>Valeurs Nutritionnelles (optionnel)</Label>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   <div>
                     <Label htmlFor="calories" className="text-xs">Calories</Label>
                     <Input id="calories" name="calories" type="number" placeholder="kcal" />
@@ -856,18 +857,14 @@ export default function RestaurantDashboard() {
 
       {/* Edit Item Dialog */}
       <Dialog open={isEditItemOpen} onOpenChange={setIsEditItemOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Modifier le Plat</DialogTitle>
             <DialogDescription>Modifiez les informations du plat</DialogDescription>
-            <DialogClose className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
-              <span className="sr-only">Fermer</span>
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </DialogClose>
           </DialogHeader>
           <form onSubmit={handleUpdateItem}>
             <div className="space-y-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="edit-item-name">Nom du plat *</Label>
                   <Input
@@ -966,7 +963,7 @@ export default function RestaurantDashboard() {
 
               <div className="space-y-2">
                 <Label>Valeurs Nutritionnelles (optionnel)</Label>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                   <div>
                     <Label htmlFor="edit-calories" className="text-xs">Calories</Label>
                     <Input
