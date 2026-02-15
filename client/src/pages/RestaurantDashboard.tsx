@@ -355,23 +355,39 @@ export default function RestaurantDashboard() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b bg-card">
-        <div className="container max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-4">
-          <div className="flex flex-col gap-3">
-            <div className="flex items-center justify-between gap-2">
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+          {/* Mobile: tout en vertical */}
+          <div className="flex flex-col gap-3 sm:hidden">
+            <div className="flex items-start justify-between gap-2">
               <div className="flex-1 min-w-0">
-                <h1 className="text-lg sm:text-xl md:text-2xl font-display font-bold text-pronto-primary truncate">{restaurant.name}</h1>
-                <p className="text-xs sm:text-sm text-muted-foreground">Dashboard Restaurateur</p>
+                <h1 className="text-base font-display font-bold text-pronto-primary break-words leading-tight">{restaurant.name}</h1>
+                <p className="text-xs text-muted-foreground mt-1">Dashboard Restaurateur</p>
               </div>
-              <Badge variant={restaurant.subscriptionPlan === "premium" ? "default" : "secondary"} className="flex-shrink-0 text-xs">
+              <Badge variant={restaurant.subscriptionPlan === "premium" ? "default" : "secondary"} className="flex-shrink-0 text-xs px-2 py-0.5">
                 {restaurant.subscriptionPlan === "premium" ? "Premium" : "Basic"}
               </Badge>
             </div>
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="flex-1 sm:flex-none">
-                <Eye className="mr-1 sm:mr-2 h-4 w-4" />
-                <span className="text-xs sm:text-sm">Aperçu</span>
-              </Button>
+            <Button variant="outline" size="sm" className="w-full" onClick={() => window.open(`/${restaurant.slug}`, '_blank')}>
+              <Eye className="mr-2 h-4 w-4" />
+              <span className="text-xs">Voir la page publique</span>
+            </Button>
+          </div>
+
+          {/* Desktop: layout horizontal */}
+          <div className="hidden sm:flex flex-col gap-3">
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex-1 min-w-0">
+                <h1 className="text-xl md:text-2xl font-display font-bold text-pronto-primary truncate">{restaurant.name}</h1>
+                <p className="text-sm text-muted-foreground">Gestion du Restaurant (Super Admin)</p>
+              </div>
+              <Badge variant={restaurant.subscriptionPlan === "premium" ? "default" : "secondary"} className="flex-shrink-0">
+                {restaurant.subscriptionPlan === "premium" ? "Premium" : "Basic"}
+              </Badge>
             </div>
+            <Button variant="outline" size="sm" className="w-fit" onClick={() => window.open(`/${restaurant.slug}`, '_blank')}>
+              <Eye className="mr-2 h-4 w-4" />
+              Voir la page publique
+            </Button>
           </div>
         </div>
       </header>

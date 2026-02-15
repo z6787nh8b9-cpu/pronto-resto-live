@@ -153,3 +153,36 @@
 - [x] CRITIQUE : Corriger le responsive mobile du header (chevauchement titre/boutons)
 - [x] CRITIQUE : Corriger le responsive mobile de tous les éléments (textes coupés, layout cassé)
 - [x] CRITIQUE : Tester tous les dialogs sur desktop et mobile avant livraison
+
+## Drag & Drop Implementation (EN PAUSE - PRIORITÉ RESPONSIVE)
+- [x] Ajouter le champ displayOrder (integer) à la table menuCategories (déjà présent)
+- [x] Ajouter le champ displayOrder (integer) à la table menuItems (déjà présent)
+- [x] Générer et appliquer la migration SQL pour les nouveaux champs (déjà fait)
+- [x] Mettre à jour les queries tRPC pour trier par displayOrder (déjà fait)
+- [x] Créer la mutation reorderCategories dans le router restaurant (déjà présente)
+- [x] Créer la mutation reorderItems dans le router restaurant (déjà présente)
+- [ ] Implémenter DndContext pour les catégories dans RestaurantDashboard
+- [ ] Implémenter SortableContext et useSortable pour les catégories
+- [ ] Implémenter DndContext pour les plats dans RestaurantDashboard
+- [ ] Implémenter SortableContext et useSortable pour les plats
+- [ ] Ajouter les poignées visuelles de drag (GripVertical) avec curseur grab
+- [ ] Tester le drag & drop des catégories
+- [ ] Tester le drag & drop des plats dans chaque catégorie
+
+## RESPONSIVE MOBILE CRITIQUE (PRIORITÉ ABSOLUE)
+- [x] Corriger le header du dashboard restaurateur : titre déborde complètement
+- [x] Corriger le chevauchement titre/boutons dans le header
+- [x] Revoir complètement la structure du header mobile (layout vertical avec sm:hidden/hidden sm:flex)
+- [x] Corriger le tableau Super Admin : colonnes trop larges, pas de scroll
+- [x] Ajouter overflow-x-auto sur les tableaux
+- [x] Réduire les paddings/margins sur mobile (px-4 sm:px-6)
+- [x] Utiliser breakpoints Tailwind corrects (text-base sur mobile, text-xl md:text-2xl sur desktop)
+- [x] Stats cards responsive (grid-cols-1 sm:grid-cols-2 md:grid-cols-3)
+- [x] Badge compact sur mobile (text-xs px-2 py-0.5)
+- [x] Bouton pleine largeur sur mobile (w-full), fit sur desktop (w-fit)
+
+## CORRECTION SCROLL TABLEAU (EN COURS)
+- [x] Corriger le scroll horizontal du tableau Super Admin qui déborde toujours sur mobile
+- [x] Enlever les paddings du CardContent et les mettre dans la div overflow-x-auto
+- [x] Ajouter min-w-[640px] sur le Table pour forcer une largeur minimale
+- [ ] Tester le scroll sur mobile réel (en attente de test utilisateur)

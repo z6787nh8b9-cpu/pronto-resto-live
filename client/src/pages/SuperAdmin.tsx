@@ -96,8 +96,8 @@ export default function SuperAdmin() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b bg-card">
-        <div className="container py-6">
-          <div className="flex items-center justify-between">
+        <div className="container px-4 sm:px-6 py-4 sm:py-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <h1 className="text-3xl font-display font-bold text-pronto-primary">PRONTO</h1>
               <p className="text-muted-foreground">Super Admin Dashboard</p>
@@ -110,9 +110,9 @@ export default function SuperAdmin() {
         </div>
       </header>
 
-      <main className="container py-8">
-        {/* Statistics Cards */}
-        <div className="grid gap-6 md:grid-cols-3 mb-8">
+      <main className="container px-4 sm:px-6 py-6">
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Restaurants Actifs</CardTitle>
@@ -153,8 +153,9 @@ export default function SuperAdmin() {
             <CardTitle>Liste des Restaurants</CardTitle>
             <CardDescription>Gérez tous les restaurants de la plateforme</CardDescription>
           </CardHeader>
-          <CardContent>
-            <Table>
+          <CardContent className="p-0">
+            <div className="overflow-x-auto px-4 sm:px-6 py-4 sm:py-6">
+            <Table className="min-w-[640px]">
               <TableHeader>
                 <TableRow>
                   <TableHead>Nom</TableHead>
@@ -227,6 +228,7 @@ export default function SuperAdmin() {
                 ))}
               </TableBody>
             </Table>
+            </div>
           </CardContent>
         </Card>
       </main>
