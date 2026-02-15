@@ -306,3 +306,9 @@
 - [ ] Tester le flow de réservation complet
 - [ ] Tester la création d'événements et l'inscription
 - [ ] Vérifier le responsive mobile sur toutes les nouvelles pages
+
+
+## 🐛 CORRECTION ERREUR SQL SUPER ADMIN
+- [x] Vérifier que les nouveaux champs existent bien dans la BDD
+- [x] Corriger la requête SQL qui échoue dans le Super Admin (colonne featuresEnabled manquante)
+- [x] Tester l'accès au Super Admin
