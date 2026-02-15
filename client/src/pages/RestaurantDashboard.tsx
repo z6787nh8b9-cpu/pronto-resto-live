@@ -210,6 +210,23 @@ export default function RestaurantDashboard() {
   const handleCreateItem = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
+    
+    // Parse allergens from comma-separated string
+    const allergensStr = formData.get("allergens") as string;
+    const allergens = allergensStr ? allergensStr.split(',').map(a => a.trim()).filter(Boolean) : [];
+    
+    // Parse nutritional info
+    const calories = formData.get("calories") as string;
+    const protein = formData.get("protein") as string;
+    const carbs = formData.get("carbs") as string;
+    const fat = formData.get("fat") as string;
+    const nutritionalInfo = (calories || protein || carbs || fat) ? {
+      calories: calories ? Number(calories) : undefined,
+      protein: protein ? Number(protein) : undefined,
+      carbs: carbs ? Number(carbs) : undefined,
+      fat: fat ? Number(fat) : undefined,
+    } : undefined;
+    
     createItemMutation.mutate({
       categoryId: selectedCategory!,
       restaurantId: restaurant!.id,
@@ -219,6 +236,9 @@ export default function RestaurantDashboard() {
       isVegetarian: formData.get("isVegetarian") === "on",
       isVegan: formData.get("isVegan") === "on",
       isGlutenFree: formData.get("isGlutenFree") === "on",
+      ingredients: formData.get("ingredients") as string || undefined,
+      allergens,
+      nutritionalInfo,
     });
   };
 
@@ -252,6 +272,23 @@ export default function RestaurantDashboard() {
   const handleUpdateItem = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
+    
+    // Parse allergens from comma-separated string
+    const allergensStr = formData.get("allergens") as string;
+    const allergens = allergensStr ? allergensStr.split(',').map(a => a.trim()).filter(Boolean) : [];
+    
+    // Parse nutritional info
+    const calories = formData.get("calories") as string;
+    const protein = formData.get("protein") as string;
+    const carbs = formData.get("carbs") as string;
+    const fat = formData.get("fat") as string;
+    const nutritionalInfo = (calories || protein || carbs || fat) ? {
+      calories: calories ? Number(calories) : undefined,
+      protein: protein ? Number(protein) : undefined,
+      carbs: carbs ? Number(carbs) : undefined,
+      fat: fat ? Number(fat) : undefined,
+    } : undefined;
+    
     updateItemMutation.mutate({
       id: editingItem.id,
       data: {
@@ -262,6 +299,9 @@ export default function RestaurantDashboard() {
         isVegan: formData.get("isVegan") === "on",
         isGlutenFree: formData.get("isGlutenFree") === "on",
         isFeatured: formData.get("isFeatured") === "on",
+        ingredients: formData.get("ingredients") as string || undefined,
+        allergens,
+        nutritionalInfo,
       },
     });
   };
@@ -707,6 +747,38 @@ export default function RestaurantDashboard() {
                   <Label htmlFor="gf">Sans gluten</Label>
                 </div>
               </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="item-ingredients">Ingrédients</Label>
+                <Textarea id="item-ingredients" name="ingredients" rows={2} placeholder="Liste des ingrédients séparés par des virgules" />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="item-allergens">Allergènes</Label>
+                <Input id="item-allergens" name="allergens" placeholder="Ex: gluten, lactose, fruits à coque (séparés par des virgules)" />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Valeurs Nutritionnelles (optionnel)</Label>
+                <div className="grid grid-cols-4 gap-2">
+                  <div>
+                    <Label htmlFor="calories" className="text-xs">Calories</Label>
+                    <Input id="calories" name="calories" type="number" placeholder="kcal" />
+                  </div>
+                  <div>
+                    <Label htmlFor="protein" className="text-xs">Protéines</Label>
+                    <Input id="protein" name="protein" type="number" step="0.1" placeholder="g" />
+                  </div>
+                  <div>
+                    <Label htmlFor="carbs" className="text-xs">Glucides</Label>
+                    <Input id="carbs" name="carbs" type="number" step="0.1" placeholder="g" />
+                  </div>
+                  <div>
+                    <Label htmlFor="fat" className="text-xs">Lipides</Label>
+                    <Input id="fat" name="fat" type="number" step="0.1" placeholder="g" />
+                  </div>
+                </div>
+              </div>
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setIsAddItemOpen(false)}>
@@ -852,6 +924,76 @@ export default function RestaurantDashboard() {
                     className="rounded"
                   />
                   <Label htmlFor="edit-featured">⭐ Plat en favori</Label>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="edit-item-ingredients">Ingrédients</Label>
+                <Textarea
+                  id="edit-item-ingredients"
+                  name="ingredients"
+                  defaultValue={editingItem?.ingredients || ""}
+                  rows={2}
+                  placeholder="Liste des ingrédients séparés par des virgules"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="edit-item-allergens">Allergènes</Label>
+                <Input
+                  id="edit-item-allergens"
+                  name="allergens"
+                  defaultValue={editingItem?.allergens?.join(', ') || ""}
+                  placeholder="Ex: gluten, lactose, fruits à coque (séparés par des virgules)"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Valeurs Nutritionnelles (optionnel)</Label>
+                <div className="grid grid-cols-4 gap-2">
+                  <div>
+                    <Label htmlFor="edit-calories" className="text-xs">Calories</Label>
+                    <Input
+                      id="edit-calories"
+                      name="calories"
+                      type="number"
+                      defaultValue={editingItem?.nutritionalInfo?.calories || ""}
+                      placeholder="kcal"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-protein" className="text-xs">Protéines</Label>
+                    <Input
+                      id="edit-protein"
+                      name="protein"
+                      type="number"
+                      step="0.1"
+                      defaultValue={editingItem?.nutritionalInfo?.protein || ""}
+                      placeholder="g"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-carbs" className="text-xs">Glucides</Label>
+                    <Input
+                      id="edit-carbs"
+                      name="carbs"
+                      type="number"
+                      step="0.1"
+                      defaultValue={editingItem?.nutritionalInfo?.carbs || ""}
+                      placeholder="g"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="edit-fat" className="text-xs">Lipides</Label>
+                    <Input
+                      id="edit-fat"
+                      name="fat"
+                      type="number"
+                      step="0.1"
+                      defaultValue={editingItem?.nutritionalInfo?.fat || ""}
+                      placeholder="g"
+                    />
+                  </div>
                 </div>
               </div>
             </div>

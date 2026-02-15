@@ -134,3 +134,6 @@
 - [x] Créer un vrai uploader d'images avec drag & drop et import depuis la pellicule
 - [x] Synchroniser le dashboard accessible depuis la nav temporaire et celui depuis le super admin
 - [ ] Implémenter le drag & drop fonctionnel pour réorganiser les catégories et plats
+- [x] Restaurer tous les champs de personnalisation des plats (ingrédients, allergènes, badges diététiques, valeurs nutritionnelles)
+- [x] Vérifier que les dashboards super admin et restaurateur sont identiques (PreviewRestaurantDashboard redirige vers RestaurantDashboard)
+- [x] S'assurer que le super admin peut gérer tous les éléments à la place du restaurateur (même composant utilisé)
