@@ -198,3 +198,12 @@
 - [x] Refactoriser SuperAdmin avec ResponsiveHeader et ResponsiveTable
 - [ ] Tester sur mobile réel (en attente de test utilisateur)
 - [x] Documenter le système (commentaires dans les composants)
+
+## CORRECTION RESTAURANT DASHBOARD MOBILE (URGENT)
+- [x] Remplacer VRAIMENT le header actuel par ResponsiveHeader avec backButton
+- [x] Corriger le titre "Hôtel des Nacres" qui déborde (ResponsiveHeader avec truncate)
+- [x] Corriger le bouton "Retour au Super Admin" responsive (backButton dans ResponsiveHeader)
+- [x] Corriger les cards de plats qui débordent (layout vertical mobile, horizontal desktop)
+- [x] Réduire les espacements inutiles (p-2 sur mobile, p-3 sur desktop)
+- [x] Aligner correctement les boutons d'édition/suppression sur mobile (h-7 w-7 p-0)
+- [ ] Tester sur mobile réel (en attente de test utilisateur)

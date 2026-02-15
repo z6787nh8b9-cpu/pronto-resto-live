@@ -368,6 +368,10 @@ export default function RestaurantDashboard() {
           onClick: () => window.open(`/${restaurant.slug}`, '_blank'),
           icon: <Eye className="h-4 w-4" />,
         }}
+        backButton={{
+          label: "Super Admin",
+          onClick: () => window.location.href = '/admin',
+        }}
       />
 
       <main className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -473,63 +477,123 @@ export default function RestaurantDashboard() {
                       {menuItems
                         ?.filter((item) => item.categoryId === category.id)
                         .map((item) => (
-                          <div
-                            key={item.id}
-                            className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50"
-                          >
-                            <div className="flex items-center gap-3">
-                              <GripVertical className="h-4 w-4 text-muted-foreground cursor-move" />
-                              <div>
-                                <div className="flex items-center gap-2">
-                                  <span className="font-medium">{item.name}</span>
-                                  {item.isVegetarian && (
-                                    <Badge variant="outline" className="text-xs">
-                                      🌱 Végé
-                                    </Badge>
-                                  )}
-                                  {item.isVegan && (
-                                    <Badge variant="outline" className="text-xs">
-                                      🌿 Vegan
-                                    </Badge>
-                                  )}
-                                  {item.isGlutenFree && (
-                                    <Badge variant="outline" className="text-xs">
-                                      Sans gluten
-                                    </Badge>
+                          <div key={item.id} className="border rounded-lg hover:bg-accent/50">
+                            {/* Mobile: Layout vertical */}
+                            <div className="flex flex-col gap-2 p-2 sm:hidden">
+                              <div className="flex items-start gap-2">
+                                <GripVertical className="h-4 w-4 text-muted-foreground cursor-move shrink-0 mt-0.5" />
+                                <div className="min-w-0 flex-1">
+                                  <div className="flex items-center gap-1 flex-wrap">
+                                    <span className="font-medium text-sm truncate">{item.name}</span>
+                                    {item.isVegetarian && (
+                                      <Badge variant="outline" className="text-xs px-1 py-0">
+                                        🌱
+                                      </Badge>
+                                    )}
+                                    {item.isVegan && (
+                                      <Badge variant="outline" className="text-xs px-1 py-0">
+                                        🌿
+                                      </Badge>
+                                    )}
+                                    {item.isGlutenFree && (
+                                      <Badge variant="outline" className="text-xs px-1 py-0">
+                                        GF
+                                      </Badge>
+                                    )}
+                                  </div>
+                                  {item.description && (
+                                    <p className="text-xs text-muted-foreground line-clamp-1">{item.description}</p>
                                   )}
                                 </div>
-                                {item.description && (
-                                  <p className="text-sm text-muted-foreground">{item.description}</p>
-                                )}
+                                <span className="font-semibold text-sm text-pronto-primary shrink-0">{item.price}€</span>
                               </div>
-                            </div>
-                            <div className="flex items-center gap-4">
-                              <span className="font-semibold text-pronto-primary">{item.price}€</span>
-                              <div className="flex gap-1">
+                              <div className="flex gap-1 justify-end">
                                 <Button
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => handleToggleFeatured(item.id, item.isFeatured || false)}
                                   title={item.isFeatured ? "Retirer des favoris" : "Mettre en favori"}
+                                  className="h-7 w-7 p-0"
                                 >
                                   <Star
-                                    className={`h-4 w-4 ${item.isFeatured ? "fill-yellow-400 text-yellow-400" : ""}`}
+                                    className={`h-3 w-3 ${item.isFeatured ? "fill-yellow-400 text-yellow-400" : ""}`}
                                   />
                                 </Button>
                                 <Button
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => handleEditItem(item)}
+                                  className="h-7 w-7 p-0"
                                 >
-                                  <Edit className="h-4 w-4" />
+                                  <Edit className="h-3 w-3" />
                                 </Button>
                                 <Button
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => handleDeleteItem(item.id)}
+                                  className="h-7 w-7 p-0"
                                 >
-                                  <Trash2 className="h-4 w-4 text-destructive" />
+                                  <Trash2 className="h-3 w-3 text-destructive" />
                                 </Button>
+                              </div>
+                            </div>
+                            
+                            {/* Desktop: Layout horizontal */}
+                            <div className="hidden sm:flex items-center justify-between p-3">
+                              <div className="flex items-center gap-3">
+                                <GripVertical className="h-4 w-4 text-muted-foreground cursor-move" />
+                                <div>
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-medium">{item.name}</span>
+                                    {item.isVegetarian && (
+                                      <Badge variant="outline" className="text-xs">
+                                        🌱 Végé
+                                      </Badge>
+                                    )}
+                                    {item.isVegan && (
+                                      <Badge variant="outline" className="text-xs">
+                                        🌿 Vegan
+                                      </Badge>
+                                    )}
+                                    {item.isGlutenFree && (
+                                      <Badge variant="outline" className="text-xs">
+                                        Sans gluten
+                                      </Badge>
+                                    )}
+                                  </div>
+                                  {item.description && (
+                                    <p className="text-sm text-muted-foreground">{item.description}</p>
+                                  )}
+                                </div>
+                              </div>
+                              <div className="flex items-center gap-4">
+                                <span className="font-semibold text-pronto-primary">{item.price}€</span>
+                                <div className="flex gap-1">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleToggleFeatured(item.id, item.isFeatured || false)}
+                                    title={item.isFeatured ? "Retirer des favoris" : "Mettre en favori"}
+                                  >
+                                    <Star
+                                      className={`h-4 w-4 ${item.isFeatured ? "fill-yellow-400 text-yellow-400" : ""}`}
+                                    />
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleEditItem(item)}
+                                  >
+                                    <Edit className="h-4 w-4" />
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleDeleteItem(item.id)}
+                                  >
+                                    <Trash2 className="h-4 w-4 text-destructive" />
+                                  </Button>
+                                </div>
                               </div>
                             </div>
                           </div>
