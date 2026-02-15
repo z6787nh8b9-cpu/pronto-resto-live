@@ -224,7 +224,7 @@ export default function AdminManageRestaurant() {
         <div className="container py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
-              <Button variant="ghost" size="sm" onClick={() => setLocation("/")}>
+              <Button variant="ghost" size="sm" onClick={() => setLocation("/admin/super")}>
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Retour au Super Admin
               </Button>

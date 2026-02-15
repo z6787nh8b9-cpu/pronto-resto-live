@@ -227,3 +227,7 @@
 - [x] Appeler les mutations tRPC reorderCategories et reorderItems
 - [x] Désactiver les boutons quand le déplacement n'est pas possible (premier/dernier élément)
 - [ ] Tester la réorganisation complète (en attente de test utilisateur)
+
+## CORRECTION LIEN RETOUR SUPER ADMIN
+- [x] Corriger le lien du bouton "Retour au Super Admin" qui redirige vers /admin (404)
+- [x] Changer la redirection vers /admin/super
