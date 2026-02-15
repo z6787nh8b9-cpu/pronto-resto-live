@@ -25,9 +25,12 @@ export default function SuperAdmin() {
   const [, setLocation] = useLocation();
   const { user, loading } = useAuth();
 
+  // MODE DÉVELOPPEMENT : Accès sans authentification
+  const isDev = import.meta.env.DEV;
+
   // Queries - MUST be before any conditional returns (React hooks rules)
-  const { data: stats } = trpc.admin.getStats.useQuery(undefined, { enabled: !!user && user.role === 'admin' });
-  const { data: restaurants, refetch } = trpc.admin.listRestaurants.useQuery(undefined, { enabled: !!user && user.role === 'admin' });
+  const { data: stats } = trpc.admin.getStats.useQuery(undefined, { enabled: isDev || (!!user && user.role === 'admin') });
+  const { data: restaurants, refetch } = trpc.admin.listRestaurants.useQuery(undefined, { enabled: isDev || (!!user && user.role === 'admin') });
 
   // Mutations
   const createMutation = trpc.admin.createRestaurant.useMutation({
@@ -63,7 +66,7 @@ export default function SuperAdmin() {
   });
 
   // Redirect if not admin - AFTER all hooks
-  if (loading) {
+  if (!isDev && loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -74,7 +77,7 @@ export default function SuperAdmin() {
     );
   }
 
-  if (!user || user.role !== 'admin') {
+  if (!isDev && (!user || user.role !== 'admin')) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-muted/20">
         <Card className="max-w-md">
