@@ -207,3 +207,9 @@
 - [x] Réduire les espacements inutiles (p-2 sur mobile, p-3 sur desktop)
 - [x] Aligner correctement les boutons d'édition/suppression sur mobile (h-7 w-7 p-0)
 - [ ] Tester sur mobile réel (en attente de test utilisateur)
+
+## CORRECTION LIENS SUPERADMIN
+- [x] Corriger les boutons dans les cards de restaurants pour utiliser les mêmes liens que la nav temporaire
+- [x] Ajouter bouton "🍽️ Public" → ouvrir `/preview/${restaurant.slug}` (page publique)
+- [x] Ajouter bouton "📊 Dashboard" → ouvrir `/preview/${restaurant.slug}/dashboard` (dashboard restaurant)
+- [x] Conserver les boutons "Gérer" et "Modifier" existants

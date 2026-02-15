@@ -221,6 +221,22 @@ export default function SuperAdmin() {
                     <Button
                       variant="outline"
                       size="sm"
+                      onClick={() => window.open(`/preview/${row.slug}`, '_blank')}
+                      className="flex-1 text-xs"
+                    >
+                      🍽️ Public
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => window.open(`/preview/${row.slug}/dashboard`, '_blank')}
+                      className="flex-1 text-xs"
+                    >
+                      📊 Dashboard
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={() => setLocation(`/admin/manage/${row.id}`)}
                       className="flex-1 text-xs"
                     >
