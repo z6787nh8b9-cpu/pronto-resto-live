@@ -173,8 +173,8 @@ export default function SuperAdmin() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => setLocation(`/admin/restaurants/${row.id}`)}
-                      title="Gérer le dashboard"
+                      onClick={() => setLocation(`/${row.slug}/dashboard`)}
+                      title="Ouvrir le dashboard"
                     >
                       <Settings className="h-4 w-4" />
                     </Button>
@@ -235,19 +235,10 @@ export default function SuperAdmin() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => window.open(`/${row.slug}/dashboard`, '_blank')}
+                      onClick={() => setLocation(`/${row.slug}/dashboard`)}
                       className="w-full sm:flex-1 text-xs"
                     >
                       📊 Dashboard
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setLocation(`/admin/restaurants/${row.id}`)}
-                      className="w-full sm:flex-1 text-xs"
-                    >
-                      <Settings className="h-3 w-3 mr-1" />
-                      Gérer
                     </Button>
                     <Button
                       variant="outline"

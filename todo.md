@@ -337,3 +337,17 @@
 - [ ] Onglet "Traductions" : corriger les traductions automatiques (déjà dans Phase 3)
 - [ ] Restrictions visuelles : griser les onglets inaccessibles avec cadenas doré
 - [ ] Toggle ON/OFF pour activer/désactiver les fonctionnalités (ex: événements)
+
+
+## 🐛 CORRECTIONS URGENTES SUPER ADMIN
+- [x] Supprimer le bouton "Gérer" qui renvoie vers l'ancienne version (conflit avec "Dashboard")
+- [x] Corriger le lien du bouton "Dashboard" : doit pointer vers /:slug/dashboard au lieu de l'URL actuelle incorrecte
+
+
+### PHASE 6 : SYSTÈME D'ÉVÉNEMENTS (PREMIUM)
+- [x] Créer les tables (events, event_registrations)
+- [x] Créer le router tRPC pour les événements
+- [x] Créer la page de gestion des événements dans le dashboard
+- [x] Créer le composant EventRegistrationFlow pour l'inscription
+- [x] Afficher les événements sur RestaurantHomePage
+- [x] Intégrer le système d'inscription en ligne

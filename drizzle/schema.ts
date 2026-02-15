@@ -339,3 +339,81 @@ export const reservations = mysqlTable("reservations", {
 
 export type Reservation = typeof reservations.$inferSelect;
 export type InsertReservation = typeof reservations.$inferInsert;
+
+/**
+ * Events table - PREMIUM feature
+ * Allows restaurants to create and manage events
+ */
+export const events = mysqlTable("events", {
+  id: int("id").autoincrement().primaryKey(),
+  restaurantId: int("restaurantId").notNull(),
+  
+  // Event details
+  title: varchar("title", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  imageUrl: text("imageUrl"), // Event cover image
+  
+  // Date and time
+  eventDate: timestamp("eventDate").notNull(), // Date and time of the event
+  duration: int("duration").default(120).notNull(), // Duration in minutes
+  
+  // Capacity
+  maxAttendees: int("maxAttendees").notNull(), // Maximum number of attendees
+  currentAttendees: int("currentAttendees").default(0).notNull(), // Current number of registrations
+  
+  // Pricing
+  price: decimal("price", { precision: 10, scale: 2 }).default("0.00").notNull(), // Event price (0 for free events)
+  currency: varchar("currency", { length: 3 }).default("EUR").notNull(),
+  
+  // Status
+  status: mysqlEnum("status", ["draft", "published", "cancelled", "completed"]).default("draft").notNull(),
+  isVisible: boolean("isVisible").default(true).notNull(), // Show/hide on public page
+  
+  // Registration settings
+  requiresApproval: boolean("requiresApproval").default(false).notNull(), // Auto-approve or manual approval
+  registrationDeadline: timestamp("registrationDeadline"), // Last date to register
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Event = typeof events.$inferSelect;
+export type InsertEvent = typeof events.$inferInsert;
+
+/**
+ * Event registrations table - PREMIUM feature
+ * Tracks customer registrations for events
+ */
+export const eventRegistrations = mysqlTable("event_registrations", {
+  id: int("id").autoincrement().primaryKey(),
+  eventId: int("eventId").notNull(),
+  restaurantId: int("restaurantId").notNull(),
+  
+  // Customer information
+  customerName: varchar("customerName", { length: 255 }).notNull(),
+  customerEmail: varchar("customerEmail", { length: 320 }).notNull(),
+  customerPhone: varchar("customerPhone", { length: 20 }).notNull(),
+  
+  // Registration details
+  numberOfPeople: int("numberOfPeople").default(1).notNull(), // Number of people in this registration
+  specialRequests: text("specialRequests"), // Special requests or dietary restrictions
+  
+  // Status
+  status: mysqlEnum("status", ["pending", "confirmed", "cancelled", "attended", "no_show"]).default("pending").notNull(),
+  
+  // Payment (for paid events)
+  paymentStatus: mysqlEnum("paymentStatus", ["pending", "paid", "refunded"]).default("pending").notNull(),
+  paymentAmount: decimal("paymentAmount", { precision: 10, scale: 2 }).default("0.00").notNull(),
+  
+  // Confirmation
+  confirmationToken: varchar("confirmationToken", { length: 100 }), // Token for email confirmation
+  confirmedAt: timestamp("confirmedAt"),
+  cancelledAt: timestamp("cancelledAt"),
+  cancellationReason: text("cancellationReason"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type EventRegistration = typeof eventRegistrations.$inferSelect;
+export type InsertEventRegistration = typeof eventRegistrations.$inferInsert;

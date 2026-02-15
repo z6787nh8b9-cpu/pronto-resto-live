@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { MessageCircle, Phone, MapPin, Mail, Clock, Calendar, X, Send, ChevronRight, CalendarDays } from "lucide-react";
+import { MessageCircle, Phone, MapPin, Mail, Clock, Calendar, X, Send, ChevronRight, CalendarDays, Users } from "lucide-react";
 import { useParams, useLocation } from "wouter";
 import { toast } from "sonner";
 import { nanoid } from "nanoid";
@@ -13,6 +13,7 @@ import ReactMarkdown from "react-markdown";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { useTranslation } from "@/hooks/useTranslation";
 import { ReservationFlow } from "@/components/ReservationFlow";
+import { EventRegistrationFlow } from "@/components/EventRegistrationFlow";
 
 export default function RestaurantHomePage() {
   const params: { slug?: string } = useParams();
@@ -20,6 +21,8 @@ export default function RestaurantHomePage() {
   const slug = params.slug || "";
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isReservationOpen, setIsReservationOpen] = useState(false);
+  const [isEventRegistrationOpen, setIsEventRegistrationOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<any>(null);
   const [chatMessages, setChatMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
   const [chatInput, setChatInput] = useState("");
   const [sessionId] = useState(() => nanoid());
@@ -43,6 +46,12 @@ export default function RestaurantHomePage() {
   const { data: openingHours } = trpc.openingHours.getOpeningHours.useQuery(
     { restaurantId: restaurant?.id || 0 },
     { enabled: !!restaurant?.id }
+  );
+
+  // Get public events
+  const { data: events } = trpc.events.getPublicEvents.useQuery(
+    { restaurantId: restaurant?.id || 0 },
+    { enabled: !!restaurant?.id && restaurant?.featuresEnabled?.events }
   );
 
   // Chat mutation
@@ -234,6 +243,86 @@ export default function RestaurantHomePage() {
                 Voir le menu complet
                 <ChevronRight className="ml-2 h-5 w-5" />
               </Button>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Événements */}
+      {restaurant.featuresEnabled?.events && events && events.length > 0 && (
+        <section className="py-16 bg-muted/30">
+          <div className="container">
+            <div className="text-center mb-12">
+              <Badge variant="outline" className="mb-4">Événements à venir</Badge>
+              <h3 className="text-3xl md:text-4xl font-bold mb-4">Rejoignez-nous</h3>
+              <p className="text-muted-foreground max-w-2xl mx-auto">
+                Découvrez nos événements spéciaux et réservez votre place
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {events.map((event) => {
+                const eventDate = new Date(event.eventDate);
+                const availableSpots = event.maxAttendees - event.currentAttendees;
+                const isFull = availableSpots <= 0;
+
+                return (
+                  <Card key={event.id} className="overflow-hidden">
+                    {event.imageUrl && (
+                      <img
+                        src={event.imageUrl}
+                        alt={event.title}
+                        className="w-full h-48 object-cover"
+                      />
+                    )}
+                    <CardContent className="p-6">
+                      <h4 className="text-xl font-semibold mb-2">{event.title}</h4>
+                      <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
+                        {event.description}
+                      </p>
+                      <div className="space-y-2 text-sm mb-4">
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4 text-muted-foreground" />
+                          <span>
+                            {eventDate.toLocaleDateString("fr-FR", {
+                              weekday: "long",
+                              day: "numeric",
+                              month: "long",
+                              year: "numeric",
+                            })}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-4 w-4 text-muted-foreground" />
+                          <span>{eventDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <Users className="h-4 w-4 text-muted-foreground" />
+                            <span>
+                              {availableSpots} place{availableSpots > 1 ? "s" : ""} disponible{availableSpots > 1 ? "s" : ""}
+                            </span>
+                          </div>
+                          {parseFloat(event.price) > 0 && (
+                            <Badge variant="secondary">{event.price}€</Badge>
+                          )}
+                        </div>
+                      </div>
+                      <Button
+                        className="w-full"
+                        style={{ backgroundColor: primaryColor }}
+                        onClick={() => {
+                          setSelectedEvent(event);
+                          setIsEventRegistrationOpen(true);
+                        }}
+                        disabled={isFull}
+                      >
+                        {isFull ? "Complet" : "S'inscrire"}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </div>
         </section>
@@ -442,6 +531,23 @@ export default function RestaurantHomePage() {
             restaurantName={restaurant.name}
             onClose={() => setIsReservationOpen(false)}
           />
+        </DialogContent>
+      </Dialog>
+
+      {/* Event Registration Dialog */}
+      <Dialog open={isEventRegistrationOpen} onOpenChange={setIsEventRegistrationOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Inscription à l'événement</DialogTitle>
+          </DialogHeader>
+          {selectedEvent && (
+            <EventRegistrationFlow 
+              event={selectedEvent}
+              restaurantId={restaurant.id} 
+              restaurantName={restaurant.name}
+              onClose={() => setIsEventRegistrationOpen(false)}
+            />
+          )}
         </DialogContent>
       </Dialog>
     </div>
