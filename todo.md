@@ -218,3 +218,12 @@
 - [x] Les 5 boutons (Public, Dashboard, Gérer, Modifier, Supprimer) dépassent sur mobile dans les cards
 - [x] Passer en layout vertical (flex-col) sur mobile, horizontal (flex-row) sur desktop
 - [x] Ajouter w-full sm:flex-1 pour que les boutons prennent toute la largeur sur mobile
+
+## RÉORGANISATION CATÉGORIES ET PLATS (BOUTONS FLÈCHES)
+- [x] Implémenter la logique de déplacement vers le haut pour les catégories
+- [x] Implémenter la logique de déplacement vers le bas pour les catégories
+- [x] Implémenter la logique de déplacement vers le haut pour les plats
+- [x] Implémenter la logique de déplacement vers le bas pour les plats
+- [x] Appeler les mutations tRPC reorderCategories et reorderItems
+- [x] Désactiver les boutons quand le déplacement n'est pas possible (premier/dernier élément)
+- [ ] Tester la réorganisation complète (en attente de test utilisateur)

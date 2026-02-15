@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Edit, Trash2, GripVertical, ArrowLeft, Eye, MessageSquare, BarChart3 } from "lucide-react";
+import { Plus, Edit, Trash2, GripVertical, ArrowLeft, Eye, MessageSquare, BarChart3, ChevronUp, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 import { ALLERGENS } from "@shared/allergens";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -275,7 +275,40 @@ export default function AdminManageRestaurant() {
                   <CardHeader>
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <GripVertical className="h-5 w-5 text-muted-foreground cursor-move" />
+                        <div className="flex flex-col gap-1">
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-6 w-6"
+                            disabled={categories?.indexOf(category) === 0}
+                            onClick={() => {
+                              const currentIndex = categories!.indexOf(category);
+                              if (currentIndex > 0) {
+                                const newCategoryIds = [...categories!.map(c => c.id)];
+                                [newCategoryIds[currentIndex - 1], newCategoryIds[currentIndex]] = [newCategoryIds[currentIndex], newCategoryIds[currentIndex - 1]];
+                                reorderCategoriesMutation.mutate({ restaurantId, categoryIds: newCategoryIds });
+                              }
+                            }}
+                          >
+                            <ChevronUp className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="ghost"
+                            className="h-6 w-6"
+                            disabled={categories?.indexOf(category) === categories!.length - 1}
+                            onClick={() => {
+                              const currentIndex = categories!.indexOf(category);
+                              if (currentIndex < categories!.length - 1) {
+                                const newCategoryIds = [...categories!.map(c => c.id)];
+                                [newCategoryIds[currentIndex], newCategoryIds[currentIndex + 1]] = [newCategoryIds[currentIndex + 1], newCategoryIds[currentIndex]];
+                                reorderCategoriesMutation.mutate({ restaurantId, categoryIds: newCategoryIds });
+                              }
+                            }}
+                          >
+                            <ChevronDown className="h-4 w-4" />
+                          </Button>
+                        </div>
                         <div>
                           <CardTitle>{category.name}</CardTitle>
                           {category.description && (
@@ -305,7 +338,42 @@ export default function AdminManageRestaurant() {
                             className="flex items-center justify-between p-3 border rounded-lg hover:bg-accent/50"
                           >
                             <div className="flex items-center gap-3">
-                              <GripVertical className="h-4 w-4 text-muted-foreground cursor-move" />
+                              <div className="flex flex-col gap-1">
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  className="h-6 w-6"
+                                  disabled={menuItems?.filter(i => i.categoryId === category.id).indexOf(item) === 0}
+                                  onClick={() => {
+                                    const categoryItems = menuItems!.filter(i => i.categoryId === category.id);
+                                    const currentIndex = categoryItems.indexOf(item);
+                                    if (currentIndex > 0) {
+                                      const newItemIds = [...categoryItems.map(i => i.id)];
+                                      [newItemIds[currentIndex - 1], newItemIds[currentIndex]] = [newItemIds[currentIndex], newItemIds[currentIndex - 1]];
+                                      reorderItemsMutation.mutate({ categoryId: category.id, itemIds: newItemIds });
+                                    }
+                                  }}
+                                >
+                                  <ChevronUp className="h-3 w-3" />
+                                </Button>
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  className="h-6 w-6"
+                                  disabled={menuItems?.filter(i => i.categoryId === category.id).indexOf(item) === menuItems!.filter(i => i.categoryId === category.id).length - 1}
+                                  onClick={() => {
+                                    const categoryItems = menuItems!.filter(i => i.categoryId === category.id);
+                                    const currentIndex = categoryItems.indexOf(item);
+                                    if (currentIndex < categoryItems.length - 1) {
+                                      const newItemIds = [...categoryItems.map(i => i.id)];
+                                      [newItemIds[currentIndex], newItemIds[currentIndex + 1]] = [newItemIds[currentIndex + 1], newItemIds[currentIndex]];
+                                      reorderItemsMutation.mutate({ categoryId: category.id, itemIds: newItemIds });
+                                    }
+                                  }}
+                                >
+                                  <ChevronDown className="h-3 w-3" />
+                                </Button>
+                              </div>
                               <div>
                                 <div className="flex items-center gap-2">
                                   <span className="font-medium">{item.name}</span>
