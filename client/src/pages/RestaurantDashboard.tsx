@@ -397,7 +397,7 @@ export default function RestaurantDashboard() {
       <main className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
-            <TabsList className="inline-flex sm:grid w-auto sm:w-full grid-cols-10 gap-1 sm:gap-2 min-w-full sm:min-w-0">
+            <TabsList className="inline-flex lg:grid w-auto lg:w-full grid-cols-5 xl:grid-cols-10 gap-1 lg:gap-2 min-w-full lg:min-w-0">
             <TabsTrigger value="menu">Menu</TabsTrigger>
             <TabsTrigger value="settings">Paramètres</TabsTrigger>
             <TabsTrigger value="chatbot">Chatbot IA</TabsTrigger>

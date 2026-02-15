@@ -382,3 +382,6 @@
 ## 🐛 CORRECTION SUPER ADMIN - OFFRE PREMIUM MANQUANTE
 - [x] Ajouter l'option PREMIUM (39€) dans le sélecteur d'abonnement du Super Admin
 - [x] Vérifier que toutes les fonctionnalités PREMIUM sont bien accessibles lors de la sélection
+
+## 🐛 CORRECTION DASHBOARD - CHEVAUCHEMENT ONGLETS DESKTOP
+- [x] Corriger le chevauchement des onglets dans le RestaurantDashboard sur desktop (grille responsive : 5 cols sur tablette, 10 cols sur grand écran)
