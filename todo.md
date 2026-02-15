@@ -231,3 +231,7 @@
 ## CORRECTION LIEN RETOUR SUPER ADMIN
 - [x] Corriger le lien du bouton "Retour au Super Admin" qui redirige vers /admin (404)
 - [x] Changer la redirection vers /admin/super
+
+## REDIRECTION /admin VERS /admin/super
+- [x] Ajouter une route /admin qui redirige automatiquement vers /admin/super
+- [x] Éviter l'erreur 404 quand on accède directement à /admin

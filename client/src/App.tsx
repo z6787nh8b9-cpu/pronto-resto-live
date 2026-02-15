@@ -21,6 +21,7 @@ function Router() {
     return (
       <Switch>
         <Route path="/" component={SuperAdmin} />
+        <Route path="/admin/super" component={SuperAdmin} />
         <Route path="/admin/manage/:id" component={AdminManageRestaurant} />
         <Route path="/preview/:slug" component={PreviewPublicPage} />
         <Route path="/preview/:slug/dashboard" component={PreviewRestaurantDashboard} />
@@ -57,7 +58,13 @@ function Router() {
   return (
     <Switch>
       <Route path="/" component={LandingPage} />
-      <Route path="/admin" component={SuperAdmin} />
+      <Route path="/admin/super" component={SuperAdmin} />
+      <Route path="/admin">
+        {() => {
+          window.location.href = "/admin/super";
+          return null;
+        }}
+      </Route>
       <Route path="/admin/manage/:id" component={AdminManageRestaurant} />
       <Route path="/preview/:slug" component={PreviewPublicPage} />
       <Route path="/preview/:slug/dashboard" component={RestaurantDashboard} />
