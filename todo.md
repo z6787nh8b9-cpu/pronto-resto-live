@@ -764,3 +764,9 @@
 - [x] Ajouter classe btn-glassy aux boutons "Voir une démo", "Essayer gratuitement" (footer), "Contacter l'équipe"
 - [x] Ajouter classe btn-glassy aux 6 cartes de fonctionnalités
 - [x] Animations : liquidGlass (morphing), glassShine (reflet), heroButtonPulse (pulsation)
+
+## 🔧 Corrections animations glassy (16 février 2026)
+- [x] Supprimer l'animation liquidGlass qui causait l'effet pilule bizarre
+- [x] Simplifier btn-hero-special : retirer pulsation et ripple, garder juste reflet subtil
+- [x] Garder uniquement glassShine (reflet lumineux) + translateY + scale au hover
+- [x] Bouton hero maintenant sobre avec juste un léger lift au hover
