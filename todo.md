@@ -732,3 +732,10 @@
 - [x] Extraire les nouvelles images PNG transparentes optimisées
 - [x] Uploader les 4 frames sur S3 CDN (373-381 Ko chacune, 5x plus légères)
 - [x] Remplacer les URLs dans ChatbotWidget.tsx
+
+## 📱 Correction responsive chatbot mobile (16 février 2026)
+- [x] Analyser le problème : fenêtre trop large, mal positionnée sur mobile
+- [x] Rendre la fenêtre pleine largeur sur mobile (left-4 right-4)
+- [x] Conserver la largeur fixe 384px sur desktop (sm:w-96)
+- [x] Ajouter max-h-[85vh] pour éviter débordement vertical
+- [x] Ajuster les marges (bottom-4 sur mobile, bottom-6 sur desktop)

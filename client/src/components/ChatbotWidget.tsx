@@ -124,7 +124,7 @@ export default function ChatbotWidget() {
 
       {/* Fenêtre de chat */}
       {isOpen && (
-        <Card className="fixed bottom-6 right-6 w-96 h-[500px] shadow-2xl z-50 flex flex-col border-2 border-pronto-primary">
+        <Card className="fixed bottom-4 right-4 left-4 sm:left-auto sm:right-6 sm:w-96 sm:bottom-6 h-[500px] max-h-[85vh] shadow-2xl z-50 flex flex-col border-2 border-pronto-primary">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b" style={{ backgroundColor: '#C75B4B' }}>
             <div className="flex items-center gap-2">
