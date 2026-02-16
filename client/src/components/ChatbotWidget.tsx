@@ -72,8 +72,11 @@ export default function ChatbotWidget() {
             <div className="flex items-center gap-2">
               <MessageSquare className="h-5 w-5 text-white" />
               <div>
-                <h3 className="font-semibold text-white">RISE AI™</h3>
-                <p className="text-xs text-white/80">Assistant virtuel PRONTO</p>
+                <h3 className="font-semibold text-white">Assistance PRONTO</h3>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <div className="w-2 h-2 rounded-full bg-green-400"></div>
+                  <p className="text-xs text-white/90">En ligne</p>
+                </div>
               </div>
             </div>
             <Button
@@ -134,6 +137,23 @@ export default function ChatbotWidget() {
               >
                 <Send className="h-4 w-4" />
               </Button>
+            </div>
+            {/* Footer avec mentions légales */}
+            <div className="mt-3 text-center">
+              <p className="text-xs text-muted-foreground">
+                Propulsé par{" "}
+                <a
+                  href="https://agencerise.fr"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium text-pronto-primary hover:underline"
+                >
+                  RISE IA
+                </a>
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Anonyme • Sans rétention de données • Protégé
+              </p>
             </div>
           </div>
         </Card>

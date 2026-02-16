@@ -632,3 +632,9 @@
 - [x] Enrichir le contexte pour rendre le chatbot plus intelligent et contextuel
 - [x] Corriger la couleur du texte dans le champ de saisie (noir au lieu de blanc)
 - [x] Remplacer le bandeau orange par un rouge terra cotta uni (#C75B4B)
+
+## 🎨 Design Chatbot Landing Page
+- [x] Remplacer "RISE AI™" par "Assistance PRONTO" dans le header
+- [x] Ajouter point vert + "En ligne" sous le titre
+- [x] Ajouter footer avec "Propulsé par RISE IA" (lien agencerise.fr)
+- [x] Ajouter mentions "Anonyme • Sans rétention de données • Protégé"
