@@ -671,3 +671,6 @@
 
 ## 🎨 Agrandissement logo Super Admin
 - [x] Agrandir le logo dans ResponsiveHeader (h-12 sm:h-16)
+
+## 🎨 Doublement taille logo Super Admin
+- [x] Doubler la taille du logo (h-24 sm:h-32)
