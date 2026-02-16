@@ -11,7 +11,7 @@ export default function LandingPage() {
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src="/pronto-logo-horizontal.png" alt="PRONTO - Fini les 5 outils. Un seul suffit." className="h-10" />
+            <img src="/pronto-logo-horizontal.png" alt="PRONTO - Fini les 5 outils. Un seul suffit." className="h-16" />
           </div>
           <nav className="hidden md:flex items-center gap-6">
             <a href="#fonctionnalites" className="text-sm hover:text-pronto-primary transition-colors">
@@ -176,7 +176,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {/* Basic Plan */}
             <Card className="border-2 hover:shadow-lg transition-shadow">
               <CardHeader>
@@ -214,13 +214,10 @@ export default function LandingPage() {
               </CardContent>
             </Card>
 
-            {/* Premium Plan */}
-            <Card className="border-4 border-pronto-primary hover:shadow-xl transition-shadow relative">
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                <Badge className="bg-pronto-primary text-white">Recommandé</Badge>
-              </div>
+            {/* Pro Plan */}
+            <Card className="border-2 hover:shadow-lg transition-shadow">
               <CardHeader>
-                <CardTitle className="text-2xl">Premium</CardTitle>
+                <CardTitle className="text-2xl">Pro</CardTitle>
                 <div className="mt-4">
                   <span className="text-4xl font-bold">29€</span>
                   <span className="text-muted-foreground">/mois</span>
@@ -247,6 +244,51 @@ export default function LandingPage() {
                   <li className="flex items-start gap-2">
                     <Check className="h-5 w-5 text-pronto-primary mt-0.5 flex-shrink-0" />
                     <span>Nom de domaine personnalisé</span>
+                  </li>
+                </ul>
+                <Button className="w-full bg-pronto-primary hover:bg-pronto-primary/90">
+                  Commencer
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Premium Plan */}
+            <Card className="border-4 border-pronto-primary hover:shadow-xl transition-shadow relative">
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                <Badge className="bg-pronto-primary text-white">Recommandé</Badge>
+              </div>
+              <CardHeader>
+                <CardTitle className="text-2xl">Premium</CardTitle>
+                <div className="mt-4">
+                  <span className="text-4xl font-bold">39€</span>
+                  <span className="text-muted-foreground">/mois</span>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <ul className="space-y-3">
+                  <li className="flex items-start gap-2">
+                    <Check className="h-5 w-5 text-pronto-primary mt-0.5 flex-shrink-0" />
+                    <span>Tout du plan Pro</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="h-5 w-5 text-pronto-primary mt-0.5 flex-shrink-0" />
+                    <span className="font-semibold">Gestion complète du site</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="h-5 w-5 text-pronto-primary mt-0.5 flex-shrink-0" />
+                    <span>Personnalisation des horaires</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="h-5 w-5 text-pronto-primary mt-0.5 flex-shrink-0" />
+                    <span>Customisation avancée du mini-site</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="h-5 w-5 text-pronto-primary mt-0.5 flex-shrink-0" />
+                    <span>Intégrations tierces</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <Check className="h-5 w-5 text-pronto-primary mt-0.5 flex-shrink-0" />
+                    <span>Support dédié 24/7</span>
                   </li>
                 </ul>
                 <Button className="w-full bg-pronto-primary hover:bg-pronto-primary/90">
@@ -367,8 +409,7 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <img src="/pronto-logo.png" alt="PRONTO" className="h-6" />
-                <span className="text-xl font-display font-bold text-pronto-primary">PRONTO</span>
+                <img src="/pronto-logo-horizontal.png" alt="PRONTO - Fini les 5 outils. Un seul suffit." className="h-12" />
               </div>
               <p className="text-sm text-muted-foreground">
                 La solution web pour restaurants modernes
