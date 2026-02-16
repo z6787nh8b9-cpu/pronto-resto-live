@@ -595,8 +595,10 @@ export default function RestaurantHomePage() {
         <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-slate-50 via-white to-slate-50 border-t border-slate-200/60 backdrop-blur-sm shadow-2xl z-[9999]">
           <div className="container max-w-7xl mx-auto px-6 py-4">
             <div className="flex items-center justify-between gap-6">
-              <div className="flex items-center gap-2 text-xs text-slate-500 font-medium tracking-wide flex-shrink-0">
-                <span className="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+              <div className="flex items-center gap-2 text-xs font-medium tracking-wide flex-shrink-0" style={{ fontFamily: 'Montserrat, sans-serif', color: '#B8860B' }}>
+                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                </svg>
                 PARTENAIRE
               </div>
               <div className="flex-1 overflow-x-auto">
@@ -612,11 +614,11 @@ export default function RestaurantHomePage() {
                       <img
                         src={ad.imageUrl}
                         alt={ad.title}
-                        className="h-14 w-14 object-cover rounded-lg shadow-sm group-hover:shadow-md transition-shadow"
+                        className="h-20 w-20 object-cover rounded-lg shadow-sm group-hover:shadow-md transition-shadow"
                       />
                       <div className="flex flex-col gap-1">
-                        <span className="text-sm font-semibold text-slate-800 group-hover:text-slate-900">{ad.title}</span>
-                        <span className="text-xs text-slate-500 group-hover:text-pronto-primary transition-colors flex items-center gap-1">
+                        <span className="text-sm font-semibold text-slate-800 group-hover:text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>{ad.title}</span>
+                        <span className="text-xs text-slate-500 group-hover:text-pronto-primary transition-colors flex items-center gap-1" style={{ fontFamily: 'Montserrat, sans-serif' }}>
                           Découvrir
                           <svg className="w-3 h-3 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

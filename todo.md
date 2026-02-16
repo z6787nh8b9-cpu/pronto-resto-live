@@ -447,3 +447,8 @@
 - [x] Remplacer le badge "Publicité" par "Partenaire" ou équivalent discret
 - [x] Ajouter des animations au survol pour inciter au clic
 - [x] Améliorer le CTA (Call To Action) pour l'annonceur
+
+## 🎨 AMÉLIORATION - RAFFINEMENT VISUEL DU BANDEAU DE PUBLICITÉS
+- [x] Changer la police pour Montserrat Medium (clean et moderne)
+- [x] Agrandir l'image de la publicité pour plus d'impact
+- [x] Remplacer le badge "PARTENAIRE" par une version dorée avec icône étoile SVG dorée
