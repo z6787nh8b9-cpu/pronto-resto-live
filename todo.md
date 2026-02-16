@@ -697,3 +697,9 @@
 
 ## 📐 Indications de tailles pour les publicités (16 février 2026)
 - [x] Ajouter les tailles recommandées pour chaque format dans l'UI Super Admin
+
+## ✅ Validation d'images et planification des publicités (16 février 2026)
+- [x] Ajouter champs startDate et endDate à la table advertisements
+- [x] Implémenter validation automatique des dimensions d'images dans ImageUploader
+- [x] Ajouter interface de planification (dates) dans formulaire publicités
+- [x] Implémenter logique backend pour activer/désactiver automatiquement selon dates

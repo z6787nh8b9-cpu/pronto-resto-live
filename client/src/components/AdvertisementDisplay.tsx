@@ -13,6 +13,8 @@ interface Advertisement {
   content?: any;
   isActive: boolean;
   displayOrder: number;
+  startDate?: Date | string | null;
+  endDate?: Date | string | null;
 }
 
 interface AdvertisementDisplayProps {
@@ -24,10 +26,29 @@ export function AdvertisementDisplay({ advertisements, currentPage }: Advertisem
   const [popupAd, setPopupAd] = useState<Advertisement | null>(null);
   const [isPopupOpen, setIsPopupOpen] = useState(false);
 
-  // Filtrer les publicités selon la page cible
-  const filteredAds = advertisements.filter(
-    (ad) => ad.targetPage === "all" || ad.targetPage === currentPage
-  );
+  // Filtrer les publicités selon la page cible et les dates
+  const now = new Date();
+  const filteredAds = advertisements.filter((ad) => {
+    // Vérifier la page cible
+    if (ad.targetPage !== "all" && ad.targetPage !== currentPage) return false;
+    
+    // Vérifier si la publicité est active
+    if (!ad.isActive) return false;
+    
+    // Vérifier la date de début
+    if (ad.startDate) {
+      const startDate = new Date(ad.startDate);
+      if (now < startDate) return false;
+    }
+    
+    // Vérifier la date de fin
+    if (ad.endDate) {
+      const endDate = new Date(ad.endDate);
+      if (now > endDate) return false;
+    }
+    
+    return true;
+  });
 
   // Séparer par format
   const pastilleAds = filteredAds.filter((ad) => ad.format === "pastille");

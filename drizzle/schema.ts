@@ -274,6 +274,10 @@ export const advertisements = mysqlTable("advertisements", {
   isActive: boolean("isActive").default(true).notNull(),
   displayOrder: int("displayOrder").default(0).notNull(),
   
+  // Planification
+  startDate: timestamp("startDate"), // Date de début d'affichage (optionnel)
+  endDate: timestamp("endDate"), // Date de fin d'affichage (optionnel)
+  
   // Tailles indiquées (pour référence)
   // pastille: 80x80px
   // footer: 100% x 60px

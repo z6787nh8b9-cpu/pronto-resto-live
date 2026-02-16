@@ -134,6 +134,13 @@
       "when": 1771266703997,
       "tag": "0018_curved_blade",
       "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "5",
+      "when": 1771271591376,
+      "tag": "0019_orange_earthquake",
+      "breakpoints": true
     }
   ]
 }

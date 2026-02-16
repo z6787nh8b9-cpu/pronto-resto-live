@@ -9,6 +9,13 @@ interface ImageUploaderProps {
   currentImageUrl?: string;
   label?: string;
   className?: string;
+  // Validation des dimensions (optionnel)
+  minWidth?: number;
+  maxWidth?: number;
+  minHeight?: number;
+  maxHeight?: number;
+  recommendedWidth?: number;
+  recommendedHeight?: number;
 }
 
 export function ImageUploader({
@@ -16,6 +23,12 @@ export function ImageUploader({
   currentImageUrl,
   label = "Image",
   className = "",
+  minWidth,
+  maxWidth,
+  minHeight,
+  maxHeight,
+  recommendedWidth,
+  recommendedHeight,
 }: ImageUploaderProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [preview, setPreview] = useState<string | null>(currentImageUrl || null);
@@ -44,6 +57,64 @@ export function ImageUploader({
     if (file.size > 5 * 1024 * 1024) {
       toast.error("L'image ne doit pas dépasser 5 MB");
       return;
+    }
+
+    // Validate image dimensions if specified
+    if (minWidth || maxWidth || minHeight || maxHeight) {
+      const img = new Image();
+      const objectUrl = URL.createObjectURL(file);
+      
+      await new Promise((resolve, reject) => {
+        img.onload = () => {
+          const width = img.width;
+          const height = img.height;
+          URL.revokeObjectURL(objectUrl);
+
+          let warnings: string[] = [];
+          let errors: string[] = [];
+
+          // Check dimensions
+          if (minWidth && width < minWidth) {
+            errors.push(`Largeur minimale: ${minWidth}px (actuelle: ${width}px)`);
+          }
+          if (maxWidth && width > maxWidth) {
+            errors.push(`Largeur maximale: ${maxWidth}px (actuelle: ${width}px)`);
+          }
+          if (minHeight && height < minHeight) {
+            errors.push(`Hauteur minimale: ${minHeight}px (actuelle: ${height}px)`);
+          }
+          if (maxHeight && height > maxHeight) {
+            errors.push(`Hauteur maximale: ${maxHeight}px (actuelle: ${height}px)`);
+          }
+
+          // Check recommended dimensions (warnings only)
+          if (recommendedWidth && Math.abs(width - recommendedWidth) > recommendedWidth * 0.1) {
+            warnings.push(`Largeur recommandée: ${recommendedWidth}px (actuelle: ${width}px)`);
+          }
+          if (recommendedHeight && Math.abs(height - recommendedHeight) > recommendedHeight * 0.1) {
+            warnings.push(`Hauteur recommandée: ${recommendedHeight}px (actuelle: ${height}px)`);
+          }
+
+          if (errors.length > 0) {
+            toast.error(`Dimensions invalides:\n${errors.join('\n')}`);
+            reject(new Error("Invalid dimensions"));
+          } else {
+            if (warnings.length > 0) {
+              toast.warning(`Attention:\n${warnings.join('\n')}\nL'image sera quand même uploadée.`, {
+                duration: 5000,
+              });
+            }
+            resolve(true);
+          }
+        };
+        img.onerror = () => {
+          URL.revokeObjectURL(objectUrl);
+          reject(new Error("Failed to load image"));
+        };
+        img.src = objectUrl;
+      }).catch(() => {
+        return; // Stop processing if validation fails
+      });
     }
 
     // Show preview immediately

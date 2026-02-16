@@ -126,6 +126,8 @@ export const adminRouter = router({
         targetPage: z.enum(["landing", "restaurant_page", "menu", "all"]).default("all"),
         content: z.any().optional(),
         displayOrder: z.number().default(0),
+        startDate: z.string().optional(),
+        endDate: z.string().optional(),
       })
     )
     .mutation(async ({ input }) => {
@@ -142,6 +144,8 @@ export const adminRouter = router({
         content: input.content || {},
         displayOrder: input.displayOrder,
         isActive: true,
+        startDate: input.startDate ? new Date(input.startDate) : null,
+        endDate: input.endDate ? new Date(input.endDate) : null,
       });
 
       return ad;
@@ -162,6 +166,8 @@ export const adminRouter = router({
           content: z.any().optional(),
           displayOrder: z.number().optional(),
           isActive: z.boolean().optional(),
+          startDate: z.string().optional(),
+          endDate: z.string().optional(),
         }),
       })
     )
@@ -169,7 +175,14 @@ export const adminRouter = router({
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
-      await db.update(advertisements).set(input.data).where(eq(advertisements.id, input.id));
+      const updateData: any = { ...input.data };
+      if (input.data.startDate !== undefined) {
+        updateData.startDate = input.data.startDate ? new Date(input.data.startDate) : null;
+      }
+      if (input.data.endDate !== undefined) {
+        updateData.endDate = input.data.endDate ? new Date(input.data.endDate) : null;
+      }
+      await db.update(advertisements).set(updateData).where(eq(advertisements.id, input.id));
 
       return { success: true };
     }),

@@ -66,6 +66,8 @@ export default function Advertisements() {
       targetPage: (formData.get("targetPage") as "landing" | "restaurant_page" | "menu" | "all") || "all",
       displayOrder: parseInt(formData.get("displayOrder") as string) || 0,
       content: {},
+      startDate: formData.get("startDate") as string || undefined,
+      endDate: formData.get("endDate") as string || undefined,
     });
   };
 
@@ -86,6 +88,8 @@ export default function Advertisements() {
         targetPage: (formData.get("targetPage") as "landing" | "restaurant_page" | "menu" | "all") || "all",
         displayOrder: parseInt(formData.get("displayOrder") as string),
         content: {},
+        startDate: formData.get("startDate") as string || undefined,
+        endDate: formData.get("endDate") as string || undefined,
       },
     });
   };
@@ -130,27 +134,57 @@ export default function Advertisements() {
     pastille: {
       sizes: "80x80px à 200x200px (carré)",
       formats: "JPG, PNG, WebP, GIF",
-      recommended: "100x100px"
+      recommended: "100x100px",
+      minWidth: 80,
+      maxWidth: 200,
+      minHeight: 80,
+      maxHeight: 200,
+      recommendedWidth: 100,
+      recommendedHeight: 100
     },
     footer: {
       sizes: "728x90px à 1920x90px (bannière)",
       formats: "JPG, PNG, WebP",
-      recommended: "1200x90px"
+      recommended: "1200x90px",
+      minWidth: 728,
+      maxWidth: 1920,
+      minHeight: 60,
+      maxHeight: 120,
+      recommendedWidth: 1200,
+      recommendedHeight: 90
     },
     fullpage: {
       sizes: "1920x1080px minimum (paysage)",
       formats: "JPG, PNG, WebP",
-      recommended: "1920x1080px"
+      recommended: "1920x1080px",
+      minWidth: 1920,
+      maxWidth: 3840,
+      minHeight: 1080,
+      maxHeight: 2160,
+      recommendedWidth: 1920,
+      recommendedHeight: 1080
     },
     popup: {
       sizes: "400x300px à 800x600px (4:3)",
       formats: "JPG, PNG, WebP, GIF",
-      recommended: "600x450px"
+      recommended: "600x450px",
+      minWidth: 400,
+      maxWidth: 800,
+      minHeight: 300,
+      maxHeight: 600,
+      recommendedWidth: 600,
+      recommendedHeight: 450
     },
     dish_item: {
       sizes: "300x200px à 600x400px (3:2)",
       formats: "JPG, PNG, WebP",
-      recommended: "450x300px"
+      recommended: "450x300px",
+      minWidth: 300,
+      maxWidth: 600,
+      minHeight: 200,
+      maxHeight: 400,
+      recommendedWidth: 450,
+      recommendedHeight: 300
     },
   };
 
@@ -303,6 +337,12 @@ export default function Advertisements() {
                 label={selectedFormat === "dish_item" ? "Image du partenaire" : "Image de la publicité"}
                 currentImageUrl={adImageUrl}
                 onUploadComplete={setAdImageUrl}
+                minWidth={formatSpecs[selectedFormat].minWidth}
+                maxWidth={formatSpecs[selectedFormat].maxWidth}
+                minHeight={formatSpecs[selectedFormat].minHeight}
+                maxHeight={formatSpecs[selectedFormat].maxHeight}
+                recommendedWidth={formatSpecs[selectedFormat].recommendedWidth}
+                recommendedHeight={formatSpecs[selectedFormat].recommendedHeight}
               />
               <div className="space-y-2">
                 <Label htmlFor="linkUrl">URL de destination</Label>
@@ -338,6 +378,30 @@ export default function Advertisements() {
                 <p className="text-sm text-muted-foreground">
                   Les publicités sont affichées par ordre croissant (0 = premier)
                 </p>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="startDate">Date de début (optionnel)</Label>
+                  <Input
+                    id="startDate"
+                    name="startDate"
+                    type="datetime-local"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Laisser vide pour activer immédiatement
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="endDate">Date de fin (optionnel)</Label>
+                  <Input
+                    id="endDate"
+                    name="endDate"
+                    type="datetime-local"
+                  />
+                  <p className="text-xs text-muted-foreground">
+                    Laisser vide pour ne jamais désactiver
+                  </p>
+                </div>
               </div>
             </div>
             <DialogFooter>
@@ -397,6 +461,12 @@ export default function Advertisements() {
                   label={selectedFormat === "dish_item" ? "Image du partenaire" : "Image de la publicité"}
                   currentImageUrl={adImageUrl}
                   onUploadComplete={setAdImageUrl}
+                  minWidth={formatSpecs[selectedFormat].minWidth}
+                  maxWidth={formatSpecs[selectedFormat].maxWidth}
+                  minHeight={formatSpecs[selectedFormat].minHeight}
+                  maxHeight={formatSpecs[selectedFormat].maxHeight}
+                  recommendedWidth={formatSpecs[selectedFormat].recommendedWidth}
+                  recommendedHeight={formatSpecs[selectedFormat].recommendedHeight}
                 />
                 <div className="space-y-2">
                   <Label htmlFor="edit-linkUrl">URL de destination</Label>
@@ -429,6 +499,32 @@ export default function Advertisements() {
                     type="number"
                     defaultValue={selectedAd.displayOrder}
                   />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-startDate">Date de début (optionnel)</Label>
+                    <Input
+                      id="edit-startDate"
+                      name="startDate"
+                      type="datetime-local"
+                      defaultValue={selectedAd.startDate ? new Date(selectedAd.startDate).toISOString().slice(0, 16) : ""}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Laisser vide pour activer immédiatement
+                    </p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="edit-endDate">Date de fin (optionnel)</Label>
+                    <Input
+                      id="edit-endDate"
+                      name="endDate"
+                      type="datetime-local"
+                      defaultValue={selectedAd.endDate ? new Date(selectedAd.endDate).toISOString().slice(0, 16) : ""}
+                    />
+                    <p className="text-xs text-muted-foreground">
+                      Laisser vide pour ne jamais désactiver
+                    </p>
+                  </div>
                 </div>
               </div>
               <DialogFooter>
