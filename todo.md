@@ -643,3 +643,8 @@
 - [x] Ajouter 3 boutons de questions suggérées au démarrage
 - [x] Gérer le clic sur les questions suggérées
 - [x] Masquer les suggestions après la première question
+
+## 🎨 Améliorations design chatbot v2
+- [x] Ajouter animation pulse au point vert "En ligne"
+- [x] Ajouter contour autour des messages utilisateur
+- [x] Enrichir contexte pour répondre aux questions sur TasteIt et Restovia
