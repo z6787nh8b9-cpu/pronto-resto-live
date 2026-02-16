@@ -1,9 +1,10 @@
 import { z } from "zod";
-import { router } from "../_core/trpc";
+import { router, publicProcedure } from "../_core/trpc";
 import { adminProcedure } from "../_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { getDb } from "../db";
-import { advertisements, users } from "../../drizzle/schema";
+import { advertisements, users, adminInvitations } from "../../drizzle/schema";
+import { randomBytes } from "crypto";
 import { eq } from "drizzle-orm";
 import {
   getAllRestaurants,
@@ -245,4 +246,144 @@ export const adminRouter = router({
     const allUsers = await db.select().from(users);
     return allUsers;
   }),
+
+  // ===== ADMIN INVITATIONS =====
+
+  // Create admin invitation
+  createAdminInvitation: adminProcedure
+    .input(z.object({ email: z.string().email() }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Check if email already exists as admin
+      const existingAdmin = await db.select().from(users).where(eq(users.email, input.email)).limit(1);
+      if (existingAdmin.length > 0 && existingAdmin[0].role === 'admin') {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "This email is already an admin" });
+      }
+
+      // Check if there's already a pending invitation
+      const existingInvitation = await db.select().from(adminInvitations)
+        .where(eq(adminInvitations.email, input.email))
+        .limit(1);
+      
+      if (existingInvitation.length > 0 && !existingInvitation[0].usedAt) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "An invitation has already been sent to this email" });
+      }
+
+      // Generate unique token
+      const token = randomBytes(32).toString('hex');
+      
+      // Set expiration to 7 days from now
+      const expiresAt = new Date();
+      expiresAt.setDate(expiresAt.getDate() + 7);
+
+      // Create invitation
+      const [invitation] = await db.insert(adminInvitations).values({
+        email: input.email,
+        token,
+        expiresAt,
+        createdBy: ctx.user!.id,
+      });
+
+      // TODO: Send email with invitation link
+      // const invitationUrl = `${origin}/admin/invite/${token}`;
+      // await sendInvitationEmail(input.email, invitationUrl);
+
+      return { success: true, token };
+    }),
+
+  // List admin invitations
+  listAdminInvitations: adminProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+    const invitations = await db.select().from(adminInvitations).orderBy(adminInvitations.createdAt);
+    return invitations;
+  }),
+
+  // Delete/revoke admin invitation
+  revokeAdminInvitation: adminProcedure
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      await db.delete(adminInvitations).where(eq(adminInvitations.id, input.id));
+      return { success: true };
+    }),
+
+  // Check invitation validity (public procedure)
+  checkAdminInvitation: publicProcedure
+    .input(z.object({ token: z.string() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const [invitation] = await db.select().from(adminInvitations)
+        .where(eq(adminInvitations.token, input.token))
+        .limit(1);
+
+      if (!invitation) {
+        return { valid: false, reason: "invalid" };
+      }
+
+      if (invitation.usedAt) {
+        return { valid: false, reason: "used", email: invitation.email };
+      }
+
+      if (new Date(invitation.expiresAt) < new Date()) {
+        return { valid: false, reason: "expired", email: invitation.email };
+      }
+
+      return { valid: true, email: invitation.email };
+    }),
+
+  // Accept admin invitation (requires authentication)
+  acceptAdminInvitation: publicProcedure
+    .input(z.object({ token: z.string() }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // User must be authenticated
+      if (!ctx.user) {
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "You must be logged in to accept an invitation" });
+      }
+
+      // Find invitation
+      const [invitation] = await db.select().from(adminInvitations)
+        .where(eq(adminInvitations.token, input.token))
+        .limit(1);
+
+      if (!invitation) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Invitation not found" });
+      }
+
+      if (invitation.usedAt) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "This invitation has already been used" });
+      }
+
+      if (new Date(invitation.expiresAt) < new Date()) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "This invitation has expired" });
+      }
+
+      // Check if user email matches invitation email
+      if (ctx.user.email !== invitation.email) {
+        throw new TRPCError({ 
+          code: "FORBIDDEN", 
+          message: `This invitation is for ${invitation.email}. Please log in with the correct account.` 
+        });
+      }
+
+      // Promote user to admin
+      await db.update(users).set({ role: 'admin' }).where(eq(users.id, ctx.user.id));
+
+      // Mark invitation as used
+      await db.update(adminInvitations)
+        .set({ usedAt: new Date() })
+        .where(eq(adminInvitations.id, invitation.id));
+
+      return { success: true };
+    }),
 });

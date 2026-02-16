@@ -566,3 +566,19 @@ export const chatbotRequests = mysqlTable("chatbot_requests", {
 
 export type ChatbotRequest = typeof chatbotRequests.$inferSelect;
 export type InsertChatbotRequest = typeof chatbotRequests.$inferInsert;
+
+/**
+ * Admin invitations table - For inviting super administrators via email
+ */
+export const adminInvitations = mysqlTable("admin_invitations", {
+  id: int("id").autoincrement().primaryKey(),
+  email: varchar("email", { length: 320 }).notNull(),
+  token: varchar("token", { length: 64 }).notNull().unique(),
+  expiresAt: timestamp("expiresAt").notNull(),
+  usedAt: timestamp("usedAt"),
+  createdBy: int("createdBy").notNull(), // ID of the admin who created the invitation
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type AdminInvitation = typeof adminInvitations.$inferSelect;
+export type InsertAdminInvitation = typeof adminInvitations.$inferInsert;

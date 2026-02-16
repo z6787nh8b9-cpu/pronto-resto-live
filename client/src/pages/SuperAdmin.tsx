@@ -212,9 +212,9 @@ export default function SuperAdmin() {
               Publicités
             </Button>
             <Button
-              variant={activeTab === "admins" ? "default" : "ghost"}
+              variant="ghost"
               size="sm"
-              onClick={() => setActiveTab("admins")}
+              onClick={() => setLocation("/admin/admins")}
               className="w-full sm:w-auto justify-start"
             >
               <Shield className="h-4 w-4 mr-2" />

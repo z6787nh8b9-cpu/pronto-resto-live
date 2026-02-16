@@ -546,7 +546,7 @@
 - [ ] Gérer les erreurs (compte non trouvé, etc.)
 
 ### Phase 6 : Tests
-- [ ] Tester le flux complet d'invitation
+- [x] Tester le flux complet d'invitation
 - [ ] Tester la connexion Google et Facebook
 - [ ] Tester la protection des dashboards
 - [ ] Vérifier que les Super Admins peuvent accéder à tout
@@ -770,3 +770,12 @@
 - [x] Simplifier btn-hero-special : retirer pulsation et ripple, garder juste reflet subtil
 - [x] Garder uniquement glassShine (reflet lumineux) + translateY + scale au hover
 - [x] Bouton hero maintenant sobre avec juste un léger lift au hover
+
+## 🔐 Système d'invitation admin par email avec token (16 février 2026)
+- [x] Créer table admin_invitations (id, email, token, expires_at, used_at, created_by)
+- [x] Générer migration SQL et l'appliquer
+- [x] Créer procédures tRPC : createAdminInvitation, acceptAdminInvitation, listAdminInvitations
+- [x] Créer page /admin avec liste des admins et bouton d'invitation
+- [x] Créer page /admin/invite/[token] pour accepter l'invitation
+- [x] Intégrer envoi d'email avec lien d'invitation
+- [x] Tester le flux complet d'invitation
