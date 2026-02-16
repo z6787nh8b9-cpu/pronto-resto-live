@@ -751,3 +751,9 @@
 - [x] Changer le texte : "🎲 Une solution crée par ALTMachine"
 - [x] Ajouter lien vers altmachine.fr
 - [x] Supprimer la mention Agence Rise
+
+## 🎨 Modifications visuelles landing page (16 février 2026)
+- [x] Changer la couleur du bouton "Contacter l'équipe" en jaune doré (#d7c75b)
+- [x] Remplacer l'image du footer par le nouveau logo Pronto avec slogan circulaire
+- [x] Uploader le logo sur S3 CDN
+- [x] Mettre à jour l'URL de l'image dans LandingPage.tsx

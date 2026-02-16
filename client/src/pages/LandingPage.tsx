@@ -458,7 +458,7 @@ export default function LandingPage() {
               Essayer gratuitement
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            <Button size="lg" variant="outline" className="text-lg bg-transparent border-white text-white hover:bg-white hover:text-pronto-primary">
+            <Button size="lg" variant="outline" className="text-lg bg-transparent border-white text-white hover:bg-white hover:text-pronto-primary" style={{backgroundColor: '#d7c75b'}}>
               Contacter l'équipe
             </Button>
           </div>
@@ -471,7 +471,7 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-4">
-                <img src="/pronto-logo-horizontal.png" alt="PRONTO - Fini les 5 outils. Un seul suffit." className="h-12" />
+                <img src="https://files.manuscdn.com/user_upload_by_module/session_file/99899876/kPfBhkQPsClvCiMw.png" alt="PRONTO - Fini les 5 outils. Un seul suffit." className="h-12" />
               </div>
               <p className="text-sm text-muted-foreground">
                 Dire que c'est la solution de demain, ça date pas d'hier
