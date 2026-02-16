@@ -209,6 +209,148 @@ export const translationsRouter = router({
     }),
 
   /**
+   * Auto-translate content when visitor changes language (public, one-time per language)
+   */
+  autoTranslatePublic: publicProcedure
+    .input(z.object({
+      restaurantId: z.number(),
+      targetLanguage: z.enum(["en", "it", "de", "es"]),
+    }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error('Database not available');
+      
+      // Check if translations already exist for this language
+      const existing = await db
+        .select()
+        .from(translations)
+        .where(
+          and(
+            eq(translations.restaurantId, input.restaurantId),
+            eq(translations.language, input.targetLanguage)
+          )
+        )
+        .limit(1);
+
+      // If translations exist, don't re-translate
+      if (existing.length > 0) {
+        return {
+          success: true,
+          alreadyTranslated: true,
+          translationsCount: 0,
+        };
+      }
+
+      // Get restaurant
+      const [restaurant] = await db
+        .select()
+        .from(restaurants)
+        .where(eq(restaurants.id, input.restaurantId))
+        .limit(1);
+
+      if (!restaurant) {
+        throw new Error("Restaurant not found");
+      }
+
+      const results = [];
+
+      // Translate restaurant info
+      if (restaurant.name) {
+        const nameTranslation = await translateSingle(
+          input.restaurantId,
+          "restaurant",
+          restaurant.id,
+          "name",
+          restaurant.name,
+          input.targetLanguage
+        );
+        results.push(nameTranslation);
+      }
+
+      if (restaurant.description) {
+        const descTranslation = await translateSingle(
+          input.restaurantId,
+          "restaurant",
+          restaurant.id,
+          "description",
+          restaurant.description,
+          input.targetLanguage
+        );
+        results.push(descTranslation);
+      }
+
+      // Translate categories
+      const categories = await db
+        .select()
+        .from(menuCategories)
+        .where(eq(menuCategories.restaurantId, input.restaurantId));
+
+      for (const category of categories) {
+        if (category.name) {
+          const catTranslation = await translateSingle(
+            input.restaurantId,
+            "category",
+            category.id,
+            "name",
+            category.name,
+            input.targetLanguage
+          );
+          results.push(catTranslation);
+        }
+
+        if (category.description) {
+          const catDescTranslation = await translateSingle(
+            input.restaurantId,
+            "category",
+            category.id,
+            "description",
+            category.description,
+            input.targetLanguage
+          );
+          results.push(catDescTranslation);
+        }
+      }
+
+      // Translate menu items
+      const items = await db
+        .select()
+        .from(menuItems)
+        .where(eq(menuItems.restaurantId, input.restaurantId));
+
+      for (const item of items) {
+        if (item.name) {
+          const itemTranslation = await translateSingle(
+            input.restaurantId,
+            "item",
+            item.id,
+            "name",
+            item.name,
+            input.targetLanguage
+          );
+          results.push(itemTranslation);
+        }
+
+        if (item.description) {
+          const itemDescTranslation = await translateSingle(
+            input.restaurantId,
+            "item",
+            item.id,
+            "description",
+            item.description,
+            input.targetLanguage
+          );
+          results.push(itemDescTranslation);
+        }
+      }
+
+      return {
+        success: true,
+        alreadyTranslated: false,
+        translationsCount: results.length,
+      };
+    }),
+
+  /**
    * Get all translations for management (dashboard)
    */
   getTranslationsForManagement: protectedProcedure

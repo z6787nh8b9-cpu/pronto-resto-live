@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import type { LanguageCode } from "@/components/LanguageSelector";
+import { toast } from "sonner";
 
 interface Translation {
   id: number;
@@ -19,7 +20,7 @@ export function useTranslation(restaurantId: number | undefined) {
   const [translations, setTranslations] = useState<Translation[]>([]);
 
   // Fetch translations when language changes
-  const { data: translationsData } = trpc.translations.getTranslations.useQuery(
+  const { data: translationsData, refetch } = trpc.translations.getTranslations.useQuery(
     {
       restaurantId: restaurantId!,
       language: currentLanguage,
@@ -29,11 +30,37 @@ export function useTranslation(restaurantId: number | undefined) {
     }
   );
 
+  // Auto-translate mutation
+  const autoTranslateMutation = trpc.translations.autoTranslatePublic.useMutation();
+
+  // Update translations when data changes
   useEffect(() => {
     if (translationsData) {
       setTranslations(translationsData);
+    } else if (currentLanguage !== "fr") {
+      // No translations found, trigger auto-translation
+      if (restaurantId && !autoTranslateMutation.isPending) {
+        autoTranslateMutation.mutate(
+          {
+            restaurantId,
+            targetLanguage: currentLanguage as "en" | "it" | "de" | "es",
+          },
+          {
+            onSuccess: (data) => {
+              if (!data.alreadyTranslated && data.translationsCount > 0) {
+                toast.success(`${data.translationsCount} éléments traduits`);
+              }
+              // Refetch translations after auto-translation
+              setTimeout(() => refetch(), 1000);
+            },
+            onError: () => {
+              toast.error("Erreur lors de la traduction");
+            },
+          }
+        );
+      }
     }
-  }, [translationsData]);
+  }, [translationsData, currentLanguage, restaurantId]);
 
   // Helper function to translate a specific entity field
   const translate = (
@@ -62,5 +89,6 @@ export function useTranslation(restaurantId: number | undefined) {
     currentLanguage,
     setCurrentLanguage,
     translate,
+    isTranslating: autoTranslateMutation.isPending,
   };
 }

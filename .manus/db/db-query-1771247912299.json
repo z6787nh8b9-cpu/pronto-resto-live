@@ -1,0 +1,75 @@
+{
+  "query": "SELECT * FROM translations WHERE language = 'en' LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2m1m65o6UXETKUo.39bdc9c5be54 --database Lrdq8kkKw7pbRUXDsDAG5X --execute SELECT * FROM translations WHERE language = 'en' LIMIT 5;",
+  "rows": [
+    {
+      "id": "1",
+      "restaurantId": "1",
+      "entityType": "restaurant",
+      "entityId": "1",
+      "field": "name",
+      "language": "en",
+      "originalText": "Hôtel des Nacres",
+      "translatedText": "Mother-of-Pearl Hotel",
+      "isAutoTranslated": "1",
+      "createdAt": "2026-02-16 13:18:03",
+      "updatedAt": "2026-02-16 13:18:03"
+    },
+    {
+      "id": "2",
+      "restaurantId": "1",
+      "entityType": "restaurant",
+      "entityId": "1",
+      "field": "description",
+      "language": "en",
+      "originalText": "Restaurant méditerranéen proposant des pizzas artisanales, des pâtes fraîches et des spécialités corses dans un cadre élégant.",
+      "translatedText": "Mediterranean restaurant offering artisanal pizzas, fresh pasta, and Corsican specialties in an elegant setting.",
+      "isAutoTranslated": "1",
+      "createdAt": "2026-02-16 13:18:07",
+      "updatedAt": "2026-02-16 13:18:07"
+    },
+    {
+      "id": "3",
+      "restaurantId": "1",
+      "entityType": "category",
+      "entityId": "1",
+      "field": "name",
+      "language": "en",
+      "originalText": "Entrées",
+      "translatedText": "Starters",
+      "isAutoTranslated": "1",
+      "createdAt": "2026-02-16 13:18:09",
+      "updatedAt": "2026-02-16 13:18:09"
+    },
+    {
+      "id": "4",
+      "restaurantId": "1",
+      "entityType": "category",
+      "entityId": "2",
+      "field": "name",
+      "language": "en",
+      "originalText": "Pizze (le soir)",
+      "translatedText": "Pizzas (Evening)",
+      "isAutoTranslated": "1",
+      "createdAt": "2026-02-16 13:18:11",
+      "updatedAt": "2026-02-16 13:18:11"
+    },
+    {
+      "id": "5",
+      "restaurantId": "1",
+      "entityType": "category",
+      "entityId": "3",
+      "field": "name",
+      "language": "en",
+      "originalText": "Pâtes",
+      "translatedText": "Pasta",
+      "isAutoTranslated": "1",
+      "createdAt": "2026-02-16 13:18:12",
+      "updatedAt": "2026-02-16 13:18:12"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\trestaurantId\tentityType\tentityId\tfield\tlanguage\toriginalText\ttranslatedText\tisAutoTranslated\tcreatedAt\tupdatedAt\n1\t1\trestaurant\t1\tname\ten\tHôtel des Nacres\tMother-of-Pearl Hotel\t1\t2026-02-16 13:18:03\t2026-02-16 13:18:03\n2\t1\trestaurant\t1\tdescription\ten\tRestaurant méditerranéen proposant des pizzas artisanales, des pâtes fraîches et des spécialités corses dans un cadre élégant.\tMediterranean restaurant offering artisanal pizzas, fresh pasta, and Corsican specialties in an elegant setting.\t1\t2026-02-16 13:18:07\t2026-02-16 13:18:07\n3\t1\tcategory\t1\tname\ten\tEntrées\tStarters\t1\t2026-02-16 13:18:09\t2026-02-16 13:18:09\n4\t1\tcategory\t2\tname\ten\tPizze (le soir)\tPizzas (Evening)\t1\t2026-02-16 13:18:11\t2026-02-16 13:18:11\n5\t1\tcategory\t3\tname\ten\tPâtes\tPasta\t1\t2026-02-16 13:18:12\t2026-02-16 13:18:12\n",
+  "stderr": "",
+  "execution_time_ms": 97
+}

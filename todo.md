@@ -483,3 +483,20 @@
 - [ ] Finaliser les 4 autres thèmes (Moderne Soho, Beach Bohème, Day n Night, Marble Rome)
 - [ ] Refondre RestaurantMenuPage pour utiliser les classes CSS des thèmes
 - [ ] Vérifier le responsive mobile pour chaque thème
+
+## 🎨 MODERNISATION DU DESIGN DES PAGES PUBLIQUES
+
+- [ ] Créer une palette de couleurs moderne (noir/blanc/gris + accent doré/terracotta)
+- [ ] Ajouter des variables CSS globales pour le nouveau design
+- [ ] Refondre RestaurantHomePage avec design moderne et épuré
+- [ ] Améliorer les cards de plats avec hover effects et meilleure intégration d'images
+- [ ] Refondre RestaurantMenuPage avec le même design
+- [ ] Optimiser le responsive mobile
+- [ ] Tester sur plusieurs restaurants
+
+## ✨ FONCTIONNALITÉ - Auto-traduction avec LLM
+
+- [x] Créer une mutation tRPC pour l'auto-traduction avec LLM (autoTranslatePublic)
+- [x] Modifier useTranslation pour déclencher l'auto-traduction automatiquement
+- [x] Implémenter la traduction automatique du restaurant, catégories et plats
+- [x] Tester l'auto-traduction avec l'anglais (fonctionne correctement)
