@@ -5,7 +5,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
-import { Upload, Palette, Type } from "lucide-react";
+import { Upload, Palette, Type, Sparkles, Lock } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 
 interface CustomizationProps {
   restaurantId: number;
@@ -18,7 +20,10 @@ export default function Customization({ restaurantId }: CustomizationProps) {
   const [primaryColor, setPrimaryColor] = useState(restaurant?.primaryColor || "#7D3A31");
   const [accentColor, setAccentColor] = useState(restaurant?.accentColor || "#FF9999");
   const [fontFamily, setFontFamily] = useState(restaurant?.fontFamily || "Playfair Display");
+  const [theme, setTheme] = useState<string>(restaurant?.theme || "pronto-service");
   const [isUploading, setIsUploading] = useState(false);
+
+  const isPremium = restaurant?.subscriptionTier === "premium";
 
   const updateCustomization = trpc.restaurant.updateCustomization.useMutation({
     onSuccess: () => {
@@ -69,6 +74,7 @@ export default function Customization({ restaurantId }: CustomizationProps) {
       primaryColor,
       accentColor,
       fontFamily,
+      theme: theme as "pronto-service" | "moderne-soho" | "beach-boheme" | "day-night" | "marble-rome",
     });
   };
 
@@ -189,6 +195,95 @@ export default function Customization({ restaurantId }: CustomizationProps) {
                 />
                 <p className="text-xs text-center text-muted-foreground">Accentuation</p>
               </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Thème visuel (PREMIUM uniquement) */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5" />
+            <CardTitle>Thème visuel</CardTitle>
+            {!isPremium && (
+              <Badge variant="secondary" className="ml-2">
+                <Lock className="h-3 w-3 mr-1" />
+                PREMIUM
+              </Badge>
+            )}
+          </div>
+          <CardDescription>
+            {isPremium
+              ? "Choisissez parmi 5 thèmes visuels premium pour votre page publique"
+              : "Passez en formule PREMIUM pour accéder à 5 thèmes visuels exclusifs"}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="theme">Thème</Label>
+            <Select
+              value={theme}
+              onValueChange={setTheme}
+              disabled={!isPremium}
+            >
+              <SelectTrigger id="theme" className="w-full">
+                <SelectValue placeholder="Sélectionnez un thème" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="pronto-service">
+                  🍽️ Pronto Service (Par défaut) - Élégant, moderne, serif
+                </SelectItem>
+                <SelectItem value="moderne-soho" disabled={!isPremium}>
+                  ✨ Moderne Soho {!isPremium && "(PREMIUM)"} - Minimaliste, blanc, géométrique
+                </SelectItem>
+                <SelectItem value="beach-boheme" disabled={!isPremium}>
+                  🏖️ Beach Bohème {!isPremium && "(PREMIUM)"} - Coloré, immersif, plage
+                </SelectItem>
+                <SelectItem value="day-night" disabled={!isPremium}>
+                  🌓 Day n Night {!isPremium && "(PREMIUM)"} - Contraste, bold, animations
+                </SelectItem>
+                <SelectItem value="marble-rome" disabled={!isPremium}>
+                  🏛️ Marble Rome {!isPremium && "(PREMIUM)"} - Luxe sombre, marbre, or
+                </SelectItem>
+              </SelectContent>
+            </Select>
+            {!isPremium && (
+              <p className="text-xs text-muted-foreground">
+                Le thème "Pronto Service" est disponible pour tous les forfaits. Les 4 autres thèmes sont réservés aux restaurants PREMIUM.
+              </p>
+            )}
+          </div>
+
+          {/* Aperçu du thème */}
+          <div className="mt-4 p-4 border rounded-lg">
+            <p className="text-sm font-medium mb-2">Aperçu du thème sélectionné</p>
+            <div className="space-y-2">
+              {theme === "pronto-service" && (
+                <p className="text-sm text-muted-foreground">
+                  <strong>Pronto Service</strong> : Design élégant et moderne inspiré de Da Pietro 1955. Typographie serif raffinée, palette neutre et chaleureuse.
+                </p>
+              )}
+              {theme === "moderne-soho" && (
+                <p className="text-sm text-muted-foreground">
+                  <strong>Moderne Soho</strong> : Minimalisme scandinave inspiré de Krem Kanel. Beaucoup d'espace blanc, typographie géométrique, design épuré.
+                </p>
+              )}
+              {theme === "beach-boheme" && (
+                <p className="text-sm text-muted-foreground">
+                  <strong>Beach Bohème</strong> : Ambiance colorée et immersive inspirée de Corona Extra. Animations storytelling, couleurs vives, esprit plage.
+                </p>
+              )}
+              {theme === "day-night" && (
+                <p className="text-sm text-muted-foreground">
+                  <strong>Day n Night</strong> : Contraste audacieux inspiré de La Huella Club. Typographie bold, animations dynamiques, design impactant.
+                </p>
+              )}
+              {theme === "marble-rome" && (
+                <p className="text-sm text-muted-foreground">
+                  <strong>Marble Rome</strong> : Luxe sombre inspiré de Restaurant Onyx. Marbre, or, typographie élégante, gastronomie haute gamme.
+                </p>
+              )}
             </div>
           </div>
         </CardContent>

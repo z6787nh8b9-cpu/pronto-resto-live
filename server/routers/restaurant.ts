@@ -317,7 +317,7 @@ export const restaurantRouter = router({
       return restaurant || null;
     }),
 
-  // Update customization (logo, colors, fonts)
+  // Update customization (logo, colors, fonts, theme)
   updateCustomization: protectedProcedure
     .input(
       z.object({
@@ -326,6 +326,7 @@ export const restaurantRouter = router({
         primaryColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
         accentColor: z.string().regex(/^#[0-9A-Fa-f]{6}$/).optional(),
         fontFamily: z.string().optional(),
+        theme: z.enum(["pronto-service", "moderne-soho", "beach-boheme", "day-night", "marble-rome"]).optional(),
       })
     )
     .mutation(async ({ input }) => {
@@ -339,6 +340,7 @@ export const restaurantRouter = router({
           primaryColor: input.primaryColor,
           accentColor: input.accentColor,
           fontFamily: input.fontFamily,
+          theme: input.theme,
           updatedAt: new Date(),
         })
         .where(eq(restaurants.id, input.restaurantId));

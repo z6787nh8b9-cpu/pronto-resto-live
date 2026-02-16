@@ -10,21 +10,19 @@ interface ThemeWrapperProps {
  */
 export function ThemeWrapper({ theme, children }: ThemeWrapperProps) {
   useEffect(() => {
-    // Charger le CSS du thème dynamiquement
-    const loadThemeCSS = async () => {
-      try {
-        // Import dynamique du fichier CSS du thème
-        await import(`@/themes/${theme}.css`);
-      } catch (error) {
-        console.error(`Failed to load theme: ${theme}`, error);
-        // Fallback sur le thème par défaut
-        if (theme !== 'pronto-service') {
-          await import('@/themes/pronto-service.css');
-        }
-      }
-    };
+    // Charger le CSS du thème via un élément <link>
+    const linkId = 'theme-stylesheet';
+    let linkElement = document.getElementById(linkId) as HTMLLinkElement;
 
-    loadThemeCSS();
+    if (!linkElement) {
+      linkElement = document.createElement('link');
+      linkElement.id = linkId;
+      linkElement.rel = 'stylesheet';
+      document.head.appendChild(linkElement);
+    }
+
+    // Mettre à jour le href avec le bon thème
+    linkElement.href = `/src/themes/${theme}.css`;
 
     // Appliquer l'attribut data-theme au body
     document.body.setAttribute('data-theme', theme);

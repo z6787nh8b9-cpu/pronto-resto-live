@@ -458,17 +458,15 @@
 
 ## 🐛 CORRECTION - BOUTON CONNEXION ET ACCÈS /ADMIN
 - [x] Corriger le bouton "Connexion" sur la landing page pour qu'il redirige vers OAuth
-- [ ] Modifier /admin pour rediriger vers OAuth au lieu de refuser l'accès directement
-
-## 🎨 SYSTÈME DE THÈMES POUR MINI-SITES
-- [x] Analyser les fichiers HTML fournis (Krem Kanel, Onyx, Da Pietro, La Huella, Corona)
-- [x] Créer l'architecture du système de thèmes (champ theme dans DB)
-- [x] Créer le composant ThemeWrapper pour charger dynamiquement les thèmes
-- [x] Créer le fichier CSS du thème Pronto Service
-- [ ] Créer le thème "Pronto Service" (moderne, épuré, mobile-first)
-- [ ] Créer le thème "Moderne Soho" (inspiré Krem Kanel)
-- [ ] Créer le thème "Beach Bohème" (inspiré Corona Extra)
-- [ ] Créer le thème "Day n Night" (inspiré La Huella Club)
+- [ ] Modifier /admin pour rediriger vers OAuth au lieu de refuser l'accès directemen## 🎨 SYSTÈME DE THÈMES POUR MINI-SITES
+- [ ] Analyser en profondeur les 5 sites HTML de référence (design, couleurs, typo, layouts)
+- [ ] Créer le thème 1: Pronto Service inspiré de Da Pietro 1955 (moderne, élégant, serif)
+- [ ] Créer le thème 2: Moderne Soho inspiré de Krem Kanel (minimaliste, blanc, géométrique)
+- [ ] Créer le thème 3: Beach Bohème inspiré de Corona Extra (coloré, immersif, storytelling)
+- [ ] Créer le thème 4: Day n Night inspiré de La Huella Club (contraste, bold, animations)
+- [ ] Créer le thème 5: Marble Rome inspiré de Restaurant Onyx (luxe sombre, marbre, or)
+- [ ] Ajouter le sélecteur de thème dans le Super Admin avec restrictions par tier
+- [ ] Tester les 5 thèmes et livrerla Club)
 - [ ] Créer le thème "Marble Rome" (inspiré Restaurant Onyx)
 - [ ] Ajouter le sélecteur de thème dans le Super Admin
 - [ ] Implémenter les restrictions par tier (BASIC/PRO = Pronto Service, PREMIUM = 5 thèmes)

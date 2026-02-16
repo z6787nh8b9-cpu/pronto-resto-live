@@ -1,0 +1,154 @@
+/**
+ * Thème MARBLE ROME - Inspiré de Restaurant Onyx
+ * Luxe sombre, marbre, or, gastronomie haute gamme
+ */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lora:wght@400;600&family=Cormorant:wght@300;400;600&display=swap');
+
+[data-theme="marble-rome"] {
+  --primary: #1A1A1A;
+  --secondary: #2C2C2C;
+  --accent: #D4AF37;
+  --marble: #E8E8E8;
+  --text: #FFFFFF;
+  --text-light: #CCCCCC;
+  --border: rgba(212, 175, 55, 0.3);
+  --font-heading: 'Cinzel', serif;
+  --font-body: 'Lora', serif;
+  --font-accent: 'Cormorant', serif;
+}
+
+/* Global styles */
+[data-theme="marble-rome"] * {
+  font-family: var(--font-body);
+}
+
+[data-theme="marble-rome"] body {
+  background: var(--primary);
+  color: var(--text);
+}
+
+/* Hero section */
+[data-theme="marble-rome"] .hero-section {
+  min-height: 85vh;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  position: relative;
+}
+
+[data-theme="marble-rome"] .restaurant-name {
+  font-family: var(--font-heading);
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  font-weight: 700;
+  color: var(--accent);
+  text-align: center;
+  margin-bottom: 1.5rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+[data-theme="marble-rome"] .restaurant-description {
+  font-family: var(--font-accent);
+  font-size: clamp(1.2rem, 2.5vw, 1.5rem);
+  color: var(--text-light);
+  text-align: center;
+  font-weight: 300;
+  font-style: italic;
+}
+
+/* Section titles */
+[data-theme="marble-rome"] h2,
+[data-theme="marble-rome"] .section-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 600;
+  color: var(--accent);
+  text-align: center;
+  margin: 5rem 0 3rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Dish cards */
+[data-theme="marble-rome"] .dish-card {
+  background: var(--secondary);
+  border: 1px solid var(--border);
+  border-radius: 0;
+  overflow: hidden;
+  transition: all 500ms ease;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+[data-theme="marble-rome"] .dish-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 0 30px rgba(212, 175, 55, 0.4), 0 8px 25px rgba(0, 0, 0, 0.6);
+  transform: translateY(-4px);
+}
+
+[data-theme="marble-rome"] .dish-name {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+}
+
+[data-theme="marble-rome"] .dish-description {
+  font-size: 0.95rem;
+  color: var(--text-light);
+  line-height: 1.7;
+  font-style: italic;
+}
+
+[data-theme="marble-rome"] .dish-price {
+  font-family: var(--font-heading);
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.05em;
+}
+
+/* Buttons */
+[data-theme="marble-rome"] button,
+[data-theme="marble-rome"] .btn {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  padding: 1rem 2.5rem;
+  border: 2px solid var(--accent);
+  border-radius: 0;
+  background: transparent;
+  color: var(--accent);
+  transition: all 500ms ease;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+[data-theme="marble-rome"] button:hover,
+[data-theme="marble-rome"] .btn:hover {
+  background: var(--accent);
+  color: var(--primary);
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+}
+
+/* Footer */
+[data-theme="marble-rome"] footer {
+  background: var(--secondary);
+  padding: 4rem 2rem;
+  text-align: center;
+  border-top: 1px solid var(--border);
+  margin-top: 5rem;
+}
+
+[data-theme="marble-rome"] footer a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: all 500ms ease;
+  font-weight: 600;
+}
+
+[data-theme="marble-rome"] footer a:hover {
+  text-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+}
