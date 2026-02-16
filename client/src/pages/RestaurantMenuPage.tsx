@@ -13,6 +13,7 @@ import { nanoid } from "nanoid";
 import ReactMarkdown from "react-markdown";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { useTranslation } from "@/hooks/useTranslation";
+import { AdvertisementDisplay, DishItemAd } from "@/components/AdvertisementDisplay";
 
 export default function RestaurantMenuPage() {
   const params: { slug?: string } = useParams();
@@ -43,8 +44,11 @@ export default function RestaurantMenuPage() {
     { enabled: !!restaurant?.id }
   );
 
-  // Get active advertisements
-  const { data: advertisements } = trpc.public.getActiveAdvertisements.useQuery();
+  // Get active advertisements (only for MENU tier)
+  const { data: advertisements } = trpc.public.getActiveAdvertisements.useQuery(
+    undefined,
+    { enabled: restaurant?.subscriptionTier === "menu" && restaurant?.showAds }
+  );
 
   // Chat mutation
   const chatMutation = trpc.public.chat.useMutation({
@@ -115,6 +119,10 @@ export default function RestaurantMenuPage() {
 
   const primaryColor = restaurant.primaryColor || "#ef4444";
   const accentColor = restaurant.accentColor || "#fbbf24";
+
+  // Séparer les publicités dish_item des autres formats
+  const dishItemAds = advertisements?.filter((ad: any) => ad.format === "dish_item") || [];
+  const otherFormatAds = advertisements?.filter((ad: any) => ad.format !== "dish_item") || [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -210,8 +218,15 @@ export default function RestaurantMenuPage() {
                 return (
                   <TabsContent key={category.id} value={category.id.toString()} className="space-y-4">
                     {categoryItems.length > 0 ? (
-                      categoryItems.map((item) => (
-                        <Card key={item.id} className="overflow-hidden hover:shadow-md transition-shadow">
+                      <>
+                        {categoryItems.map((item, index) => (
+                          <>
+                            {/* Insérer un dish_item ad tous les 4 plats si disponible */}
+                            {index > 0 && index % 4 === 0 && dishItemAds[Math.floor(index / 4) - 1] && (
+                              <DishItemAd key={`ad-${dishItemAds[Math.floor(index / 4) - 1].id}`} advertisement={dishItemAds[Math.floor(index / 4) - 1]} />
+                            )}
+                            {/* Plat normal */}
+                            <Card key={item.id} className="overflow-hidden hover:shadow-md transition-shadow">
                           <CardContent className="p-6">
                             <div className="flex justify-between items-start gap-4">
                               <div className="flex-1">
@@ -259,7 +274,14 @@ export default function RestaurantMenuPage() {
                             </div>
                           </CardContent>
                         </Card>
-                      ))
+                          </>
+                        ))}
+                        
+                        {/* Ajouter les dish_item ads restants à la fin de chaque catégorie */}
+                        {dishItemAds.slice(Math.floor(categoryItems.length / 4)).map((ad: any) => (
+                          <DishItemAd key={`ad-${ad.id}`} advertisement={ad} />
+                        ))}
+                      </>
                     ) : (
                       <p className="text-center text-muted-foreground py-8">Aucun plat dans cette catégorie</p>
                     )}
@@ -370,52 +392,12 @@ export default function RestaurantMenuPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Advertisement Banner (MENU tier only) */}
-      {restaurant.subscriptionTier === "menu" && restaurant.showAds && advertisements && advertisements.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-slate-50 via-white to-slate-50 border-t border-slate-200/60 backdrop-blur-sm shadow-2xl z-[9999]">
-          <div className="container max-w-7xl mx-auto px-6 py-4">
-            <div className="flex items-center justify-between gap-6">
-              <div className="flex items-center gap-2 text-xs font-medium tracking-wide flex-shrink-0" style={{ fontFamily: 'Montserrat, sans-serif', color: '#B8860B' }}>
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-                </svg>
-                PARTENAIRE
-              </div>
-              <div className="flex-1 overflow-x-auto">
-                <div className="flex gap-4 items-center justify-center">
-                  {advertisements.map((ad) => (
-                    <a
-                      key={ad.id}
-                      href={ad.linkUrl || "#"}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group flex items-center gap-4 px-6 py-3 rounded-xl bg-white/80 hover:bg-white border border-slate-200/60 hover:border-slate-300 hover:shadow-lg transition-all duration-300 flex-shrink-0 hover:scale-105"
-                    >
-                      {ad.imageUrl && (
-                        <img
-                          src={ad.imageUrl}
-                          alt={ad.title}
-                          className="h-20 w-20 object-cover rounded-lg shadow-sm group-hover:shadow-md transition-shadow"
-                        />
-                      )}
-                      <div className="flex flex-col gap-1">
-                        <span className="text-sm font-semibold text-slate-800 group-hover:text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>{ad.title}</span>
-                        <span className="text-xs text-slate-500 group-hover:text-pronto-primary transition-colors flex items-center gap-1" style={{ fontFamily: 'Montserrat, sans-serif' }}>
-                          Découvrir
-                          <svg className="w-3 h-3 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
-                        </span>
-                      </div>
-                    </a>
-                  ))}
-                </div>
-              </div>
-              <div className="w-20 flex-shrink-0"></div>
-            </div>
-          </div>
-        </div>
+      {/* Advertisements - MENU tier only (tous formats sauf dish_item) */}
+      {restaurant.subscriptionTier === "menu" && restaurant.showAds && otherFormatAds && otherFormatAds.length > 0 && (
+        <AdvertisementDisplay advertisements={otherFormatAds} currentPage="menu" />
       )}
+
+
     </div>
   );
 }

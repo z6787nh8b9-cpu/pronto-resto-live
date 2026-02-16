@@ -682,9 +682,9 @@
 ## 📢 Système de publicités configurable
 - [x] Créer table `advertisements` pour stocker les publicités
 - [x] Créer onglet "Publicités" dans Super Admin avec configuration des formats
-- [ ] Implémenter format publicité : Pastille
-- [ ] Implémenter format publicité : Footer
-- [ ] Implémenter format publicité : Pleine page arrière-plan
-- [ ] Implémenter format publicité : Pop-up
-- [ ] Implémenter format publicité : Item plat (vert pesto avec mention "Partenariat" dorée + couronne)
+- [- [x] Implémenter format publicité : Pastille
+- [x] Implémenter format publicité : Footer
+- [x] Implémenter format publicité : Pleine page arrière-plan
+- [x] Implémenter format publicité : Pop-up
+- [x] Implémenter format publicité : Item plat (vert pesto + mention "Partenariat" dorée + couronne)
 - [ ] Afficher les publicités actives sur la landing page selon leur format

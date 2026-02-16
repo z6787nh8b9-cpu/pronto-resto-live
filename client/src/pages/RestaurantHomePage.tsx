@@ -14,6 +14,7 @@ import { LanguageSelector } from "@/components/LanguageSelector";
 import { useTranslation } from "@/hooks/useTranslation";
 import { ReservationFlow } from "@/components/ReservationFlow";
 import { EventRegistrationFlow } from "@/components/EventRegistrationFlow";
+import { AdvertisementDisplay, DishItemAd } from "@/components/AdvertisementDisplay";
 
 export default function RestaurantHomePage() {
   const params: { slug?: string } = useParams();
@@ -135,8 +136,12 @@ export default function RestaurantHomePage() {
 
   const daysOfWeek = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
 
+  // Séparer les publicités dish_item des autres formats
+  const dishItemAds = advertisements?.filter((ad: any) => ad.format === "dish_item") || [];
+  const otherFormatAds = advertisements?.filter((ad: any) => ad.format !== "dish_item") || [];
+
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white relative">
       {/* Header moderne et minimaliste */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-neutral-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -236,11 +241,18 @@ export default function RestaurantHomePage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {featuredDishes.map((dish: any) => (
-                <div
-                  key={dish.id}
-                  className="group bg-white overflow-hidden transition-all duration-300 hover:shadow-2xl"
-                >
+              {/* Plats signatures */}
+              {featuredDishes.map((dish: any, index: number) => (
+                <>
+                  {/* Insérer un dish_item ad tous les 3 plats si disponible */}
+                  {index > 0 && index % 3 === 0 && dishItemAds[Math.floor(index / 3) - 1] && (
+                    <DishItemAd key={`ad-${dishItemAds[Math.floor(index / 3) - 1].id}`} advertisement={dishItemAds[Math.floor(index / 3) - 1]} />
+                  )}
+                  {/* Plat normal */}
+                  <div
+                    key={dish.id}
+                    className="group bg-white overflow-hidden transition-all duration-300 hover:shadow-2xl"
+                  >
                   {dish.imageUrl && (
                     <div className="aspect-[4/3] overflow-hidden">
                       <img
@@ -282,7 +294,13 @@ export default function RestaurantHomePage() {
                       )}
                     </div>
                   </div>
-                </div>
+                  </div>
+                </>
+              ))}
+              
+              {/* Ajouter les dish_item ads restants à la fin */}
+              {dishItemAds.slice(Math.floor(featuredDishes.length / 3)).map((ad: any) => (
+                <DishItemAd key={`ad-${ad.id}`} advertisement={ad} />
               ))}
             </div>
 
@@ -461,34 +479,9 @@ export default function RestaurantHomePage() {
         </div>
       </section>
 
-      {/* Advertisements Banner - MENU tier only */}
-      {restaurant.subscriptionTier === "menu" && restaurant.showAds && advertisements && advertisements.length > 0 && (
-        <section className="py-12 bg-neutral-100">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {advertisements.map((ad: any) => (
-                <a
-                  key={ad.id}
-                  href={ad.linkUrl || "#"}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block group"
-                >
-                  <div className="aspect-video overflow-hidden bg-white">
-                    {ad.imageUrl && (
-                      <img
-                        src={ad.imageUrl}
-                        alt={ad.title}
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
-                    )}
-                  </div>
-                  <p className="mt-2 text-sm text-neutral-600 text-center">{ad.title}</p>
-                </a>
-              ))}
-            </div>
-          </div>
-        </section>
+      {/* Advertisements - MENU tier only (tous formats sauf dish_item) */}
+      {restaurant.subscriptionTier === "menu" && restaurant.showAds && otherFormatAds && otherFormatAds.length > 0 && (
+        <AdvertisementDisplay advertisements={otherFormatAds} currentPage="restaurant_page" />
       )}
 
       {/* Footer */}
