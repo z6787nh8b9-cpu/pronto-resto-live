@@ -13,13 +13,6 @@ import { eq } from "drizzle-orm";
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!;
 
-// Base URL for callbacks
-let callbackBaseURL = "http://localhost:3000";
-
-export function setAdminCallbackBaseURL(url: string) {
-  callbackBaseURL = url;
-}
-
 /**
  * Initialize Passport strategy for admin Google OAuth
  */
@@ -31,7 +24,7 @@ export function initializeAdminGoogleStrategy() {
       {
         clientID: GOOGLE_CLIENT_ID,
         clientSecret: GOOGLE_CLIENT_SECRET,
-        callbackURL: `${callbackBaseURL}/api/auth/admin-google/callback`,
+        callbackURL: "/api/auth/admin-google/callback",
         passReqToCallback: true,
       },
       async (req: any, accessToken, refreshToken, profile, done) => {

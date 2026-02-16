@@ -7,6 +7,7 @@ import { Express, Request, Response } from "express";
 import session from "express-session";
 import passport from "passport";
 import { initializePassport } from "./auth-config";
+import { initializeAdminGoogleStrategy } from "./admin-auth-config";
 
 /**
  * Register OAuth routes for restaurant owner authentication
@@ -26,8 +27,9 @@ export function registerRestaurantAuthRoutes(app: Express) {
     })
   );
 
-  // Initialize Passport
+  // Initialize Passport with both restaurant and admin strategies
   initializePassport();
+  initializeAdminGoogleStrategy();
   app.use(passport.initialize());
   app.use(passport.session());
 

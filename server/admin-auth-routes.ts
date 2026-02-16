@@ -11,10 +11,7 @@ import { initializeAdminGoogleStrategy } from "./admin-auth-config";
  * Register OAuth routes for admin authentication
  */
 export function registerAdminAuthRoutes(app: Express) {
-  // Initialize Admin Google Strategy
-  initializeAdminGoogleStrategy();
-
-  // Admin Google OAuth Routes
+  // Admin Google OAuth Routes (strategy initialized in auth-routes.ts)
   app.get(
     "/api/auth/admin-google",
     (req: Request, res: Response, next) => {

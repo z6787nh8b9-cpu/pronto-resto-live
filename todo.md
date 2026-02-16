@@ -802,3 +802,7 @@
 - [x] Créer page d'acceptation /invite-admin/:token
 - [x] Modifier contexte tRPC pour supporter adminAccount
 - [x] Modifier adminProcedure pour accepter les 2 types d'admins
+
+## 🔧 Correction callback OAuth admin
+- [x] Corriger la configuration callbackBaseURL pour la production
+- [x] Tester le flux complet d'invitation admin
