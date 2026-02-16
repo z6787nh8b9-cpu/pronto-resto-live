@@ -83,7 +83,8 @@ export function initializeAdminGoogleStrategy() {
 
           // If admin doesn't exist, create new admin account
           if (!admin) {
-            const [newAdmin] = await db.insert(adminAccounts).values({
+            console.log('[Admin OAuth] Creating new admin account for:', email);
+            const result = await db.insert(adminAccounts).values({
               email,
               name: profile.displayName || email,
               avatarUrl: profile.photos?.[0]?.value || null,
@@ -91,12 +92,27 @@ export function initializeAdminGoogleStrategy() {
               invitationId: invitation.id,
             });
 
+            console.log('[Admin OAuth] Insert result:', result);
+
+            const insertedId = Number(result[0].insertId);
+            if (!insertedId) {
+              console.error('[Admin OAuth] Failed to get insertId from database');
+              return done(new Error('Failed to create admin account'), undefined);
+            }
+
             const [newAdminData] = await db
               .select()
               .from(adminAccounts)
-              .where(eq(adminAccounts.id, newAdmin.insertId))
+              .where(eq(adminAccounts.id, insertedId))
               .limit(1);
+            
+            if (!newAdminData) {
+              console.error('[Admin OAuth] Failed to retrieve newly created admin');
+              return done(new Error('Failed to retrieve admin account'), undefined);
+            }
+            
             admin = newAdminData;
+            console.log('[Admin OAuth] Admin account created successfully:', admin.id);
 
             // Mark invitation as used
             await db
@@ -120,7 +136,8 @@ export function initializeAdminGoogleStrategy() {
           // Store admin session
           req.session.adminAccountId = admin!.id;
 
-          done(null, admin as any);
+          console.log('[Admin OAuth] Authentication successful for admin:', admin.id);
+          return done(null, admin);
         } catch (error) {
           done(error as Error, undefined);
         }

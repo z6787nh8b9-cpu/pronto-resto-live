@@ -27,20 +27,42 @@ export function setCallbackBaseURL(url: string) {
  * Initialize Passport with OAuth strategies
  */
 export function initializePassport() {
-  // Serialize user to session
-  passport.serializeUser((owner: any, done) => {
-    done(null, owner.id);
+  // Serialize user to session (supports both restaurant owners and admin accounts)
+  passport.serializeUser((user: any, done) => {
+    // Differentiate between restaurant owners and admin accounts
+    if (user.googleId && !user.facebookId) {
+      // Could be either - check if it has invitationId (admin) or restaurantId (owner)
+      if (user.invitationId !== undefined) {
+        done(null, `admin:${user.id}`);
+      } else {
+        done(null, `owner:${user.id}`);
+      }
+    } else if (user.facebookId) {
+      done(null, `owner:${user.id}`);
+    } else {
+      done(null, `owner:${user.id}`); // Default to owner
+    }
   });
 
-  // Deserialize user from session
-  passport.deserializeUser(async (id: number, done) => {
+  // Deserialize user from session (supports both types)
+  passport.deserializeUser(async (id: string, done) => {
     try {
       const db = await getDb();
       if (!db) {
         return done(new Error("Database not available"), null);
       }
-      const [owner] = await db.select().from(restaurantOwners).where(eq(restaurantOwners.id, id)).limit(1);
-      done(null, owner || null);
+
+      const [type, userId] = id.split(':');
+      const numericId = parseInt(userId, 10);
+
+      if (type === 'admin') {
+        const { adminAccounts } = await import('../drizzle/schema');
+        const [admin] = await db.select().from(adminAccounts).where(eq(adminAccounts.id, numericId)).limit(1);
+        done(null, admin || null);
+      } else {
+        const [owner] = await db.select().from(restaurantOwners).where(eq(restaurantOwners.id, numericId)).limit(1);
+        done(null, owner || null);
+      }
     } catch (error) {
       done(error, null);
     }

@@ -1,0 +1,15 @@
+{
+  "query": "SELECT token, createdAt, expiresAt FROM admin_invitations ORDER BY createdAt DESC LIMIT 1;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2m1m65o6UXETKUo.39bdc9c5be54 --database Lrdq8kkKw7pbRUXDsDAG5X --execute SELECT token, createdAt, expiresAt FROM admin_invitations ORDER BY createdAt DESC LIMIT 1;",
+  "rows": [
+    {
+      "token": "52df77f198de4e3bc2fe9c70effa75e69c9f86066d6e6b7e3767a78a48983239",
+      "createdAt": "2026-02-16 23:42:19",
+      "expiresAt": "2026-02-23 23:42:20"
+    }
+  ],
+  "messages": [],
+  "stdout": "token\tcreatedAt\texpiresAt\n52df77f198de4e3bc2fe9c70effa75e69c9f86066d6e6b7e3767a78a48983239\t2026-02-16 23:42:19\t2026-02-23 23:42:20\n",
+  "stderr": "",
+  "execution_time_ms": 60
+}

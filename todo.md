@@ -809,3 +809,6 @@
 
 ## 🔧 Correction domaine callback OAuth admin
 - [x] Utiliser https://pronto.page pour le callback en production
+
+## 🐛 Correction erreur callback OAuth admin
+- [ ] Analyser et corriger l'erreur serveur lors du callback

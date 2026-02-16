@@ -140,8 +140,11 @@ declare global {
       email: string;
       name: string;
       avatarUrl: string | null;
-      provider: "google" | "facebook";
-      providerId: string;
+      provider?: "google" | "facebook"; // Optional for admins
+      providerId?: string; // Optional for admins
+      googleId?: string; // For admins
+      invitationId?: number; // For admins
+      restaurantId?: number; // For restaurant owners
       createdAt: Date;
       updatedAt: Date;
       lastSignedIn: Date;
