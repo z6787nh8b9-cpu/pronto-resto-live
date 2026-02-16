@@ -583,3 +583,23 @@ export const adminInvitations = mysqlTable("admin_invitations", {
 
 export type AdminInvitation = typeof adminInvitations.$inferSelect;
 export type InsertAdminInvitation = typeof adminInvitations.$inferInsert;
+
+/**
+ * Admin accounts table - For admins who joined via invitation link with Google OAuth
+ * Separate from users table (Manus OAuth) to support independent authentication
+ */
+export const adminAccounts = mysqlTable("admin_accounts", {
+  id: int("id").autoincrement().primaryKey(),
+  email: varchar("email", { length: 320 }).notNull().unique(),
+  name: text("name").notNull(),
+  avatarUrl: text("avatarUrl"),
+  googleId: varchar("googleId", { length: 255 }).notNull().unique(), // Google OAuth ID
+  invitationId: int("invitationId").notNull(), // Reference to admin_invitations
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
+});
+
+export type AdminAccount = typeof adminAccounts.$inferSelect;
+export type InsertAdminAccount = typeof adminAccounts.$inferInsert;

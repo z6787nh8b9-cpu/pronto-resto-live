@@ -35,7 +35,17 @@ export const adminProcedure = t.procedure.use(
     // MODE DÉVELOPPEMENT : Autoriser l'accès sans authentification
     const isDev = process.env.NODE_ENV === 'development';
     
-    if (!isDev && (!ctx.user || ctx.user.role !== 'admin')) {
+    if (isDev) {
+      return next({ ctx });
+    }
+
+    // Check if user is Manus OAuth admin
+    const isManusAdmin = ctx.user && ctx.user.role === 'admin';
+    
+    // Check if user is Google OAuth invited admin
+    const isInvitedAdmin = !!ctx.adminAccount;
+
+    if (!isManusAdmin && !isInvitedAdmin) {
       throw new TRPCError({ code: "FORBIDDEN", message: NOT_ADMIN_ERR_MSG });
     }
 
@@ -43,6 +53,7 @@ export const adminProcedure = t.procedure.use(
       ctx: {
         ...ctx,
         user: ctx.user,
+        adminAccount: ctx.adminAccount,
       },
     });
   }),

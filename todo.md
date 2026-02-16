@@ -791,3 +791,14 @@
 - [ ] Créer page d'acceptation avec auth Google/Email
 - [ ] Implémenter création automatique compte admin
 - [ ] Tester flux complet invitation autonome
+
+## 🔐 Système d'invitation admin autonome (Google OAuth)
+- [x] Créer table admin_accounts pour admins invités
+- [x] Modifier table admin_invitations (retirer email, ajouter usedBy)
+- [x] Créer procédure generateAdminInvitation (sans email)
+- [x] Créer interface de génération de liens dans /admin
+- [x] Créer configuration OAuth admin (admin-auth-config.ts)
+- [x] Créer routes OAuth admin (/api/auth/admin-google)
+- [x] Créer page d'acceptation /invite-admin/:token
+- [x] Modifier contexte tRPC pour supporter adminAccount
+- [x] Modifier adminProcedure pour accepter les 2 types d'admins

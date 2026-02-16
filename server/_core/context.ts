@@ -1,5 +1,5 @@
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
-import type { User, RestaurantOwner } from "../../drizzle/schema";
+import type { User, RestaurantOwner, AdminAccount } from "../../drizzle/schema";
 import { sdk } from "./sdk";
 
 export type TrpcContext = {
@@ -7,6 +7,7 @@ export type TrpcContext = {
   res: CreateExpressContextOptions["res"];
   user: User | null; // Manus OAuth user (Super Admin)
   restaurantOwner: RestaurantOwner | null; // Google/Facebook OAuth user
+  adminAccount: AdminAccount | null; // Google OAuth admin (invited)
 };
 
 export async function createContext(
@@ -14,6 +15,7 @@ export async function createContext(
 ): Promise<TrpcContext> {
   let user: User | null = null;
   let restaurantOwner: RestaurantOwner | null = null;
+  let adminAccount: AdminAccount | null = null;
 
   // Check for Manus OAuth user (Super Admin)
   try {
@@ -29,10 +31,23 @@ export async function createContext(
     restaurantOwner = opts.req.user as RestaurantOwner;
   }
 
+  // Check for admin account session (Google OAuth invited admin)
+  if (opts.req.session?.adminAccountId) {
+    const { getDb } = await import("../db");
+    const { adminAccounts } = await import("../../drizzle/schema");
+    const { eq } = await import("drizzle-orm");
+    const db = await getDb();
+    if (db) {
+      const [account] = await db.select().from(adminAccounts).where(eq(adminAccounts.id, opts.req.session.adminAccountId)).limit(1);
+      adminAccount = account || null;
+    }
+  }
+
   return {
     req: opts.req,
     res: opts.res,
     user,
     restaurantOwner,
+    adminAccount,
   };
 }

@@ -3,20 +3,15 @@ import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Shield, ShieldOff, UserPlus, Crown, Mail, Clock, CheckCircle, XCircle, Copy, Trash2 } from "lucide-react";
+import { Shield, ShieldOff, UserPlus, Crown, Link as LinkIcon, Clock, CheckCircle, XCircle, Copy, Trash2, Plus } from "lucide-react";
 import { toast } from "sonner";
 
 export default function Admins() {
-  const [isPromoteDialogOpen, setIsPromoteDialogOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
-  const [inviteEmail, setInviteEmail] = useState("");
-  const [isInviting, setIsInviting] = useState(false);
+  const [isGenerating, setIsGenerating] = useState(false);
 
   // Queries
   const { data: admins, refetch: refetchAdmins } = trpc.admin.listAdmins.useQuery();
@@ -28,10 +23,9 @@ export default function Admins() {
     onSuccess: () => {
       toast.success("Utilisateur promu admin avec succès");
       refetchAdmins();
-      setIsPromoteDialogOpen(false);
       setSelectedUserId(null);
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(error.message || "Erreur lors de la promotion");
     },
   });
@@ -41,26 +35,25 @@ export default function Admins() {
       toast.success("Admin rétrogradé en utilisateur");
       refetchAdmins();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(error.message || "Erreur lors de la rétrogradation");
     },
   });
 
-  const createInvitation = trpc.admin.createAdminInvitation.useMutation({
+  const generateInvitation = trpc.admin.generateAdminInvitation.useMutation({
     onSuccess: (data) => {
-      toast.success(`Invitation envoyée à ${inviteEmail}`);
-      setInviteEmail("");
-      setIsInviting(false);
+      toast.success("Lien d'invitation généré !");
+      setIsGenerating(false);
       refetchInvitations();
       
       // Copy invitation link to clipboard
-      const invitationUrl = `${window.location.origin}/admin/invite/${data.token}`;
+      const invitationUrl = `${window.location.origin}/invite-admin/${data.token}`;
       navigator.clipboard.writeText(invitationUrl);
-      toast.success("Lien d'invitation copié dans le presse-papiers");
+      toast.success("Lien copié dans le presse-papiers");
     },
-    onError: (error) => {
-      toast.error(error.message || "Erreur lors de la création de l'invitation");
-      setIsInviting(false);
+    onError: (error: any) => {
+      toast.error(error.message || "Erreur lors de la génération");
+      setIsGenerating(false);
     },
   });
 
@@ -69,23 +62,20 @@ export default function Admins() {
       toast.success("Invitation révoquée");
       refetchInvitations();
     },
-    onError: (error) => {
+    onError: (error: any) => {
       toast.error(error.message || "Erreur lors de la révocation");
     },
   });
 
   const nonAdminUsers = allUsers?.filter(u => u.role !== 'admin') || [];
 
-  const handleInvite = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!inviteEmail) return;
-    
-    setIsInviting(true);
-    createInvitation.mutate({ email: inviteEmail });
+  const handleGenerateInvitation = () => {
+    setIsGenerating(true);
+    generateInvitation.mutate();
   };
 
   const handleCopyInviteLink = (token: string) => {
-    const invitationUrl = `${window.location.origin}/admin/invite/${token}`;
+    const invitationUrl = `${window.location.origin}/invite-admin/${token}`;
     navigator.clipboard.writeText(invitationUrl);
     toast.success("Lien copié dans le presse-papiers");
   };
@@ -109,9 +99,9 @@ export default function Admins() {
             <Shield className="h-4 w-4 mr-2" />
             Admins Actifs ({admins?.length || 0})
           </TabsTrigger>
-          <TabsTrigger value="invite">
-            <Mail className="h-4 w-4 mr-2" />
-            Inviter par Email
+          <TabsTrigger value="generate">
+            <LinkIcon className="h-4 w-4 mr-2" />
+            Générer Invitation
           </TabsTrigger>
           <TabsTrigger value="promote">
             <UserPlus className="h-4 w-4 mr-2" />
@@ -181,37 +171,31 @@ export default function Admins() {
           </Card>
         </TabsContent>
 
-        {/* Invite by Email Tab */}
-        <TabsContent value="invite" className="space-y-6">
+        {/* Generate Invitation Tab */}
+        <TabsContent value="generate" className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Mail className="h-5 w-5" />
-                Inviter un administrateur par email
+                <LinkIcon className="h-5 w-5" />
+                Générer un lien d'invitation
               </CardTitle>
               <CardDescription>
-                Envoyez une invitation par email avec un lien d'activation unique (valide 7 jours)
+                Créez un lien unique permettant à n'importe qui de devenir administrateur (valide 7 jours)
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleInvite} className="flex gap-4">
-                <div className="flex-1">
-                  <Label htmlFor="email" className="sr-only">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="admin@example.com"
-                    value={inviteEmail}
-                    onChange={(e) => setInviteEmail(e.target.value)}
-                    disabled={isInviting}
-                    required
-                  />
-                </div>
-                <Button type="submit" disabled={isInviting || !inviteEmail}>
-                  <Mail className="mr-2 h-4 w-4" />
-                  {isInviting ? "Envoi..." : "Envoyer l'invitation"}
-                </Button>
-              </form>
+              <Button 
+                onClick={handleGenerateInvitation} 
+                disabled={isGenerating}
+                size="lg"
+                className="w-full"
+              >
+                <Plus className="mr-2 h-5 w-5" />
+                {isGenerating ? "Génération..." : "Générer un nouveau lien"}
+              </Button>
+              <p className="text-sm text-muted-foreground mt-4 text-center">
+                Le lien sera automatiquement copié dans votre presse-papiers
+              </p>
             </CardContent>
           </Card>
 
@@ -220,10 +204,10 @@ export default function Admins() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Clock className="h-5 w-5" />
-                Invitations en attente ({invitations?.filter(i => !i.usedAt).length || 0})
+                Liens d'invitation ({invitations?.length || 0})
               </CardTitle>
               <CardDescription>
-                Invitations envoyées mais pas encore acceptées
+                Tous les liens générés et leur statut
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -231,9 +215,9 @@ export default function Admins() {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>Email</TableHead>
+                      <TableHead>Token</TableHead>
                       <TableHead>Statut</TableHead>
-                      <TableHead>Créée le</TableHead>
+                      <TableHead>Créé le</TableHead>
                       <TableHead>Expire le</TableHead>
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
@@ -245,22 +229,24 @@ export default function Admins() {
                       
                       return (
                         <TableRow key={invitation.id}>
-                          <TableCell className="font-medium">{invitation.email}</TableCell>
+                          <TableCell className="font-mono text-xs">
+                            {invitation.token.substring(0, 16)}...
+                          </TableCell>
                           <TableCell>
                             {used ? (
                               <Badge variant="default" className="bg-green-500">
                                 <CheckCircle className="mr-1 h-3 w-3" />
-                                Acceptée
+                                Utilisé
                               </Badge>
                             ) : expired ? (
                               <Badge variant="destructive">
                                 <XCircle className="mr-1 h-3 w-3" />
-                                Expirée
+                                Expiré
                               </Badge>
                             ) : (
                               <Badge variant="secondary">
                                 <Clock className="mr-1 h-3 w-3" />
-                                En attente
+                                Actif
                               </Badge>
                             )}
                           </TableCell>
@@ -285,7 +271,7 @@ export default function Admins() {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => {
-                                  if (confirm(`Êtes-vous sûr de vouloir révoquer l'invitation pour ${invitation.email} ?`)) {
+                                  if (confirm(`Êtes-vous sûr de vouloir révoquer cette invitation ?`)) {
                                     revokeInvitation.mutate({ id: invitation.id });
                                   }
                                 }}
@@ -301,7 +287,7 @@ export default function Admins() {
                 </Table>
               ) : (
                 <p className="text-center text-muted-foreground py-8">
-                  Aucune invitation en attente
+                  Aucune invitation générée
                 </p>
               )}
             </CardContent>

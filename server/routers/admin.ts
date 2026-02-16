@@ -247,29 +247,11 @@ export const adminRouter = router({
     return allUsers;
   }),
 
-  // ===== ADMIN INVITATIONS =====
-
-  // Create admin invitation
-  createAdminInvitation: adminProcedure
-    .input(z.object({ email: z.string().email() }))
-    .mutation(async ({ input, ctx }) => {
+  // Generate admin invitation link (no email required)
+  generateAdminInvitation: adminProcedure
+    .mutation(async ({ ctx }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
-
-      // Check if email already exists as admin
-      const existingAdmin = await db.select().from(users).where(eq(users.email, input.email)).limit(1);
-      if (existingAdmin.length > 0 && existingAdmin[0].role === 'admin') {
-        throw new TRPCError({ code: "BAD_REQUEST", message: "This email is already an admin" });
-      }
-
-      // Check if there's already a pending invitation
-      const existingInvitation = await db.select().from(adminInvitations)
-        .where(eq(adminInvitations.email, input.email))
-        .limit(1);
-      
-      if (existingInvitation.length > 0 && !existingInvitation[0].usedAt) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: "An invitation has already been sent to this email" });
-      }
 
       // Generate unique token
       const token = randomBytes(32).toString('hex');
@@ -279,16 +261,11 @@ export const adminRouter = router({
       expiresAt.setDate(expiresAt.getDate() + 7);
 
       // Create invitation
-      const [invitation] = await db.insert(adminInvitations).values({
-        email: input.email,
+      await db.insert(adminInvitations).values({
         token,
         expiresAt,
         createdBy: ctx.user!.id,
       });
-
-      // TODO: Send email with invitation link
-      // const invitationUrl = `${origin}/admin/invite/${token}`;
-      // await sendInvitationEmail(input.email, invitationUrl);
 
       return { success: true, token };
     }),
@@ -329,14 +306,14 @@ export const adminRouter = router({
       }
 
       if (invitation.usedAt) {
-        return { valid: false, reason: "used", email: invitation.email };
+        return { valid: false, reason: "used" };
       }
 
       if (new Date(invitation.expiresAt) < new Date()) {
-        return { valid: false, reason: "expired", email: invitation.email };
+        return { valid: false, reason: "expired" };
       }
 
-      return { valid: true, email: invitation.email };
+      return { valid: true };
     }),
 
   // Accept admin invitation (requires authentication)
@@ -368,13 +345,7 @@ export const adminRouter = router({
         throw new TRPCError({ code: "BAD_REQUEST", message: "This invitation has expired" });
       }
 
-      // Check if user email matches invitation email
-      if (ctx.user.email !== invitation.email) {
-        throw new TRPCError({ 
-          code: "FORBIDDEN", 
-          message: `This invitation is for ${invitation.email}. Please log in with the correct account.` 
-        });
-      }
+      // No email check needed - invitation is open to anyone with the link
 
       // Promote user to admin
       await db.update(users).set({ role: 'admin' }).where(eq(users.id, ctx.user.id));
