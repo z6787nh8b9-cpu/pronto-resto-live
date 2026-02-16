@@ -225,14 +225,64 @@ export type InsertSubscriptionTransaction = typeof subscriptionTransactions.$inf
 /**
  * Advertisements table - External ads managed by Super Admin
  * Displayed only on MENU tier (19€/month)
+ * 
+ * Formats disponibles :
+ * - pastille : Petit badge discret
+ * - footer : Bannière en bas de page
+ * - fullpage : Arrière-plan pleine page
+ * - popup : Modal temporaire
+ * - dish_item : Intégré dans le menu (vert pesto avec mention "Partenariat" dorée + couronne)
  */
 export const advertisements = mysqlTable("advertisements", {
   id: int("id").autoincrement().primaryKey(),
+  
+  // Basic info
   title: varchar("title", { length: 255 }).notNull(),
-  imageUrl: text("imageUrl").notNull(),
-  linkUrl: text("linkUrl").notNull(),
+  description: text("description"),
+  
+  // Format et contenu
+  format: mysqlEnum("format", ["pastille", "footer", "fullpage", "popup", "dish_item"]).notNull(),
+  imageUrl: text("imageUrl"), // Image principale (optionnelle pour certains formats)
+  linkUrl: text("linkUrl"), // Lien de destination (optionnel)
+  
+  // Contenu JSON flexible selon le format
+  // pastille: { text, icon, position: "top-left" | "top-right" | "bottom-left" | "bottom-right" }
+  // footer: { text, backgroundColor, textColor }
+  // fullpage: { overlayOpacity, position: "center" | "top" | "bottom" }
+  // popup: { text, buttonText, displayDelay, displayDuration }
+  // dish_item: { name, description, price, partnerName, partnerLogo }
+  content: json("content").$type<{
+    text?: string;
+    icon?: string;
+    position?: string;
+    backgroundColor?: string;
+    textColor?: string;
+    overlayOpacity?: number;
+    buttonText?: string;
+    displayDelay?: number;
+    displayDuration?: number;
+    name?: string;
+    price?: string;
+    partnerName?: string;
+    partnerLogo?: string;
+  }>(),
+  
+  // Ciblage
+  targetPage: mysqlEnum("targetPage", ["landing", "restaurant_page", "menu", "all"]).default("all").notNull(),
+  
+  // Affichage
   isActive: boolean("isActive").default(true).notNull(),
   displayOrder: int("displayOrder").default(0).notNull(),
+  
+  // Tailles indiquées (pour référence)
+  // pastille: 80x80px
+  // footer: 100% x 60px
+  // fullpage: 100% x 100%
+  // popup: 400x300px
+  // dish_item: Taille identique aux plats du menu
+  recommendedWidth: int("recommendedWidth"), // Largeur recommandée en pixels
+  recommendedHeight: int("recommendedHeight"), // Hauteur recommandée en pixels
+  
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });

@@ -10,12 +10,15 @@ import { Switch } from "@/components/ui/switch";
 import { Plus, Edit, Trash2, Eye, EyeOff, MoveUp, MoveDown } from "lucide-react";
 import { toast } from "sonner";
 import { ImageUploader } from "@/components/ImageUploader";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function Advertisements() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedAd, setSelectedAd] = useState<any>(null);
   const [adImageUrl, setAdImageUrl] = useState("");
+  const [selectedFormat, setSelectedFormat] = useState<"pastille" | "footer" | "fullpage" | "popup" | "dish_item">("footer");
 
   const { data: ads, refetch } = trpc.admin.listAdvertisements.useQuery();
 
@@ -56,9 +59,13 @@ export default function Advertisements() {
 
     createMutation.mutate({
       title: formData.get("title") as string,
-      imageUrl: adImageUrl,
-      linkUrl: formData.get("linkUrl") as string,
+      description: formData.get("description") as string || undefined,
+      format: selectedFormat,
+      imageUrl: adImageUrl || undefined,
+      linkUrl: formData.get("linkUrl") as string || undefined,
+      targetPage: (formData.get("targetPage") as "landing" | "restaurant_page" | "menu" | "all") || "all",
       displayOrder: parseInt(formData.get("displayOrder") as string) || 0,
+      content: {},
     });
   };
 
@@ -72,9 +79,13 @@ export default function Advertisements() {
       id: selectedAd.id,
       data: {
         title: formData.get("title") as string,
-        imageUrl: adImageUrl || selectedAd.imageUrl,
-        linkUrl: formData.get("linkUrl") as string,
+        description: formData.get("description") as string || undefined,
+        format: selectedFormat,
+        imageUrl: adImageUrl || selectedAd.imageUrl || undefined,
+        linkUrl: formData.get("linkUrl") as string || undefined,
+        targetPage: (formData.get("targetPage") as "landing" | "restaurant_page" | "menu" | "all") || "all",
         displayOrder: parseInt(formData.get("displayOrder") as string),
+        content: {},
       },
     });
   };
@@ -94,8 +105,25 @@ export default function Advertisements() {
 
   const handleEditAd = (ad: any) => {
     setSelectedAd(ad);
-    setAdImageUrl(ad.imageUrl);
+    setAdImageUrl(ad.imageUrl || "");
+    setSelectedFormat(ad.format || "footer");
     setIsEditDialogOpen(true);
+  };
+
+  const formatLabels = {
+    pastille: "Pastille (badge discret)",
+    footer: "Footer (bannière bas de page)",
+    fullpage: "Pleine page (arrière-plan)",
+    popup: "Pop-up (modal temporaire)",
+    dish_item: "Item plat (intégré au menu)",
+  };
+
+  const formatDescriptions = {
+    pastille: "Petit badge discret affiché dans un coin de la page (80x80px)",
+    footer: "Bannière horizontale en bas de page (100% x 60px)",
+    fullpage: "Arrière-plan pleine page avec overlay (100% x 100%)",
+    popup: "Modal temporaire qui s'affiche après un délai (400x300px)",
+    dish_item: "Intégré dans le menu avec design vert pesto et mention 'Partenariat' dorée",
   };
 
   return (
@@ -122,28 +150,33 @@ export default function Advertisements() {
                 <Card key={ad.id}>
                   <CardContent className="p-4">
                     <div className="flex flex-col sm:flex-row gap-4">
-                      <img
-                        src={ad.imageUrl}
-                        alt={ad.title}
-                        className="w-full sm:w-32 h-32 object-cover rounded-lg flex-shrink-0"
-                      />
+                      {ad.imageUrl && (
+                        <img
+                          src={ad.imageUrl}
+                          alt={ad.title}
+                          className="w-full sm:w-32 h-32 object-cover rounded-lg flex-shrink-0"
+                        />
+                      )}
                       <div className="flex-1 min-w-0">
                         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-2">
                           <div className="min-w-0">
                             <h3 className="font-semibold text-lg truncate">{ad.title}</h3>
-                            <a
-                              href={ad.linkUrl}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-sm text-blue-600 hover:underline break-all"
-                            >
-                              {ad.linkUrl}
-                            </a>
+                            {ad.linkUrl && (
+                              <a
+                                href={ad.linkUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-sm text-blue-600 hover:underline break-all"
+                              >
+                                {ad.linkUrl}
+                              </a>
+                            )}
                           </div>
-                          <div className="flex gap-2 flex-shrink-0">
+                          <div className="flex gap-2 flex-shrink-0 flex-wrap">
                             <Badge variant={ad.isActive ? "default" : "secondary"}>
                               {ad.isActive ? "Active" : "Inactive"}
                             </Badge>
+                            <Badge variant="outline">{formatLabels[ad.format as keyof typeof formatLabels]}</Badge>
                             <Badge variant="outline">Ordre: {ad.displayOrder}</Badge>
                           </div>
                         </div>
@@ -209,20 +242,55 @@ export default function Advertisements() {
                 <Label htmlFor="title">Titre *</Label>
                 <Input id="title" name="title" required />
               </div>
+              <div className="space-y-2">
+                <Label htmlFor="description">Description</Label>
+                <Textarea id="description" name="description" placeholder="Description de la publicité" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="format">Format *</Label>
+                <Select value={selectedFormat} onValueChange={(value: any) => setSelectedFormat(value)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(formatLabels).map(([key, label]) => (
+                      <SelectItem key={key} value={key}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-sm text-muted-foreground">
+                  {formatDescriptions[selectedFormat]}
+                </p>
+              </div>
               <ImageUploader
-                label="Image de la publicité *"
+                label={selectedFormat === "dish_item" ? "Image du partenaire" : "Image de la publicité"}
                 currentImageUrl={adImageUrl}
                 onUploadComplete={setAdImageUrl}
               />
               <div className="space-y-2">
-                <Label htmlFor="linkUrl">URL de destination *</Label>
+                <Label htmlFor="linkUrl">URL de destination</Label>
                 <Input
                   id="linkUrl"
                   name="linkUrl"
                   type="url"
                   placeholder="https://example.com"
-                  required
                 />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="targetPage">Page cible</Label>
+                <Select name="targetPage" defaultValue="all">
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">Toutes les pages</SelectItem>
+                    <SelectItem value="landing">Landing page PRONTO</SelectItem>
+                    <SelectItem value="restaurant_page">Pages restaurants</SelectItem>
+                    <SelectItem value="menu">Pages menu</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="displayOrder">Ordre d'affichage</Label>
@@ -261,20 +329,55 @@ export default function Advertisements() {
                   <Label htmlFor="edit-title">Titre *</Label>
                   <Input id="edit-title" name="title" defaultValue={selectedAd.title} required />
                 </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-description">Description</Label>
+                  <Textarea id="edit-description" name="description" defaultValue={selectedAd.description || ""} placeholder="Description de la publicité" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-format">Format *</Label>
+                  <Select value={selectedFormat} onValueChange={(value: any) => setSelectedFormat(value)}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.entries(formatLabels).map(([key, label]) => (
+                        <SelectItem key={key} value={key}>
+                          {label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-sm text-muted-foreground">
+                    {formatDescriptions[selectedFormat]}
+                  </p>
+                </div>
                 <ImageUploader
-                  label="Image de la publicité *"
+                  label={selectedFormat === "dish_item" ? "Image du partenaire" : "Image de la publicité"}
                   currentImageUrl={adImageUrl}
                   onUploadComplete={setAdImageUrl}
                 />
                 <div className="space-y-2">
-                  <Label htmlFor="edit-linkUrl">URL de destination *</Label>
+                  <Label htmlFor="edit-linkUrl">URL de destination</Label>
                   <Input
                     id="edit-linkUrl"
                     name="linkUrl"
                     type="url"
-                    defaultValue={selectedAd.linkUrl}
-                    required
+                    defaultValue={selectedAd.linkUrl || ""}
                   />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-targetPage">Page cible</Label>
+                  <Select name="targetPage" defaultValue={selectedAd.targetPage || "all"}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">Toutes les pages</SelectItem>
+                      <SelectItem value="landing">Landing page PRONTO</SelectItem>
+                      <SelectItem value="restaurant_page">Pages restaurants</SelectItem>
+                      <SelectItem value="menu">Pages menu</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="edit-displayOrder">Ordre d'affichage</Label>

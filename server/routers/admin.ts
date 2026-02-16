@@ -119,8 +119,12 @@ export const adminRouter = router({
     .input(
       z.object({
         title: z.string(),
-        imageUrl: z.string(),
-        linkUrl: z.string(),
+        description: z.string().optional(),
+        format: z.enum(["pastille", "footer", "fullpage", "popup", "dish_item"]),
+        imageUrl: z.string().optional(),
+        linkUrl: z.string().optional(),
+        targetPage: z.enum(["landing", "restaurant_page", "menu", "all"]).default("all"),
+        content: z.any().optional(),
         displayOrder: z.number().default(0),
       })
     )
@@ -130,8 +134,12 @@ export const adminRouter = router({
 
       const [ad] = await db.insert(advertisements).values({
         title: input.title,
+        description: input.description,
+        format: input.format,
         imageUrl: input.imageUrl,
         linkUrl: input.linkUrl,
+        targetPage: input.targetPage,
+        content: input.content || {},
         displayOrder: input.displayOrder,
         isActive: true,
       });
@@ -146,8 +154,12 @@ export const adminRouter = router({
         id: z.number(),
         data: z.object({
           title: z.string().optional(),
+          description: z.string().optional(),
+          format: z.enum(["pastille", "footer", "fullpage", "popup", "dish_item"]).optional(),
           imageUrl: z.string().optional(),
           linkUrl: z.string().optional(),
+          targetPage: z.enum(["landing", "restaurant_page", "menu", "all"]).optional(),
+          content: z.any().optional(),
           displayOrder: z.number().optional(),
           isActive: z.boolean().optional(),
         }),

@@ -1,0 +1,9 @@
+{
+  "query": "ALTER TABLE `advertisements` MODIFY COLUMN `imageUrl` text;\nALTER TABLE `advertisements` MODIFY COLUMN `linkUrl` text;\nALTER TABLE `advertisements` ADD `description` text;\nALTER TABLE `advertisements` ADD `format` enum('pastille','footer','fullpage','popup','dish_item') NOT NULL;\nALTER TABLE `advertisements` ADD `content` json;\nALTER TABLE `advertisements` ADD `targetPage` enum('landing','restaurant_page','menu','all') DEFAULT 'all' NOT NULL;\nALTER TABLE `advertisements` ADD `recommendedWidth` int;\nALTER TABLE `advertisements` ADD `recommendedHeight` int;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2m1m65o6UXETKUo.39bdc9c5be54 --database Lrdq8kkKw7pbRUXDsDAG5X --execute ALTER TABLE `advertisements` MODIFY COLUMN `imageUrl` text;\nALTER TABLE `advertisements` MODIFY COLUMN `linkUrl` text;\nALTER TABLE `advertisements` ADD `description` text;\nALTER TABLE `advertisements` ADD `format` enum('pastille','footer','fullpage','popup','dish_item') NOT NULL;\nALTER TABLE `advertisements` ADD `content` json;\nALTER TABLE `advertisements` ADD `targetPage` enum('landing','restaurant_page','menu','all') DEFAULT 'all' NOT NULL;\nALTER TABLE `advertisements` ADD `recommendedWidth` int;\nALTER TABLE `advertisements` ADD `recommendedHeight` int;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 2947
+}

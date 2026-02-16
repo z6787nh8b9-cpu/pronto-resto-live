@@ -191,11 +191,61 @@ export default function SuperAdmin() {
           onClick: () => setIsCreateDialogOpen(true),
           icon: <Plus className="h-4 w-4" />,
         }}
+        secondaryActions={
+          <>
+            <Button
+              variant={activeTab === "restaurants" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setActiveTab("restaurants")}
+              className="w-full sm:w-auto justify-start"
+            >
+              <Store className="h-4 w-4 mr-2" />
+              Restaurants
+            </Button>
+            <Button
+              variant={activeTab === "advertisements" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setActiveTab("advertisements")}
+              className="w-full sm:w-auto justify-start"
+            >
+              <Megaphone className="h-4 w-4 mr-2" />
+              Publicités
+            </Button>
+            <Button
+              variant={activeTab === "admins" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setActiveTab("admins")}
+              className="w-full sm:w-auto justify-start"
+            >
+              <Shield className="h-4 w-4 mr-2" />
+              Admins
+            </Button>
+            <Button
+              variant={activeTab === "invitations" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setActiveTab("invitations")}
+              className="w-full sm:w-auto justify-start"
+            >
+              <Mail className="h-4 w-4 mr-2" />
+              Invitations
+            </Button>
+            <Button
+              variant={activeTab === "requests" ? "default" : "ghost"}
+              size="sm"
+              onClick={() => setActiveTab("requests")}
+              className="w-full sm:w-auto justify-start"
+            >
+              <MessageSquare className="h-4 w-4 mr-2" />
+              Demandes
+            </Button>
+          </>
+        }
       />
 
       <main className="container px-4 sm:px-6 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList className="mb-6">
+          {/* Desktop Tabs */}
+          <TabsList className="mb-6 hidden sm:flex">
             <TabsTrigger value="restaurants">
               <Store className="h-4 w-4 mr-2" />
               Restaurants

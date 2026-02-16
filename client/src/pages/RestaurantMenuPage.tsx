@@ -386,16 +386,18 @@ export default function RestaurantMenuPage() {
                   {advertisements.map((ad) => (
                     <a
                       key={ad.id}
-                      href={ad.linkUrl}
+                      href={ad.linkUrl || "#"}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="group flex items-center gap-4 px-6 py-3 rounded-xl bg-white/80 hover:bg-white border border-slate-200/60 hover:border-slate-300 hover:shadow-lg transition-all duration-300 flex-shrink-0 hover:scale-105"
                     >
-                      <img
-                        src={ad.imageUrl}
-                        alt={ad.title}
-                        className="h-20 w-20 object-cover rounded-lg shadow-sm group-hover:shadow-md transition-shadow"
-                      />
+                      {ad.imageUrl && (
+                        <img
+                          src={ad.imageUrl}
+                          alt={ad.title}
+                          className="h-20 w-20 object-cover rounded-lg shadow-sm group-hover:shadow-md transition-shadow"
+                        />
+                      )}
                       <div className="flex flex-col gap-1">
                         <span className="text-sm font-semibold text-slate-800 group-hover:text-slate-900" style={{ fontFamily: 'Montserrat, sans-serif' }}>{ad.title}</span>
                         <span className="text-xs text-slate-500 group-hover:text-pronto-primary transition-colors flex items-center gap-1" style={{ fontFamily: 'Montserrat, sans-serif' }}>

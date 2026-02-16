@@ -127,6 +127,13 @@
       "when": 1771257009039,
       "tag": "0017_wet_machine_man",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "5",
+      "when": 1771266703997,
+      "tag": "0018_curved_blade",
+      "breakpoints": true
     }
   ]
 }

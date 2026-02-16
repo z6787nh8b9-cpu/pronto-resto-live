@@ -1,9 +1,17 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, MessageSquare, Palette, Smartphone, Zap, Star, ArrowRight } from "lucide-react";
+import { Check, MessageSquare, Palette, Smartphone, Zap, Star, ArrowRight, Menu } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import ChatbotWidget from "@/components/ChatbotWidget";
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export default function LandingPage() {
   return (
@@ -11,10 +19,12 @@ export default function LandingPage() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container flex h-24 items-center justify-between">
+        <div className="container flex h-16 sm:h-24 items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src="/pronto-logo-horizontal.png" alt="PRONTO - Fini les 5 outils. Un seul suffit." className="h-28" />
+            <img src="/pronto-logo-horizontal.png" alt="PRONTO - Fini les 5 outils. Un seul suffit." className="h-12 sm:h-28" />
           </div>
+          
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6">
             <a href="#fonctionnalites" className="text-sm hover:text-pronto-primary transition-colors">
               Fonctionnalités
@@ -32,6 +42,40 @@ export default function LandingPage() {
               Essai gratuit
             </Button>
           </nav>
+
+          {/* Mobile Menu */}
+          <Sheet>
+            <SheetTrigger asChild className="md:hidden">
+              <Button variant="ghost" size="sm">
+                <Menu className="h-5 w-5" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right">
+              <SheetHeader>
+                <SheetTitle>Menu</SheetTitle>
+                <SheetDescription>
+                  Navigation PRONTO
+                </SheetDescription>
+              </SheetHeader>
+              <nav className="mt-6 flex flex-col gap-4">
+                <a href="#fonctionnalites" className="text-base hover:text-pronto-primary transition-colors py-2">
+                  Fonctionnalités
+                </a>
+                <a href="#pricing" className="text-base hover:text-pronto-primary transition-colors py-2">
+                  Tarifs
+                </a>
+                <a href="#temoignages" className="text-base hover:text-pronto-primary transition-colors py-2">
+                  Témoignages
+                </a>
+                <Button variant="outline" className="w-full mt-4" onClick={() => window.location.href = "/login-restaurant"}>
+                  Connexion
+                </Button>
+                <Button className="w-full bg-pronto-primary hover:bg-pronto-primary/90">
+                  Essai gratuit
+                </Button>
+              </nav>
+            </SheetContent>
+          </Sheet>
         </div>
       </header>
 

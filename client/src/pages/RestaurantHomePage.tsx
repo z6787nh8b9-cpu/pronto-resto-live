@@ -469,17 +469,19 @@ export default function RestaurantHomePage() {
               {advertisements.map((ad: any) => (
                 <a
                   key={ad.id}
-                  href={ad.linkUrl}
+                  href={ad.linkUrl || "#"}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block group"
                 >
                   <div className="aspect-video overflow-hidden bg-white">
-                    <img
-                      src={ad.imageUrl}
-                      alt={ad.title}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    />
+                    {ad.imageUrl && (
+                      <img
+                        src={ad.imageUrl}
+                        alt={ad.title}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      />
+                    )}
                   </div>
                   <p className="mt-2 text-sm text-neutral-600 text-center">{ad.title}</p>
                 </a>
