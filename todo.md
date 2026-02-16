@@ -779,3 +779,8 @@
 - [x] Créer page /admin/invite/[token] pour accepter l'invitation
 - [x] Intégrer envoi d'email avec lien d'invitation
 - [x] Tester le flux complet d'invitation
+
+## 🔧 Correction bouton d'invitation admin (16 février 2026)
+- [x] Analyser le bouton d'invitation dans Admins.tsx
+- [x] Implémenter la logique d'envoi d'invitation fonctionnelle
+- [x] Tester l'envoi d'invitation et la copie du lien

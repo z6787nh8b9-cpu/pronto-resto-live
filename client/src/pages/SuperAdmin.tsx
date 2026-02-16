@@ -211,15 +211,7 @@ export default function SuperAdmin() {
               <Megaphone className="h-4 w-4 mr-2" />
               Publicités
             </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setLocation("/admin/admins")}
-              className="w-full sm:w-auto justify-start"
-            >
-              <Shield className="h-4 w-4 mr-2" />
-              Admins
-            </Button>
+
             <Button
               variant={activeTab === "invitations" ? "default" : "ghost"}
               size="sm"

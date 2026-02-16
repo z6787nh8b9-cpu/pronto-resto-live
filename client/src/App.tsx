@@ -6,8 +6,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import SuperAdmin from "./pages/SuperAdmin";
 import AdminManageRestaurant from "./pages/AdminManageRestaurant";
-import { AdminPage } from "./pages/AdminPage";
-import { AdminInviteAccept } from "./pages/AdminInviteAccept";
+
 import RestaurantDashboard from "./pages/RestaurantDashboard";
 import PublicRestaurantPage from "./pages/PublicRestaurantPage";
 import LandingPage from "./pages/LandingPage";
@@ -41,8 +40,6 @@ function Router() {
       
       {/* Super Admin routes */}
       <Route path="/admin" component={SuperAdmin} />
-      <Route path="/admin/admins" component={AdminPage} />
-      <Route path="/admin/invite/:token" component={AdminInviteAccept} />
       <Route path="/admin/restaurants/:id" component={AdminManageRestaurant} />
       
       {/* Restaurant dashboard - must come before public page to avoid conflict */}
