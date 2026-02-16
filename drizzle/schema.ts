@@ -481,3 +481,34 @@ export const invitations = mysqlTable("invitations", {
 
 export type Invitation = typeof invitations.$inferSelect;
 export type InsertInvitation = typeof invitations.$inferInsert;
+
+/**
+ * Chatbot requests table - manages call requests and issue reports from landing page chatbot
+ * Allows visitors to request callbacks or report issues, with notifications to Super Admin
+ */
+export const chatbotRequests = mysqlTable("chatbot_requests", {
+  id: int("id").autoincrement().primaryKey(),
+  
+  // Request type
+  type: mysqlEnum("type", ["call_request", "issue_report"]).notNull(),
+  
+  // Contact information
+  name: varchar("name", { length: 255 }),
+  email: varchar("email", { length: 320 }),
+  phone: varchar("phone", { length: 50 }),
+  
+  // Message content
+  message: text("message").notNull(),
+  
+  // Status tracking
+  status: mysqlEnum("status", ["pending", "contacted", "resolved", "dismissed"]).default("pending").notNull(),
+  
+  // Admin notes
+  adminNotes: text("adminNotes"),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type ChatbotRequest = typeof chatbotRequests.$inferSelect;
+export type InsertChatbotRequest = typeof chatbotRequests.$inferInsert;

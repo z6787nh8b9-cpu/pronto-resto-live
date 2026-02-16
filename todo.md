@@ -648,3 +648,12 @@
 - [x] Ajouter animation pulse au point vert "En ligne"
 - [x] Ajouter contour autour des messages utilisateur
 - [x] Enrichir contexte pour répondre aux questions sur TasteIt et Restovia
+
+## 📞 Système de demandes d'appel et signalements
+- [x] Créer table chatbot_requests dans le schéma Drizzle
+- [x] Générer et appliquer la migration SQL
+- [x] Créer procédures tRPC pour soumettre et lister les demandes
+- [x] Ajouter boutons "Demander un appel" et "Signaler" dans le chatbot
+- [x] Créer onglet "Demandes" dans le Super Admin
+- [x] Intégrer notifications Manus avec notifyOwner()
+- [x] Tester le flux complet

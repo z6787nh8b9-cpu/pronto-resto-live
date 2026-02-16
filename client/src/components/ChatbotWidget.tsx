@@ -19,6 +19,9 @@ export default function ChatbotWidget() {
   ]);
   const [input, setInput] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(true);
+  const [showRequestForm, setShowRequestForm] = useState(false);
+  const [requestType, setRequestType] = useState<"call_request" | "issue_report">("call_request");
+  const [requestData, setRequestData] = useState({ name: "", email: "", phone: "", message: "" });
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const suggestedQuestions = [
@@ -30,6 +33,22 @@ export default function ChatbotWidget() {
   const chatMutation = trpc.chat.sendMessage.useMutation({
     onSuccess: (data: { response: string }) => {
       setMessages((prev) => [...prev, { role: "assistant", content: data.response }]);
+    },
+  });
+
+  const requestMutation = trpc.chatbotRequests.submit.useMutation({
+    onSuccess: () => {
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: "assistant",
+          content: requestType === "call_request" 
+            ? "✅ Merci ! Votre demande d'appel a bien été enregistrée. Nous vous recontacterons très prochainement."
+            : "✅ Merci pour votre signalement ! Notre équipe va l'étudier rapidement.",
+        },
+      ]);
+      setShowRequestForm(false);
+      setRequestData({ name: "", email: "", phone: "", message: "" });
     },
   });
 
@@ -149,8 +168,103 @@ export default function ChatbotWidget() {
             <div ref={messagesEndRef} />
           </div>
 
+          {/* Action buttons */}
+          {!showRequestForm && (
+            <div className="px-4 py-2 border-t bg-card flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1 text-xs"
+                onClick={() => {
+                  setRequestType("call_request");
+                  setShowRequestForm(true);
+                }}
+              >
+                📞 Demander un appel
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex-1 text-xs"
+                onClick={() => {
+                  setRequestType("issue_report");
+                  setShowRequestForm(true);
+                }}
+              >
+                ⚠️ Signaler
+              </Button>
+            </div>
+          )}
+
+          {/* Request form */}
+          {showRequestForm && (
+            <div className="p-4 border-t bg-card space-y-3">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-medium">
+                  {requestType === "call_request" ? "📞 Demande d'appel" : "⚠️ Signalement"}
+                </h3>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowRequestForm(false)}
+                  className="h-6 w-6 p-0"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              <input
+                type="text"
+                placeholder="Nom"
+                value={requestData.name}
+                onChange={(e) => setRequestData({ ...requestData, name: e.target.value })}
+                className="w-full px-3 py-2 border rounded-lg text-sm text-foreground bg-background"
+              />
+              <input
+                type="email"
+                placeholder="Email"
+                value={requestData.email}
+                onChange={(e) => setRequestData({ ...requestData, email: e.target.value })}
+                className="w-full px-3 py-2 border rounded-lg text-sm text-foreground bg-background"
+              />
+              {requestType === "call_request" && (
+                <input
+                  type="tel"
+                  placeholder="Téléphone"
+                  value={requestData.phone}
+                  onChange={(e) => setRequestData({ ...requestData, phone: e.target.value })}
+                  className="w-full px-3 py-2 border rounded-lg text-sm text-foreground bg-background"
+                />
+              )}
+              <textarea
+                placeholder="Votre message..."
+                value={requestData.message}
+                onChange={(e) => setRequestData({ ...requestData, message: e.target.value })}
+                className="w-full px-3 py-2 border rounded-lg text-sm text-foreground bg-background"
+                rows={3}
+              />
+              <Button
+                onClick={() => {
+                  if (requestData.message.trim()) {
+                    requestMutation.mutate({
+                      type: requestType,
+                      name: requestData.name || undefined,
+                      email: requestData.email || undefined,
+                      phone: requestData.phone || undefined,
+                      message: requestData.message,
+                    });
+                  }
+                }}
+                disabled={!requestData.message.trim() || requestMutation.isPending}
+                className="w-full bg-pronto-primary hover:bg-pronto-primary/90"
+              >
+                {requestMutation.isPending ? "Envoi..." : "Envoyer"}
+              </Button>
+            </div>
+          )}
+
           {/* Input */}
-          <div className="p-4 border-t bg-card">
+          {!showRequestForm && (
+            <div className="p-4 border-t bg-card">
             <div className="flex gap-2">
               <input
                 type="text"
@@ -188,6 +302,7 @@ export default function ChatbotWidget() {
               </p>
             </div>
           </div>
+          )}
         </Card>
       )}
     </>

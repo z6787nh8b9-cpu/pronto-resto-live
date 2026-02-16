@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE `chatbot_requests` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`type` enum('call_request','issue_report') NOT NULL,\n\t`name` varchar(255),\n\t`email` varchar(320),\n\t`phone` varchar(50),\n\t`message` text NOT NULL,\n\t`status` enum('pending','contacted','resolved','dismissed') NOT NULL DEFAULT 'pending',\n\t`adminNotes` text,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\tCONSTRAINT `chatbot_requests_id` PRIMARY KEY(`id`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2m1m65o6UXETKUo.39bdc9c5be54 --database Lrdq8kkKw7pbRUXDsDAG5X --execute CREATE TABLE `chatbot_requests` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`type` enum('call_request','issue_report') NOT NULL,\n\t`name` varchar(255),\n\t`email` varchar(320),\n\t`phone` varchar(50),\n\t`message` text NOT NULL,\n\t`status` enum('pending','contacted','resolved','dismissed') NOT NULL DEFAULT 'pending',\n\t`adminNotes` text,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\tCONSTRAINT `chatbot_requests_id` PRIMARY KEY(`id`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 225
+}

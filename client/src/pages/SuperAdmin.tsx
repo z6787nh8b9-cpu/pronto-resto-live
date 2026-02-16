@@ -18,6 +18,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Advertisements from "./admin/Advertisements";
 import Admins from "./admin/Admins";
 import InvitationsTab from "./admin/InvitationsTab";
+import RequestsTab from "./admin/RequestsTab";
 
 export default function SuperAdmin() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -209,6 +210,10 @@ export default function SuperAdmin() {
             <TabsTrigger value="invitations">
               <Mail className="h-4 w-4 mr-2" />
               Invitations
+            </TabsTrigger>
+            <TabsTrigger value="requests">
+              <MessageSquare className="h-4 w-4 mr-2" />
+              Demandes
             </TabsTrigger>
           </TabsList>
 
@@ -417,6 +422,11 @@ export default function SuperAdmin() {
           {/* Tab Invitations */}
           <TabsContent value="invitations">
             <InvitationsTab />
+          </TabsContent>
+
+          {/* Tab Demandes */}
+          <TabsContent value="requests">
+            <RequestsTab />
           </TabsContent>
         </Tabs>
       </main>

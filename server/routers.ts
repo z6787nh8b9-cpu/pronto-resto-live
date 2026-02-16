@@ -13,6 +13,7 @@ import { eventsRouter } from "./routers/events";
 import { galleryRouter } from "./routers/gallery";
 import { invitationsRouter } from "./routers/invitations";
 import { chatRouter } from "./routers/chat";
+import { chatbotRequestsRouter } from "./routers/chatbotRequests";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -48,6 +49,9 @@ export const appRouter = router({
 
   // Reservations routes
   reservations: reservationsRouter,
+
+  // Chatbot requests routes
+  chatbotRequests: chatbotRequestsRouter,
 
   // Chat routes (RISE AI™)
   chat: chatRouter,
