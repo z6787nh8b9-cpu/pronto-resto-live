@@ -806,3 +806,6 @@
 ## 🔧 Correction callback OAuth admin
 - [x] Corriger la configuration callbackBaseURL pour la production
 - [x] Tester le flux complet d'invitation admin
+
+## 🔧 Correction domaine callback OAuth admin
+- [x] Utiliser https://pronto.page pour le callback en production

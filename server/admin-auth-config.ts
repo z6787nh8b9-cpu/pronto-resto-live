@@ -13,6 +13,11 @@ import { eq } from "drizzle-orm";
 const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID!;
 const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!;
 
+// Determine callback URL based on environment
+const CALLBACK_URL = process.env.NODE_ENV === "production"
+  ? "https://pronto.page/api/auth/admin-google/callback"
+  : "http://localhost:3000/api/auth/admin-google/callback";
+
 /**
  * Initialize Passport strategy for admin Google OAuth
  */
@@ -24,7 +29,7 @@ export function initializeAdminGoogleStrategy() {
       {
         clientID: GOOGLE_CLIENT_ID,
         clientSecret: GOOGLE_CLIENT_SECRET,
-        callbackURL: "/api/auth/admin-google/callback",
+        callbackURL: CALLBACK_URL,
         passReqToCallback: true,
       },
       async (req: any, accessToken, refreshToken, profile, done) => {
