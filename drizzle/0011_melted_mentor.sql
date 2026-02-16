@@ -1,0 +1,1 @@
+ALTER TABLE `restaurants` ADD `theme` enum('pronto-service','moderne-soho','beach-boheme','day-night','marble-rome') DEFAULT 'pronto-service' NOT NULL;

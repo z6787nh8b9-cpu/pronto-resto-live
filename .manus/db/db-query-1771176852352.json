@@ -1,0 +1,82 @@
+{
+  "query": "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'restaurants' ORDER BY ORDINAL_POSITION;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2m1m65o6UXETKUo.39bdc9c5be54 --database Lrdq8kkKw7pbRUXDsDAG5X --execute SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'restaurants' ORDER BY ORDINAL_POSITION;",
+  "rows": [
+    {
+      "COLUMN_NAME": "id"
+    },
+    {
+      "COLUMN_NAME": "ownerId"
+    },
+    {
+      "COLUMN_NAME": "slug"
+    },
+    {
+      "COLUMN_NAME": "name"
+    },
+    {
+      "COLUMN_NAME": "description"
+    },
+    {
+      "COLUMN_NAME": "whatsapp"
+    },
+    {
+      "COLUMN_NAME": "reservationUrl"
+    },
+    {
+      "COLUMN_NAME": "email"
+    },
+    {
+      "COLUMN_NAME": "phone"
+    },
+    {
+      "COLUMN_NAME": "address"
+    },
+    {
+      "COLUMN_NAME": "logoUrl"
+    },
+    {
+      "COLUMN_NAME": "heroImageUrl"
+    },
+    {
+      "COLUMN_NAME": "primaryColor"
+    },
+    {
+      "COLUMN_NAME": "accentColor"
+    },
+    {
+      "COLUMN_NAME": "fontFamily"
+    },
+    {
+      "COLUMN_NAME": "subscriptionPlan"
+    },
+    {
+      "COLUMN_NAME": "subscriptionStatus"
+    },
+    {
+      "COLUMN_NAME": "subscriptionExpiresAt"
+    },
+    {
+      "COLUMN_NAME": "subscriptionEndDate"
+    },
+    {
+      "COLUMN_NAME": "isActive"
+    },
+    {
+      "COLUMN_NAME": "createdAt"
+    },
+    {
+      "COLUMN_NAME": "updatedAt"
+    },
+    {
+      "COLUMN_NAME": "subscriptionTier"
+    },
+    {
+      "COLUMN_NAME": "showAds"
+    }
+  ],
+  "messages": [],
+  "stdout": "COLUMN_NAME\nid\nownerId\nslug\nname\ndescription\nwhatsapp\nreservationUrl\nemail\nphone\naddress\nlogoUrl\nheroImageUrl\nprimaryColor\naccentColor\nfontFamily\nsubscriptionPlan\nsubscriptionStatus\nsubscriptionExpiresAt\nsubscriptionEndDate\nisActive\ncreatedAt\nupdatedAt\nsubscriptionTier\nshowAds\n",
+  "stderr": "",
+  "execution_time_ms": 62
+}

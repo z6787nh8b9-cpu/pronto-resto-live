@@ -1,0 +1,41 @@
+CREATE TABLE `event_registrations` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`eventId` int NOT NULL,
+	`restaurantId` int NOT NULL,
+	`customerName` varchar(255) NOT NULL,
+	`customerEmail` varchar(320) NOT NULL,
+	`customerPhone` varchar(20) NOT NULL,
+	`numberOfPeople` int NOT NULL DEFAULT 1,
+	`specialRequests` text,
+	`status` enum('pending','confirmed','cancelled','attended','no_show') NOT NULL DEFAULT 'pending',
+	`paymentStatus` enum('pending','paid','refunded') NOT NULL DEFAULT 'pending',
+	`paymentAmount` decimal(10,2) NOT NULL DEFAULT '0.00',
+	`confirmationToken` varchar(100),
+	`confirmedAt` timestamp,
+	`cancelledAt` timestamp,
+	`cancellationReason` text,
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+	CONSTRAINT `event_registrations_id` PRIMARY KEY(`id`)
+);
+--> statement-breakpoint
+CREATE TABLE `events` (
+	`id` int AUTO_INCREMENT NOT NULL,
+	`restaurantId` int NOT NULL,
+	`title` varchar(255) NOT NULL,
+	`description` text NOT NULL,
+	`imageUrl` text,
+	`eventDate` timestamp NOT NULL,
+	`duration` int NOT NULL DEFAULT 120,
+	`maxAttendees` int NOT NULL,
+	`currentAttendees` int NOT NULL DEFAULT 0,
+	`price` decimal(10,2) NOT NULL DEFAULT '0.00',
+	`currency` varchar(3) NOT NULL DEFAULT 'EUR',
+	`status` enum('draft','published','cancelled','completed') NOT NULL DEFAULT 'draft',
+	`isVisible` boolean NOT NULL DEFAULT true,
+	`requiresApproval` boolean NOT NULL DEFAULT false,
+	`registrationDeadline` timestamp,
+	`createdAt` timestamp NOT NULL DEFAULT (now()),
+	`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,
+	CONSTRAINT `events_id` PRIMARY KEY(`id`)
+);

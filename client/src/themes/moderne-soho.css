@@ -1,0 +1,182 @@
+/**
+ * Thème MODERNE SOHO - Inspiré de Krem Kanel
+ * Minimalisme scandinave, espace blanc, géométrie pure
+ */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;700&family=Lato:wght@300;400&family=Raleway:wght@100;300;400&display=swap');
+
+/* Variables CSS */
+[data-theme="moderne-soho"] {
+  --primary: #000000;
+  --secondary: #F8F8F8;
+  --accent: #FFFFFF;
+  --text: #1A1A1A;
+  --text-light: #666666;
+  --border: rgba(0, 0, 0, 0.1);
+  --font-heading: 'Montserrat', sans-serif;
+  --font-body: 'Lato', sans-serif;
+  --font-accent: 'Raleway', sans-serif;
+}
+
+/* Global styles */
+[data-theme="moderne-soho"] * {
+  font-family: var(--font-body);
+}
+
+[data-theme="moderne-soho"] body {
+  background: var(--accent);
+}
+
+/* Hero section */
+[data-theme="moderne-soho"] .theme-hero {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  position: relative;
+}
+
+[data-theme="moderne-soho"] .theme-hero-section {
+[data-theme="moderne-soho"] .theme-hero-content {
+[data-theme="moderne-soho"] .theme-hero-logo {
+  max-width: 150px;
+  height: auto;
+  margin: 0 auto 2rem;
+  display: block;
+}
+
+  max-width: 800px;
+  text-align: center;
+}
+
+  min-height: 80vh;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+}
+
+[data-theme="moderne-soho"] .theme-hero-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+[data-theme="moderne-soho"] .theme-restaurant-name {
+  font-family: var(--font-heading);
+  font-size: clamp(3rem, 6vw, 5rem);
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.03em;
+}
+
+[data-theme="moderne-soho"] .theme-hero-description {
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
+  color: var(--text-light);
+  text-align: center;
+}
+
+[data-theme="moderne-soho"] .theme-restaurant-description {
+  font-family: var(--font-accent);
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: var(--text-light);
+  text-align: center;
+  font-weight: 300;
+}
+
+/* Section titles */
+[data-theme="moderne-soho"] h2,
+[data-theme="moderne-soho"] .theme-section-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+  margin: 5rem 0 3rem;
+  letter-spacing: -0.02em;
+}
+
+/* Dish cards */
+[data-theme="moderne-soho"] .theme-dish-card {
+  background: var(--accent);
+  border: 0.5px solid var(--border);
+  border-radius: 0;
+  overflow: hidden;
+  transition: all 200ms ease-out;
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="moderne-soho"] .theme-dish-card:hover {
+  border-color: var(--primary);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="moderne-soho"] .theme-dish-name {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: -0.01em;
+}
+
+[data-theme="moderne-soho"] .theme-dish-description {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  line-height: 1.6;
+  font-weight: 300;
+}
+
+[data-theme="moderne-soho"] .theme-dish-price {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+/* Buttons */
+[data-theme="moderne-soho"] button,
+[data-theme="moderne-soho"] .btn {
+  font-family: var(--font-heading);
+  font-weight: 500;
+  padding: 1rem 2rem;
+  border: 1px solid var(--primary);
+  border-radius: 0;
+  background: var(--accent);
+  color: var(--text);
+  transition: all 200ms ease-out;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+[data-theme="moderne-soho"] button:hover,
+[data-theme="moderne-soho"] .btn:hover {
+  background: var(--primary);
+  color: var(--accent);
+}
+
+/* Footer */
+[data-theme="moderne-soho"] footer {
+  background: var(--secondary);
+  padding: 4rem 2rem;
+  text-align: center;
+  border-top: 0.5px solid var(--border);
+  margin-top: 5rem;
+}
+
+[data-theme="moderne-soho"] footer a {
+  color: var(--primary);
+  text-decoration: none;
+  transition: opacity 200ms ease-out;
+}
+
+[data-theme="moderne-soho"] footer a:hover {
+  opacity: 0.6;
+}

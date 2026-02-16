@@ -1,0 +1,1 @@
+ALTER TABLE `menuCategories` ADD `emoji` varchar(10) DEFAULT '🍴';
