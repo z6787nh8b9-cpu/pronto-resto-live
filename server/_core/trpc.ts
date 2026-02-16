@@ -8,7 +8,6 @@ const t = initTRPC.context<TrpcContext>().create({
 });
 
 export const router = t.router;
-export const middleware = t.middleware;
 export const publicProcedure = t.procedure;
 
 const requireUser = t.middleware(async opts => {
@@ -32,10 +31,7 @@ export const adminProcedure = t.procedure.use(
   t.middleware(async opts => {
     const { ctx, next } = opts;
 
-    // MODE DÉVELOPPEMENT : Autoriser l'accès sans authentification
-    const isDev = process.env.NODE_ENV === 'development';
-    
-    if (!isDev && (!ctx.user || ctx.user.role !== 'admin')) {
+    if (!ctx.user || ctx.user.role !== 'admin') {
       throw new TRPCError({ code: "FORBIDDEN", message: NOT_ADMIN_ERR_MSG });
     }
 

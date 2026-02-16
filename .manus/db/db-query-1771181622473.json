@@ -1,9 +1,0 @@
-{
-  "query": "CREATE TABLE `gallery_photos` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`restaurantId` int NOT NULL,\n\t`imageUrl` text NOT NULL,\n\t`caption` text,\n\t`displayOrder` int NOT NULL DEFAULT 0,\n\t`isActive` boolean NOT NULL DEFAULT true,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\tCONSTRAINT `gallery_photos_id` PRIMARY KEY(`id`)\n);",
-  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2m1m65o6UXETKUo.39bdc9c5be54 --database Lrdq8kkKw7pbRUXDsDAG5X --execute CREATE TABLE `gallery_photos` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`restaurantId` int NOT NULL,\n\t`imageUrl` text NOT NULL,\n\t`caption` text,\n\t`displayOrder` int NOT NULL DEFAULT 0,\n\t`isActive` boolean NOT NULL DEFAULT true,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\tCONSTRAINT `gallery_photos_id` PRIMARY KEY(`id`)\n);",
-  "rows": [],
-  "messages": [],
-  "stdout": "",
-  "stderr": "",
-  "execution_time_ms": 190
-}
