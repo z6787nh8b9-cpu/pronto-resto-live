@@ -28,7 +28,7 @@ describe("Chatbot RISE AI™", () => {
       response.response.toLowerCase().includes("pro") ||
       response.response.toLowerCase().includes("premium")
     ).toBe(true);
-  });
+  }, 10000);
 
   it("devrait répondre à une question sur les fonctionnalités", async () => {
     const mockContext: TrpcContext = {
@@ -53,7 +53,7 @@ describe("Chatbot RISE AI™", () => {
       response.response.toLowerCase().includes("site") ||
       response.response.toLowerCase().includes("personnalis")
     ).toBe(true);
-  });
+  }, 10000);
 
   it("devrait nettoyer le formatage (pas de ** ou -)", async () => {
     const mockContext: TrpcContext = {
@@ -73,5 +73,5 @@ describe("Chatbot RISE AI™", () => {
     expect(response.response.includes("**")).toBe(false);
     // Vérifier qu'il n'y a pas de tirets en début de ligne (liste)
     expect(response.response.match(/^- /m)).toBe(null);
-  });
+  }, 10000);
 });

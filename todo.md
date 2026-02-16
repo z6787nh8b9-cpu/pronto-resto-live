@@ -627,3 +627,8 @@
 - [x] Créer procédure tRPC pour chat avec contexte PRONTO
 - [x] Intégrer le chatbot dans LandingPage.tsx
 - [x] Tester les réponses du chatbot (3 tests passés)
+
+## 🤖 Améliorations Chatbot RISE AI™
+- [x] Enrichir le contexte pour rendre le chatbot plus intelligent et contextuel
+- [x] Corriger la couleur du texte dans le champ de saisie (noir au lieu de blanc)
+- [x] Remplacer le bandeau orange par un rouge terra cotta uni (#C75B4B)

@@ -68,7 +68,7 @@ export default function ChatbotWidget() {
       {isOpen && (
         <Card className="fixed bottom-6 right-6 w-96 h-[500px] shadow-2xl z-50 flex flex-col border-2 border-pronto-primary">
           {/* Header */}
-          <div className="flex items-center justify-between p-4 border-b bg-gradient-to-r from-pronto-primary to-amber-600">
+          <div className="flex items-center justify-between p-4 border-b" style={{ backgroundColor: '#C75B4B' }}>
             <div className="flex items-center gap-2">
               <MessageSquare className="h-5 w-5 text-white" />
               <div>
@@ -123,7 +123,7 @@ export default function ChatbotWidget() {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Posez votre question..."
-                className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pronto-primary text-sm"
+                className="flex-1 px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pronto-primary text-sm text-foreground bg-background"
                 disabled={chatMutation.isPending}
               />
               <Button
