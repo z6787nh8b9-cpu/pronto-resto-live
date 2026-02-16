@@ -68,9 +68,13 @@ export function ResponsiveHeader({
             
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 flex-wrap">
-                <h1 className="text-sm sm:text-lg md:text-xl lg:text-2xl font-display font-semibold truncate">
-                  {title}
-                </h1>
+                {title === "PRONTO" ? (
+                  <img src="/pronto-logo-horizontal.png" alt="PRONTO - Fini les 5 outils. Un seul suffit." className="h-8 sm:h-10" />
+                ) : (
+                  <h1 className="text-sm sm:text-lg md:text-xl lg:text-2xl font-display font-semibold truncate">
+                    {title}
+                  </h1>
+                )}
                 {badge && (
                   <div className="shrink-0">{badge}</div>
                 )}
