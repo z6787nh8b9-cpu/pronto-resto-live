@@ -9,9 +9,9 @@ export default function LandingPage() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container flex h-20 items-center justify-between">
+        <div className="container flex h-24 items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src="/pronto-logo-horizontal.png" alt="PRONTO - Fini les 5 outils. Un seul suffit." className="h-20" />
+            <img src="/pronto-logo-horizontal.png" alt="PRONTO - Fini les 5 outils. Un seul suffit." className="h-28" />
           </div>
           <nav className="hidden md:flex items-center gap-6">
             <a href="#fonctionnalites" className="text-sm hover:text-pronto-primary transition-colors">
@@ -205,7 +205,7 @@ export default function LandingPage() {
                     <span>Statistiques de base</span>
                   </li>
                   <li className="flex items-start gap-2 text-muted-foreground">
-                    <span className="text-sm">⚠️ Publicité PRONTO affichée</span>
+                    <span className="text-sm">🎫 Légère publicité affichée<br/><span className="italic">(garantie non concurrentielle)</span></span>
                   </li>
                 </ul>
                 <Button className="w-full" variant="outline">
@@ -253,8 +253,12 @@ export default function LandingPage() {
             </Card>
 
             {/* Premium Plan */}
-            <Card className="border-4 border-pronto-primary hover:shadow-xl transition-all relative bg-gradient-to-br from-white via-amber-50/30 to-white shadow-[0_8px_30px_rgb(217,119,6,0.12)] backdrop-blur-sm" style={{ boxShadow: '0 8px 30px rgba(217, 119, 6, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -1px 0 rgba(217, 119, 6, 0.2)' }}>
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+            <Card className="border-4 border-pronto-primary hover:shadow-xl transition-all relative bg-gradient-to-br from-white via-amber-50/30 to-white shadow-[0_8px_30px_rgb(217,119,6,0.12)] backdrop-blur-sm overflow-hidden" style={{ boxShadow: '0 8px 30px rgba(217, 119, 6, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -1px 0 rgba(217, 119, 6, 0.2)' }}>
+              {/* Animation de lumière sur les bords */}
+              <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-amber-200/40 to-transparent animate-[shimmer_3s_ease-in-out_infinite]" style={{ backgroundSize: '200% 100%' }} />
+              </div>
+              <div className="absolute -top-4 left-1/2 -translate-x-1/2 hidden">
                 <Badge className="bg-pronto-primary text-white">Recommandé</Badge>
               </div>
               <CardHeader>

@@ -615,3 +615,9 @@
 ## 🎨 Améliorations visuelles Landing Page v2
 - [x] Agrandir encore plus le logo dans le header (h-20)
 - [x] Ajouter effet bords dorés en biseau (glassmorphism) sur la carte Premium
+
+## 🎨 Améliorations visuelles Landing Page v3
+- [x] Agrandir le logo header à h-28
+- [x] Masquer le badge "Recommandé" sur la carte Premium
+- [x] Ajouter animation de lumière sur les bords de la carte Premium (shimmer)
+- [x] Modifier texte publicité avec italique "garantie non concurrentielle"
