@@ -505,11 +505,10 @@ export default function LandingPage() {
           <div className="border-t pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
             <p>© 2026 PRONTO. Tous droits réservés.</p>
             <p>
-              Créé avec 🤍 par{" "}
-              <a href="https://agencerise.fr" target="_blank" rel="noopener noreferrer" className="text-pronto-primary hover:underline">
-                l'Agence Rise
+              🎲 Une solution crée par{" "}
+              <a href="https://altmachine.fr" target="_blank" rel="noopener noreferrer" className="text-pronto-primary hover:underline">
+                ALTMachine
               </a>
-              {" "}• By ALTMachine
             </p>
           </div>
         </div>

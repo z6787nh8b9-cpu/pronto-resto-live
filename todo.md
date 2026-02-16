@@ -746,3 +746,8 @@
 - [x] Supprimer les répétitions "RISE AI" dans les réponses
 - [x] Rendre le chatbot moins robotique, plus concis (2-3 phrases max)
 - [x] Ton professionnel mais accessible, comme un conseiller startup
+
+## 🔗 Modification footer landing page (16 février 2026)
+- [x] Changer le texte : "🎲 Une solution crée par ALTMachine"
+- [x] Ajouter lien vers altmachine.fr
+- [x] Supprimer la mention Agence Rise
