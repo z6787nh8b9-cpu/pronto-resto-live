@@ -727,3 +727,8 @@
 - [x] Générer icône SVG animée robot souriant style Fallout Yes Man modernisé
 - [x] Intégrer l'icône dans ChatbotWidget avec animation
 - [x] Repositionner le bouton pour éviter chevauchement avec reCAPTCHA
+
+## 🎨 Mise à jour images chatbot PNG transparentes (16 février 2026)
+- [x] Extraire les nouvelles images PNG transparentes optimisées
+- [x] Uploader les 4 frames sur S3 CDN (373-381 Ko chacune, 5x plus légères)
+- [x] Remplacer les URLs dans ChatbotWidget.tsx

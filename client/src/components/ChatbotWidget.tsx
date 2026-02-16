@@ -99,10 +99,10 @@ export default function ChatbotWidget() {
         >
           <style>{`
             @keyframes chatbotFrames {
-              0%, 100% { background-image: url('https://files.manuscdn.com/user_upload_by_module/session_file/99899876/FXxzvojHqpfxflET.png'); }
-              25% { background-image: url('https://files.manuscdn.com/user_upload_by_module/session_file/99899876/GRHFNJeBSLEOhTcj.png'); }
-              50% { background-image: url('https://files.manuscdn.com/user_upload_by_module/session_file/99899876/psijLpjLdAFDwGet.png'); }
-              75% { background-image: url('https://files.manuscdn.com/user_upload_by_module/session_file/99899876/FJFDROoGxDkuukxA.png'); }
+              0%, 100% { background-image: url('https://files.manuscdn.com/user_upload_by_module/session_file/99899876/qdHdlqxJDrcPieHz.png'); }
+              25% { background-image: url('https://files.manuscdn.com/user_upload_by_module/session_file/99899876/DGisotQskbdxgMVc.png'); }
+              50% { background-image: url('https://files.manuscdn.com/user_upload_by_module/session_file/99899876/oFlNfKqUXBqweiVF.png'); }
+              75% { background-image: url('https://files.manuscdn.com/user_upload_by_module/session_file/99899876/oUpwZebeGHEroreA.png'); }
             }
             @keyframes chatbotPulse {
               0%, 100% { transform: scale(1); }
@@ -112,7 +112,7 @@ export default function ChatbotWidget() {
           <div 
             className="w-full h-full rounded-full"
             style={{
-              backgroundImage: 'url(https://files.manuscdn.com/user_upload_by_module/session_file/99899876/FXxzvojHqpfxflET.png)',
+              backgroundImage: 'url(https://files.manuscdn.com/user_upload_by_module/session_file/99899876/qdHdlqxJDrcPieHz.png)',
               backgroundSize: 'contain',
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat',
