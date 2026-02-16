@@ -611,3 +611,7 @@
 
 ## 🎨 Header Super Admin
 - [x] Remplacer le titre "PRONTO" par le logo horizontal dans ResponsiveHeader
+
+## 🎨 Améliorations visuelles Landing Page v2
+- [x] Agrandir encore plus le logo dans le header (h-20)
+- [x] Ajouter effet bords dorés en biseau (glassmorphism) sur la carte Premium
