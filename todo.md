@@ -595,3 +595,9 @@
 - [x] Copier le nouveau logo horizontal dans le dossier public
 - [x] Remplacer le logo dans LandingPage.tsx
 - [x] Vérifier l'affichage responsive du nouveau logo
+
+## 🔧 UX - Séparation invitations et restaurants
+- [x] Créer procédure tRPC pour lister toutes les invitations (tous restaurants confondus)
+- [x] Ajouter section "Invitations" séparée dans SuperAdmin
+- [x] Afficher statut, restaurant, date création, date expiration pour chaque invitation
+- [x] Garder bouton "Inviter" sur chaque ligne du tableau restaurants

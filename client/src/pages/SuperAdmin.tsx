@@ -17,6 +17,7 @@ import { ResponsiveHeader, ResponsiveTable } from "@/components/responsive";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Advertisements from "./admin/Advertisements";
 import Admins from "./admin/Admins";
+import InvitationsTab from "./admin/InvitationsTab";
 
 export default function SuperAdmin() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -204,6 +205,10 @@ export default function SuperAdmin() {
             <TabsTrigger value="admins">
               <Shield className="h-4 w-4 mr-2" />
               Admins
+            </TabsTrigger>
+            <TabsTrigger value="invitations">
+              <Mail className="h-4 w-4 mr-2" />
+              Invitations
             </TabsTrigger>
           </TabsList>
 
@@ -407,6 +412,11 @@ export default function SuperAdmin() {
 
           <TabsContent value="admins">
             <Admins />
+          </TabsContent>
+
+          {/* Tab Invitations */}
+          <TabsContent value="invitations">
+            <InvitationsTab />
           </TabsContent>
         </Tabs>
       </main>

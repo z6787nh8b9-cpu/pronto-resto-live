@@ -120,6 +120,37 @@ export const invitationsRouter = router({
     }),
 
   /**
+   * List ALL invitations (Super Admin only)
+   */
+  listAll: publicProcedure
+    .query(async () => {
+      const db = await getDb();
+      if (!db) {
+        throw new Error("Database not available");
+      }
+
+      // Get all invitations with restaurant details
+      const invitationsList = await db
+        .select({
+          id: invitations.id,
+          token: invitations.token,
+          restaurantId: invitations.restaurantId,
+          restaurantName: restaurants.name,
+          restaurantSlug: restaurants.slug,
+          status: invitations.status,
+          createdAt: invitations.createdAt,
+          expiresAt: invitations.expiresAt,
+          acceptedAt: invitations.acceptedAt,
+          acceptedBy: invitations.acceptedBy,
+        })
+        .from(invitations)
+        .leftJoin(restaurants, eq(invitations.restaurantId, restaurants.id))
+        .orderBy(invitations.createdAt);
+
+      return invitationsList;
+    }),
+
+  /**
    * List all invitations for a restaurant
    */
   listByRestaurant: publicProcedure
