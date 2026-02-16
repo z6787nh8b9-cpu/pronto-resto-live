@@ -11,6 +11,8 @@ import PublicRestaurantPage from "./pages/PublicRestaurantPage";
 import LandingPage from "./pages/LandingPage";
 import RestaurantHomePage from "./pages/RestaurantHomePage";
 import RestaurantMenuPage from "./pages/RestaurantMenuPage";
+import RestaurantLogin from "./pages/RestaurantLogin";
+import InviteAccept from "./pages/InviteAccept";
 
 /**
  * PRONTO Router - Clean URL Structure
@@ -28,6 +30,12 @@ function Router() {
     <Switch>
       {/* Landing page */}
       <Route path="/" component={LandingPage} />
+      
+      {/* Restaurant owner login */}
+      <Route path="/login-restaurant" component={RestaurantLogin} />
+      
+      {/* Invitation acceptance */}
+      <Route path="/invite/:token" component={InviteAccept} />
       
       {/* Super Admin routes */}
       <Route path="/admin" component={SuperAdmin} />

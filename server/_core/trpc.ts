@@ -47,3 +47,43 @@ export const adminProcedure = t.procedure.use(
     });
   }),
 );
+
+/**
+ * Middleware for restaurant owner authentication
+ * Allows both restaurant owners AND super admins
+ */
+const requireRestaurantOwnerOrAdmin = t.middleware(async opts => {
+  const { ctx, next } = opts;
+
+  // MODE DÉVELOPPEMENT : Autoriser l'accès sans authentification
+  const isDev = process.env.NODE_ENV === 'development';
+  
+  if (isDev) {
+    return next({ ctx });
+  }
+
+  // Check if user is Super Admin (Manus OAuth)
+  if (ctx.user && ctx.user.role === 'admin') {
+    return next({
+      ctx: {
+        ...ctx,
+        isAdmin: true,
+      },
+    });
+  }
+
+  // Check if user is restaurant owner (Google/Facebook OAuth)
+  if (ctx.restaurantOwner) {
+    return next({
+      ctx: {
+        ...ctx,
+        restaurantOwner: ctx.restaurantOwner,
+        isAdmin: false,
+      },
+    });
+  }
+
+  throw new TRPCError({ code: "UNAUTHORIZED", message: "Vous devez être connecté pour accéder à cette ressource." });
+});
+
+export const restaurantOwnerProcedure = t.procedure.use(requireRestaurantOwnerOrAdmin);

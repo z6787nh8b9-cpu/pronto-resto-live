@@ -37,7 +37,7 @@ export const adminRouter = router({
   createRestaurant: adminProcedure
     .input(
       z.object({
-        ownerId: z.number(),
+        ownerId: z.number().nullable().optional(),
         slug: z.string().min(1).max(100),
         name: z.string().min(1).max(255),
         description: z.string().optional(),

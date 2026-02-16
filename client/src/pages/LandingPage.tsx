@@ -24,7 +24,7 @@ export default function LandingPage() {
             <a href="#temoignages" className="text-sm hover:text-pronto-primary transition-colors">
               Témoignages
             </a>
-            <Button variant="outline" size="sm" onClick={() => window.location.href = getLoginUrl()}>
+            <Button variant="outline" size="sm" onClick={() => window.location.href = "/login-restaurant"}>
               Connexion
             </Button>
             <Button size="sm" className="bg-pronto-primary hover:bg-pronto-primary/90">

@@ -19,11 +19,31 @@ export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
 /**
+ * Restaurant owners table - for Google/Facebook OAuth authentication
+ * Separate from users table which is reserved for Manus OAuth (Super Admins)
+ */
+export const restaurantOwners = mysqlTable("restaurant_owners", {
+  id: int("id").autoincrement().primaryKey(),
+  email: varchar("email", { length: 320 }).notNull().unique(),
+  name: text("name").notNull(),
+  avatarUrl: text("avatarUrl"),
+  provider: mysqlEnum("provider", ["google", "facebook"]).notNull(), // OAuth provider
+  providerId: varchar("providerId", { length: 255 }).notNull(), // ID from OAuth provider
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  lastSignedIn: timestamp("lastSignedIn").defaultNow().notNull(),
+});
+
+export type RestaurantOwner = typeof restaurantOwners.$inferSelect;
+export type InsertRestaurantOwner = typeof restaurantOwners.$inferInsert;
+
+/**
  * Restaurants table - core multi-tenant entity
  */
 export const restaurants = mysqlTable("restaurants", {
   id: int("id").autoincrement().primaryKey(),
-  ownerId: int("ownerId").notNull(), // Reference to users table
+  ownerId: int("ownerId"), // Reference to restaurant_owners table (nullable until owner accepts invitation)
   slug: varchar("slug", { length: 100 }).notNull().unique(), // Subdomain identifier
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
@@ -437,3 +457,27 @@ export const galleryPhotos = mysqlTable("gallery_photos", {
 
 export type GalleryPhoto = typeof galleryPhotos.$inferSelect;
 export type InsertGalleryPhoto = typeof galleryPhotos.$inferInsert;
+
+/**
+ * Invitations table - manages restaurant owner invitations
+ * Allows Super Admin to invite restaurant owners via unique links
+ */
+export const invitations = mysqlTable("invitations", {
+  id: int("id").autoincrement().primaryKey(),
+  restaurantId: int("restaurantId").notNull(), // Restaurant to associate with
+  token: varchar("token", { length: 255 }).notNull().unique(), // Unique invitation token (UUID)
+  
+  // Status
+  status: mysqlEnum("status", ["pending", "accepted", "expired"]).default("pending").notNull(),
+  acceptedBy: int("acceptedBy"), // User ID who accepted the invitation
+  acceptedAt: timestamp("acceptedAt"),
+  
+  // Expiration (24 hours from creation)
+  expiresAt: timestamp("expiresAt").notNull(),
+  
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Invitation = typeof invitations.$inferSelect;
+export type InsertInvitation = typeof invitations.$inferInsert;

@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Edit, Trash2, TrendingUp, Store, MessageSquare, Settings, Megaphone, Shield } from "lucide-react";
+import { Plus, Edit, Trash2, TrendingUp, Store, MessageSquare, Settings, Megaphone, Shield, Mail, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -22,6 +22,8 @@ export default function SuperAdmin() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingRestaurant, setEditingRestaurant] = useState<any>(null);
   const [activeTab, setActiveTab] = useState("restaurants");
+  const [invitationUrl, setInvitationUrl] = useState<string | null>(null);
+  const [copiedInvitation, setCopiedInvitation] = useState(false);
   const [, setLocation] = useLocation();
   const { user, loading } = useAuth();
 
@@ -64,6 +66,25 @@ export default function SuperAdmin() {
       toast.error(`Erreur: ${error.message}`);
     },
   });
+
+  const createInvitationMutation = trpc.invitations.create.useMutation({
+    onSuccess: (data) => {
+      setInvitationUrl(data.invitationUrl);
+      toast.success("Invitation créée avec succès");
+    },
+    onError: (error) => {
+      toast.error(`Erreur: ${error.message}`);
+    },
+  });
+
+  const handleCopyInvitation = () => {
+    if (invitationUrl) {
+      navigator.clipboard.writeText(invitationUrl);
+      setCopiedInvitation(true);
+      toast.success("Lien copié dans le presse-papier");
+      setTimeout(() => setCopiedInvitation(false), 2000);
+    }
+  };
 
   // Redirect if not admin - AFTER all hooks
   if (!isDev && loading) {
@@ -269,6 +290,15 @@ export default function SuperAdmin() {
                     <Button
                       variant="outline"
                       size="sm"
+                      onClick={() => createInvitationMutation.mutate({ restaurantId: row.id })}
+                      className="text-xs"
+                    >
+                      <Mail className="h-3 w-3 mr-1" />
+                      Inviter
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
                       onClick={() => setEditingRestaurant(row)}
                       className="text-xs"
                     >
@@ -331,6 +361,15 @@ export default function SuperAdmin() {
                       className="w-full sm:flex-1 text-xs"
                     >
                       📊 Dashboard
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => createInvitationMutation.mutate({ restaurantId: row.id })}
+                      className="w-full sm:flex-1 text-xs"
+                    >
+                      <Mail className="h-3 w-3 mr-1" />
+                      Inviter
                     </Button>
                     <Button
                       variant="outline"
@@ -550,6 +589,42 @@ export default function SuperAdmin() {
         </DialogContent>
       </Dialog>
 
+      {/* Dialog d'invitation */}
+      <Dialog open={!!invitationUrl} onOpenChange={() => setInvitationUrl(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Lien d'invitation généré</DialogTitle>
+            <DialogDescription>
+              Envoyez ce lien au propriétaire du restaurant. Il expirera dans 24 heures.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="p-4 bg-muted rounded-lg">
+              <code className="text-sm break-all">{invitationUrl}</code>
+            </div>
+            <Button
+              onClick={handleCopyInvitation}
+              className="w-full"
+              variant={copiedInvitation ? "default" : "outline"}
+            >
+              {copiedInvitation ? (
+                <>
+                  <Check className="h-4 w-4 mr-2" />
+                  Copié !
+                </>
+              ) : (
+                <>
+                  <Copy className="h-4 w-4 mr-2" />
+                  Copier le lien
+                </>
+              )}
+            </Button>
+          </div>
+          <DialogFooter>
+            <Button onClick={() => setInvitationUrl(null)}>Fermer</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
     </div>
   );

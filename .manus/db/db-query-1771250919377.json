@@ -1,0 +1,9 @@
+{
+  "query": "CREATE TABLE `invitations` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`restaurantId` int NOT NULL,\n\t`token` varchar(255) NOT NULL,\n\t`status` enum('pending','accepted','expired') NOT NULL DEFAULT 'pending',\n\t`acceptedBy` int,\n\t`acceptedAt` timestamp,\n\t`expiresAt` timestamp NOT NULL,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\tCONSTRAINT `invitations_id` PRIMARY KEY(`id`),\n\tCONSTRAINT `invitations_token_unique` UNIQUE(`token`)\n);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2m1m65o6UXETKUo.39bdc9c5be54 --database Lrdq8kkKw7pbRUXDsDAG5X --execute CREATE TABLE `invitations` (\n\t`id` int AUTO_INCREMENT NOT NULL,\n\t`restaurantId` int NOT NULL,\n\t`token` varchar(255) NOT NULL,\n\t`status` enum('pending','accepted','expired') NOT NULL DEFAULT 'pending',\n\t`acceptedBy` int,\n\t`acceptedAt` timestamp,\n\t`expiresAt` timestamp NOT NULL,\n\t`createdAt` timestamp NOT NULL DEFAULT (now()),\n\t`updatedAt` timestamp NOT NULL DEFAULT (now()) ON UPDATE CURRENT_TIMESTAMP,\n\tCONSTRAINT `invitations_id` PRIMARY KEY(`id`),\n\tCONSTRAINT `invitations_token_unique` UNIQUE(`token`)\n);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 301
+}

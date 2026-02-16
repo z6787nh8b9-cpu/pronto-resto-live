@@ -500,3 +500,93 @@
 - [x] Modifier useTranslation pour déclencher l'auto-traduction automatiquement
 - [x] Implémenter la traduction automatique du restaurant, catégories et plats
 - [x] Tester l'auto-traduction avec l'anglais (fonctionne correctement)
+
+## 🚨 RESTAURATION FONCTIONNALITÉS PERDUES (URGENT)
+
+- [ ] Restaurer les flèches de déplacement (↑↓) pour réorganiser les catégories dans le dashboard
+- [ ] Restaurer les flèches de déplacement (↑↓) pour réorganiser les plats dans le dashboard
+- [ ] Restaurer la section Événements sur RestaurantHomePage
+- [ ] Restaurer la section Horaires d'ouverture sur RestaurantHomePage
+- [ ] Restaurer la section Réservations sur RestaurantHomePage
+- [ ] Restaurer les stats (vues, conversations) dans le dashboard
+- [ ] Restaurer le toggle de désactivation du chatbot dans le dashboard
+- [ ] Restaurer la configuration des zones/tables/réservations dans le dashboard
+- [ ] Implémenter la limitation des favoris selon la formule (Basic: 1, Pro: 3, Premium: 5)
+- [ ] Ajouter une bulle info quand l'utilisateur atteint la limite de favoris
+- [ ] Restaurer la mise en avant visuelle des favoris sur la page publique (étoile dorée + badge)
+- [ ] Intégrer subtilement les favoris dans les suggestions du chatbot IA
+
+## 🔐 SYSTÈME D'AUTHENTIFICATION OAUTH (EN COURS)
+
+### Phase 1 : Configuration OAuth et table d'invitations
+- [ ] Ajouter les credentials OAuth Google et Facebook aux secrets
+- [ ] Créer la table `invitations` dans le schéma Drizzle
+- [ ] Ajouter le champ `ownerId` à la table `restaurants`
+- [ ] Générer et appliquer la migration SQL
+
+### Phase 2 : Routes OAuth
+- [ ] Créer les routes `/api/auth/google` et `/api/auth/google/callback`
+- [ ] Créer les routes `/api/auth/facebook` et `/api/auth/facebook/callback`
+- [ ] Implémenter la logique de création/association des users
+
+### Phase 3 : Système d'invitations
+- [ ] Créer la mutation tRPC `createInvitation` (Super Admin)
+- [ ] Créer la mutation tRPC `acceptInvitation` (public)
+- [ ] Créer la page `/invite/[token]`
+- [ ] Implémenter l'expiration automatique (24h)
+
+### Phase 4 : Protection des dashboards
+- [ ] Créer le middleware `protectedRestaurantProcedure`
+- [ ] Vérifier que `user.restaurantId === restaurant.id`
+- [ ] Autoriser les Super Admins à accéder à tous les dashboards
+
+### Phase 5 : Page de login
+- [ ] Créer la page `/login` avec boutons OAuth
+- [ ] Implémenter la redirection après connexion
+- [ ] Gérer les erreurs (compte non trouvé, etc.)
+
+### Phase 6 : Tests
+- [ ] Tester le flux complet d'invitation
+- [ ] Tester la connexion Google et Facebook
+- [ ] Tester la protection des dashboards
+- [ ] Vérifier que les Super Admins peuvent accéder à tout
+
+
+## 🔐 SYSTÈME D'AUTHENTIFICATION RESTAURATEURS (OAuth Google/Facebook)
+
+### PHASE 1 & 2 : Base de données et Login (TERMINÉ)
+- [x] Créer table `restaurant_owners` en base de données (séparée de `users`)
+- [x] Créer table `invitations` en base de données avec token unique et expiration 24h
+- [x] Installer et configurer Passport.js avec Google et Facebook OAuth
+- [x] Créer page `/login-restaurant` avec boutons OAuth Google et Facebook
+- [x] Modifier bouton "Connexion" de la landing page pour rediriger vers `/login-restaurant`
+- [x] Remplacer logo carré par le vrai logo PRONTO
+
+### PHASE 3 : Système d'invitations (TERMINÉ)
+- [x] Créer procédure tRPC `invitations.create` (Super Admin uniquement)
+- [x] Générer token unique (UUID v4) avec expiration 24h
+- [x] Ajouter bouton "Inviter propriétaire" dans le Super Admin pour chaque restaurant
+- [x] Afficher le lien d'invitation généré (copier dans le presse-papier)
+- [x] Gérer l'expiration automatique des invitations
+
+### PHASE 4 : Acceptation d'invitation (TERMINÉ)
+- [x] Créer page `/invite/:token` pour accepter les invitations
+- [x] Vérifier la validité du token (existe, non utilisé, non expiré)
+- [x] Rediriger vers `/login-restaurant?token=XXX` si valide
+- [x] Afficher erreur si token invalide/expiré
+- [x] Associer le restaurant au propriétaire après OAuth réussi
+
+### PHASE 5 : Protection des dashboards (TERMINÉ)
+- [x] Créer middleware `requireRestaurantOwner` pour vérifier l'authentification
+- [x] Vérifier que `req.user.id === restaurant.ownerId` avant d'accéder au dashboard
+- [x] Permettre aux Super Admins (Manus OAuth) d'accéder à tous les dashboards
+- [x] Rediriger vers `/login-restaurant` si non authentifié
+- [x] Afficher message d'erreur si le restaurateur tente d'accéder à un autre restaurant
+
+### PHASE 6 : Tests et finalisation (TERMINÉ)
+- [x] Tester le flux complet d'invitation
+- [x] Tester l'authentification Google OAuth
+- [x] Tester l'authentification Facebook OAuth
+- [x] Vérifier la protection des dashboards
+- [x] Créer checkpoint finalin à tous les restaurants
+- [ ] Checkpoint final avec toutes les fonctionnalités

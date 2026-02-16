@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Edit, Trash2, GripVertical, Settings, Eye, MessageSquare, BarChart3, Star, Globe, Clock, CalendarDays, PartyPopper, Lock } from "lucide-react";
+import { Plus, Edit, Trash2, GripVertical, Settings, Eye, MessageSquare, BarChart3, Star, Globe, Clock, CalendarDays, PartyPopper, Lock, ChevronUp, ChevronDown } from "lucide-react";
 import { toast } from "sonner";
 
 import { useParams, useLocation } from "wouter";
@@ -62,6 +62,25 @@ export default function RestaurantDashboard() {
     { slug: slug || "" },
     { enabled: !!slug }
   );
+
+  // Check dashboard access (authentication + ownership verification)
+  const { data: accessCheck, isLoading: isCheckingAccess, error: accessError } = trpc.restaurant.checkDashboardAccess.useQuery(
+    { restaurantId: restaurant?.id || 0 },
+    { enabled: !!restaurant?.id, retry: false }
+  );
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (accessError && restaurant?.id) {
+      // @ts-ignore - error.data exists on TRPCError
+      if (accessError.data?.code === "UNAUTHORIZED") {
+        navigate("/login-restaurant");
+      } else if (accessError.data?.code === "FORBIDDEN") {
+        toast.error("Vous n'avez pas accès à ce restaurant");
+        navigate("/");
+      }
+    }
+  }, [accessError, restaurant?.id, navigate]);
 
   // Get menu data
   const { data: categories, refetch: refetchCategories } = trpc.restaurant.getCategories.useQuery(
@@ -212,6 +231,60 @@ export default function RestaurantDashboard() {
     reorderItemsMutation.mutate({
       categoryId: selectedCategory,
       itemIds: reordered.map((item) => item.id),
+    });
+  };
+
+  // Déplacer une catégorie vers le haut
+  const handleMoveCategoryUp = (categoryId: number) => {
+    if (!categories || !restaurant) return;
+    const index = categories.findIndex((cat: any) => cat.id === categoryId);
+    if (index <= 0) return; // Déjà en première position
+    
+    const reordered = arrayMove(categories, index, index - 1);
+    reorderCategoriesMutation.mutate({
+      restaurantId: restaurant.id,
+      categoryIds: reordered.map((cat: any) => cat.id),
+    });
+  };
+
+  // Déplacer une catégorie vers le bas
+  const handleMoveCategoryDown = (categoryId: number) => {
+    if (!categories || !restaurant) return;
+    const index = categories.findIndex((cat: any) => cat.id === categoryId);
+    if (index < 0 || index >= categories.length - 1) return; // Déjà en dernière position
+    
+    const reordered = arrayMove(categories, index, index + 1);
+    reorderCategoriesMutation.mutate({
+      restaurantId: restaurant.id,
+      categoryIds: reordered.map((cat: any) => cat.id),
+    });
+  };
+
+  // Déplacer un plat vers le haut
+  const handleMoveItemUp = (itemId: number, categoryId: number) => {
+    if (!menuItems) return;
+    const categoryItems = menuItems.filter((item: any) => item.categoryId === categoryId);
+    const index = categoryItems.findIndex((item: any) => item.id === itemId);
+    if (index <= 0) return; // Déjà en première position
+    
+    const reordered = arrayMove(categoryItems, index, index - 1);
+    reorderItemsMutation.mutate({
+      categoryId,
+      itemIds: reordered.map((item: any) => item.id),
+    });
+  };
+
+  // Déplacer un plat vers le bas
+  const handleMoveItemDown = (itemId: number, categoryId: number) => {
+    if (!menuItems) return;
+    const categoryItems = menuItems.filter((item: any) => item.categoryId === categoryId);
+    const index = categoryItems.findIndex((item: any) => item.id === itemId);
+    if (index < 0 || index >= categoryItems.length - 1) return; // Déjà en dernière position
+    
+    const reordered = arrayMove(categoryItems, index, index + 1);
+    reorderItemsMutation.mutate({
+      categoryId,
+      itemIds: reordered.map((item: any) => item.id),
     });
   };
 
@@ -511,7 +584,26 @@ export default function RestaurantDashboard() {
                     {/* Desktop: Layout horizontal */}
                     <div className="hidden sm:flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <GripVertical className="h-5 w-5 text-muted-foreground cursor-move" />
+                        <div className="flex flex-col gap-1">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleMoveCategoryUp(category.id)}
+                            disabled={categories?.findIndex((cat: any) => cat.id === category.id) === 0}
+                            className="h-6 w-6 p-0"
+                          >
+                            <ChevronUp className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => handleMoveCategoryDown(category.id)}
+                            disabled={categories?.findIndex((cat: any) => cat.id === category.id) === categories.length - 1}
+                            className="h-6 w-6 p-0"
+                          >
+                            <ChevronDown className="h-4 w-4" />
+                          </Button>
+                        </div>
                         <div className="text-3xl">{category.emoji || "🍴"}</div>
                         <div>
                           <CardTitle>{category.name}</CardTitle>
@@ -610,7 +702,26 @@ export default function RestaurantDashboard() {
                             {/* Desktop: Layout horizontal */}
                             <div className="hidden sm:flex items-center justify-between p-3">
                               <div className="flex items-center gap-3">
-                                <GripVertical className="h-4 w-4 text-muted-foreground cursor-move" />
+                                <div className="flex flex-col gap-1">
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => handleMoveItemUp(item.id, category.id)}
+                                    disabled={menuItems?.filter((i: any) => i.categoryId === category.id).findIndex((i: any) => i.id === item.id) === 0}
+                                    className="h-5 w-5 p-0"
+                                  >
+                                    <ChevronUp className="h-3 w-3" />
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={() => handleMoveItemDown(item.id, category.id)}
+                                    disabled={menuItems?.filter((i: any) => i.categoryId === category.id).findIndex((i: any) => i.id === item.id) === menuItems.filter((i: any) => i.categoryId === category.id).length - 1}
+                                    className="h-5 w-5 p-0"
+                                  >
+                                    <ChevronDown className="h-3 w-3" />
+                                  </Button>
+                                </div>
                                 <div>
                                   <div className="flex items-center gap-2">
                                     <span className="font-medium">{item.name}</span>

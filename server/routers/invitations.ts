@@ -1,0 +1,145 @@
+/**
+ * Invitations Router
+ * Handles restaurant owner invitation system
+ */
+
+import { router, publicProcedure } from "../_core/trpc";
+import { z } from "zod";
+import { getDb } from "../db";
+import { invitations, restaurants } from "../../drizzle/schema";
+import { eq, and } from "drizzle-orm";
+import { randomUUID } from "crypto";
+
+export const invitationsRouter = router({
+  /**
+   * Create a new invitation for a restaurant (Super Admin only)
+   */
+  create: publicProcedure
+    .input(
+      z.object({
+        restaurantId: z.number(),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) {
+        throw new Error("Database not available");
+      }
+
+      // Check if restaurant exists
+      const [restaurant] = await db
+        .select()
+        .from(restaurants)
+        .where(eq(restaurants.id, input.restaurantId))
+        .limit(1);
+
+      if (!restaurant) {
+        throw new Error("Restaurant not found");
+      }
+
+      // Generate unique token
+      const token = randomUUID();
+
+      // Set expiration to 24 hours from now
+      const expiresAt = new Date();
+      expiresAt.setHours(expiresAt.getHours() + 24);
+
+      // Create invitation
+      const [invitation] = await db.insert(invitations).values({
+        restaurantId: input.restaurantId,
+        token,
+        expiresAt,
+        status: "pending",
+      });
+
+      // Return invitation with full URL
+      const invitationUrl = `${process.env.FRONTEND_URL || "https://pronto.page"}/invite/${token}`;
+
+      return {
+        id: invitation.insertId,
+        token,
+        invitationUrl,
+        expiresAt,
+      };
+    }),
+
+  /**
+   * Get invitation details by token
+   */
+  getByToken: publicProcedure
+    .input(
+      z.object({
+        token: z.string(),
+      })
+    )
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) {
+        throw new Error("Database not available");
+      }
+
+      const [invitation] = await db
+        .select()
+        .from(invitations)
+        .where(eq(invitations.token, input.token))
+        .limit(1);
+
+      if (!invitation) {
+        return { valid: false, reason: "not_found" };
+      }
+
+      // Check if already used
+      if (invitation.status === "accepted") {
+        return { valid: false, reason: "already_used" };
+      }
+
+      // Check if expired
+      const now = new Date();
+      if (invitation.expiresAt < now) {
+        // Mark as expired
+        await db
+          .update(invitations)
+          .set({ status: "expired" })
+          .where(eq(invitations.id, invitation.id));
+
+        return { valid: false, reason: "expired" };
+      }
+
+      // Get restaurant details
+      const [restaurant] = await db
+        .select()
+        .from(restaurants)
+        .where(eq(restaurants.id, invitation.restaurantId))
+        .limit(1);
+
+      return {
+        valid: true,
+        invitation,
+        restaurant,
+      };
+    }),
+
+  /**
+   * List all invitations for a restaurant
+   */
+  listByRestaurant: publicProcedure
+    .input(
+      z.object({
+        restaurantId: z.number(),
+      })
+    )
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) {
+        throw new Error("Database not available");
+      }
+
+      const invitationsList = await db
+        .select()
+        .from(invitations)
+        .where(eq(invitations.restaurantId, input.restaurantId))
+        .orderBy(invitations.createdAt);
+
+      return invitationsList;
+    }),
+});

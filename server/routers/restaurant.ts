@@ -1,7 +1,8 @@
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 import { router } from "../_core/trpc";
 // Removed obsolete tenantMiddleware import
-import { publicProcedure, protectedProcedure } from "../_core/trpc";
+import { publicProcedure, protectedProcedure, restaurantOwnerProcedure } from "../_core/trpc";
 import {
   getRestaurantsByOwnerId,
   updateRestaurant,
@@ -24,6 +25,52 @@ import { menuCategories, menuItems, restaurants } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
 
 export const restaurantRouter = router({
+  /**
+   * Check if current user has access to a restaurant dashboard
+   * Returns restaurant data if authorized, throws error otherwise
+   */
+  checkDashboardAccess: restaurantOwnerProcedure
+    .input(
+      z.object({
+        restaurantId: z.number(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const db = await getDb();
+      if (!db) {
+        throw new Error("Database not available");
+      }
+
+      // Get restaurant
+      const [restaurant] = await db
+        .select()
+        .from(restaurants)
+        .where(eq(restaurants.id, input.restaurantId))
+        .limit(1);
+
+      if (!restaurant) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Restaurant non trouvé" });
+      }
+
+      // Super Admin has access to all restaurants
+      if (ctx.user && ctx.user.role === 'admin') {
+        return { authorized: true, restaurant, isAdmin: true };
+      }
+
+      // Restaurant owner can only access their own restaurant
+      if (ctx.restaurantOwner) {
+        if (restaurant.ownerId !== ctx.restaurantOwner.id) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Vous n'avez pas accès à ce restaurant",
+          });
+        }
+        return { authorized: true, restaurant, isAdmin: false };
+      }
+
+      throw new TRPCError({ code: "UNAUTHORIZED", message: "Non autorisé" });
+    }),
+
   // Get current restaurant (based on tenant context) - DEPRECATED
   // getCurrent: publicProcedure.query(async ({ ctx }) => {
   //   return null;
