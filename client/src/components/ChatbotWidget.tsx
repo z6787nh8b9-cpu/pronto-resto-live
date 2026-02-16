@@ -134,7 +134,7 @@ export default function ChatbotWidget() {
                 <div
                   className={`max-w-[80%] rounded-lg px-4 py-2 ${
                     msg.role === "user"
-                      ? "bg-pronto-primary text-white border-2 border-pronto-primary/30 shadow-sm"
+                      ? "bg-pronto-primary text-black border-2 border-pronto-primary/30 shadow-sm"
                       : "bg-muted text-foreground"
                   }`}
                 >

@@ -657,3 +657,6 @@
 - [x] Créer onglet "Demandes" dans le Super Admin
 - [x] Intégrer notifications Manus avec notifyOwner()
 - [x] Tester le flux complet
+
+## 🐛 Correction texte chatbot
+- [x] Corriger la couleur du texte des messages utilisateur (noir au lieu de blanc)
