@@ -172,11 +172,12 @@ Instructions:
       })
     )
     .mutation(async ({ input }) => {
-      // Note: In production, you should verify the reCAPTCHA token server-side
-      // by calling Google's API with your secret key.
-      // For now, we just check that the token exists.
-      if (!input.recaptchaToken) {
-        throw new Error("reCAPTCHA validation failed");
+      // Verify reCAPTCHA token server-side
+      const { verifyRecaptcha } = await import("../_core/recaptcha");
+      const isValid = await verifyRecaptcha(input.recaptchaToken, "submit_contact_form");
+      
+      if (!isValid) {
+        throw new Error("reCAPTCHA validation failed. Please try again.");
       }
 
       const { notifyOwner } = await import("../_core/notification");

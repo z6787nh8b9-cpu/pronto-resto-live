@@ -447,7 +447,7 @@ export default function LandingPage() {
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-br from-pronto-primary to-pronto-accent text-white">
         <div className="container text-center">
-          <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">
+          <h2 className="text-4xl md:text-5xl font-display font-bold mb-6" style={{color: '#000000'}}>
             Prêt à transformer votre restaurant ?
           </h2>
           <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">

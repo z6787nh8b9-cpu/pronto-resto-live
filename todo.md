@@ -716,4 +716,9 @@
 ## 🔒 Google reCAPTCHA Enterprise invisible (16 février 2026)
 - [x] Ajouter le script reCAPTCHA dans client/index.html
 - [x] Intégrer la validation reCAPTCHA dans ContactFormDialog
-- [x] Tester le fonctionnement du reCAPTCHA invisible
+- [x] Ajouter la secret key reCAPTCHA aux variables d'environnement
+- [x] Créer la fonction de vérification reCAPTCHA côté serveur
+- [x] Intégrer la vérification dans submitContactForm
+
+## 🐛 Erreur ChatbotWidget (16 février 2026)
+- [ ] Corriger l'erreur "ERREUR Clé de site : Domaine clé de site..." affichée par le ChatbotWidget
