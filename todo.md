@@ -664,3 +664,7 @@
 ## 🔧 Séparation données de test Super Admin
 - [x] Créer section "Configuration & Tests" sous le tableau restaurants
 - [x] Afficher tokens, URLs OAuth, et autres données techniques
+
+## 🔍 Barre de recherche restaurants Super Admin
+- [x] Ajouter input de recherche avec icône loupe
+- [x] Implémenter filtre en temps réel (nom, slug, email, phone)

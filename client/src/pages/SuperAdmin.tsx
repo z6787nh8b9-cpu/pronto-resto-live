@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Edit, Trash2, TrendingUp, Store, MessageSquare, Settings, Megaphone, Shield, Mail, Copy, Check } from "lucide-react";
+import { Plus, Edit, Trash2, TrendingUp, Store, MessageSquare, Settings, Megaphone, Shield, Mail, Copy, Check, Search } from "lucide-react";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
 import { useAuth } from "@/_core/hooks/useAuth";
@@ -26,6 +26,7 @@ export default function SuperAdmin() {
   const [activeTab, setActiveTab] = useState("restaurants");
   const [invitationUrl, setInvitationUrl] = useState<string | null>(null);
   const [copiedInvitation, setCopiedInvitation] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [, setLocation] = useLocation();
   const { user, loading } = useAuth();
 
@@ -257,8 +258,21 @@ export default function SuperAdmin() {
         {/* Restaurants Table avec ResponsiveTable */}
         <Card>
           <CardHeader className="p-4 sm:p-6">
-            <CardTitle className="text-lg sm:text-xl">Liste des Restaurants</CardTitle>
-            <CardDescription className="text-xs sm:text-sm">Gérez tous les restaurants de la plateforme</CardDescription>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <CardTitle className="text-lg sm:text-xl">Liste des Restaurants</CardTitle>
+                <CardDescription className="text-xs sm:text-sm">Gérez tous les restaurants de la plateforme</CardDescription>
+              </div>
+              <div className="relative w-full sm:w-64">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Rechercher un restaurant..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-10 text-sm"
+                />
+              </div>
+            </div>
           </CardHeader>
           <CardContent className="p-0 sm:p-6">
             <ResponsiveTable
@@ -331,7 +345,16 @@ export default function SuperAdmin() {
                   </div>
                 ) },
               ]}
-              data={restaurants || []}
+              data={(restaurants || []).filter(restaurant => {
+                if (!searchQuery) return true;
+                const query = searchQuery.toLowerCase();
+                return (
+                  restaurant.name?.toLowerCase().includes(query) ||
+                  restaurant.slug?.toLowerCase().includes(query) ||
+                  restaurant.email?.toLowerCase().includes(query) ||
+                  restaurant.phone?.toLowerCase().includes(query)
+                );
+              })}
               keyExtractor={(row) => row.id}
               mobileCardRender={(row) => (
                 <div className="space-y-3">
