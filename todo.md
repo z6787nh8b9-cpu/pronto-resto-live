@@ -621,3 +621,9 @@
 - [x] Masquer le badge "Recommandé" sur la carte Premium
 - [x] Ajouter animation de lumière sur les bords de la carte Premium (shimmer)
 - [x] Modifier texte publicité avec italique "garantie non concurrentielle"
+
+## 🤖 Chatbot RISE AI™ sur Landing Page
+- [x] Créer composant ChatbotWidget avec design PRONTO
+- [x] Créer procédure tRPC pour chat avec contexte PRONTO
+- [x] Intégrer le chatbot dans LandingPage.tsx
+- [x] Tester les réponses du chatbot (3 tests passés)

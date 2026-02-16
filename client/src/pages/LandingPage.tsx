@@ -3,9 +3,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Check, MessageSquare, Palette, Smartphone, Zap, Star, ArrowRight } from "lucide-react";
 import { getLoginUrl } from "@/const";
+import ChatbotWidget from "@/components/ChatbotWidget";
 
 export default function LandingPage() {
   return (
+    <>
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
@@ -457,5 +459,7 @@ export default function LandingPage() {
         </div>
       </footer>
     </div>
+    <ChatbotWidget />
+    </>
   );
 }
