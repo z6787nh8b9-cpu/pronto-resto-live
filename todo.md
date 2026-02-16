@@ -722,3 +722,8 @@
 
 ## 🐛 Erreur ChatbotWidget (16 février 2026)
 - [ ] Corriger l'erreur "ERREUR Clé de site : Domaine clé de site..." affichée par le ChatbotWidget
+
+## 🤖 Refonte icône chatbot (16 février 2026)
+- [x] Générer icône SVG animée robot souriant style Fallout Yes Man modernisé
+- [x] Intégrer l'icône dans ChatbotWidget avec animation
+- [x] Repositionner le bouton pour éviter chevauchement avec reCAPTCHA

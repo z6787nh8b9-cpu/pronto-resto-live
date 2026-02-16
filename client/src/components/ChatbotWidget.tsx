@@ -90,13 +90,36 @@ export default function ChatbotWidget() {
     <>
       {/* Bouton flottant */}
       {!isOpen && (
-        <Button
+        <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-lg bg-pronto-primary hover:bg-pronto-primary/90 z-50"
-          size="icon"
+          className="fixed bottom-24 right-6 h-20 w-20 rounded-full shadow-2xl hover:scale-110 transition-transform duration-300 z-50 bg-transparent border-none cursor-pointer"
+          style={{
+            animation: 'chatbotPulse 2s ease-in-out infinite',
+          }}
         >
-          <MessageSquare className="h-6 w-6" />
-        </Button>
+          <style>{`
+            @keyframes chatbotFrames {
+              0%, 100% { background-image: url('https://files.manuscdn.com/user_upload_by_module/session_file/99899876/FXxzvojHqpfxflET.png'); }
+              25% { background-image: url('https://files.manuscdn.com/user_upload_by_module/session_file/99899876/GRHFNJeBSLEOhTcj.png'); }
+              50% { background-image: url('https://files.manuscdn.com/user_upload_by_module/session_file/99899876/psijLpjLdAFDwGet.png'); }
+              75% { background-image: url('https://files.manuscdn.com/user_upload_by_module/session_file/99899876/FJFDROoGxDkuukxA.png'); }
+            }
+            @keyframes chatbotPulse {
+              0%, 100% { transform: scale(1); }
+              50% { transform: scale(1.05); }
+            }
+          `}</style>
+          <div 
+            className="w-full h-full rounded-full"
+            style={{
+              backgroundImage: 'url(https://files.manuscdn.com/user_upload_by_module/session_file/99899876/FXxzvojHqpfxflET.png)',
+              backgroundSize: 'contain',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              animation: 'chatbotFrames 1.2s steps(1) infinite',
+            }}
+          />
+        </button>
       )}
 
       {/* Fenêtre de chat */}
