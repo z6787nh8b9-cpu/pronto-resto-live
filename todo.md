@@ -590,3 +590,8 @@
 - [x] Vérifier la protection des dashboards
 - [x] Créer checkpoint finalin à tous les restaurants
 - [ ] Checkpoint final avec toutes les fonctionnalités
+
+## 🎨 BRANDING - Remplacement du logo
+- [x] Copier le nouveau logo horizontal dans le dossier public
+- [x] Remplacer le logo dans LandingPage.tsx
+- [x] Vérifier l'affichage responsive du nouveau logo

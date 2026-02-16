@@ -11,8 +11,7 @@ export default function LandingPage() {
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
-            <img src="/pronto-logo.png" alt="PRONTO" className="h-8" />
-            <span className="text-2xl font-display font-bold text-pronto-primary">PRONTO</span>
+            <img src="/pronto-logo-horizontal.png" alt="PRONTO - Fini les 5 outils. Un seul suffit." className="h-10" />
           </div>
           <nav className="hidden md:flex items-center gap-6">
             <a href="#fonctionnalites" className="text-sm hover:text-pronto-primary transition-colors">
