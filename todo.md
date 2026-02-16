@@ -455,3 +455,21 @@
 
 ## 🎯 FONCTIONNALITÉ - PUBLICITÉS SUR LA PAGE MENU BASIC
 - [x] Ajouter le bandeau de publicités sur MenuPage pour les restaurants BASIC
+
+## 🐛 CORRECTION - BOUTON CONNEXION ET ACCÈS /ADMIN
+- [x] Corriger le bouton "Connexion" sur la landing page pour qu'il redirige vers OAuth
+- [ ] Modifier /admin pour rediriger vers OAuth au lieu de refuser l'accès directement
+
+## 🎨 SYSTÈME DE THÈMES POUR MINI-SITES
+- [x] Analyser les fichiers HTML fournis (Krem Kanel, Onyx, Da Pietro, La Huella, Corona)
+- [x] Créer l'architecture du système de thèmes (champ theme dans DB)
+- [x] Créer le composant ThemeWrapper pour charger dynamiquement les thèmes
+- [x] Créer le fichier CSS du thème Pronto Service
+- [ ] Créer le thème "Pronto Service" (moderne, épuré, mobile-first)
+- [ ] Créer le thème "Moderne Soho" (inspiré Krem Kanel)
+- [ ] Créer le thème "Beach Bohème" (inspiré Corona Extra)
+- [ ] Créer le thème "Day n Night" (inspiré La Huella Club)
+- [ ] Créer le thème "Marble Rome" (inspiré Restaurant Onyx)
+- [ ] Ajouter le sélecteur de thème dans le Super Admin
+- [ ] Implémenter les restrictions par tier (BASIC/PRO = Pronto Service, PREMIUM = 5 thèmes)
+- [ ] Tester tous les thèmes sur mobile et desktop

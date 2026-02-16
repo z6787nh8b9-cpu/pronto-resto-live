@@ -42,6 +42,9 @@ export const restaurants = mysqlTable("restaurants", {
   accentColor: varchar("accentColor", { length: 7 }).default("#FF9999"),
   fontFamily: varchar("fontFamily", { length: 100 }).default("Playfair Display"),
   
+  // Theme (PREMIUM uniquement pour choix multiple, sinon pronto-service par défaut)
+  theme: mysqlEnum("theme", ["pronto-service", "moderne-soho", "beach-boheme", "day-night", "marble-rome"]).default("pronto-service").notNull(),
+  
   // Subscription (19€ MENU / 29€ PRO / 39€ PREMIUM)
   subscriptionTier: mysqlEnum("subscriptionTier", ["menu", "pro", "premium"]).default("menu").notNull(),
   subscriptionStatus: mysqlEnum("subscriptionStatus", ["active", "trial", "expired", "cancelled"]).default("trial").notNull(),
