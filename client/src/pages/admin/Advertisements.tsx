@@ -119,11 +119,39 @@ export default function Advertisements() {
   };
 
   const formatDescriptions = {
-    pastille: "Petit badge discret affiché dans un coin de la page (80x80px)",
-    footer: "Bannière horizontale en bas de page (100% x 60px)",
-    fullpage: "Arrière-plan pleine page avec overlay (100% x 100%)",
-    popup: "Modal temporaire qui s'affiche après un délai (400x300px)",
+    pastille: "Petit badge discret affiché dans un coin de la page",
+    footer: "Bannière horizontale fixe en bas de page",
+    fullpage: "Arrière-plan pleine page avec overlay",
+    popup: "Modal temporaire qui s'affiche après un délai",
     dish_item: "Intégré dans le menu avec design vert pesto et mention 'Partenariat' dorée",
+  };
+
+  const formatSpecs = {
+    pastille: {
+      sizes: "80x80px à 200x200px (carré)",
+      formats: "JPG, PNG, WebP, GIF",
+      recommended: "100x100px"
+    },
+    footer: {
+      sizes: "728x90px à 1920x90px (bannière)",
+      formats: "JPG, PNG, WebP",
+      recommended: "1200x90px"
+    },
+    fullpage: {
+      sizes: "1920x1080px minimum (paysage)",
+      formats: "JPG, PNG, WebP",
+      recommended: "1920x1080px"
+    },
+    popup: {
+      sizes: "400x300px à 800x600px (4:3)",
+      formats: "JPG, PNG, WebP, GIF",
+      recommended: "600x450px"
+    },
+    dish_item: {
+      sizes: "300x200px à 600x400px (3:2)",
+      formats: "JPG, PNG, WebP",
+      recommended: "450x300px"
+    },
   };
 
   return (
@@ -260,9 +288,16 @@ export default function Advertisements() {
                     ))}
                   </SelectContent>
                 </Select>
-                <p className="text-sm text-muted-foreground">
-                  {formatDescriptions[selectedFormat]}
-                </p>
+                <div className="space-y-1">
+                  <p className="text-sm text-muted-foreground">
+                    {formatDescriptions[selectedFormat]}
+                  </p>
+                  <div className="text-xs text-muted-foreground bg-muted/50 p-3 rounded-md space-y-1">
+                    <p><strong>Taille recommandée :</strong> {formatSpecs[selectedFormat].recommended}</p>
+                    <p><strong>Tailles acceptées :</strong> {formatSpecs[selectedFormat].sizes}</p>
+                    <p><strong>Formats acceptés :</strong> {formatSpecs[selectedFormat].formats}</p>
+                  </div>
+                </div>
               </div>
               <ImageUploader
                 label={selectedFormat === "dish_item" ? "Image du partenaire" : "Image de la publicité"}
@@ -347,9 +382,16 @@ export default function Advertisements() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <p className="text-sm text-muted-foreground">
-                    {formatDescriptions[selectedFormat]}
-                  </p>
+                  <div className="space-y-1">
+                    <p className="text-sm text-muted-foreground">
+                      {formatDescriptions[selectedFormat]}
+                    </p>
+                    <div className="text-xs text-muted-foreground bg-muted/50 p-3 rounded-md space-y-1">
+                      <p><strong>Taille recommandée :</strong> {formatSpecs[selectedFormat].recommended}</p>
+                      <p><strong>Tailles acceptées :</strong> {formatSpecs[selectedFormat].sizes}</p>
+                      <p><strong>Formats acceptés :</strong> {formatSpecs[selectedFormat].formats}</p>
+                    </div>
+                  </div>
                 </div>
                 <ImageUploader
                   label={selectedFormat === "dish_item" ? "Image du partenaire" : "Image de la publicité"}

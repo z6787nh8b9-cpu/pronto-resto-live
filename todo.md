@@ -688,3 +688,12 @@
 - [x] Implémenter format publicité : Pop-up
 - [x] Implémenter format publicité : Item plat (vert pesto + mention "Partenariat" dorée + couronne)
 - [ ] Afficher les publicités actives sur la landing page selon leur format
+
+## 🐛 Bug OAuth sur Safari mobile (16 février 2026)
+- [ ] Investiguer les logs du callback OAuth
+- [ ] Identifier la cause de "OAuth callback failed" sur Safari iOS
+- [ ] Corriger le problème de callback OAuth mobile
+- [ ] Tester la connexion sur Safari iOS
+
+## 📐 Indications de tailles pour les publicités (16 février 2026)
+- [x] Ajouter les tailles recommandées pour chaque format dans l'UI Super Admin
