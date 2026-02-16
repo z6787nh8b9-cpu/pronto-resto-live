@@ -638,3 +638,8 @@
 - [x] Ajouter point vert + "En ligne" sous le titre
 - [x] Ajouter footer avec "Propulsé par RISE IA" (lien agencerise.fr)
 - [x] Ajouter mentions "Anonyme • Sans rétention de données • Protégé"
+
+## 💬 Questions suggérées chatbot
+- [x] Ajouter 3 boutons de questions suggérées au démarrage
+- [x] Gérer le clic sur les questions suggérées
+- [x] Masquer les suggestions après la première question

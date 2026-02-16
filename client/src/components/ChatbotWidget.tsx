@@ -18,7 +18,14 @@ export default function ChatbotWidget() {
     },
   ]);
   const [input, setInput] = useState("");
+  const [showSuggestions, setShowSuggestions] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const suggestedQuestions = [
+    "Quels sont les tarifs de PRONTO ?",
+    "Comment fonctionne l'essai gratuit ?",
+    "Combien de temps pour créer mon site ?",
+  ];
 
   const chatMutation = trpc.chat.sendMessage.useMutation({
     onSuccess: (data: { response: string }) => {
@@ -40,8 +47,17 @@ export default function ChatbotWidget() {
     const userMessage: Message = { role: "user", content: input };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
+    setShowSuggestions(false);
 
     chatMutation.mutate({ message: input });
+  };
+
+  const handleSuggestedQuestion = (question: string) => {
+    const userMessage: Message = { role: "user", content: question };
+    setMessages((prev) => [...prev, userMessage]);
+    setShowSuggestions(false);
+
+    chatMutation.mutate({ message: question });
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -107,6 +123,22 @@ export default function ChatbotWidget() {
                 </div>
               </div>
             ))}
+            {/* Questions suggérées */}
+            {showSuggestions && messages.length === 1 && (
+              <div className="space-y-2">
+                <p className="text-xs text-muted-foreground text-center mb-2">Questions fréquentes :</p>
+                {suggestedQuestions.map((question, idx) => (
+                  <Button
+                    key={idx}
+                    variant="outline"
+                    className="w-full text-left justify-start text-sm h-auto py-2 px-3 hover:bg-pronto-primary/10 hover:border-pronto-primary"
+                    onClick={() => handleSuggestedQuestion(question)}
+                  >
+                    {question}
+                  </Button>
+                ))}
+              </div>
+            )}
             {chatMutation.isPending && (
               <div className="flex justify-start">
                 <div className="bg-muted rounded-lg px-4 py-2">
