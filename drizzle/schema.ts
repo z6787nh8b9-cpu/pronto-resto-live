@@ -568,14 +568,15 @@ export type ChatbotRequest = typeof chatbotRequests.$inferSelect;
 export type InsertChatbotRequest = typeof chatbotRequests.$inferInsert;
 
 /**
- * Admin invitations table - For inviting super administrators via email
+ * Admin invitations table - For inviting super administrators via unique link
+ * No email required - anyone with the link can accept and become admin
  */
 export const adminInvitations = mysqlTable("admin_invitations", {
   id: int("id").autoincrement().primaryKey(),
-  email: varchar("email", { length: 320 }).notNull(),
   token: varchar("token", { length: 64 }).notNull().unique(),
   expiresAt: timestamp("expiresAt").notNull(),
   usedAt: timestamp("usedAt"),
+  usedBy: int("usedBy"), // ID of the admin_account that used this invitation
   createdBy: int("createdBy").notNull(), // ID of the admin who created the invitation
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });

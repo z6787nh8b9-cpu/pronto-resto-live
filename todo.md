@@ -784,3 +784,10 @@
 - [x] Analyser le bouton d'invitation dans Admins.tsx
 - [x] Implémenter la logique d'envoi d'invitation fonctionnelle
 - [x] Tester l'envoi d'invitation et la copie du lien
+
+## 🔗 Système d'invitation admin autonome (16 février 2026)
+- [ ] Modifier schéma admin_invitations pour authentification autonome
+- [ ] Ajouter tab 'Générer Invitation' dans Admins
+- [ ] Créer page d'acceptation avec auth Google/Email
+- [ ] Implémenter création automatique compte admin
+- [ ] Tester flux complet invitation autonome
