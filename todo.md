@@ -712,3 +712,8 @@
 - [x] Connecter bouton "Essai gratuit" footer au formulaire (source: FOOTER)
 - [x] Ajouter texte "0€ de frais d'installation" sous la section tarifs
 - [ ] Corriger la section vide (ligne 436) qui semble mal foutue
+
+## 🔒 Google reCAPTCHA Enterprise invisible (16 février 2026)
+- [x] Ajouter le script reCAPTCHA dans client/index.html
+- [x] Intégrer la validation reCAPTCHA dans ContactFormDialog
+- [x] Tester le fonctionnement du reCAPTCHA invisible

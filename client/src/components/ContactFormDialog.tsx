@@ -37,13 +37,25 @@ export function ContactFormDialog({ isOpen, onClose, source }: ContactFormDialog
     const phone = formData.get("phone") as string;
     const message = formData.get("message") as string;
 
-    submitMutation.mutate({
-      name,
-      email,
-      phone,
-      message,
-      source,
-    });
+    try {
+      // Execute reCAPTCHA Enterprise invisible
+      const token = await (window as any).grecaptcha.enterprise.execute(
+        "6Lft5G0sAAAAAIJoMS8v8LzHlc9DH4UYHI3P30J_",
+        { action: "submit_contact_form" }
+      );
+
+      submitMutation.mutate({
+        name,
+        email,
+        phone,
+        message,
+        source,
+        recaptchaToken: token,
+      });
+    } catch (error) {
+      toast.error("Erreur de vérification reCAPTCHA. Veuillez réessayer.");
+      setIsSubmitting(false);
+    }
   };
 
   return (

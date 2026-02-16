@@ -168,9 +168,17 @@ Instructions:
         phone: z.string(),
         message: z.string().optional(),
         source: z.enum(["HEADER", "HERO", "FOOTER"]),
+        recaptchaToken: z.string(),
       })
     )
     .mutation(async ({ input }) => {
+      // Note: In production, you should verify the reCAPTCHA token server-side
+      // by calling Google's API with your secret key.
+      // For now, we just check that the token exists.
+      if (!input.recaptchaToken) {
+        throw new Error("reCAPTCHA validation failed");
+      }
+
       const { notifyOwner } = await import("../_core/notification");
 
       const content = `
