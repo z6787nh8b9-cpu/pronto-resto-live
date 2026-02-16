@@ -28,7 +28,28 @@
 }
 
 /* Hero section */
-[data-theme="marble-rome"] .hero-section {
+[data-theme="marble-rome"] .theme-hero {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  position: relative;
+}
+
+[data-theme="marble-rome"] .theme-hero-section {
+[data-theme="marble-rome"] .theme-hero-content {
+[data-theme="marble-rome"] .theme-hero-logo {
+  max-width: 150px;
+  height: auto;
+  margin: 0 auto 2rem;
+  display: block;
+}
+
+  max-width: 800px;
+  text-align: center;
+}
+
   min-height: 85vh;
   background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
   display: flex;
@@ -38,7 +59,16 @@
   position: relative;
 }
 
-[data-theme="marble-rome"] .restaurant-name {
+[data-theme="marble-rome"] .theme-hero-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+[data-theme="marble-rome"] .theme-restaurant-name {
   font-family: var(--font-heading);
   font-size: clamp(3rem, 7vw, 5.5rem);
   font-weight: 700;
@@ -49,7 +79,13 @@
   text-transform: uppercase;
 }
 
-[data-theme="marble-rome"] .restaurant-description {
+[data-theme="marble-rome"] .theme-hero-description {
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
+  color: var(--text-light);
+  text-align: center;
+}
+
+[data-theme="marble-rome"] .theme-restaurant-description {
   font-family: var(--font-accent);
   font-size: clamp(1.2rem, 2.5vw, 1.5rem);
   color: var(--text-light);
@@ -60,7 +96,7 @@
 
 /* Section titles */
 [data-theme="marble-rome"] h2,
-[data-theme="marble-rome"] .section-title {
+[data-theme="marble-rome"] .theme-section-title {
   font-family: var(--font-heading);
   font-size: clamp(2.5rem, 5vw, 4rem);
   font-weight: 600;
@@ -72,7 +108,7 @@
 }
 
 /* Dish cards */
-[data-theme="marble-rome"] .dish-card {
+[data-theme="marble-rome"] .theme-dish-card {
   background: var(--secondary);
   border: 1px solid var(--border);
   border-radius: 0;
@@ -82,13 +118,13 @@
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
-[data-theme="marble-rome"] .dish-card:hover {
+[data-theme="marble-rome"] .theme-dish-card:hover {
   border-color: var(--accent);
   box-shadow: 0 0 30px rgba(212, 175, 55, 0.4), 0 8px 25px rgba(0, 0, 0, 0.6);
   transform: translateY(-4px);
 }
 
-[data-theme="marble-rome"] .dish-name {
+[data-theme="marble-rome"] .theme-dish-name {
   font-family: var(--font-heading);
   font-size: 1.5rem;
   font-weight: 600;
@@ -96,14 +132,14 @@
   letter-spacing: 0.05em;
 }
 
-[data-theme="marble-rome"] .dish-description {
+[data-theme="marble-rome"] .theme-dish-description {
   font-size: 0.95rem;
   color: var(--text-light);
   line-height: 1.7;
   font-style: italic;
 }
 
-[data-theme="marble-rome"] .dish-price {
+[data-theme="marble-rome"] .theme-dish-price {
   font-family: var(--font-heading);
   font-size: 1.7rem;
   font-weight: 700;

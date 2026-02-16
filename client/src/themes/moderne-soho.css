@@ -27,7 +27,28 @@
 }
 
 /* Hero section */
-[data-theme="moderne-soho"] .hero-section {
+[data-theme="moderne-soho"] .theme-hero {
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  position: relative;
+}
+
+[data-theme="moderne-soho"] .theme-hero-section {
+[data-theme="moderne-soho"] .theme-hero-content {
+[data-theme="moderne-soho"] .theme-hero-logo {
+  max-width: 150px;
+  height: auto;
+  margin: 0 auto 2rem;
+  display: block;
+}
+
+  max-width: 800px;
+  text-align: center;
+}
+
   min-height: 80vh;
   background: var(--accent);
   display: flex;
@@ -36,7 +57,16 @@
   padding: 4rem 2rem;
 }
 
-[data-theme="moderne-soho"] .restaurant-name {
+[data-theme="moderne-soho"] .theme-hero-title {
+  font-family: var(--font-heading);
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 700;
+  color: var(--text);
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+[data-theme="moderne-soho"] .theme-restaurant-name {
   font-family: var(--font-heading);
   font-size: clamp(3rem, 6vw, 5rem);
   font-weight: 700;
@@ -46,7 +76,13 @@
   letter-spacing: -0.03em;
 }
 
-[data-theme="moderne-soho"] .restaurant-description {
+[data-theme="moderne-soho"] .theme-hero-description {
+  font-size: clamp(1.1rem, 2vw, 1.3rem);
+  color: var(--text-light);
+  text-align: center;
+}
+
+[data-theme="moderne-soho"] .theme-restaurant-description {
   font-family: var(--font-accent);
   font-size: clamp(1rem, 2vw, 1.2rem);
   color: var(--text-light);
@@ -56,7 +92,7 @@
 
 /* Section titles */
 [data-theme="moderne-soho"] h2,
-[data-theme="moderne-soho"] .section-title {
+[data-theme="moderne-soho"] .theme-section-title {
   font-family: var(--font-heading);
   font-size: clamp(2.5rem, 5vw, 4rem);
   font-weight: 700;
@@ -67,7 +103,7 @@
 }
 
 /* Dish cards */
-[data-theme="moderne-soho"] .dish-card {
+[data-theme="moderne-soho"] .theme-dish-card {
   background: var(--accent);
   border: 0.5px solid var(--border);
   border-radius: 0;
@@ -77,12 +113,12 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
-[data-theme="moderne-soho"] .dish-card:hover {
+[data-theme="moderne-soho"] .theme-dish-card:hover {
   border-color: var(--primary);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-[data-theme="moderne-soho"] .dish-name {
+[data-theme="moderne-soho"] .theme-dish-name {
   font-family: var(--font-heading);
   font-size: 1.4rem;
   font-weight: 500;
@@ -90,14 +126,14 @@
   letter-spacing: -0.01em;
 }
 
-[data-theme="moderne-soho"] .dish-description {
+[data-theme="moderne-soho"] .theme-dish-description {
   font-size: 0.9rem;
   color: var(--text-light);
   line-height: 1.6;
   font-weight: 300;
 }
 
-[data-theme="moderne-soho"] .dish-price {
+[data-theme="moderne-soho"] .theme-dish-price {
   font-family: var(--font-heading);
   font-size: 1.5rem;
   font-weight: 700;

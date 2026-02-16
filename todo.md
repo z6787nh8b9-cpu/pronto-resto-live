@@ -471,3 +471,15 @@
 - [ ] Ajouter le sélecteur de thème dans le Super Admin
 - [ ] Implémenter les restrictions par tier (BASIC/PRO = Pronto Service, PREMIUM = 5 thèmes)
 - [ ] Tester tous les thèmes sur mobile et desktop
+
+## 🚨 CORRECTION URGENTE - SYSTÈME DE THÈMES NE S'APPLIQUE PAS
+
+- [x] Analyser pourquoi les CSS des thèmes ne s'appliquent pas (classes CSS vs classes Tailwind)
+- [x] Refondre RestaurantHomePage pour utiliser les classes CSS des thèmes au lieu de Tailwind
+- [x] Corriger le mismatch entre les noms de classes HTML et CSS
+- [x] Importer statiquement tous les CSS de thèmes dans index.css
+- [x] Créer le CSS complet pour le thème Pronto Service avec toutes les classes nécessaires
+- [x] Tester le thème Pronto Service visuellement (fonctionne correctement)
+- [ ] Finaliser les 4 autres thèmes (Moderne Soho, Beach Bohème, Day n Night, Marble Rome)
+- [ ] Refondre RestaurantMenuPage pour utiliser les classes CSS des thèmes
+- [ ] Vérifier le responsive mobile pour chaque thème

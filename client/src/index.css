@@ -5,6 +5,13 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Import restaurant themes */
+@import "./themes/pronto-service.css";
+@import "./themes/moderne-soho.css";
+@import "./themes/beach-boheme.css";
+@import "./themes/day-night.css";
+@import "./themes/marble-rome.css";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

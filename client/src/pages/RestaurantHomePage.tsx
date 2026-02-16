@@ -37,11 +37,10 @@ export default function RestaurantHomePage() {
   // Translation hook
   const { currentLanguage, setCurrentLanguage, translate } = useTranslation(restaurant?.id);
 
-  // Load theme CSS dynamically
+  // Set theme attribute on body
   useEffect(() => {
     if (restaurant?.theme) {
       const themeName = restaurant.theme || 'pronto-service';
-      import(`@/themes/${themeName}.css`);
       document.body.setAttribute('data-theme', themeName);
     }
     return () => {
