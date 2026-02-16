@@ -452,3 +452,6 @@
 - [x] Changer la police pour Montserrat Medium (clean et moderne)
 - [x] Agrandir l'image de la publicité pour plus d'impact
 - [x] Remplacer le badge "PARTENAIRE" par une version dorée avec icône étoile SVG dorée
+
+## 🎯 FONCTIONNALITÉ - PUBLICITÉS SUR LA PAGE MENU BASIC
+- [x] Ajouter le bandeau de publicités sur MenuPage pour les restaurants BASIC
