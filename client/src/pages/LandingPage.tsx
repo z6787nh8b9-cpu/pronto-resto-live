@@ -1,9 +1,11 @@
 import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Check, MessageSquare, Palette, Smartphone, Zap, Star, ArrowRight, Menu } from "lucide-react";
 import { getLoginUrl } from "@/const";
 import ChatbotWidget from "@/components/ChatbotWidget";
+import { ContactFormDialog } from "@/components/ContactFormDialog";
 import {
   Sheet,
   SheetContent,
@@ -14,6 +16,13 @@ import {
 } from "@/components/ui/sheet";
 
 export default function LandingPage() {
+  const [isContactFormOpen, setIsContactFormOpen] = useState(false);
+  const [contactFormSource, setContactFormSource] = useState<"HEADER" | "HERO" | "FOOTER">("HEADER");
+
+  const openContactForm = (source: "HEADER" | "HERO" | "FOOTER") => {
+    setContactFormSource(source);
+    setIsContactFormOpen(true);
+  };
   return (
     <>
     <div className="min-h-screen bg-background">
@@ -38,7 +47,7 @@ export default function LandingPage() {
             <Button variant="outline" size="sm" onClick={() => window.location.href = "/login-restaurant"}>
               Connexion
             </Button>
-            <Button size="sm" className="bg-pronto-primary hover:bg-pronto-primary/90">
+            <Button size="sm" className="bg-pronto-primary hover:bg-pronto-primary/90" onClick={() => openContactForm("HEADER")}>
               Essai gratuit
             </Button>
           </nav>
@@ -70,7 +79,7 @@ export default function LandingPage() {
                 <Button variant="outline" className="w-full mt-4" onClick={() => window.location.href = "/login-restaurant"}>
                   Connexion
                 </Button>
-                <Button className="w-full bg-pronto-primary hover:bg-pronto-primary/90">
+                <Button className="w-full bg-pronto-primary hover:bg-pronto-primary/90" onClick={() => openContactForm("HEADER")}>
                   Essai gratuit
                 </Button>
               </nav>
@@ -97,7 +106,7 @@ export default function LandingPage() {
                 Aucune compétence technique requise.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="bg-pronto-primary hover:bg-pronto-primary/90 text-lg">
+                <Button size="lg" className="bg-pronto-primary hover:bg-pronto-primary/90 text-lg" onClick={() => openContactForm("HERO")}>
                   Commencer gratuitement
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
@@ -218,7 +227,10 @@ export default function LandingPage() {
               Des tarifs simples et transparents
             </h2>
             <p className="text-xl text-muted-foreground">
-              Choisissez la formule adaptée à vos besoins
+              À la carte (sans mauvais jeu de mots)
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              Que c'est bon, 0€ de frais d'installation !
             </p>
           </div>
 
@@ -442,7 +454,7 @@ export default function LandingPage() {
             Rejoignez des centaines de restaurants qui ont choisi PRONTO pour leur présence en ligne
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" variant="secondary" className="text-lg">
+            <Button size="lg" variant="secondary" className="text-lg" onClick={() => openContactForm("FOOTER")}>
               Essayer gratuitement
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
@@ -462,7 +474,7 @@ export default function LandingPage() {
                 <img src="/pronto-logo-horizontal.png" alt="PRONTO - Fini les 5 outils. Un seul suffit." className="h-12" />
               </div>
               <p className="text-sm text-muted-foreground">
-                La solution web pour restaurants modernes
+                Dire que c'est la solution de demain, ça date pas d'hier
               </p>
             </div>
             <div>
@@ -504,6 +516,11 @@ export default function LandingPage() {
       </footer>
     </div>
     <ChatbotWidget />
+    <ContactFormDialog 
+      isOpen={isContactFormOpen} 
+      onClose={() => setIsContactFormOpen(false)} 
+      source={contactFormSource} 
+    />
     </>
   );
 }

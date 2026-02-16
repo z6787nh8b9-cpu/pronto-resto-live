@@ -158,4 +158,36 @@ Instructions:
 
     return ads;
   }),
+
+  // Submit contact form for free trial
+  submitContactForm: publicProcedure
+    .input(
+      z.object({
+        name: z.string(),
+        email: z.string().email(),
+        phone: z.string(),
+        message: z.string().optional(),
+        source: z.enum(["HEADER", "HERO", "FOOTER"]),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const { notifyOwner } = await import("../_core/notification");
+
+      const content = `
+Nouvelle demande d'essai gratuit
+
+**Source:** ${input.source}
+**Nom:** ${input.name}
+**Email:** ${input.email}
+**Téléphone:** ${input.phone}
+${input.message ? `**Message:** ${input.message}` : ""}
+      `;
+
+      await notifyOwner({
+        title: `ESSAI GRATUIT - ${input.source}`,
+        content,
+      });
+
+      return { success: true };
+    }),
 });

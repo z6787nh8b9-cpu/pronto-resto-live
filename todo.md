@@ -703,3 +703,12 @@
 - [x] Implémenter validation automatique des dimensions d'images dans ImageUploader
 - [x] Ajouter interface de planification (dates) dans formulaire publicités
 - [x] Implémenter logique backend pour activer/désactiver automatiquement selon dates
+
+## 📧 Formulaire de contact "Essai gratuit" (16 février 2026)
+- [x] Créer composant formulaire de contact avec champs (nom, email, téléphone, message)
+- [x] Implémenter l'envoi d'email avec notifyOwner incluant la source du clic
+- [x] Connecter bouton "Essai gratuit" header au formulaire (source: HEADER)
+- [x] Connecter bouton "Essai gratuit" hero au formulaire (source: HERO)
+- [x] Connecter bouton "Essai gratuit" footer au formulaire (source: FOOTER)
+- [x] Ajouter texte "0€ de frais d'installation" sous la section tarifs
+- [ ] Corriger la section vide (ligne 436) qui semble mal foutue
