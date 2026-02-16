@@ -668,3 +668,6 @@
 ## 🔍 Barre de recherche restaurants Super Admin
 - [x] Ajouter input de recherche avec icône loupe
 - [x] Implémenter filtre en temps réel (nom, slug, email, phone)
+
+## 🎨 Agrandissement logo Super Admin
+- [x] Agrandir le logo dans ResponsiveHeader (h-12 sm:h-16)
