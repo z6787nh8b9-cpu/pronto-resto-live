@@ -592,32 +592,42 @@ export default function RestaurantHomePage() {
 
       {/* Advertisement Banner (MENU tier only) */}
       {restaurant.subscriptionTier === "menu" && restaurant.showAds && advertisements && advertisements.length > 0 && (
-        <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg z-[9999]">
-          <div className="container max-w-7xl mx-auto px-4 py-3">
-            <div className="flex items-center justify-between gap-4">
+        <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-slate-50 via-white to-slate-50 border-t border-slate-200/60 backdrop-blur-sm shadow-2xl z-[9999]">
+          <div className="container max-w-7xl mx-auto px-6 py-4">
+            <div className="flex items-center justify-between gap-6">
+              <div className="flex items-center gap-2 text-xs text-slate-500 font-medium tracking-wide flex-shrink-0">
+                <span className="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                PARTENAIRE
+              </div>
               <div className="flex-1 overflow-x-auto">
-                <div className="flex gap-6 items-center">
+                <div className="flex gap-4 items-center justify-center">
                   {advertisements.map((ad) => (
                     <a
                       key={ad.id}
                       href={ad.linkUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-3 hover:opacity-80 transition-opacity flex-shrink-0"
+                      className="group flex items-center gap-4 px-6 py-3 rounded-xl bg-white/80 hover:bg-white border border-slate-200/60 hover:border-slate-300 hover:shadow-lg transition-all duration-300 flex-shrink-0 hover:scale-105"
                     >
                       <img
                         src={ad.imageUrl}
                         alt={ad.title}
-                        className="h-12 w-12 object-cover rounded"
+                        className="h-14 w-14 object-cover rounded-lg shadow-sm group-hover:shadow-md transition-shadow"
                       />
-                      <span className="text-sm font-medium">{ad.title}</span>
+                      <div className="flex flex-col gap-1">
+                        <span className="text-sm font-semibold text-slate-800 group-hover:text-slate-900">{ad.title}</span>
+                        <span className="text-xs text-slate-500 group-hover:text-pronto-primary transition-colors flex items-center gap-1">
+                          Découvrir
+                          <svg className="w-3 h-3 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                          </svg>
+                        </span>
+                      </div>
                     </a>
                   ))}
                 </div>
               </div>
-              <Badge variant="outline" className="text-xs flex-shrink-0">
-                Publicité
-              </Badge>
+              <div className="w-20 flex-shrink-0"></div>
             </div>
           </div>
         </div>

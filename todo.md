@@ -441,3 +441,9 @@
 - [x] Corriger le bouton de connexion pour qu'il redirige vers OAuth Manus
 - [x] Vérifier la persistance de session après connexion
 - [x] Tester l'accès au Super Admin après connexion
+
+## 🎨 AMÉLIORATION - DESIGN MODERNE DU BANDEAU DE PUBLICITÉS
+- [x] Redesigner le bandeau de publicités avec un style moderne et élégant
+- [x] Remplacer le badge "Publicité" par "Partenaire" ou équivalent discret
+- [x] Ajouter des animations au survol pour inciter au clic
+- [x] Améliorer le CTA (Call To Action) pour l'annonceur
