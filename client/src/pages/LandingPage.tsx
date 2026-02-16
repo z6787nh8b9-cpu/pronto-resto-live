@@ -106,11 +106,11 @@ export default function LandingPage() {
                 Aucune compétence technique requise.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button size="lg" className="bg-pronto-primary hover:bg-pronto-primary/90 text-lg" onClick={() => openContactForm("HERO")}>
+                <Button size="lg" className="bg-pronto-primary hover:bg-pronto-primary/90 text-lg btn-hero-special" onClick={() => openContactForm("HERO")}>
                   Commencer gratuitement
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
-                <Button size="lg" variant="outline" className="text-lg">
+                <Button size="lg" variant="outline" className="text-lg btn-glassy">
                   Voir une démo
                 </Button>
               </div>
@@ -144,7 +144,7 @@ export default function LandingPage() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="border-2 hover:border-pronto-primary transition-colors">
+            <Card className="border-2 hover:border-pronto-primary transition-colors btn-glassy">
               <CardHeader>
                 <div className="h-12 w-12 rounded-lg bg-pronto-primary/10 flex items-center justify-center mb-4">
                   <Palette className="h-6 w-6 text-pronto-primary" />
@@ -156,7 +156,7 @@ export default function LandingPage() {
               </CardHeader>
             </Card>
 
-            <Card className="border-2 hover:border-pronto-primary transition-colors">
+            <Card className="border-2 hover:border-pronto-primary transition-colors btn-glassy">
               <CardHeader>
                 <div className="h-12 w-12 rounded-lg bg-pronto-primary/10 flex items-center justify-center mb-4">
                   <MessageSquare className="h-6 w-6 text-pronto-primary" />
@@ -168,7 +168,7 @@ export default function LandingPage() {
               </CardHeader>
             </Card>
 
-            <Card className="border-2 hover:border-pronto-primary transition-colors">
+            <Card className="border-2 hover:border-pronto-primary transition-colors btn-glassy">
               <CardHeader>
                 <div className="h-12 w-12 rounded-lg bg-pronto-primary/10 flex items-center justify-center mb-4">
                   <Smartphone className="h-6 w-6 text-pronto-primary" />
@@ -180,7 +180,7 @@ export default function LandingPage() {
               </CardHeader>
             </Card>
 
-            <Card className="border-2 hover:border-pronto-primary transition-colors">
+            <Card className="border-2 hover:border-pronto-primary transition-colors btn-glassy">
               <CardHeader>
                 <div className="h-12 w-12 rounded-lg bg-pronto-primary/10 flex items-center justify-center mb-4">
                   <Zap className="h-6 w-6 text-pronto-primary" />
@@ -192,7 +192,7 @@ export default function LandingPage() {
               </CardHeader>
             </Card>
 
-            <Card className="border-2 hover:border-pronto-primary transition-colors">
+            <Card className="border-2 hover:border-pronto-primary transition-colors btn-glassy">
               <CardHeader>
                 <div className="h-12 w-12 rounded-lg bg-pronto-primary/10 flex items-center justify-center mb-4">
                   <Check className="h-6 w-6 text-pronto-primary" />
@@ -204,7 +204,7 @@ export default function LandingPage() {
               </CardHeader>
             </Card>
 
-            <Card className="border-2 hover:border-pronto-primary transition-colors">
+            <Card className="border-2 hover:border-pronto-primary transition-colors btn-glassy">
               <CardHeader>
                 <div className="h-12 w-12 rounded-lg bg-pronto-primary/10 flex items-center justify-center mb-4">
                   <Star className="h-6 w-6 text-pronto-primary" />
@@ -454,11 +454,11 @@ export default function LandingPage() {
             Rejoignez des centaines de restaurants qui ont choisi PRONTO pour leur présence en ligne
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" variant="secondary" className="text-lg" onClick={() => openContactForm("FOOTER")}>
+            <Button size="lg" variant="secondary" className="text-lg btn-glassy" onClick={() => openContactForm("FOOTER")}>
               Essayer gratuitement
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            <Button size="lg" variant="outline" className="text-lg bg-transparent border-white text-white hover:bg-white hover:text-pronto-primary" style={{backgroundColor: '#d7c75b'}}>
+            <Button size="lg" variant="outline" className="text-lg bg-transparent border-white text-white hover:bg-white hover:text-pronto-primary btn-glassy" style={{backgroundColor: '#d7c75b'}}>
               Contacter l'équipe
             </Button>
           </div>

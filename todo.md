@@ -757,3 +757,10 @@
 - [x] Remplacer l'image du footer par le nouveau logo Pronto avec slogan circulaire
 - [x] Uploader le logo sur S3 CDN
 - [x] Mettre à jour l'URL de l'image dans LandingPage.tsx
+
+## ✨ Effets glassy/liquid glass sur boutons et cartes (16 février 2026)
+- [x] Créer les animations CSS glassy/liquid glass dans index.css
+- [x] Ajouter classe btn-hero-special au bouton hero "Commencer gratuitement"
+- [x] Ajouter classe btn-glassy aux boutons "Voir une démo", "Essayer gratuitement" (footer), "Contacter l'équipe"
+- [x] Ajouter classe btn-glassy aux 6 cartes de fonctionnalités
+- [x] Animations : liquidGlass (morphing), glassShine (reflet), heroButtonPulse (pulsation)

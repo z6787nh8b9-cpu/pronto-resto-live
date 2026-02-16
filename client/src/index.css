@@ -233,3 +233,97 @@
     background-position: 200% 0;
   }
 }
+
+/* Glassy/Liquid Glass Button Effects */
+@keyframes liquidGlass {
+  0%, 100% {
+    border-radius: 2rem;
+    transform: scale(1);
+  }
+  50% {
+    border-radius: 1.5rem;
+    transform: scale(1.02);
+  }
+}
+
+@keyframes glassShine {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+@keyframes heroButtonPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(199, 91, 75, 0.7);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 20px rgba(199, 91, 75, 0);
+  }
+}
+
+.btn-glassy {
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-glassy::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: glassShine 3s infinite;
+  pointer-events: none;
+}
+
+.btn-glassy:hover {
+  animation: liquidGlass 0.6s ease-in-out;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2),
+              0 0 20px rgba(255, 255, 255, 0.1) inset;
+  transform: translateY(-2px);
+}
+
+.btn-hero-special {
+  position: relative;
+  overflow: hidden;
+  animation: heroButtonPulse 2s infinite;
+  transition: all 0.3s ease;
+}
+
+.btn-hero-special::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.btn-hero-special:hover::after {
+  width: 300px;
+  height: 300px;
+}
+
+.btn-hero-special:hover {
+  transform: scale(1.1);
+  box-shadow: 0 15px 50px rgba(199, 91, 75, 0.4);
+}
