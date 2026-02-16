@@ -14,7 +14,7 @@ export default function ChatbotWidget() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "👋 Bonjour ! Je suis RISE AI™, votre assistant virtuel PRONTO. Comment puis-je vous aider aujourd'hui ?",
+      content: "👋 Bonjour ! Je suis l'assistant IA de Pronto. Comment puis-je vous aider ?",
     },
   ]);
   const [input, setInput] = useState("");

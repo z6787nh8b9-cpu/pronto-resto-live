@@ -739,3 +739,10 @@
 - [x] Conserver la largeur fixe 384px sur desktop (sm:w-96)
 - [x] Ajouter max-h-[85vh] pour éviter débordement vertical
 - [x] Ajuster les marges (bottom-4 sur mobile, bottom-6 sur desktop)
+
+## 🗣️ Amélioration ton chatbot IA (16 février 2026)
+- [x] Modifier message d'accueil : "assistant IA de Pronto" au lieu de "RISE AI™"
+- [x] Réécrire prompt système pour ton plus naturel et professionnel-jeune
+- [x] Supprimer les répétitions "RISE AI" dans les réponses
+- [x] Rendre le chatbot moins robotique, plus concis (2-3 phrases max)
+- [x] Ton professionnel mais accessible, comme un conseiller startup
