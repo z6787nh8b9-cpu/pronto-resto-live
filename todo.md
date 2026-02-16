@@ -660,3 +660,7 @@
 
 ## 🐛 Correction texte chatbot
 - [x] Corriger la couleur du texte des messages utilisateur (noir au lieu de blanc)
+
+## 🔧 Séparation données de test Super Admin
+- [x] Créer section "Configuration & Tests" sous le tableau restaurants
+- [x] Afficher tokens, URLs OAuth, et autres données techniques

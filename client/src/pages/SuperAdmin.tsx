@@ -409,6 +409,42 @@ export default function SuperAdmin() {
             />
           </CardContent>
         </Card>
+
+        {/* Section Configuration & Tests */}
+        <Card className="mt-6">
+          <CardHeader className="p-4 sm:p-6">
+            <CardTitle className="text-lg sm:text-xl">Configuration & Tests</CardTitle>
+            <CardDescription className="text-xs sm:text-sm">Données techniques et de test</CardDescription>
+          </CardHeader>
+          <CardContent className="p-4 sm:p-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label className="text-sm font-semibold">Token Test</Label>
+                <code className="block text-xs bg-muted p-3 rounded border">
+                  {import.meta.env.VITE_FRONTEND_FORGE_API_KEY?.substring(0, 20)}...
+                </code>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm font-semibold">URL API</Label>
+                <code className="block text-xs bg-muted p-3 rounded border">
+                  {import.meta.env.VITE_FRONTEND_FORGE_API_URL || "Non configuré"}
+                </code>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm font-semibold">OAuth Google Client ID</Label>
+                <code className="block text-xs bg-muted p-3 rounded border">
+                  {import.meta.env.GOOGLE_CLIENT_ID || "Non configuré"}
+                </code>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-sm font-semibold">OAuth Facebook App ID</Label>
+                <code className="block text-xs bg-muted p-3 rounded border">
+                  {import.meta.env.FACEBOOK_APP_ID || "Non configuré"}
+                </code>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
           </TabsContent>
 
           <TabsContent value="advertisements">
