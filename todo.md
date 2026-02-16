@@ -433,3 +433,11 @@
 - [x] BASIC : description, chatbot, contact, publicités + bouton "Voir le menu"
 - [x] PRO : BASIC + horaires + traductions
 - [x] PREMIUM : PRO + réservations + événements + galerie + personnalisation
+
+## 🐛 CORRECTION - PERMISSIONS TRPC ADMIN EN DEV
+- [x] Désactiver la vérification des permissions dans les procédures tRPC admin en mode développement
+
+## 🔐 CORRECTION - BOUTON DE CONNEXION OAUTH
+- [x] Corriger le bouton de connexion pour qu'il redirige vers OAuth Manus
+- [x] Vérifier la persistance de session après connexion
+- [x] Tester l'accès au Super Admin après connexion

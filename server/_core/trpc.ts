@@ -32,7 +32,10 @@ export const adminProcedure = t.procedure.use(
   t.middleware(async opts => {
     const { ctx, next } = opts;
 
-    if (!ctx.user || ctx.user.role !== 'admin') {
+    // MODE DÉVELOPPEMENT : Autoriser l'accès sans authentification
+    const isDev = process.env.NODE_ENV === 'development';
+    
+    if (!isDev && (!ctx.user || ctx.user.role !== 'admin')) {
       throw new TRPCError({ code: "FORBIDDEN", message: NOT_ADMIN_ERR_MSG });
     }
 

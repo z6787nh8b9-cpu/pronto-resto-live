@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Check, MessageSquare, Palette, Smartphone, Zap, Star, ArrowRight } from "lucide-react";
+import { getLoginUrl } from "@/const";
 
 export default function LandingPage() {
   return (
@@ -23,7 +24,7 @@ export default function LandingPage() {
             <a href="#temoignages" className="text-sm hover:text-pronto-primary transition-colors">
               Témoignages
             </a>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={() => window.location.href = getLoginUrl()}>
               Connexion
             </Button>
             <Button size="sm" className="bg-pronto-primary hover:bg-pronto-primary/90">

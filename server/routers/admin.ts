@@ -204,7 +204,7 @@ export const adminRouter = router({
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
       // Prevent demoting yourself
-      if (input.userId === ctx.user.id) {
+      if (ctx.user && input.userId === ctx.user.id) {
         throw new TRPCError({ code: "BAD_REQUEST", message: "Cannot demote yourself" });
       }
 
