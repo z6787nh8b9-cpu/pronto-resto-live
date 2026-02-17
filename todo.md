@@ -996,3 +996,11 @@
 - [x] Publicité format "Pleine page (arrière-plan)" s'affichait EN AVANT-PLAN au lieu d'être en arrière-plan
 - [x] Corrigé le z-index de z-0 à -z-10 pour que l'image soit derrière le contenu
 - [ ] Tester en production
+
+## BUG TAILLE PUBLICITÉ DISH_ITEM (17 février 2026)
+- [x] La publicité format "dish_item" était beaucoup trop grande par rapport aux plats normaux
+- [x] Identifié les dimensions exactes des plats normaux dans RestaurantMenuPage.tsx (Card avec p-6, image w-24 h-24)
+- [x] Ajusté le composant DishItemAd pour qu'il ait exactement la même structure (Card + CardContent p-6, image w-24 h-24)
+- [x] Supprimé l'aspect-[4/3] qui rendait l'image trop grande
+- [x] Conservé le style visuel distinctif (gradient vert, badge PARTENARIAT doré)
+- [ ] Tester en production

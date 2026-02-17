@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { X, Crown } from "lucide-react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface Advertisement {
   id: number;
@@ -219,56 +220,48 @@ export function DishItemAd({ advertisement }: DishItemAdProps) {
       href={advertisement.linkUrl || "#"}
       target="_blank"
       rel="noopener noreferrer"
-      className="group block bg-gradient-to-br from-[#8B9D83] to-[#6B7D63] rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border-2 border-[#D4AF37]/30"
+      className="group block"
     >
-      {advertisement.imageUrl && (
-        <div className="aspect-[4/3] overflow-hidden">
-          <img
-            src={advertisement.imageUrl}
-            alt={advertisement.title}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-          />
-        </div>
-      )}
-      <div className="p-6 relative">
-        {/* Badge Partenariat avec couronne */}
-        <div className="absolute top-2 right-2 flex items-center gap-1 bg-[#D4AF37] text-white px-2 py-1 rounded-full text-[10px] font-bold tracking-wide">
-          <Crown className="h-3 w-3" />
-          <span>PARTENARIAT</span>
-        </div>
-
-        <div className="flex items-start justify-between mb-3">
-          <h3 className="text-xl font-semibold text-white flex-1 pr-20">
-            {advertisement.content?.name || advertisement.title}
-          </h3>
-          {advertisement.content?.price && (
-            <span className="text-lg font-bold text-[#D4AF37] ml-4">
-              {advertisement.content.price}
-            </span>
-          )}
-        </div>
-
-        {advertisement.description && (
-          <p className="text-white/90 text-sm leading-relaxed mb-4">
-            {advertisement.description}
-          </p>
-        )}
-
-        {advertisement.content?.partnerName && (
-          <div className="flex items-center gap-2 mt-4 pt-4 border-t border-white/20">
-            {advertisement.content?.partnerLogo && (
-              <img
-                src={advertisement.content.partnerLogo}
-                alt={advertisement.content.partnerName}
-                className="h-8 w-8 object-cover rounded-full border-2 border-white/30"
-              />
-            )}
-            <span className="text-xs text-white/70">
-              En partenariat avec <span className="font-semibold text-white">{advertisement.content.partnerName}</span>
-            </span>
+      <Card className="overflow-hidden hover:shadow-md transition-shadow bg-gradient-to-br from-[#8B9D83] to-[#6B7D63] border-2 border-[#D4AF37]/30">
+        <CardContent className="p-6">
+          <div className="flex justify-between items-start gap-4">
+            <div className="flex-1">
+              <div className="flex items-start gap-3 mb-2">
+                <h3 className="text-lg font-semibold text-white">
+                  {advertisement.content?.name || advertisement.title}
+                </h3>
+                {/* Badge Partenariat avec couronne */}
+                <div className="flex items-center gap-1 bg-[#D4AF37] text-white px-2 py-1 rounded-full text-[10px] font-bold tracking-wide flex-shrink-0">
+                  <Crown className="h-3 w-3" />
+                  <span>PARTENARIAT</span>
+                </div>
+              </div>
+              {advertisement.description && (
+                <p className="text-sm text-white/90 mb-2">{advertisement.description}</p>
+              )}
+              {advertisement.content?.partnerName && (
+                <p className="text-xs text-white/70">
+                  <span className="font-medium">Partenaire :</span> {advertisement.content.partnerName}
+                </p>
+              )}
+            </div>
+            <div className="text-right">
+              {advertisement.content?.price && (
+                <p className="text-xl font-bold text-[#D4AF37]">
+                  {advertisement.content.price}
+                </p>
+              )}
+              {advertisement.imageUrl && (
+                <img
+                  src={advertisement.imageUrl}
+                  alt={advertisement.title}
+                  className="mt-2 w-24 h-24 object-cover rounded-md transition-transform duration-300 group-hover:scale-110"
+                />
+              )}
+            </div>
           </div>
-        )}
-      </div>
+        </CardContent>
+      </Card>
     </a>
   );
 }
