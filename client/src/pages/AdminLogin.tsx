@@ -22,17 +22,9 @@ export default function AdminLogin() {
   const [error, setError] = useState("");
 
   const loginMutation = trpc.adminAuth.login.useMutation({
-    onSuccess: async (data) => {
-      console.log('[AdminLogin] Login successful:', data);
-      console.log('[AdminLogin] Invalidating adminAuth.me query...');
-      
-      // Invalidate the me query to refetch admin data
-      await utils.adminAuth.me.invalidate();
-      
-      console.log('[AdminLogin] Query invalidated, redirecting to /admin...');
-      
-      // Force a full page redirect to admin panel
-      window.location.href = "/admin";
+    onSuccess: async () => {
+      // Simply reload to /admin - session is now active
+      window.location.replace("/admin");
     },
     onError: (err) => {
       console.error('[AdminLogin] Login failed:', err);
