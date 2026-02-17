@@ -105,13 +105,15 @@ export const restaurantRouter = router({
     )
     .mutation(async ({ input, ctx }) => {
       // Verify ownership
-      if (!ctx.user) {
+      const userId = ctx.restaurantOwner?.id || ctx.user?.id;
+      if (!userId) {
         throw new Error("Unauthorized");
       }
-      const restaurants = await getRestaurantsByOwnerId(ctx.user.id);
+      const restaurants = await getRestaurantsByOwnerId(userId);
       const ownsRestaurant = restaurants.some((r) => r.id === input.restaurantId);
 
-      if (!ownsRestaurant && ctx.user.role !== "admin") {
+      // Super admin can edit any restaurant
+      if (!ownsRestaurant && ctx.user?.role !== "admin") {
         throw new Error("Unauthorized");
       }
 

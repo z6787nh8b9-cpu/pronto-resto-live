@@ -46,6 +46,8 @@ export default function RestaurantDashboard() {
   const [selectedEmoji, setSelectedEmoji] = useState("🍴");
   const [categoryImageUrl, setCategoryImageUrl] = useState("");
   const [itemImageUrl, setItemImageUrl] = useState("");
+  const [logoUrl, setLogoUrl] = useState("");
+  const [heroImageUrl, setHeroImageUrl] = useState("");
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
   const [upgradeFeature, setUpgradeFeature] = useState<{ name: string; tier: "pro" | "premium" }>({ name: "", tier: "pro" });
 
@@ -190,6 +192,8 @@ export default function RestaurantDashboard() {
         phone: formData.get("phone") as string,
         whatsapp: formData.get("whatsapp") as string,
         address: formData.get("address") as string,
+        logoUrl: logoUrl || restaurant?.logoUrl,
+        heroImageUrl: heroImageUrl || restaurant?.heroImageUrl,
       },
     });
   };
@@ -822,6 +826,31 @@ export default function RestaurantDashboard() {
                     <Label htmlFor="rest-address">Adresse</Label>
                     <Input id="rest-address" name="address" defaultValue={restaurant.address || ""} />
                   </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <ImageUploader
+                      label="Logo du restaurant"
+                      currentImageUrl={logoUrl || restaurant.logoUrl}
+                      onUploadComplete={setLogoUrl}
+                      recommendedWidth={200}
+                      recommendedHeight={200}
+                      className="space-y-2"
+                    />
+                    <ImageUploader
+                      label="Photo de couverture"
+                      currentImageUrl={heroImageUrl || restaurant.heroImageUrl}
+                      onUploadComplete={setHeroImageUrl}
+                      recommendedWidth={1920}
+                      recommendedHeight={600}
+                      className="space-y-2"
+                    />
+                  </div>
+                  
+                  <div className="text-sm text-muted-foreground space-y-1">
+                    <p>📐 <strong>Logo :</strong> Recommandé 200x200px (carré, pour header/footer)</p>
+                    <p>📐 <strong>Couverture :</strong> Recommandé 1920x600px (bannière hero de la page publique)</p>
+                  </div>
+                  
                   <Button type="submit">Sauvegarder les modifications</Button>
                 </form>
               </CardContent>

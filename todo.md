@@ -970,3 +970,11 @@
 - [x] Dialog de création de plat trop grand sur mobile - Ajouté max-h-[90vh] overflow-y-auto
 - [x] Upload d'image échouait avec erreur "Cannot read properties of null (reading 'id')" - Corrigé pour utiliser ctx.restaurantOwner?.id au lieu de ctx.user!.id
 - [ ] Tester en production
+
+## BUGS PARAMÈTRES RESTAURANT (17 février 2026)
+- [x] La sauvegarde des paramètres restaurant ne fonctionnait pas - Corrigé pour utiliser ctx.restaurantOwner au lieu de ctx.user
+- [x] Ajouté upload de logo avec dimensions recommandées (200x200px carré)
+- [x] Ajouté upload de photo de couverture avec dimensions recommandées (1920x600px bannière)
+- [x] Ajouté indications visuelles des dimensions recommandées dans le formulaire
+- [ ] Vérifier que le logo apparaît dans le placeholder de la page publique
+- [ ] Tester la sauvegarde complète en production (paramètres + logo + couverture)
