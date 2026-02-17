@@ -182,7 +182,7 @@ export default function RestaurantMenuPage() {
       </section>
 
       {/* Filtres */}
-      <section className="relative z-10 py-6 border-b bg-background">
+      <section className="relative z-10 py-6 border-b">
         <div className="container">
           <div className="flex flex-wrap gap-2 justify-center">
             <Button
@@ -217,7 +217,7 @@ export default function RestaurantMenuPage() {
       </section>
 
       {/* Menu avec tabs horizontales */}
-      <section className="relative z-10 py-12 bg-background">
+      <section className="relative z-10 py-12">
         <div className="container max-w-5xl">
           {categories.length > 0 ? (
             <Tabs defaultValue={categories[0]?.id.toString()} className="w-full">

@@ -1014,3 +1014,10 @@
 - [x] SOLUTION : Ajouté relative z-10 bg-background à toutes les sections (hero, filtres, menu, footer)
 - [x] Image fullpage reste à z-0, contenu à z-10, header à z-40
 - [ ] Tester en production
+
+## BUG PUBLICITÉ FULLPAGE CACHÉE PAR FOND BLANC (17 février 2026)
+- [x] Les sections menu et filtres avaient bg-background qui cachait complètement l'image fullpage
+- [x] Retiré bg-background des sections filtres et menu (lignes 185 et 220)
+- [x] Gardé relative z-10 pour que le contenu reste au-dessus
+- [x] L'image fullpage est maintenant visible à travers les espaces entre les cards
+- [ ] Tester en production
