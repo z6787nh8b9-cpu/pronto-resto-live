@@ -31,8 +31,8 @@ export default function AdminLogin() {
       
       console.log('[AdminLogin] Query invalidated, redirecting to /admin...');
       
-      // Redirect to admin panel after successful login
-      setLocation("/admin");
+      // Force a full page redirect to admin panel
+      window.location.href = "/admin";
     },
     onError: (err) => {
       console.error('[AdminLogin] Login failed:', err);
