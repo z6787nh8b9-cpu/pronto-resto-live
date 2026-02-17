@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO admin_invitations (token, expiresAt, createdBy) VALUES ('392be41784dae5482d4dc97a16670d5f9039a2f439b6c991e433185970d8d7d1', '2026-02-24 00:26:03', 1);",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2m1m65o6UXETKUo.39bdc9c5be54 --database Lrdq8kkKw7pbRUXDsDAG5X --execute INSERT INTO admin_invitations (token, expiresAt, createdBy) VALUES ('392be41784dae5482d4dc97a16670d5f9039a2f439b6c991e433185970d8d7d1', '2026-02-24 00:26:03', 1);",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 83
+}

@@ -835,3 +835,9 @@
 - [x] Analyser le code de AdminLogin.tsx pour identifier le problème
 - [x] Ajouter l'invalidation de la query adminAuth.me après le login réussi
 - [ ] Tester le login en production
+
+## 🔧 Système de connexion automatique par lien magique
+- [ ] Créer une procédure tRPC `adminAuth.createMagicLink` pour générer un token de connexion unique
+- [ ] Créer une procédure tRPC `adminAuth.loginWithMagicLink` pour connecter automatiquement avec un token
+- [ ] Créer une page `/admin/magic-login/:token` qui connecte automatiquement et redirige vers `/admin`
+- [ ] Générer un lien magique et tester la connexion automatique

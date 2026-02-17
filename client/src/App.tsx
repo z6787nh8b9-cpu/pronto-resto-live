@@ -16,6 +16,7 @@ import RestaurantLogin from "./pages/RestaurantLogin";
 import InviteAccept from "./pages/InviteAccept";
 import AdminInvite from "./pages/AdminInvite";
 import AdminLogin from "./pages/AdminLogin";
+import AdminMagicLogin from "./pages/AdminMagicLogin";
 
 /**
  * PRONTO Router - Clean URL Structure
@@ -45,6 +46,9 @@ function Router() {
       
       {/* Admin login */}
       <Route path="/admin/login" component={AdminLogin} />
+      
+      {/* Admin magic login */}
+      <Route path="/admin/magic-login" component={AdminMagicLogin} />
       
       {/* Super Admin routes */}
       <Route path="/admin" component={SuperAdmin} />

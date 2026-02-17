@@ -118,10 +118,16 @@ export const adminAuthRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
+      console.log('[Admin Login] Starting login attempt for:', input.email);
+      
       const db = await getDb();
-      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+      if (!db) {
+        console.error('[Admin Login] Database not available');
+        throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+      }
 
       // Find admin by email
+      console.log('[Admin Login] Searching for admin in database...');
       const [admin] = await db
         .select()
         .from(adminAccounts)
@@ -129,15 +135,22 @@ export const adminAuthRouter = router({
         .limit(1);
 
       if (!admin) {
+        console.error('[Admin Login] Admin not found for email:', input.email);
         throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid email or password" });
       }
 
+      console.log('[Admin Login] Admin found, ID:', admin.id);
+
       // Verify password
+      console.log('[Admin Login] Verifying password...');
       const isValidPassword = await bcrypt.compare(input.password, admin.passwordHash);
 
       if (!isValidPassword) {
+        console.error('[Admin Login] Invalid password for:', input.email);
         throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid email or password" });
       }
+
+      console.log('[Admin Login] Password valid, updating last signed in...');
 
       // Update last signed in
       await db
@@ -145,9 +158,13 @@ export const adminAuthRouter = router({
         .set({ lastSignedIn: new Date() })
         .where(eq(adminAccounts.id, admin.id));
 
+      console.log('[Admin Login] Storing admin ID in session:', admin.id);
+
       // Store admin ID in session
       ctx.req.session.adminId = admin.id;
       await ctx.req.session.save();
+
+      console.log('[Admin Login] Session saved successfully');
 
       return {
         success: true,
@@ -170,6 +187,50 @@ export const adminAuthRouter = router({
 
     return { success: true };
   }),
+
+  /**
+   * Login with email only (magic link)
+   */
+  loginWithEmail: publicProcedure
+    .input(
+      z.object({
+        email: z.string().email("Invalid email"),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      // Find admin by email
+      const [admin] = await db
+        .select()
+        .from(adminAccounts)
+        .where(eq(adminAccounts.email, input.email))
+        .limit(1);
+
+      if (!admin) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Admin account not found" });
+      }
+
+      // Update last signed in
+      await db
+        .update(adminAccounts)
+        .set({ lastSignedIn: new Date() })
+        .where(eq(adminAccounts.id, admin.id));
+
+      // Store admin ID in session
+      ctx.req.session.adminId = admin.id;
+      await ctx.req.session.save();
+
+      return {
+        success: true,
+        admin: {
+          id: admin.id,
+          email: admin.email,
+          name: admin.name,
+        },
+      };
+    }),
 
   /**
    * Get current admin from session
