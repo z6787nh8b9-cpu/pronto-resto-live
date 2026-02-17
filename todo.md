@@ -886,3 +886,14 @@
 - [x] Ajouter des logs détaillés dans auth-routes.ts pour tracer le callback OAuth
 - [ ] Tester en production et analyser les logs pour identifier le problème exact
 - [ ] Corriger selon les résultats des logs
+
+## ANALYSE : Pourquoi Passport.js ne fonctionne pas ?
+- [x] Vérifier si Manus OAuth et Passport.js entrent en conflit (double système d'auth) - Pas de conflit détecté
+- [x] Vérifier l'ordre d'initialisation : initializePassport() doit être appelé AVANT passport.initialize() - Ordre correct
+- [x] Tester en appelant manuellement req.login() dans le callback OAuth - En cours
+- [x] PROBLÈME IDENTIFIÉ : Cookie de session n'a PAS de domain configuré → ne fonctionne pas sur sous-domaines
+- [x] PROBLÈME IDENTIFIÉ : MemoryStore utilisé → sessions perdues au redémarrage serveur
+- [x] Corriger req.login() pour attendre la création de session AVANT redirection
+- [x] Ajouter domain: '.pronto.page' au cookie de session
+- [x] Implémenter session store persistant (MySQL)
+- [ ] Tester en production et vérifier que la session persiste

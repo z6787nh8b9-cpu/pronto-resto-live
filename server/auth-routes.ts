@@ -39,44 +39,60 @@ export function registerRestaurantAuthRoutes(app: Express) {
       console.log('[OAuth Callback] User authenticated:', req.user);
       console.log('[OAuth Callback] Session ID:', req.sessionID);
       console.log('[OAuth Callback] Session data:', req.session);
-      // Check if user claimed a restaurant via invitation
-      const claimedRestaurantId = req.session.claimedRestaurantId;
       
-      console.log('[OAuth Callback] Claimed restaurant ID:', claimedRestaurantId);
-      
-      if (claimedRestaurantId) {
-        // Clear the claimed restaurant ID from session
-        delete req.session.claimedRestaurantId;
-        console.log('[OAuth Callback] Redirecting to restaurant dashboard...');
-        
-        // Get restaurant slug from database
-        try {
-          const { getDb } = await import("./db");
-          const { restaurants } = await import("../drizzle/schema");
-          const { eq } = await import("drizzle-orm");
-          const db = await getDb();
-          if (!db) throw new Error('Database connection failed');
-          
-          const restaurant = await db.select({ slug: restaurants.slug })
-            .from(restaurants)
-            .where(eq(restaurants.id, claimedRestaurantId))
-            .limit(1);
-          
-          if (restaurant.length > 0 && restaurant[0].slug) {
-            // Redirect to the restaurant dashboard with slug
-            res.redirect(`/${restaurant[0].slug}/dashboard`);
-          } else {
-            // Fallback to old format if slug not found
-            res.redirect(`/dashboard/${claimedRestaurantId}`);
-          }
-        } catch (error) {
-          console.error('[OAuth Callback] Error fetching restaurant slug:', error);
-          res.redirect(`/dashboard/${claimedRestaurantId}`);
-        }
-      } else {
-        // Redirect to home or user dashboard
-        res.redirect("/");
+      // Manually call req.login() to ensure session is created
+      if (!req.user) {
+        console.error('[OAuth Callback] No user found after authentication!');
+        return res.redirect('/login-restaurant?error=auth_failed');
       }
+      
+      // Force session creation with req.login() and WAIT for it to complete
+      req.login(req.user, async (err) => {
+        if (err) {
+          console.error('[OAuth Callback] req.login() failed:', err);
+          return res.redirect('/login-restaurant?error=session_failed');
+        }
+        console.log('[OAuth Callback] req.login() successful, session created');
+        
+        // NOW check if user claimed a restaurant via invitation
+        const claimedRestaurantId = req.session.claimedRestaurantId;
+        
+        console.log('[OAuth Callback] Claimed restaurant ID:', claimedRestaurantId);
+        
+        if (claimedRestaurantId) {
+          // Clear the claimed restaurant ID from session
+          delete req.session.claimedRestaurantId;
+          console.log('[OAuth Callback] Redirecting to restaurant dashboard...');
+          
+          // Get restaurant slug from database
+          try {
+            const { getDb } = await import("./db");
+            const { restaurants } = await import("../drizzle/schema");
+            const { eq } = await import("drizzle-orm");
+            const db = await getDb();
+            if (!db) throw new Error('Database connection failed');
+            
+            const restaurant = await db.select({ slug: restaurants.slug })
+              .from(restaurants)
+              .where(eq(restaurants.id, claimedRestaurantId))
+              .limit(1);
+            
+            if (restaurant.length > 0 && restaurant[0].slug) {
+              // Redirect to the restaurant dashboard with slug
+              return res.redirect(`/${restaurant[0].slug}/dashboard`);
+            } else {
+              // Fallback to old format if slug not found
+              return res.redirect(`/dashboard/${claimedRestaurantId}`);
+            }
+          } catch (error) {
+            console.error('[OAuth Callback] Error fetching restaurant slug:', error);
+            return res.redirect(`/dashboard/${claimedRestaurantId}`);
+          }
+        } else {
+          // Redirect to home or user dashboard
+          return res.redirect("/");
+        }
+      });
     }
   );
 
