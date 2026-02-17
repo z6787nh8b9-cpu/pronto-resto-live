@@ -25,8 +25,6 @@ export function configureSessionMiddleware(app: Express) {
         secure: process.env.NODE_ENV === "production",
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000, // 24 hours
-        sameSite: 'lax', // Allow cookie to be sent with top-level navigations
-        domain: process.env.NODE_ENV === "production" ? '.pronto.page' : undefined, // Allow cookie on all subdomains in production
       },
     })
   );

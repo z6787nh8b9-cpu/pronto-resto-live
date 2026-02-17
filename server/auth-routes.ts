@@ -11,61 +11,6 @@ import passport from "passport";
  * Register OAuth routes for restaurant owner authentication
  */
 export function registerRestaurantAuthRoutes(app: Express) {
-  // Admin login route (classic HTML form POST)
-  app.post("/api/admin/login", async (req: Request, res: Response) => {
-    try {
-      const { email, password } = req.body;
-      
-      if (!email || !password) {
-        return res.status(400).json({ error: "Email and password are required" });
-      }
-
-      // Import dependencies
-      const bcrypt = await import("bcrypt");
-      const { getDb } = await import("./db");
-      const { adminAccounts } = await import("../drizzle/schema");
-      const { eq } = await import("drizzle-orm");
-
-      const db = await getDb();
-      if (!db) {
-        return res.status(500).json({ error: "Database not available" });
-      }
-
-      // Find admin by email
-      const [admin] = await db
-        .select()
-        .from(adminAccounts)
-        .where(eq(adminAccounts.email, email))
-        .limit(1);
-
-      if (!admin) {
-        return res.status(401).json({ error: "Invalid email or password" });
-      }
-
-      // Verify password
-      const isValidPassword = await bcrypt.compare(password, admin.passwordHash);
-
-      if (!isValidPassword) {
-        return res.status(401).json({ error: "Invalid email or password" });
-      }
-
-      // Update last signed in
-      await db
-        .update(adminAccounts)
-        .set({ lastSignedIn: new Date() })
-        .where(eq(adminAccounts.id, admin.id));
-
-      // Store admin ID in session
-      req.session.adminId = admin.id;
-      await req.session.save();
-
-      // Redirect to admin panel
-      res.redirect("/admin/super");
-    } catch (error) {
-      console.error("[Admin Login Error]", error);
-      res.status(500).json({ error: "Internal server error" });
-    }
-  });
   // Session and Passport are now configured globally in session-middleware.ts
   // No need to configure them here again
 

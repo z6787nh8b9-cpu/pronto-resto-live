@@ -901,5 +901,6 @@
 - [ ] Tester en production et vérifier que la session persiste
 - [x] Retirer MySQL session store (trop complexe, causait des erreurs de connexion)
 - [x] Revenir à MemoryStore simple pour le développement
-- [x] Créer la route POST /api/admin/login manquante (formulaire HTML)
+- [x] Supprimer la route POST /api/admin/login en doublon dans auth-routes.ts
+- [x] Retirer sameSite et domain du cookie pour revenir à la config stable f8623700
 - [ ] Tester le login admin en production
