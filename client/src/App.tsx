@@ -15,7 +15,7 @@ import RestaurantMenuPage from "./pages/RestaurantMenuPage";
 import RestaurantLogin from "./pages/RestaurantLogin";
 import InviteAccept from "./pages/InviteAccept";
 import AdminInvite from "./pages/AdminInvite";
-import AdminLogin from "./pages/AdminLogin";
+
 import AdminMagicLogin from "./pages/AdminMagicLogin";
 
 /**
@@ -44,8 +44,7 @@ function Router() {
       {/* Admin invitation acceptance */}
       <Route path="/invite-admin/:token" component={AdminInvite} />
       
-      {/* Admin login */}
-      <Route path="/admin/login" component={AdminLogin} />
+
       
       {/* Admin magic login */}
       <Route path="/admin/magic-login" component={AdminMagicLogin} />
