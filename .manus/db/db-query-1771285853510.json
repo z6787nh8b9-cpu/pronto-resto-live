@@ -1,0 +1,45 @@
+{
+  "query": "SELECT token, usedAt, usedBy, createdAt, expiresAt FROM admin_invitations ORDER BY createdAt DESC LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2m1m65o6UXETKUo.39bdc9c5be54 --database Lrdq8kkKw7pbRUXDsDAG5X --execute SELECT token, usedAt, usedBy, createdAt, expiresAt FROM admin_invitations ORDER BY createdAt DESC LIMIT 5;",
+  "rows": [
+    {
+      "token": "6295d819d9697510402d8560ec873800053dcaba602818b5508c19ae532af338",
+      "usedAt": "NULL",
+      "usedBy": "NULL",
+      "createdAt": "2026-02-16 23:49:01",
+      "expiresAt": "2026-02-23 23:49:01"
+    },
+    {
+      "token": "8213949206a949aa2fd6919b9e7e374673c4b253183d9d5ec5419670ee17bc89",
+      "usedAt": "NULL",
+      "usedBy": "NULL",
+      "createdAt": "2026-02-16 23:48:11",
+      "expiresAt": "2026-02-23 23:48:12"
+    },
+    {
+      "token": "7941ea4fdd3c396e82835f494f0b163b663fc36eb0b49960abba998ef2b8901f",
+      "usedAt": "NULL",
+      "usedBy": "NULL",
+      "createdAt": "2026-02-16 23:43:35",
+      "expiresAt": "2026-02-23 23:43:35"
+    },
+    {
+      "token": "52df77f198de4e3bc2fe9c70effa75e69c9f86066d6e6b7e3767a78a48983239",
+      "usedAt": "NULL",
+      "usedBy": "NULL",
+      "createdAt": "2026-02-16 23:42:19",
+      "expiresAt": "2026-02-23 23:42:20"
+    },
+    {
+      "token": "daa4a122e49cf56514d60e1f363a7ec45359cf1465643620f801ecebc281414d",
+      "usedAt": "NULL",
+      "usedBy": "NULL",
+      "createdAt": "2026-02-16 23:36:24",
+      "expiresAt": "2026-02-23 23:36:24"
+    }
+  ],
+  "messages": [],
+  "stdout": "token\tusedAt\tusedBy\tcreatedAt\texpiresAt\n6295d819d9697510402d8560ec873800053dcaba602818b5508c19ae532af338\tNULL\tNULL\t2026-02-16 23:49:01\t2026-02-23 23:49:01\n8213949206a949aa2fd6919b9e7e374673c4b253183d9d5ec5419670ee17bc89\tNULL\tNULL\t2026-02-16 23:48:11\t2026-02-23 23:48:12\n7941ea4fdd3c396e82835f494f0b163b663fc36eb0b49960abba998ef2b8901f\tNULL\tNULL\t2026-02-16 23:43:35\t2026-02-23 23:43:35\n52df77f198de4e3bc2fe9c70effa75e69c9f86066d6e6b7e3767a78a48983239\tNULL\tNULL\t2026-02-16 23:42:19\t2026-02-23 23:42:20\ndaa4a122e49cf56514d60e1f363a7ec45359cf1465643620f801ecebc281414d\tNULL\tNULL\t2026-02-16 23:36:24\t2026-02-23 23:36:24\n",
+  "stderr": "",
+  "execution_time_ms": 51
+}

@@ -576,7 +576,7 @@ export const adminInvitations = mysqlTable("admin_invitations", {
   token: varchar("token", { length: 64 }).notNull().unique(),
   expiresAt: timestamp("expiresAt").notNull(),
   usedAt: timestamp("usedAt"),
-  usedBy: int("usedBy"), // ID of the admin_account that used this invitation
+  usedBy: varchar("usedBy", { length: 320 }), // Email of the admin who used this invitation
   createdBy: int("createdBy").notNull(), // ID of the admin who created the invitation
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
@@ -585,16 +585,17 @@ export type AdminInvitation = typeof adminInvitations.$inferSelect;
 export type InsertAdminInvitation = typeof adminInvitations.$inferInsert;
 
 /**
- * Admin accounts table - For admins who joined via invitation link with Google OAuth
+ * Admin accounts table - For admins who joined via invitation link
+ * Uses simple email/password authentication (no OAuth)
  * Separate from users table (Manus OAuth) to support independent authentication
  */
 export const adminAccounts = mysqlTable("admin_accounts", {
   id: int("id").autoincrement().primaryKey(),
   email: varchar("email", { length: 320 }).notNull().unique(),
   name: text("name").notNull(),
+  passwordHash: varchar("passwordHash", { length: 255 }).notNull(), // Bcrypt hashed password
   avatarUrl: text("avatarUrl"),
-  googleId: varchar("googleId", { length: 255 }).notNull().unique(), // Google OAuth ID
-  invitationId: int("invitationId").notNull(), // Reference to admin_invitations
+  invitationToken: varchar("invitationToken", { length: 64 }), // Token used to create this account (nullable for legacy admins)
   
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

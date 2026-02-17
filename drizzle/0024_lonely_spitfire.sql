@@ -1,0 +1,1 @@
+ALTER TABLE `admin_invitations` MODIFY COLUMN `usedBy` varchar(320);

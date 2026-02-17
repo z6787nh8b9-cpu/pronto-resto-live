@@ -31,14 +31,14 @@ export async function createContext(
     restaurantOwner = opts.req.user as RestaurantOwner;
   }
 
-  // Check for admin account session (Google OAuth invited admin)
-  if (opts.req.session?.adminAccountId) {
+  // Check for admin account session (email/password invited admin)
+  if (opts.req.session?.adminId) {
     const { getDb } = await import("../db");
     const { adminAccounts } = await import("../../drizzle/schema");
     const { eq } = await import("drizzle-orm");
     const db = await getDb();
     if (db) {
-      const [account] = await db.select().from(adminAccounts).where(eq(adminAccounts.id, opts.req.session.adminAccountId)).limit(1);
+      const [account] = await db.select().from(adminAccounts).where(eq(adminAccounts.id, opts.req.session.adminId)).limit(1);
       adminAccount = account || null;
     }
   }

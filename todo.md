@@ -812,3 +812,16 @@
 
 ## 🐛 Correction erreur callback OAuth admin
 - [ ] Analyser et corriger l'erreur serveur lors du callback
+
+## Système d'invitation admin avec authentification simple
+- [x] Modifier le schéma admin_accounts pour ajouter le champ passwordHash
+- [x] Supprimer les champs googleId et invitationId de admin_accounts
+- [x] Générer et appliquer la migration SQL
+- [x] Installer bcrypt pour le hashing des mots de passe
+- [x] Supprimer tout le code Google OAuth admin (admin-auth-config.ts, admin-auth-routes.ts)
+- [x] Créer les routes d'authentification admin simples via tRPC (register, login, logout, me)
+- [x] Créer les procédures tRPC pour l'authentification admin
+- [x] Créer la page de création de compte admin sur /invite-admin/:token
+- [x] Créer la page de login admin sur /admin/login
+- [x] Modifier le middleware d'authentification pour supporter les admins avec email/mot de passe
+- [x] Tester le flow complet : génération d'invitation → création de compte → login → accès admin

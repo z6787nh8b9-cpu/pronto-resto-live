@@ -1,0 +1,9 @@
+{
+  "query": "ALTER TABLE `admin_accounts` DROP INDEX `admin_accounts_googleId_unique`;\nALTER TABLE `admin_accounts` ADD `passwordHash` varchar(255) NOT NULL;\nALTER TABLE `admin_accounts` ADD `invitationToken` varchar(64) NOT NULL;\nALTER TABLE `admin_accounts` DROP COLUMN `googleId`;\nALTER TABLE `admin_accounts` DROP COLUMN `invitationId`;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2m1m65o6UXETKUo.39bdc9c5be54 --database Lrdq8kkKw7pbRUXDsDAG5X --execute ALTER TABLE `admin_accounts` DROP INDEX `admin_accounts_googleId_unique`;\nALTER TABLE `admin_accounts` ADD `passwordHash` varchar(255) NOT NULL;\nALTER TABLE `admin_accounts` ADD `invitationToken` varchar(64) NOT NULL;\nALTER TABLE `admin_accounts` DROP COLUMN `googleId`;\nALTER TABLE `admin_accounts` DROP COLUMN `invitationId`;",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 2630
+}

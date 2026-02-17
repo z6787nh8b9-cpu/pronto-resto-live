@@ -1,0 +1,1 @@
+ALTER TABLE `admin_accounts` MODIFY COLUMN `invitationToken` varchar(64);

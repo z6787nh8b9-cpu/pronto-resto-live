@@ -14,10 +14,12 @@ import { galleryRouter } from "./routers/gallery";
 import { invitationsRouter } from "./routers/invitations";
 import { chatRouter } from "./routers/chat";
 import { chatbotRequestsRouter } from "./routers/chatbotRequests";
+import { adminAuthRouter } from "./routers/adminAuth";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
   system: systemRouter,
+  adminAuth: adminAuthRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => {

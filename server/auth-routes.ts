@@ -7,7 +7,7 @@ import { Express, Request, Response } from "express";
 import session from "express-session";
 import passport from "passport";
 import { initializePassport } from "./auth-config";
-import { initializeAdminGoogleStrategy } from "./admin-auth-config";
+
 
 /**
  * Register OAuth routes for restaurant owner authentication
@@ -27,9 +27,8 @@ export function registerRestaurantAuthRoutes(app: Express) {
     })
   );
 
-  // Initialize Passport with both restaurant and admin strategies
+  // Initialize Passport with restaurant OAuth strategies
   initializePassport();
-  initializeAdminGoogleStrategy();
   app.use(passport.initialize());
   app.use(passport.session());
 
@@ -152,10 +151,11 @@ declare global {
   }
 }
 
-// Extend session data to include custom properties
+// Extend session data
 declare module "express-session" {
   interface SessionData {
-    invitationToken?: string;
-    claimedRestaurantId?: number;
+    adminId?: number; // For email/password admin authentication
+    invitationToken?: string; // For restaurant owner invitation flow
+    claimedRestaurantId?: number; // For restaurant owner invitation flow
   }
 }
