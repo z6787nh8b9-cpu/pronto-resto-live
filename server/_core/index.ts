@@ -31,8 +31,11 @@ async function findAvailablePort(startPort: number = 3000): Promise<number> {
   throw new Error(`No available port found starting from ${startPort}`);
 }
 
+// Export app for testing
+export let app: Express;
+
 async function startServer() {
-  const app = express();
+  app = express();
   const server = createServer(app);
   
   // Trust proxy to correctly detect HTTPS behind reverse proxy (Manus infrastructure)

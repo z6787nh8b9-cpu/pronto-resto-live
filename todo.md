@@ -915,3 +915,47 @@
 - [x] Tester le login admin en local - FONCTIONNE PARFAITEMENT
 - [x] Analyse complète du système en production et local
 - [ ] Publier et tester en production
+
+
+## PHASE 4 - IMPLÉMENTATION SÉCURISÉE (17 février 2026)
+
+### Session Management (MySQL Store)
+- [x] Installer express-mysql-session et mysql2
+- [x] Parser DATABASE_URL pour extraire host/user/password/database
+- [x] Créer pool MySQL avec SSL (TiDB Cloud requis)
+- [x] Configurer MySQL session store avec pool SSL
+- [x] Corriger cookie.secure pour dev/production (ENV.isProduction)
+- [x] Tester login admin en local (✅ SUCCÈS)
+- [x] Tester persistance de session (✅ SUCCÈS)
+- [x] Créer tests unitaires session.test.ts (✅ 5/5 tests passent)
+
+### Rate Limiting (Sécurité)
+- [x] Installer express-rate-limit
+- [x] Créer rate-limiters.ts (admin + OAuth)
+- [x] Appliquer adminLoginLimiter sur /api/admin/login (5 tentatives / 15 min)
+- [x] Appliquer oauthLimiter sur Google/Facebook OAuth (20 tentatives / 15 min)
+- [x] Tester rate limiting (✅ bloque après 5 tentatives)
+
+### Nettoyage et Corrections
+- [x] Corriger AdminInviteAccept.tsx (verifyAdminInvitation → checkAdminInvitation)
+- [x] Supprimer fichiers obsolètes (RestaurantHomePage.OLD.tsx, BACKUP.tsx)
+- [x] Supprimer fichiers de test temporaires (check-admin-password.ts, create-test-admin.ts, etc.)
+- [x] Exporter app depuis server/_core/index.ts pour tests
+- [x] Supprimer logs de debug console.log inutiles
+
+### Documentation Forensic
+- [x] Créer FORENSIC_ANALYSIS.md (analyse ligne par ligne)
+- [x] Créer PHASE2_CONSOLIDATION.md (preuves techniques)
+- [x] Créer PHASE3_STRATEGIE_CHIRURGICALE.md (plan de correction)
+- [x] Créer RAPPORT_TEST_PRODUCTION.md (tests production)
+- [x] Créer NETTOYAGE_CODE.md (rapport nettoyage)
+- [x] Créer SYNTHESE_ANALYSE.md (synthèse finale)
+
+### Tests et Validation
+- [x] Créer compte admin de test (test@pronto.admin / TestAdmin123!)
+- [x] Tester login avec curl (✅ 302 redirect + cookie)
+- [x] Tester session persistence avec curl (✅ tRPC retourne admin)
+- [x] Exécuter tests unitaires session.test.ts (✅ 5/5 passent)
+- [ ] Tester en production après publication
+- [ ] Valider login admin sur pronto.page
+- [ ] Valider login restaurateur OAuth sur pronto.page

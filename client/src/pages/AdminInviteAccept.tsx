@@ -13,7 +13,7 @@ export default function AdminInviteAccept() {
   const [error, setError] = useState<string | null>(null);
 
   // Verify invitation token
-  const { data: verification, isLoading } = trpc.admin.verifyAdminInvitation.useQuery(
+  const { data: verification, isLoading } = trpc.admin.checkAdminInvitation.useQuery(
     { token: token || "" },
     { enabled: !!token }
   );

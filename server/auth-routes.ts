@@ -5,6 +5,7 @@
 
 import { Express, Request, Response } from "express";
 import passport from "passport";
+import { oauthLimiter } from "./rate-limiters";
 
 
 /**
@@ -32,12 +33,13 @@ export function registerRestaurantAuthRoutes(app: Express) {
 
   app.get(
     "/api/auth/google/callback",
+    oauthLimiter, // SECURITY: Rate limiter (20 attempts max per 15 minutes)
     passport.authenticate("google", {
       failureRedirect: "/login?error=google_auth_failed",
     }),
     async (req: Request, res: Response) => {
       console.log('[OAuth Callback] User authenticated:', req.user);
-      console.log('[OAuth Callback] Session ID:', req.sessionID);
+      // Session ID log removed for security (avoid session hijacking)
       console.log('[OAuth Callback] Session data:', req.session);
       
       // Manually call req.login() to ensure session is created
@@ -114,6 +116,7 @@ export function registerRestaurantAuthRoutes(app: Express) {
 
   app.get(
     "/api/auth/facebook/callback",
+    oauthLimiter, // SECURITY: Rate limiter (20 attempts max per 15 minutes)
     passport.authenticate("facebook", {
       failureRedirect: "/login?error=facebook_auth_failed",
     }),
