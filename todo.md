@@ -899,3 +899,6 @@
 - [x] PROBLÈME IDENTIFIÉ : Erreur de parsing DATABASE_URL dans MySQL session store (ENOTFOUND)
 - [x] Corriger le parsing de DATABASE_URL pour extraire correctement host/user/password/database
 - [ ] Tester en production et vérifier que la session persiste
+- [x] Retirer MySQL session store (trop complexe, causait des erreurs de connexion)
+- [x] Revenir à MemoryStore simple pour le développement
+- [ ] Tester le login admin avec MemoryStore
