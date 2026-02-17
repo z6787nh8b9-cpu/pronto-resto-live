@@ -991,3 +991,8 @@
 - [x] Dialog de création/modification des pubs trop grand - boutons Sauvegarder/Annuler cachés (mobile ET desktop)
 - [x] Ajouté max-h-[90vh] overflow-y-auto aux deux dialogs (création et modification)
 - [ ] Tester en production sur mobile et desktop
+
+## BUGS AFFICHAGE PUBLICITÉS (17 février 2026)
+- [x] Publicité format "Pleine page (arrière-plan)" s'affichait EN AVANT-PLAN au lieu d'être en arrière-plan
+- [x] Corrigé le z-index de z-0 à -z-10 pour que l'image soit derrière le contenu
+- [ ] Tester en production
