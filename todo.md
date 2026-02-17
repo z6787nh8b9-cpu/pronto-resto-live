@@ -864,3 +864,9 @@
 - [x] Modifier le contexte tRPC pour ne PAS vérifier Manus OAuth sur les routes restaurateur
 - [x] Garder uniquement Google/Facebook OAuth pour les restaurateurs
 - [ ] Tester la création de catégorie après modification
+
+## BUG CRITIQUE : Session Passport.js non persistée
+- [x] La session Google OAuth n'est pas sauvegardée après login
+- [x] Vérifier la configuration express-session (secure, sameSite, domain)
+- [x] Ajout de sameSite: 'lax' pour permettre l'envoi du cookie
+- [ ] Tester en production après publication
