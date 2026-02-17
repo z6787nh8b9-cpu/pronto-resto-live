@@ -896,4 +896,6 @@
 - [x] Corriger req.login() pour attendre la création de session AVANT redirection
 - [x] Ajouter domain: '.pronto.page' au cookie de session
 - [x] Implémenter session store persistant (MySQL)
+- [x] PROBLÈME IDENTIFIÉ : Erreur de parsing DATABASE_URL dans MySQL session store (ENOTFOUND)
+- [x] Corriger le parsing de DATABASE_URL pour extraire correctement host/user/password/database
 - [ ] Tester en production et vérifier que la session persiste

@@ -16,12 +16,21 @@ import { initializePassport } from "./auth-config";
 export function configureSessionMiddleware(app: Express) {
   // Create MySQL session store
   const MySQLStoreConstructor = MySQLStore(session);
+  
+  // Parse DATABASE_URL: mysql://user:password@host:port/database
+  const dbUrl = process.env.DATABASE_URL || '';
+  const userMatch = dbUrl.match(/mysql:\/\/([^:]+):/);
+  const passwordMatch = dbUrl.match(/mysql:\/\/[^:]+:([^@]+)@/);
+  const hostMatch = dbUrl.match(/@([^:/]+)/);
+  const portMatch = dbUrl.match(/@[^:/]+:([0-9]+)/);
+  const databaseMatch = dbUrl.match(/\/([^?]+)(\?|$)/);
+  
   const sessionStore = new MySQLStoreConstructor({
-    host: process.env.DATABASE_URL?.match(/mysql:\/\/([^:]+):/)?.[1] || 'localhost',
-    port: parseInt(process.env.DATABASE_URL?.match(/:([0-9]+)\//)?.[1] || '3306'),
-    user: process.env.DATABASE_URL?.match(/\/\/([^:]+):/)?.[1] || 'root',
-    password: process.env.DATABASE_URL?.match(/:([^@]+)@/)?.[1] || '',
-    database: process.env.DATABASE_URL?.match(/\/([^?]+)(\?|$)/)?.[1] || 'pronto',
+    host: hostMatch?.[1] || 'localhost',
+    port: portMatch ? parseInt(portMatch[1]) : 3306,
+    user: userMatch?.[1] || 'root',
+    password: passwordMatch?.[1] || '',
+    database: databaseMatch?.[1] || 'pronto',
     clearExpired: true,
     checkExpirationInterval: 900000, // 15 minutes
     expiration: 86400000, // 24 hours
