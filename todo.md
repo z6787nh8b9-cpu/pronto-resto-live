@@ -901,4 +901,5 @@
 - [ ] Tester en production et vérifier que la session persiste
 - [x] Retirer MySQL session store (trop complexe, causait des erreurs de connexion)
 - [x] Revenir à MemoryStore simple pour le développement
-- [ ] Tester le login admin avec MemoryStore
+- [x] Créer la route POST /api/admin/login manquante (formulaire HTML)
+- [ ] Tester le login admin en production
