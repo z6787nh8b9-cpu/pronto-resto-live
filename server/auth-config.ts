@@ -27,6 +27,7 @@ console.log('[OAuth Config] Using callback base URL:', callbackBaseURL);
 export function initializePassport() {
   // Serialize user to session (supports both restaurant owners and admin accounts)
   passport.serializeUser((user: any, done) => {
+    console.log('[Passport] Serializing user:', user?.id, user?.email);
     // Differentiate between restaurant owners and admin accounts
     if (user.googleId && !user.facebookId) {
       // Could be either - check if it has invitationId (admin) or restaurantId (owner)
@@ -44,6 +45,7 @@ export function initializePassport() {
 
   // Deserialize user from session (supports both types)
   passport.deserializeUser(async (id: string, done) => {
+    console.log('[Passport] Deserializing user ID:', id);
     try {
       const db = await getDb();
       if (!db) {
@@ -170,6 +172,8 @@ export function initializePassport() {
             delete req.session.invitationToken;
           }
 
+          console.log('[Google OAuth] Authentication successful for:', email, 'Owner ID:', owner?.id);
+          console.log('[Google OAuth] Claimed restaurant ID:', req.session?.claimedRestaurantId);
           done(null, owner);
         } catch (error) {
           done(error as Error, undefined);
@@ -284,6 +288,8 @@ export function initializePassport() {
             delete req.session.invitationToken;
           }
 
+          console.log('[Google OAuth] Authentication successful for:', email, 'Owner ID:', owner?.id);
+          console.log('[Google OAuth] Claimed restaurant ID:', req.session?.claimedRestaurantId);
           done(null, owner);
         } catch (error) {
           done(error as Error, undefined);

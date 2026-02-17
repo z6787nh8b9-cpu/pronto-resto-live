@@ -853,3 +853,14 @@
 - [x] Modifier le callback OAuth Google pour rediriger vers /{slug}/dashboard au lieu de la landing page
 - [x] Modifier le callback OAuth Facebook pour rediriger vers /{slug}/dashboard au lieu de la landing page
 - [ ] Tester le flow complet avec Google OAuth
+
+## BUG CRITIQUE : Dashboard restaurateur utilise mauvais système OAuth
+- [ ] Le dashboard restaurateur redirige vers Manus OAuth au lieu d'utiliser Google/Facebook OAuth
+- [ ] Identifier où se fait la vérification d'authentification dans le dashboard
+- [ ] Corriger pour utiliser l'auth restaurateur (restaurant_owners) au lieu de l'auth admin (users)
+- [ ] Tester la création de catégorie après correction
+
+## Supprimer Manus OAuth du système restaurateur
+- [x] Modifier le contexte tRPC pour ne PAS vérifier Manus OAuth sur les routes restaurateur
+- [x] Garder uniquement Google/Facebook OAuth pour les restaurateurs
+- [ ] Tester la création de catégorie après modification
