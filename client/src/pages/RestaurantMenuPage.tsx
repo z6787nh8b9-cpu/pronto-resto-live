@@ -123,6 +123,9 @@ export default function RestaurantMenuPage() {
   // Séparer les publicités dish_item des autres formats
   const dishItemAds = advertisements?.filter((ad: any) => ad.format === "dish_item") || [];
   const otherFormatAds = advertisements?.filter((ad: any) => ad.format !== "dish_item") || [];
+  
+  // Détecter si une publicité fullpage est active
+  const hasFullpageAd = advertisements?.some((ad: any) => ad.format === "fullpage") || false;
 
   return (
     <div className="min-h-screen bg-background relative">
@@ -182,7 +185,7 @@ export default function RestaurantMenuPage() {
       </section>
 
       {/* Filtres */}
-      <section className="relative z-10 py-6 border-b">
+      <section className={`relative z-10 py-6 border-b ${!hasFullpageAd ? 'bg-background' : ''}`}>
         <div className="container">
           <div className="flex flex-wrap gap-2 justify-center">
             <Button
@@ -217,7 +220,7 @@ export default function RestaurantMenuPage() {
       </section>
 
       {/* Menu avec tabs horizontales */}
-      <section className="relative z-10 py-12">
+      <section className={`relative z-10 py-12 ${!hasFullpageAd ? 'bg-background' : ''}`}>
         <div className="container max-w-5xl">
           {categories.length > 0 ? (
             <Tabs defaultValue={categories[0]?.id.toString()} className="w-full">

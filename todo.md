@@ -1021,3 +1021,10 @@
 - [x] Gardé relative z-10 pour que le contenu reste au-dessus
 - [x] L'image fullpage est maintenant visible à travers les espaces entre les cards
 - [ ] Tester en production
+
+## AMÉLIORATION STABILITÉ PAGE AVEC PUB FULLPAGE (17 février 2026)
+- [x] Ajouté détection de publicité fullpage active (ligne 128)
+- [x] Ajouté bg-background conditionnel aux sections menu et filtres (lignes 188, 223)
+- [x] Si PAS de pub fullpage active → fond blanc normal (stabilité)
+- [x] Si pub fullpage active → fond transparent (image visible)
+- [ ] Tester en production avec et sans pub fullpage
