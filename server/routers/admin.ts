@@ -3,9 +3,9 @@ import { router, publicProcedure } from "../_core/trpc";
 import { adminProcedure } from "../_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { getDb } from "../db";
-import { advertisements, users, adminInvitations } from "../../drizzle/schema";
+import { advertisements, users, adminInvitations, adminAccounts } from "../../drizzle/schema";
 import { randomBytes } from "crypto";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import {
   getAllRestaurants,
   createRestaurant,
@@ -207,8 +207,32 @@ export const adminRouter = router({
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
-    const admins = await db.select().from(users).where(eq(users.role, 'admin'));
-    return admins;
+    // Get admins from users table (Manus OAuth)
+    const manusAdmins = await db.select({
+      id: users.id,
+      email: users.email,
+      name: users.name,
+      createdAt: users.createdAt,
+      lastSignedIn: users.lastSignedIn,
+      source: sql<string>`'manus'`,
+    }).from(users).where(eq(users.role, 'admin'));
+
+    // Get admins from admin_accounts table (Email/Password)
+    const emailAdmins = await db.select({
+      id: adminAccounts.id,
+      email: adminAccounts.email,
+      name: adminAccounts.name,
+      createdAt: adminAccounts.createdAt,
+      lastSignedIn: adminAccounts.lastSignedIn,
+      source: sql<string>`'email'`,
+    }).from(adminAccounts);
+
+    // Merge both lists and sort by creation date (newest first)
+    const allAdmins = [...manusAdmins, ...emailAdmins].sort((a, b) => 
+      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
+
+    return allAdmins;
   }),
 
   // Promote user to admin
