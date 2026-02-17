@@ -22,27 +22,42 @@ export default function AdminLogin() {
   const [error, setError] = useState("");
 
   const loginMutation = trpc.adminAuth.login.useMutation({
-    onSuccess: async () => {
+    onSuccess: async (data) => {
+      console.log('[AdminLogin] Login successful:', data);
+      console.log('[AdminLogin] Invalidating adminAuth.me query...');
+      
       // Invalidate the me query to refetch admin data
       await utils.adminAuth.me.invalidate();
+      
+      console.log('[AdminLogin] Query invalidated, redirecting to /admin...');
+      
       // Redirect to admin panel after successful login
       setLocation("/admin");
     },
     onError: (err) => {
+      console.error('[AdminLogin] Login failed:', err);
       setError(err.message);
     },
   });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    console.log('[AdminLogin] Form submitted with email:', email);
+    
+    // Only clear error if not already pending
+    if (!loginMutation.isPending) {
+      setError("");
+    }
 
     // Validate inputs
     if (!email || !password) {
+      console.error('[AdminLogin] Validation failed: missing fields');
       setError("Tous les champs sont requis");
       return;
     }
 
+    console.log('[AdminLogin] Calling login mutation...');
+    
     // Submit login
     loginMutation.mutate({
       email,
