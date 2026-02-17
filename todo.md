@@ -830,3 +830,8 @@
 - [x] Modifier SuperAdmin.tsx pour utiliser trpc.adminAuth.me au lieu de useAuth (Manus OAuth)
 - [x] Rediriger vers /admin/login si l'admin n'est pas connecté
 - [x] Tester le flow complet : login → accès /admin → pas de redirection Manus OAuth
+
+## 🐛 Bug login admin - champs vidés en boucle
+- [x] Analyser le code de AdminLogin.tsx pour identifier le problème
+- [x] Ajouter l'invalidation de la query adminAuth.me après le login réussi
+- [ ] Tester le login en production

@@ -15,13 +15,16 @@ import { Shield, Loader2, LogIn } from "lucide-react";
 
 export default function AdminLogin() {
   const [, setLocation] = useLocation();
+  const utils = trpc.useUtils();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
   const loginMutation = trpc.adminAuth.login.useMutation({
-    onSuccess: () => {
+    onSuccess: async () => {
+      // Invalidate the me query to refetch admin data
+      await utils.adminAuth.me.invalidate();
       // Redirect to admin panel after successful login
       setLocation("/admin");
     },
