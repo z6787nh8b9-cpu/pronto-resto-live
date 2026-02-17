@@ -1,139 +1,77 @@
-/**
- * Admin Login Page
- * Allows existing admins to login with email/password
- */
-
-import { useState } from "react";
-import { useLocation } from "wouter";
-import { trpc } from "@/lib/trpc";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Shield, Loader2, LogIn } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Shield } from "lucide-react";
 
 export default function AdminLogin() {
-  const [, setLocation] = useLocation();
-  const utils = trpc.useUtils();
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-
-  const loginMutation = trpc.adminAuth.login.useMutation({
-    onSuccess: async () => {
-      // Simply reload to /admin - session is now active
-      window.location.replace("/admin");
-    },
-    onError: (err) => {
-      console.error('[AdminLogin] Login failed:', err);
-      setError(err.message);
-    },
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log('[AdminLogin] Form submitted with email:', email);
-    
-    // Only clear error if not already pending
-    if (!loginMutation.isPending) {
-      setError("");
-    }
-
-    // Validate inputs
-    if (!email || !password) {
-      console.error('[AdminLogin] Validation failed: missing fields');
-      setError("Tous les champs sont requis");
-      return;
-    }
-
-    console.log('[AdminLogin] Calling login mutation...');
-    
-    // Submit login
-    loginMutation.mutate({
-      email,
-      password,
-    });
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-4">
       <Card className="w-full max-w-md">
-        <CardHeader className="space-y-4">
-          <div className="mx-auto w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center">
-            <Shield className="w-8 h-8 text-orange-600" />
-          </div>
-          <div className="text-center">
-            <CardTitle className="text-2xl">Connexion Administrateur</CardTitle>
-            <CardDescription className="mt-2">
+        <div className="p-8">
+          {/* Header */}
+          <div className="flex flex-col items-center mb-8">
+            <div className="w-16 h-16 rounded-full bg-orange-100 dark:bg-orange-900/20 flex items-center justify-center mb-4">
+              <Shield className="w-8 h-8 text-orange-600 dark:text-orange-400" />
+            </div>
+            <h1 className="text-2xl font-bold text-center">
+              Connexion Administrateur
+            </h1>
+            <p className="text-sm text-muted-foreground text-center mt-2">
               Connectez-vous pour accéder au panel d'administration PRONTO
-            </CardDescription>
+            </p>
           </div>
-        </CardHeader>
 
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Classic HTML Form with POST to /api/admin/login */}
+          <form method="POST" action="/api/admin/login" className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
+              <label
+                htmlFor="email"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Email
+              </label>
+              <input
                 id="email"
+                name="email"
                 type="email"
-                placeholder="admin@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 required
-                disabled={loginMutation.isPending}
+                autoComplete="email"
+                placeholder="admin@example.com"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe</Label>
-              <Input
+              <label
+                htmlFor="password"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Mot de passe
+              </label>
+              <input
                 id="password"
+                name="password"
                 type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
                 required
-                disabled={loginMutation.isPending}
+                autoComplete="current-password"
+                placeholder="••••••••"
+                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               />
             </div>
 
-            {error && (
-              <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-
-            <Button
+            <button
               type="submit"
-              className="w-full"
-              disabled={loginMutation.isPending}
+              className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2 w-full"
             >
-              {loginMutation.isPending ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Connexion...
-                </>
-              ) : (
-                <>
-                  <LogIn className="w-4 h-4 mr-2" />
-                  Se connecter
-                </>
-              )}
-            </Button>
-
-            <div className="text-center mt-4">
-              <p className="text-sm text-muted-foreground">
-                Vous n'avez pas de compte ?{" "}
-                <span className="text-muted-foreground">
-                  Contactez un administrateur pour recevoir une invitation.
-                </span>
-              </p>
-            </div>
+              <Shield className="w-4 h-4" />
+              Se connecter
+            </button>
           </form>
-        </CardContent>
+
+          {/* Help text */}
+          <p className="text-sm text-muted-foreground text-center mt-6">
+            Vous n'avez pas de compte ? Contactez un administrateur pour
+            recevoir une invitation.
+          </p>
+        </div>
       </Card>
     </div>
   );
