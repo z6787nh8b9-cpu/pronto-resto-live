@@ -291,7 +291,7 @@ export default function Advertisements() {
 
       {/* Create Advertisement Dialog */}
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Nouvelle publicité</DialogTitle>
             <DialogDescription>
@@ -416,7 +416,7 @@ export default function Advertisements() {
 
       {/* Edit Advertisement Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Modifier la publicité</DialogTitle>
             <DialogDescription>Modifiez les détails de la publicité</DialogDescription>

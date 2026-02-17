@@ -986,3 +986,8 @@
 - [x] Utilisé heroImageUrl du restaurant pour l'image de fond
 - [x] Texte en blanc avec drop-shadow pour meilleure lisibilité
 - [ ] Tester en production sur mobile et desktop
+
+## BUGS SUPER ADMIN - GESTION PUBS (17 février 2026)
+- [x] Dialog de création/modification des pubs trop grand - boutons Sauvegarder/Annuler cachés (mobile ET desktop)
+- [x] Ajouté max-h-[90vh] overflow-y-auto aux deux dialogs (création et modification)
+- [ ] Tester en production sur mobile et desktop
