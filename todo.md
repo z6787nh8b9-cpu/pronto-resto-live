@@ -848,3 +848,8 @@
 - [ ] Tester le login Google avec invitation restaurant
 - [ ] Tester le login Facebook avec invitation restaurant
 - [ ] Corriger les erreurs redirect_uri_mismatch si nécessaire
+
+## Redirection OAuth vers dashboard restaurant
+- [x] Modifier le callback OAuth Google pour rediriger vers /{slug}/dashboard au lieu de la landing page
+- [x] Modifier le callback OAuth Facebook pour rediriger vers /{slug}/dashboard au lieu de la landing page
+- [ ] Tester le flow complet avec Google OAuth

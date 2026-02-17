@@ -53,15 +53,38 @@ export function registerRestaurantAuthRoutes(app: Express) {
     passport.authenticate("google", {
       failureRedirect: "/login?error=google_auth_failed",
     }),
-    (req: Request, res: Response) => {
+    async (req: Request, res: Response) => {
       // Check if user claimed a restaurant via invitation
       const claimedRestaurantId = req.session.claimedRestaurantId;
       
       if (claimedRestaurantId) {
         // Clear the claimed restaurant ID from session
         delete req.session.claimedRestaurantId;
-        // Redirect to the restaurant dashboard
-        res.redirect(`/dashboard/${claimedRestaurantId}`);
+        
+        // Get restaurant slug from database
+        try {
+          const { getDb } = await import("./db");
+          const { restaurants } = await import("../drizzle/schema");
+          const { eq } = await import("drizzle-orm");
+          const db = await getDb();
+          if (!db) throw new Error('Database connection failed');
+          
+          const restaurant = await db.select({ slug: restaurants.slug })
+            .from(restaurants)
+            .where(eq(restaurants.id, claimedRestaurantId))
+            .limit(1);
+          
+          if (restaurant.length > 0 && restaurant[0].slug) {
+            // Redirect to the restaurant dashboard with slug
+            res.redirect(`/${restaurant[0].slug}/dashboard`);
+          } else {
+            // Fallback to old format if slug not found
+            res.redirect(`/dashboard/${claimedRestaurantId}`);
+          }
+        } catch (error) {
+          console.error('[OAuth Callback] Error fetching restaurant slug:', error);
+          res.redirect(`/dashboard/${claimedRestaurantId}`);
+        }
       } else {
         // Redirect to home or user dashboard
         res.redirect("/");
@@ -90,15 +113,38 @@ export function registerRestaurantAuthRoutes(app: Express) {
     passport.authenticate("facebook", {
       failureRedirect: "/login?error=facebook_auth_failed",
     }),
-    (req: Request, res: Response) => {
+    async (req: Request, res: Response) => {
       // Check if user claimed a restaurant via invitation
       const claimedRestaurantId = req.session.claimedRestaurantId;
       
       if (claimedRestaurantId) {
         // Clear the claimed restaurant ID from session
         delete req.session.claimedRestaurantId;
-        // Redirect to the restaurant dashboard
-        res.redirect(`/dashboard/${claimedRestaurantId}`);
+        
+        // Get restaurant slug from database
+        try {
+          const { getDb } = await import("./db");
+          const { restaurants } = await import("../drizzle/schema");
+          const { eq } = await import("drizzle-orm");
+          const db = await getDb();
+          if (!db) throw new Error('Database connection failed');
+          
+          const restaurant = await db.select({ slug: restaurants.slug })
+            .from(restaurants)
+            .where(eq(restaurants.id, claimedRestaurantId))
+            .limit(1);
+          
+          if (restaurant.length > 0 && restaurant[0].slug) {
+            // Redirect to the restaurant dashboard with slug
+            res.redirect(`/${restaurant[0].slug}/dashboard`);
+          } else {
+            // Fallback to old format if slug not found
+            res.redirect(`/dashboard/${claimedRestaurantId}`);
+          }
+        } catch (error) {
+          console.error('[OAuth Callback] Error fetching restaurant slug:', error);
+          res.redirect(`/dashboard/${claimedRestaurantId}`);
+        }
       } else {
         // Redirect to home or user dashboard
         res.redirect("/");
