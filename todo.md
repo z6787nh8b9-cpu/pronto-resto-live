@@ -959,3 +959,9 @@
 - [ ] Tester en production après publication
 - [ ] Valider login admin sur pronto.page
 - [ ] Valider login restaurateur OAuth sur pronto.page
+
+## BUGS À CORRIGER (17 février 2026)
+- [x] Bug CRITIQUE: Les restaurateurs sont redirigés vers Manus OAuth lors de la création de catégorie (protectedProcedure ne reconnaît pas ctx.restaurantOwner)
+- [x] restaurantOwnerProcedure middleware existe déjà (ligne 100 de trpc.ts)
+- [x] Remplacé 15 occurrences de protectedProcedure par restaurantOwnerProcedure dans restaurant.ts
+- [ ] Tester la création de catégorie en tant que restaurateur en production

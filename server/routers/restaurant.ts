@@ -77,13 +77,13 @@ export const restaurantRouter = router({
   // }),
 
   // Get restaurants owned by current user
-  getMyRestaurants: protectedProcedure.query(async ({ ctx }) => {
+  getMyRestaurants: restaurantOwnerProcedure.query(async ({ ctx }) => {
     if (!ctx.user) return [];
     return await getRestaurantsByOwnerId(ctx.user.id);
   }),
 
   // Update restaurant settings
-  updateSettings: protectedProcedure
+  updateSettings: restaurantOwnerProcedure
     .input(
       z.object({
         restaurantId: z.number(),
@@ -125,7 +125,7 @@ export const restaurantRouter = router({
       return await getMenuCategoriesByRestaurantId(input.restaurantId);
     }),
 
-  createCategory: protectedProcedure
+  createCategory: restaurantOwnerProcedure
     .input(
       z.object({
         restaurantId: z.number(),
@@ -140,7 +140,7 @@ export const restaurantRouter = router({
       return await createMenuCategory(input);
     }),
 
-  updateCategory: protectedProcedure
+  updateCategory: restaurantOwnerProcedure
     .input(
       z.object({
         id: z.number(),
@@ -158,7 +158,7 @@ export const restaurantRouter = router({
       return await updateMenuCategory(input.id, input.data);
     }),
 
-  deleteCategory: protectedProcedure
+  deleteCategory: restaurantOwnerProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
       await deleteMenuCategory(input.id);
@@ -178,7 +178,7 @@ export const restaurantRouter = router({
       return await getMenuItemsByCategoryId(input.categoryId);
     }),
 
-  createMenuItem: protectedProcedure
+  createMenuItem: restaurantOwnerProcedure
     .input(
       z.object({
         categoryId: z.number(),
@@ -205,7 +205,7 @@ export const restaurantRouter = router({
       return await createMenuItem(input);
     }),
 
-  updateMenuItem: protectedProcedure
+  updateMenuItem: restaurantOwnerProcedure
     .input(
       z.object({
         id: z.number(),
@@ -235,7 +235,7 @@ export const restaurantRouter = router({
       return await updateMenuItem(input.id, input.data);
     }),
 
-  deleteMenuItem: protectedProcedure
+  deleteMenuItem: restaurantOwnerProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
       await deleteMenuItem(input.id);
@@ -249,7 +249,7 @@ export const restaurantRouter = router({
       return await getChatbotConfigByRestaurantId(input.restaurantId);
     }),
 
-  updateChatbotConfig: protectedProcedure
+  updateChatbotConfig: restaurantOwnerProcedure
     .input(
       z.object({
         restaurantId: z.number(),
@@ -264,20 +264,20 @@ export const restaurantRouter = router({
     }),
 
   // Analytics
-  getPageViews: protectedProcedure
+  getPageViews: restaurantOwnerProcedure
     .input(z.object({ restaurantId: z.number(), limit: z.number().default(1000) }))
     .query(async ({ input }) => {
       return await getPageViewsByRestaurantId(input.restaurantId, input.limit);
     }),
 
-  getChatbotConversations: protectedProcedure
+  getChatbotConversations: restaurantOwnerProcedure
     .input(z.object({ restaurantId: z.number(), limit: z.number().default(100) }))
     .query(async ({ input }) => {
       return await getChatbotConversationsByRestaurantId(input.restaurantId, input.limit);
     }),
 
   // Reorder Categories
-  reorderCategories: protectedProcedure
+  reorderCategories: restaurantOwnerProcedure
     .input(
       z.object({
         restaurantId: z.number(),
@@ -300,7 +300,7 @@ export const restaurantRouter = router({
     }),
 
   // Reorder Items within a category
-  reorderItems: protectedProcedure
+  reorderItems: restaurantOwnerProcedure
     .input(
       z.object({
         categoryId: z.number(),
@@ -323,7 +323,7 @@ export const restaurantRouter = router({
     }),
 
   // Upload image to S3
-  uploadImage: protectedProcedure
+  uploadImage: restaurantOwnerProcedure
     .input(
       z.object({
         filename: z.string(),
@@ -365,7 +365,7 @@ export const restaurantRouter = router({
     }),
 
   // Update customization (logo, colors, fonts, theme)
-  updateCustomization: protectedProcedure
+  updateCustomization: restaurantOwnerProcedure
     .input(
       z.object({
         restaurantId: z.number(),
