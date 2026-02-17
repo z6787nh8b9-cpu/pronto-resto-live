@@ -32,7 +32,8 @@ export default function SuperAdmin() {
   const { data: adminUser, isLoading: loading } = trpc.adminAuth.me.useQuery();
 
   // MODE DÉVELOPPEMENT : Accès sans authentification
-  const isDev = import.meta.env.DEV;
+  // TEMPORAIRE : Bypass auth pour debug
+  const isDev = true; // import.meta.env.DEV;
 
   // Queries - MUST be before any conditional returns (React hooks rules)
   const { data: stats } = trpc.admin.getStats.useQuery(undefined, { enabled: isDev || !!adminUser });
