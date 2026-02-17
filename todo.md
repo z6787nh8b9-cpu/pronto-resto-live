@@ -870,3 +870,12 @@
 - [x] Vérifier la configuration express-session (secure, sameSite, domain)
 - [x] Ajout de sameSite: 'lax' pour permettre l'envoi du cookie
 - [ ] Tester en production après publication
+
+## BUG CRITIQUE : Session Passport.js non persistée après login
+- [x] La page /login-restaurant affiche correctement Google/Facebook OAuth
+- [x] Après login Google, la session n'est PAS persistée lors des requêtes tRPC
+- [x] Vérifier les logs serveur pour voir si serializeUser/deserializeUser sont appelés
+- [x] Identifier pourquoi le cookie n'est pas envoyé avec les requêtes tRPC
+- [x] Créer session-middleware.ts pour configurer session globalement
+- [x] Modifier server/_core/index.ts pour appliquer session AVANT les routes tRPC
+- [ ] Tester en production après publication

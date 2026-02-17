@@ -6,6 +6,7 @@ import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { registerRestaurantAuthRoutes } from "../auth-routes";
 import { adminLoginRouter } from "../admin-login-route";
+import { configureSessionMiddleware } from "../session-middleware";
 
 import { appRouter } from "../routers";
 import { createContext } from "./context";
@@ -40,6 +41,11 @@ async function startServer() {
   // Configure body parser with larger size limit for file uploads
   app.use(express.json({ limit: "50mb" }));
   app.use(express.urlencoded({ limit: "50mb", extended: true }));
+  
+  // IMPORTANT: Configure session middleware GLOBALLY before any routes
+  // This allows tRPC routes to access Passport.js session
+  configureSessionMiddleware(app);
+  
   // OAuth callback under /api/oauth/callback (Manus OAuth)
   registerOAuthRoutes(app);
   // Restaurant owner OAuth routes (Google & Facebook)

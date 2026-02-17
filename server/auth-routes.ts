@@ -4,34 +4,15 @@
  */
 
 import { Express, Request, Response } from "express";
-import session from "express-session";
 import passport from "passport";
-import { initializePassport } from "./auth-config";
 
 
 /**
  * Register OAuth routes for restaurant owner authentication
  */
 export function registerRestaurantAuthRoutes(app: Express) {
-  // Configure session middleware
-  app.use(
-    session({
-      secret: process.env.JWT_SECRET || "pronto-secret-key-change-in-production",
-      resave: false,
-      saveUninitialized: false,
-      cookie: {
-        secure: process.env.NODE_ENV === "production",
-        httpOnly: true,
-        maxAge: 24 * 60 * 60 * 1000, // 24 hours
-        sameSite: 'lax', // Allow cookie to be sent with top-level navigations
-      },
-    })
-  );
-
-  // Initialize Passport with restaurant OAuth strategies
-  initializePassport();
-  app.use(passport.initialize());
-  app.use(passport.session());
+  // Session and Passport are now configured globally in session-middleware.ts
+  // No need to configure them here again
 
   // Google OAuth Routes
   app.get(
