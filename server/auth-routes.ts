@@ -36,12 +36,18 @@ export function registerRestaurantAuthRoutes(app: Express) {
       failureRedirect: "/login?error=google_auth_failed",
     }),
     async (req: Request, res: Response) => {
+      console.log('[OAuth Callback] User authenticated:', req.user);
+      console.log('[OAuth Callback] Session ID:', req.sessionID);
+      console.log('[OAuth Callback] Session data:', req.session);
       // Check if user claimed a restaurant via invitation
       const claimedRestaurantId = req.session.claimedRestaurantId;
+      
+      console.log('[OAuth Callback] Claimed restaurant ID:', claimedRestaurantId);
       
       if (claimedRestaurantId) {
         // Clear the claimed restaurant ID from session
         delete req.session.claimedRestaurantId;
+        console.log('[OAuth Callback] Redirecting to restaurant dashboard...');
         
         // Get restaurant slug from database
         try {
@@ -99,9 +105,12 @@ export function registerRestaurantAuthRoutes(app: Express) {
       // Check if user claimed a restaurant via invitation
       const claimedRestaurantId = req.session.claimedRestaurantId;
       
+      console.log('[OAuth Callback] Claimed restaurant ID:', claimedRestaurantId);
+      
       if (claimedRestaurantId) {
         // Clear the claimed restaurant ID from session
         delete req.session.claimedRestaurantId;
+        console.log('[OAuth Callback] Redirecting to restaurant dashboard...');
         
         // Get restaurant slug from database
         try {

@@ -879,3 +879,10 @@
 - [x] Créer session-middleware.ts pour configurer session globalement
 - [x] Modifier server/_core/index.ts pour appliquer session AVANT les routes tRPC
 - [ ] Tester en production après publication
+
+## BUG CRITIQUE : Session Passport.js non créée après OAuth
+- [x] Le callback OAuth ne crée PAS de session persistante avec req.login()
+- [x] L'utilisateur est authentifié une fois mais pas "connecté" de manière persistante
+- [x] Ajouter des logs détaillés dans auth-routes.ts pour tracer le callback OAuth
+- [ ] Tester en production et analyser les logs pour identifier le problème exact
+- [ ] Corriger selon les résultats des logs
