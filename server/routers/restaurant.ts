@@ -340,7 +340,9 @@ export const restaurantRouter = router({
 
       // Generate unique filename
       const ext = input.filename.split(".").pop();
-      const key = `restaurants/${ctx.user!.id}/${nanoid()}.${ext}`;
+      // Use restaurantOwner ID if available, otherwise use super admin user ID
+      const userId = ctx.restaurantOwner?.id || ctx.user?.id || 'unknown';
+      const key = `restaurants/${userId}/${nanoid()}.${ext}`;
 
       // Upload to S3
       const { url } = await storagePut(key, buffer, input.contentType);

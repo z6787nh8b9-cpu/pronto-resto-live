@@ -1084,7 +1084,7 @@ export default function RestaurantDashboard() {
 
       {/* Add Item Dialog */}
       <Dialog open={isAddItemOpen} onOpenChange={setIsAddItemOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Nouveau Plat</DialogTitle>
             <DialogDescription>Ajoutez un nouveau plat à votre menu</DialogDescription>
