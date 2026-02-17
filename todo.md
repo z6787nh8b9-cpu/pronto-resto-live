@@ -1010,4 +1010,7 @@
 - [x] Analysé : l'image était cachée DERRIÈRE le fond bg-background du conteneur principal
 - [x] Corrigé : changé z-index de -z-10 à z-0 dans AdvertisementDisplay.tsx
 - [x] Ajouté relative au conteneur principal dans RestaurantMenuPage.tsx pour créer un contexte de stacking
+- [x] PROBLÈME : L'image était visible MAIS AU-DESSUS du contenu (menu, header, cards)
+- [x] SOLUTION : Ajouté relative z-10 bg-background à toutes les sections (hero, filtres, menu, footer)
+- [x] Image fullpage reste à z-0, contenu à z-10, header à z-40
 - [ ] Tester en production

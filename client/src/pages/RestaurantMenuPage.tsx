@@ -156,7 +156,7 @@ export default function RestaurantMenuPage() {
       </header>
 
       {/* Hero section avec image de fond */}
-      <section className="relative py-16 md:py-24 overflow-hidden">
+      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
         {/* Image de fond avec blur */}
         {restaurant.heroImageUrl && (
           <div 
@@ -182,7 +182,7 @@ export default function RestaurantMenuPage() {
       </section>
 
       {/* Filtres */}
-      <section className="py-6 border-b">
+      <section className="relative z-10 py-6 border-b bg-background">
         <div className="container">
           <div className="flex flex-wrap gap-2 justify-center">
             <Button
@@ -217,7 +217,7 @@ export default function RestaurantMenuPage() {
       </section>
 
       {/* Menu avec tabs horizontales */}
-      <section className="py-12">
+      <section className="relative z-10 py-12 bg-background">
         <div className="container max-w-5xl">
           {categories.length > 0 ? (
             <Tabs defaultValue={categories[0]?.id.toString()} className="w-full">
@@ -314,7 +314,7 @@ export default function RestaurantMenuPage() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t py-8 mt-12">
+      <footer className="relative z-10 border-t py-8 mt-12 bg-background">
         <div className="container text-center">
           <p className="text-sm text-muted-foreground">
             Propulsé par <span className="font-semibold">PRONTO by Altmachine</span>
