@@ -904,3 +904,14 @@
 - [x] Supprimer la route POST /api/admin/login en doublon dans auth-routes.ts
 - [x] Retirer sameSite et domain du cookie pour revenir à la config stable f8623700
 - [ ] Tester le login admin en production
+
+
+## NETTOYAGE ET TESTS (17 février 2026)
+- [x] Retirer MySQL session store (trop complexe, causait des erreurs de connexion)
+- [x] Revenir à MemoryStore simple pour le développement
+- [x] Supprimer la route POST /api/admin/login en doublon dans auth-routes.ts
+- [x] Retirer sameSite et domain du cookie pour revenir à la config stable f8623700
+- [x] Nettoyer les fichiers obsolètes (RestaurantHomePage.OLD.tsx, check-admins.ts, test-admin-login.sh)
+- [x] Tester le login admin en local - FONCTIONNE PARFAITEMENT
+- [x] Analyse complète du système en production et local
+- [ ] Publier et tester en production
