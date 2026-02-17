@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Plus, Edit, Trash2, TrendingUp, Store, MessageSquare, Settings, Megaphone, Shield, Mail, Copy, Check, Search } from "lucide-react";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
-import { useAuth } from "@/_core/hooks/useAuth";
+// import { useAuth } from "@/_core/hooks/useAuth"; // Remplacé par trpc.adminAuth.me
 import { ResponsiveHeader, ResponsiveTable } from "@/components/responsive";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Advertisements from "./admin/Advertisements";
@@ -28,14 +28,15 @@ export default function SuperAdmin() {
   const [copiedInvitation, setCopiedInvitation] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [, setLocation] = useLocation();
-  const { user, loading } = useAuth();
+  // const { user, loading } = useAuth(); // Remplacé par trpc.adminAuth.me
+  const { data: adminUser, isLoading: loading } = trpc.adminAuth.me.useQuery();
 
   // MODE DÉVELOPPEMENT : Accès sans authentification
   const isDev = import.meta.env.DEV;
 
   // Queries - MUST be before any conditional returns (React hooks rules)
-  const { data: stats } = trpc.admin.getStats.useQuery(undefined, { enabled: isDev || (!!user && user.role === 'admin') });
-  const { data: restaurants, refetch } = trpc.admin.listRestaurants.useQuery(undefined, { enabled: isDev || (!!user && user.role === 'admin') });
+  const { data: stats } = trpc.admin.getStats.useQuery(undefined, { enabled: isDev || !!adminUser });
+  const { data: restaurants, refetch } = trpc.admin.listRestaurants.useQuery(undefined, { enabled: isDev || !!adminUser });
 
   // Mutations
   const createMutation = trpc.admin.createRestaurant.useMutation({
@@ -101,46 +102,18 @@ export default function SuperAdmin() {
     );
   }
 
-  // Redirect to login if not authenticated or not admin
-  if (!isDev && (!user || user.role !== 'admin')) {
-    if (!user) {
-      // Not authenticated - redirect to OAuth login
-      window.location.href = `https://manus.im/app-auth?appId=${import.meta.env.VITE_APP_ID}&redirectUri=${encodeURIComponent(window.location.origin + '/api/oauth/callback')}&state=${encodeURIComponent(window.location.origin + '/admin')}&type=signIn`;
-      return (
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-            <p className="text-muted-foreground">Redirection vers la connexion...</p>
-          </div>
+  // Redirect to login if not authenticated as admin
+  if (!isDev && !adminUser) {
+    // Not authenticated - redirect to admin login
+    setLocation('/admin/login');
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Redirection vers la connexion...</p>
         </div>
-      );
-    } else {
-      // Authenticated but not admin
-      return (
-        <div className="min-h-screen flex items-center justify-center bg-muted/20">
-          <Card className="max-w-md">
-            <CardHeader>
-              <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center">
-                <Shield className="h-8 w-8 text-destructive" />
-              </div>
-              <CardTitle className="text-center">Accès Refusé</CardTitle>
-              <CardDescription className="text-center">
-                Vous n'avez pas les permissions nécessaires pour accéder au Super Admin.
-                <br />
-                <span className="text-xs text-muted-foreground mt-2 block">
-                  Code erreur : 10002 - Permissions administrateur requises
-                </span>
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="text-center">
-              <Button onClick={() => setLocation('/')} variant="outline" className="w-full">
-                Retour à l'accueil
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      );
-    }
+      </div>
+    );
   }
 
   const handleCreateSubmit = (e: React.FormEvent<HTMLFormElement>) => {

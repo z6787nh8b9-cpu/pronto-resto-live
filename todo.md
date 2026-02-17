@@ -825,3 +825,8 @@
 - [x] Créer la page de login admin sur /admin/login
 - [x] Modifier le middleware d'authentification pour supporter les admins avec email/mot de passe
 - [x] Tester le flow complet : génération d'invitation → création de compte → login → accès admin
+
+## 🐛 Correction authentification SuperAdmin
+- [x] Modifier SuperAdmin.tsx pour utiliser trpc.adminAuth.me au lieu de useAuth (Manus OAuth)
+- [x] Rediriger vers /admin/login si l'admin n'est pas connecté
+- [x] Tester le flow complet : login → accès /admin → pas de redirection Manus OAuth
