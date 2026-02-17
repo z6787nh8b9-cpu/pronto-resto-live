@@ -841,3 +841,10 @@
 - [ ] Créer une procédure tRPC `adminAuth.loginWithMagicLink` pour connecter automatiquement avec un token
 - [ ] Créer une page `/admin/magic-login/:token` qui connecte automatiquement et redirige vers `/admin`
 - [ ] Générer un lien magique et tester la connexion automatique
+
+## OAuth Configuration (En cours)
+- [x] Configurer PUBLIC_URL pour les callbacks OAuth
+- [x] Modifier auth-config.ts pour utiliser PUBLIC_URL
+- [ ] Tester le login Google avec invitation restaurant
+- [ ] Tester le login Facebook avec invitation restaurant
+- [ ] Corriger les erreurs redirect_uri_mismatch si nécessaire

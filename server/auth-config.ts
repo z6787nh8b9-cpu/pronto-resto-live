@@ -16,12 +16,10 @@ const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET!;
 const FACEBOOK_APP_ID = process.env.FACEBOOK_APP_ID!;
 const FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET!;
 
-// Base URL for callbacks (will be set dynamically based on request)
-let callbackBaseURL = "http://localhost:3000";
+// Base URL for callbacks - use PUBLIC_URL from environment or fallback to localhost
+const callbackBaseURL = process.env.PUBLIC_URL || "http://localhost:3000";
 
-export function setCallbackBaseURL(url: string) {
-  callbackBaseURL = url;
-}
+console.log('[OAuth Config] Using callback base URL:', callbackBaseURL);
 
 /**
  * Initialize Passport with OAuth strategies
