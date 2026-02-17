@@ -155,12 +155,28 @@ export default function RestaurantMenuPage() {
         </div>
       </header>
 
-      {/* Hero section minimaliste */}
-      <section className="relative py-12 md:py-16" style={{ backgroundColor: `${primaryColor}15` }}>
-        <div className="container">
+      {/* Hero section avec image de fond */}
+      <section className="relative py-16 md:py-24 overflow-hidden">
+        {/* Image de fond avec blur */}
+        {restaurant.heroImageUrl && (
+          <div 
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ 
+              backgroundImage: `url(${restaurant.heroImageUrl})`,
+              filter: 'blur(8px)',
+              transform: 'scale(1.1)' // Pour éviter les bords blancs du blur
+            }}
+          />
+        )}
+        
+        {/* Overlay sombre pour lisibilité */}
+        <div className="absolute inset-0 bg-black/50" />
+        
+        {/* Contenu */}
+        <div className="container relative z-10">
           <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Notre Menu</h2>
-            <p className="text-lg text-muted-foreground">{restaurant.description}</p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white drop-shadow-lg">Notre Menu</h2>
+            <p className="text-lg text-white/90 drop-shadow-md">{restaurant.description}</p>
           </div>
         </div>
       </section>

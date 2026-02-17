@@ -978,3 +978,11 @@
 - [x] Ajouté indications visuelles des dimensions recommandées dans le formulaire
 - [ ] Vérifier que le logo apparaît dans le placeholder de la page publique
 - [ ] Tester la sauvegarde complète en production (paramètres + logo + couverture)
+
+## DESIGN PAGE PUBLIQUE MENU (17 février 2026)
+- [x] Ajouté image de fond sur la section hero du menu public (même style que mini-site)
+- [x] Appliqué effet de flou blur(8px) sur l'image de fond
+- [x] Ajouté overlay sombre (bg-black/50) pour la lisibilité du texte
+- [x] Utilisé heroImageUrl du restaurant pour l'image de fond
+- [x] Texte en blanc avec drop-shadow pour meilleure lisibilité
+- [ ] Tester en production sur mobile et desktop
