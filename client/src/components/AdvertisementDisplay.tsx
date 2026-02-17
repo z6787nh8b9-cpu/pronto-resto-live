@@ -156,7 +156,7 @@ export function AdvertisementDisplay({ advertisements, currentPage }: Advertisem
 
       {/* Fullpage - Arrière-plan avec overlay */}
       {fullpageAds.length > 0 && fullpageAds[0].imageUrl && (
-        <div className="fixed inset-0 -z-10 pointer-events-none">
+        <div className="fixed inset-0 z-0 pointer-events-none">
           <img
             src={fullpageAds[0].imageUrl}
             alt={fullpageAds[0].title}

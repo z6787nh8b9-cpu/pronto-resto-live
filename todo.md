@@ -1004,3 +1004,10 @@
 - [x] Supprimé l'aspect-[4/3] qui rendait l'image trop grande
 - [x] Conservé le style visuel distinctif (gradient vert, badge PARTENARIAT doré)
 - [ ] Tester en production
+
+## BUG PUBLICITÉ FULLPAGE INVISIBLE (17 février 2026)
+- [x] La publicité fullpage n'était plus visible après le changement de z-index à -z-10
+- [x] Analysé : l'image était cachée DERRIÈRE le fond bg-background du conteneur principal
+- [x] Corrigé : changé z-index de -z-10 à z-0 dans AdvertisementDisplay.tsx
+- [x] Ajouté relative au conteneur principal dans RestaurantMenuPage.tsx pour créer un contexte de stacking
+- [ ] Tester en production
