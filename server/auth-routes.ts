@@ -215,3 +215,72 @@ declare module "express-session" {
     claimedRestaurantId?: number; // For restaurant owner invitation flow
   }
 }
+
+/**
+ * Email/Password login route for restaurant owners
+ * Validates credentials against restaurant_owners table (provider = 'email')
+ */
+export function registerEmailLoginRoute(app: Express) {
+  app.post("/api/auth/email-login", async (req: Request, res: Response) => {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email et mot de passe requis" });
+    }
+
+    try {
+      const { getDb } = await import("./db");
+      const { restaurantOwners, restaurants } = await import("../drizzle/schema");
+      const { eq, and } = await import("drizzle-orm");
+      const bcrypt = await import("bcrypt");
+
+      const db = await getDb();
+      if (!db) return res.status(500).json({ error: "Erreur base de données" });
+
+      // Find owner by email with email provider
+      const [owner] = await db.select()
+        .from(restaurantOwners)
+        .where(and(eq(restaurantOwners.email, email), eq(restaurantOwners.provider, "email")))
+        .limit(1);
+
+      if (!owner || !owner.passwordHash) {
+        return res.status(401).json({ error: "Identifiants invalides" });
+      }
+
+      // Verify password
+      const valid = await bcrypt.compare(password, owner.passwordHash);
+      if (!valid) {
+        return res.status(401).json({ error: "Identifiants invalides" });
+      }
+
+      // Update lastSignedIn
+      await db.update(restaurantOwners)
+        .set({ lastSignedIn: new Date() })
+        .where(eq(restaurantOwners.id, owner.id));
+
+      // Create Passport session
+      req.login(owner, async (err) => {
+        if (err) {
+          console.error('[EmailLogin] req.login() failed:', err);
+          return res.status(500).json({ error: "Erreur de session" });
+        }
+
+        // Find the restaurant linked to this owner
+        const [restaurant] = await db.select({ slug: restaurants.slug })
+          .from(restaurants)
+          .where(eq(restaurants.ownerId, owner.id))
+          .limit(1);
+
+        if (restaurant?.slug) {
+          return res.json({ success: true, redirectTo: `/${restaurant.slug}/dashboard` });
+        } else {
+          return res.json({ success: true, redirectTo: "/" });
+        }
+      });
+
+    } catch (err: any) {
+      console.error('[EmailLogin] Error:', err.message);
+      return res.status(500).json({ error: "Erreur serveur" });
+    }
+  });
+}
