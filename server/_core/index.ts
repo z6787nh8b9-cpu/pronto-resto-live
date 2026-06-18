@@ -4,6 +4,7 @@ import { createServer } from "http";
 import net from "net";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
+import { registerStorageProxy } from "./storageProxy";
 import { registerRestaurantAuthRoutes } from "../auth-routes";
 import { adminLoginRouter } from "../admin-login-route";
 import { configureSessionMiddleware } from "../session-middleware";
@@ -49,6 +50,8 @@ async function startServer() {
   // This allows tRPC routes to access Passport.js session
   configureSessionMiddleware(app);
   
+  // Storage proxy for /manus-storage/* paths
+  registerStorageProxy(app);
   // OAuth callback under /api/oauth/callback (Manus OAuth)
   registerOAuthRoutes(app);
   // Restaurant owner OAuth routes (Google & Facebook)
