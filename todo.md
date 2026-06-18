@@ -1028,3 +1028,15 @@
 - [x] Si PAS de pub fullpage active → fond blanc normal (stabilité)
 - [x] Si pub fullpage active → fond transparent (image visible)
 - [ ] Tester en production avec et sans pub fullpage
+
+## RESTAURANT LA VOILE ROUGE (18 février 2026)
+- [x] Créé le compte admin restaurant.lavoilerouge@gmail.com avec MDP hashé bcrypt
+- [x] Créé le restaurant "La Voile Rouge" (slug: la-voile-rouge, plan PRO, couleurs bordeaux/doré)
+- [x] Créé la catégorie "Entrées" et saisi les 11 plats (15€ à 24€)
+- [x] Créé la catégorie "Poissons" et saisi les 9 plats + menu enfant (12€ à 30€)
+- [x] Créé la catégorie "Viandes" et saisi les 9 plats (21€ à 80€/kg)
+- [x] Créé la catégorie "Pâtes & Risotti" et saisi les 6 plats (21€ à 27€)
+- [x] Créé la catégorie "Burgers" et saisi les 3 plats (18.50€ à 21€)
+- [x] Créé la catégorie "Desserts" et saisi les 13 desserts (2€ à 12€)
+- [x] Config chatbot créée (ton chaleureux, message de bienvenue)
+- [ ] Vérifier la page publique et le dashboard
