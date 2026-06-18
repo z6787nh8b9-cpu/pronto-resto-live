@@ -5,7 +5,7 @@ import net from "net";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
 import { registerOAuthRoutes } from "./oauth";
 import { registerStorageProxy } from "./storageProxy";
-import { registerRestaurantAuthRoutes } from "../auth-routes";
+import { registerRestaurantAuthRoutes, registerEmailLoginRoute } from "../auth-routes";
 import { adminLoginRouter } from "../admin-login-route";
 import { configureSessionMiddleware } from "../session-middleware";
 
@@ -56,6 +56,8 @@ async function startServer() {
   registerOAuthRoutes(app);
   // Restaurant owner OAuth routes (Google & Facebook)
   registerRestaurantAuthRoutes(app);
+  // Restaurant owner email/password login
+  registerEmailLoginRoute(app);
   // Admin login route (classic HTML form POST)
   app.use("/api/admin", adminLoginRouter);
   // Admin authentication is also available via tRPC (see routers/adminAuth.ts)

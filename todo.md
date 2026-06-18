@@ -1040,3 +1040,12 @@
 - [x] Créé la catégorie "Desserts" et saisi les 13 desserts (2€ à 12€)
 - [x] Config chatbot créée (ton chaleureux, message de bienvenue)
 - [ ] Vérifier la page publique et le dashboard
+
+## CONNEXION EMAIL/MDP RESTAURATEUR (18 juin 2026)
+- [x] Analysé la page de connexion restaurateur et les routes auth existantes
+- [x] Ajouté formulaire email + MDP sur la page de connexion restaurateur (RestaurantLogin.tsx)
+- [x] Créé la route POST /api/auth/email-login dans auth-routes.ts
+- [x] Étendu le schéma restaurant_owners avec provider 'email' et champ passwordHash
+- [x] Créé le restaurantOwner La Voile Rouge (ID 30001) avec hash bcrypt
+- [x] Lié le restaurantOwner au restaurant la-voile-rouge via restaurants.ownerId
+- [ ] Tester la connexion email/MDP sur /la-voile-rouge/dashboard
