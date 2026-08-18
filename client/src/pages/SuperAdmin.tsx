@@ -125,7 +125,6 @@ export default function SuperAdmin() {
     const formData = new FormData(e.currentTarget);
     
     createMutation.mutate({
-      ownerId: 1, // TODO: Get from user selection
       slug: formData.get("slug") as string,
       name: formData.get("name") as string,
       description: formData.get("description") as string,

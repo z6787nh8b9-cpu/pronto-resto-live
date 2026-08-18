@@ -1115,6 +1115,10 @@
 - [x] Ajouté des tests d'accès, de persistance et d'isolation pour l'onboarding et la médiathèque d'entreprise
 - [x] Ajouté un test d'archivage de média qui vérifie son retrait de la bibliothèque sans suppression physique
 - [ ] Refondre la navigation, les fils d'Ariane, les états vides, erreurs, chargements et confirmations d'action
+- [x] Supprimé l'identifiant propriétaire codé en dur lors de la création d'une entreprise par le Super Admin
+- [x] Remplacé les procédures publiques de gestion des réservations par des contrôles propriétaire ou Super Admin et vérifié l'accès au restaurant ciblé
+- [x] Ajouté un test garantissant qu'un visiteur anonyme ne peut plus gérer paramètres, zones ni réservations
+- [ ] Retirer les créneaux fictifs et empêcher la création de réservation hors capacité, hors délai ou sur un créneau occupé
 - [x] Ajouté un fil d'Ariane lisible à l'espace entreprise et remplacé le retour ambigu vers Super Admin par un retour Accueil
 - [x] Remplacé la confirmation navigateur de retrait de média par une confirmation accessible cohérente avec l'interface
 - [x] Repenser le dashboard entreprise autour de la publication, du catalogue, des contacts, des rendez-vous et des performances

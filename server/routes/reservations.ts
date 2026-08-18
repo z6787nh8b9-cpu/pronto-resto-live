@@ -1,9 +1,21 @@
 import { z } from "zod";
-import { publicProcedure, router } from "../_core/trpc";
+import { publicProcedure, restaurantOwnerProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
-import { reservations, reservationZones, reservationSettings } from "../../drizzle/schema";
+import { reservations, reservationZones, reservationSettings, restaurants } from "../../drizzle/schema";
 import { eq, and, gte, lte, desc } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
+
+async function requireReservationManagementAccess(ctx: any, restaurantId: number) {
+  const db = await getDb();
+  if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+  const [restaurant] = await db.select({ ownerId: restaurants.ownerId }).from(restaurants).where(eq(restaurants.id, restaurantId)).limit(1);
+  if (!restaurant) throw new TRPCError({ code: "NOT_FOUND", message: "Restaurant not found" });
+  const isPlatformAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+  if (!isPlatformAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id) {
+    throw new TRPCError({ code: "FORBIDDEN", message: "Vous n'avez pas accès à ces réservations." });
+  }
+  return db;
+}
 
 /**
  * Router for managing reservations (PREMIUM feature)
@@ -29,7 +41,7 @@ export const reservationsRouter = router({
   /**
    * Update or create reservation settings
    */
-  updateSettings: publicProcedure
+  updateSettings: restaurantOwnerProcedure
     .input(z.object({
       restaurantId: z.number(),
       slotDuration: z.number().optional(),
@@ -43,9 +55,8 @@ export const reservationsRouter = router({
       confirmationMessage: z.string().optional(),
       cancellationPolicy: z.string().optional(),
     }))
-    .mutation(async ({ input }) => {
-      const db = await getDb();
-      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+    .mutation(async ({ ctx, input }) => {
+      const db = await requireReservationManagementAccess(ctx, input.restaurantId);
       const { restaurantId, ...settings } = input;
       
       // Check if settings exist
@@ -92,16 +103,15 @@ export const reservationsRouter = router({
   /**
    * Create a new zone
    */
-  createZone: publicProcedure
+  createZone: restaurantOwnerProcedure
     .input(z.object({
       restaurantId: z.number(),
       name: z.string(),
       capacity: z.number(),
       displayOrder: z.number().optional(),
     }))
-    .mutation(async ({ input }) => {
-      const db = await getDb();
-      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+    .mutation(async ({ ctx, input }) => {
+      const db = await requireReservationManagementAccess(ctx, input.restaurantId);
       const result = await db.insert(reservationZones).values(input);
       return { id: result[0].insertId };
     }),
@@ -109,7 +119,7 @@ export const reservationsRouter = router({
   /**
    * Update a zone
    */
-  updateZone: publicProcedure
+  updateZone: restaurantOwnerProcedure
     .input(z.object({
       id: z.number(),
       name: z.string().optional(),
@@ -117,9 +127,12 @@ export const reservationsRouter = router({
       isActive: z.boolean().optional(),
       displayOrder: z.number().optional(),
     }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+      const [zone] = await db.select({ restaurantId: reservationZones.restaurantId }).from(reservationZones).where(eq(reservationZones.id, input.id)).limit(1);
+      if (!zone) throw new TRPCError({ code: "NOT_FOUND", message: "Zone not found" });
+      await requireReservationManagementAccess(ctx, zone.restaurantId);
       const { id, ...updates } = input;
       await db
         .update(reservationZones)
@@ -132,11 +145,14 @@ export const reservationsRouter = router({
   /**
    * Delete a zone
    */
-  deleteZone: publicProcedure
+  deleteZone: restaurantOwnerProcedure
     .input(z.object({ id: z.number() }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+      const [zone] = await db.select({ restaurantId: reservationZones.restaurantId }).from(reservationZones).where(eq(reservationZones.id, input.id)).limit(1);
+      if (!zone) throw new TRPCError({ code: "NOT_FOUND", message: "Zone not found" });
+      await requireReservationManagementAccess(ctx, zone.restaurantId);
       await db.delete(reservationZones).where(eq(reservationZones.id, input.id));
       return { success: true };
     }),
@@ -195,16 +211,15 @@ export const reservationsRouter = router({
   /**
    * Get all reservations for a restaurant (dashboard)
    */
-  getByRestaurant: publicProcedure
+  getByRestaurant: restaurantOwnerProcedure
     .input(z.object({
       restaurantId: z.number(),
       startDate: z.string().optional(),
       endDate: z.string().optional(),
       status: z.enum(["pending", "confirmed", "cancelled", "completed", "no_show"]).optional(),
     }))
-    .query(async ({ input }) => {
-      const db = await getDb();
-      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+    .query(async ({ ctx, input }) => {
+      const db = await requireReservationManagementAccess(ctx, input.restaurantId);
       
       // Apply filters
       const conditions = [eq(reservations.restaurantId, input.restaurantId)];
@@ -233,16 +248,19 @@ export const reservationsRouter = router({
   /**
    * Update reservation status
    */
-  updateStatus: publicProcedure
+  updateStatus: restaurantOwnerProcedure
     .input(z.object({
       id: z.number(),
       status: z.enum(["pending", "confirmed", "cancelled", "completed", "no_show"]),
       cancellationReason: z.string().optional(),
     }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
       const { id, status, cancellationReason } = input;
+      const [reservation] = await db.select({ restaurantId: reservations.restaurantId }).from(reservations).where(eq(reservations.id, id)).limit(1);
+      if (!reservation) throw new TRPCError({ code: "NOT_FOUND", message: "Reservation not found" });
+      await requireReservationManagementAccess(ctx, reservation.restaurantId);
       
       const updates: any = { status };
       
