@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { router, publicProcedure, protectedProcedure } from "../_core/trpc";
+import { router, publicProcedure, restaurantOwnerProcedure } from "../_core/trpc";
 import { getDb } from "../db";
-import { galleryPhotos } from "../../drizzle/schema";
+import { galleryPhotos, restaurants } from "../../drizzle/schema";
 import { eq, and, desc } from "drizzle-orm";
 
 export const galleryRouter = router({
@@ -27,7 +27,7 @@ export const galleryRouter = router({
     }),
 
   // Add a photo to gallery
-  addPhoto: protectedProcedure
+  addPhoto: restaurantOwnerProcedure
     .input(
       z.object({
         restaurantId: z.number(),
@@ -36,9 +36,13 @@ export const galleryRouter = router({
         displayOrder: z.number().optional(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
+
+      const [restaurant] = await db.select().from(restaurants).where(eq(restaurants.id, input.restaurantId)).limit(1);
+      const isAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      if (!restaurant || (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id)) throw new Error("Unauthorized");
 
       const [photo] = await db
         .insert(galleryPhotos)
@@ -54,7 +58,7 @@ export const galleryRouter = router({
     }),
 
   // Update photo
-  updatePhoto: protectedProcedure
+  updatePhoto: restaurantOwnerProcedure
     .input(
       z.object({
         id: z.number(),
@@ -63,9 +67,14 @@ export const galleryRouter = router({
         isActive: z.boolean().optional(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
+
+      const [photo] = await db.select().from(galleryPhotos).where(eq(galleryPhotos.id, input.id)).limit(1);
+      const [restaurant] = photo ? await db.select().from(restaurants).where(eq(restaurants.id, photo.restaurantId)).limit(1) : [];
+      const isAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      if (!restaurant || (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id)) throw new Error("Unauthorized");
 
       await db
         .update(galleryPhotos)
@@ -81,11 +90,16 @@ export const galleryRouter = router({
     }),
 
   // Delete photo
-  deletePhoto: protectedProcedure
+  deletePhoto: restaurantOwnerProcedure
     .input(z.object({ id: z.number() }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
+
+      const [photo] = await db.select().from(galleryPhotos).where(eq(galleryPhotos.id, input.id)).limit(1);
+      const [restaurant] = photo ? await db.select().from(restaurants).where(eq(restaurants.id, photo.restaurantId)).limit(1) : [];
+      const isAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      if (!restaurant || (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id)) throw new Error("Unauthorized");
 
       await db.delete(galleryPhotos).where(eq(galleryPhotos.id, input.id));
 
