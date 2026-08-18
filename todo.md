@@ -1121,6 +1121,7 @@
 - [x] Généralisé le formulaire de contact pour parler d'entreprise et d'activité plutôt que de restaurant
 - [x] Aligné l'accroche du formulaire de contact avec le positionnement multi-secteurs de PRONTO
 - [x] Généralisé l'aide de configuration chatbot du dashboard pour toutes les activités
+- [x] Généralisé les libellés de connexion pour accueillir toute entreprise tout en gardant les routes existantes
 - [x] Supprimé l'identifiant propriétaire codé en dur lors de la création d'une entreprise par le Super Admin
 - [x] Remplacé les procédures publiques de gestion des réservations par des contrôles propriétaire ou Super Admin et vérifié l'accès au restaurant ciblé
 - [x] Ajouté un test garantissant qu'un visiteur anonyme ne peut plus gérer paramètres, zones ni réservations

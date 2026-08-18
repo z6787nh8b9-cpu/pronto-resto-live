@@ -115,8 +115,8 @@ export default function RestaurantLogin() {
           </CardTitle>
           <CardDescription className="text-base">
             {token 
-              ? "Bienvenue ! Connectez-vous pour accéder à votre restaurant"
-              : "Connexion restaurateurs"
+              ? "Bienvenue ! Connectez-vous pour accéder à votre espace entreprise"
+              : "Connexion entreprise"
             }
           </CardDescription>
         </CardHeader>
@@ -132,7 +132,7 @@ export default function RestaurantLogin() {
           {token && (
             <Alert className="bg-amber-50 border-amber-200">
               <AlertDescription className="text-amber-900">
-                Vous avez été invité à gérer un restaurant. Connectez-vous pour continuer.
+                Vous avez été invité à gérer un espace entreprise. Connectez-vous pour continuer.
               </AlertDescription>
             </Alert>
           )}
