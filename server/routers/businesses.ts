@@ -1,21 +1,28 @@
 import { TRPCError } from "@trpc/server";
-import { and, asc, desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq, isNull } from "drizzle-orm";
+import { randomUUID } from "crypto";
 import { z } from "zod";
 import {
   businesses,
   businessMembers,
+  businessOnboarding,
   businessProfiles,
   catalogCollections,
   catalogItems,
   catalogs,
+  mediaAssets,
 } from "../../drizzle/schema";
 import { getDb } from "../db";
 import { adminProcedure, publicProcedure, restaurantOwnerProcedure, router } from "../_core/trpc";
 import type { TrpcContext } from "../_core/context";
+import { storagePut } from "../storage";
+import { acceptedMediaTypes, hasValidMediaSignature } from "../media-validation";
 
 const businessVertical = z.enum(["restaurant", "beauty", "retail", "service", "events", "other"]);
 const catalogType = z.enum(["menu", "services", "products", "price_list", "portfolio", "events"]);
 const catalogStatus = z.enum(["draft", "published", "archived"]);
+const onboardingSteps = z.enum(["business_type", "catalog", "media", "profile", "publish"]);
+const acceptedMediaTypeSchema = z.enum(acceptedMediaTypes);
 
 function isPlatformAdmin(ctx: TrpcContext) {
   return Boolean(ctx.adminAccount || ctx.user?.role === "admin");
@@ -239,5 +246,95 @@ export const businessesRouter = router({
       const collections = await db.select().from(catalogCollections).where(eq(catalogCollections.catalogId, input.catalogId)).orderBy(asc(catalogCollections.displayOrder));
       const items = await db.select().from(catalogItems).where(eq(catalogItems.catalogId, input.catalogId)).orderBy(asc(catalogItems.displayOrder));
       return { catalog, collections, items };
+    }),
+
+  getOnboarding: restaurantOwnerProcedure
+    .input(z.object({ businessId: z.number().int().positive() }))
+    .query(async ({ ctx, input }) => {
+      await requireBusinessAccess(ctx, input.businessId);
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
+      const [record] = await db.select().from(businessOnboarding).where(eq(businessOnboarding.businessId, input.businessId)).limit(1);
+      return record ?? null;
+    }),
+
+  updateOnboarding: restaurantOwnerProcedure
+    .input(z.object({
+      businessId: z.number().int().positive(),
+      industry: businessVertical.optional(),
+      primaryGoal: z.string().trim().min(2).max(120).optional(),
+      completedSteps: z.array(onboardingSteps).max(5).optional(),
+      status: z.enum(["not_started", "in_progress", "completed"]).optional(),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      await requireBusinessAccess(ctx, input.businessId);
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
+      const { businessId, status, ...changes } = input;
+      const completion = status === "completed" ? new Date() : null;
+      await db.insert(businessOnboarding).values({
+        businessId,
+        industry: changes.industry ?? null,
+        primaryGoal: changes.primaryGoal ?? null,
+        completedSteps: changes.completedSteps ?? [],
+        status: status ?? "in_progress",
+        completedAt: completion,
+      }).onDuplicateKeyUpdate({ set: { ...changes, ...(status ? { status } : {}), completedAt: completion } });
+      const [updated] = await db.select().from(businessOnboarding).where(eq(businessOnboarding.businessId, businessId)).limit(1);
+      return updated!;
+    }),
+
+  listMedia: restaurantOwnerProcedure
+    .input(z.object({ businessId: z.number().int().positive() }))
+    .query(async ({ ctx, input }) => {
+      await requireBusinessAccess(ctx, input.businessId);
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
+      return db.select().from(mediaAssets).where(and(eq(mediaAssets.businessId, input.businessId), isNull(mediaAssets.archivedAt))).orderBy(desc(mediaAssets.createdAt));
+    }),
+
+  uploadMedia: restaurantOwnerProcedure
+    .input(z.object({
+      businessId: z.number().int().positive(),
+      fileName: z.string().trim().min(1).max(255),
+      mimeType: acceptedMediaTypeSchema,
+      base64: z.string().min(8).max(7_000_000),
+    }))
+    .mutation(async ({ ctx, input }) => {
+      await requireBusinessAccess(ctx, input.businessId);
+      const bytes = Buffer.from(input.base64, "base64");
+      if (!bytes.length || bytes.length > 5 * 1024 * 1024 || !hasValidMediaSignature(bytes, input.mimeType)) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Le fichier est invalide, son format ne correspond pas ou il dépasse 5 Mo." });
+      }
+      const safeName = input.fileName.replace(/[^a-zA-Z0-9._-]/g, "-").slice(-120);
+      const stored = await storagePut(`businesses/${input.businessId}/media/${randomUUID()}-${safeName}`, bytes, input.mimeType);
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
+      const principalType = isPlatformAdmin(ctx) ? "admin" : "owner";
+      const principalId = isPlatformAdmin(ctx) ? ctx.adminAccount?.id ?? ctx.user?.id ?? null : ctx.restaurantOwner?.id ?? null;
+      const result = await db.insert(mediaAssets).values({
+        businessId: input.businessId,
+        uploadedByType: principalType,
+        uploadedById: principalId,
+        originalName: input.fileName,
+        mimeType: input.mimeType,
+        sizeBytes: bytes.length,
+        storageKey: stored.key,
+        url: stored.url,
+      });
+      const [asset] = await db.select().from(mediaAssets).where(eq(mediaAssets.id, Number(result[0].insertId))).limit(1);
+      return asset!;
+    }),
+
+  archiveMedia: restaurantOwnerProcedure
+    .input(z.object({ businessId: z.number().int().positive(), assetId: z.number().int().positive() }))
+    .mutation(async ({ ctx, input }) => {
+      await requireBusinessAccess(ctx, input.businessId);
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
+      const [asset] = await db.select().from(mediaAssets).where(and(eq(mediaAssets.id, input.assetId), eq(mediaAssets.businessId, input.businessId), isNull(mediaAssets.archivedAt))).limit(1);
+      if (!asset) throw new TRPCError({ code: "NOT_FOUND", message: "Média introuvable." });
+      await db.update(mediaAssets).set({ archivedAt: new Date() }).where(eq(mediaAssets.id, asset.id));
+      return { success: true };
     }),
 });

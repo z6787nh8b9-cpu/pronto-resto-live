@@ -17,10 +17,6 @@ export function registerOAuthRoutes(app: Express) {
     console.log("[OAuth] Callback received", {
       hasCode: !!code,
       hasState: !!state,
-      userAgent: req.headers["user-agent"],
-      protocol: req.protocol,
-      hostname: req.hostname,
-      secure: req.secure,
     });
 
     if (!code || !state) {
@@ -32,9 +28,9 @@ export function registerOAuthRoutes(app: Express) {
     try {
       console.log("[OAuth] Exchanging code for token...");
       const tokenResponse = await sdk.exchangeCodeForToken(code, state);
-      console.log("[OAuth] Token received, getting user info...");
+      console.log("[OAuth] Token exchange completed");
       const userInfo = await sdk.getUserInfo(tokenResponse.accessToken);
-      console.log("[OAuth] User info received", { openId: userInfo.openId, name: userInfo.name });
+      console.log("[OAuth] User information retrieved");
 
       if (!userInfo.openId) {
         res.status(400).json({ error: "openId missing from user info" });
@@ -56,13 +52,12 @@ export function registerOAuthRoutes(app: Express) {
       });
 
       const cookieOptions = getSessionCookieOptions(req);
-      console.log("[OAuth] Setting cookie with options", cookieOptions);
       res.cookie(COOKIE_NAME, sessionToken, { ...cookieOptions, maxAge: ONE_YEAR_MS });
 
       console.log("[OAuth] Redirecting to /");
       res.redirect(302, "/");
-    } catch (error) {
-      console.error("[OAuth] Callback failed", error);
+    } catch {
+      console.error("[OAuth] Callback failed");
       res.status(500).json({ error: "OAuth callback failed" });
     }
   });

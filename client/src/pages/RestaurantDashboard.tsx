@@ -30,6 +30,8 @@ import { UpgradeModal } from "@/components/UpgradeModal";
 import { LockedFeatureOverlay } from "@/components/LockedFeatureOverlay";
 import { CatalogImportCard } from "@/components/CatalogImportCard";
 import { LoadingState } from "@/components/LoadingState";
+import { BusinessOnboardingCard } from "@/components/BusinessOnboardingCard";
+import { BusinessMediaLibrary } from "@/components/BusinessMediaLibrary";
 
 export default function RestaurantDashboard() {
   const params: { slug?: string } = useParams();
@@ -95,6 +97,11 @@ export default function RestaurantDashboard() {
   const { data: menuItems, refetch: refetchItems } = trpc.restaurant.getMenuItems.useQuery(
     { restaurantId: restaurant?.id || 0 },
     { enabled: !!restaurant?.id }
+  );
+
+  const { data: businessWorkspace } = trpc.businesses.getByLegacyRestaurant.useQuery(
+    { restaurantId: restaurant?.id || 0 },
+    { enabled: Boolean(restaurant?.id) }
   );
 
   // Get chatbot config
@@ -482,6 +489,7 @@ export default function RestaurantDashboard() {
             <TabsTrigger value="overview">Vue d’ensemble</TabsTrigger>
             <TabsTrigger value="menu">Menu</TabsTrigger>
             <TabsTrigger value="import">Importer</TabsTrigger>
+            <TabsTrigger value="media">Médiathèque</TabsTrigger>
             <TabsTrigger value="settings">Paramètres</TabsTrigger>
             <TabsTrigger value="chatbot">Chatbot IA</TabsTrigger>
             <TabsTrigger 
@@ -563,6 +571,8 @@ export default function RestaurantDashboard() {
               <button type="button" onClick={() => setActiveTab("settings")} className="pronto-panel group p-5 text-left transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1"><span className="grid h-11 w-11 place-items-center rounded-2xl bg-pronto-accent/25 text-pronto-primary"><Settings className="h-5 w-5" /></span><h3 className="mt-7 text-3xl">Personnaliser</h3><p className="mt-3 leading-7 text-muted-foreground">Mettez à jour vos informations, votre image et vos coordonnées au même endroit.</p><span className="mt-6 inline-flex items-center text-sm font-semibold text-pronto-primary">Ouvrir les réglages <ArrowUpRight className="ml-1.5 h-4 w-4 transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-0.5" /></span></button>
               <button type="button" onClick={() => window.open(`/${restaurant.slug}`, "_blank", "noopener,noreferrer")} className="pronto-panel group p-5 text-left transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1"><span className="grid h-11 w-11 place-items-center rounded-2xl bg-secondary text-pronto-primary"><Store className="h-5 w-5" /></span><h3 className="mt-7 text-3xl">Vérifier la vitrine</h3><p className="mt-3 leading-7 text-muted-foreground">Consultez le résultat public dans un nouvel onglet, comme le ferait un visiteur.</p><span className="mt-6 inline-flex items-center text-sm font-semibold text-pronto-primary">Voir la page publique <ArrowUpRight className="ml-1.5 h-4 w-4 transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-0.5" /></span></button>
             </section>
+
+            <BusinessOnboardingCard businessId={businessWorkspace?.id ?? null} onNavigate={setActiveTab} />
           </TabsContent>
 
           {/* Menu Tab */}
@@ -830,6 +840,10 @@ export default function RestaurantDashboard() {
 	            </div>
 	            <CatalogImportCard restaurantId={restaurant.id} defaultCatalogName={`Carte — ${restaurant.name}`} />
 	          </TabsContent>
+
+              <TabsContent value="media" className="space-y-6">
+                <BusinessMediaLibrary businessId={businessWorkspace?.id ?? null} />
+              </TabsContent>
 
 	          {/* Settings Tab */}
           <TabsContent value="settings" className="space-y-6">

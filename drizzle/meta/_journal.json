@@ -211,6 +211,20 @@
       "when": 1787049897700,
       "tag": "0029_flat_snowbird",
       "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "5",
+      "when": 1787050517350,
+      "tag": "0030_small_doctor_spectrum",
+      "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "5",
+      "when": 1787051329501,
+      "tag": "0031_natural_adam_warlock",
+      "breakpoints": true
     }
   ]
 }

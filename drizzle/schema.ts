@@ -834,3 +834,36 @@ export const passwordResetTokens = mysqlTable("password_reset_tokens", {
 ]);
 
 export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
+
+/** One lightweight onboarding record describes the setup progress of an enterprise workspace. */
+export const businessOnboarding = mysqlTable("business_onboarding", {
+  id: int("id").autoincrement().primaryKey(),
+  businessId: int("businessId").notNull().unique(),
+  industry: varchar("industry", { length: 100 }),
+  primaryGoal: varchar("primaryGoal", { length: 120 }),
+  status: mysqlEnum("status", ["not_started", "in_progress", "completed"]).default("not_started").notNull(),
+  completedSteps: json("completedSteps").$type<string[]>().notNull(),
+  completedAt: timestamp("completedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => [index("business_onboarding_status_idx").on(table.status)]);
+
+/** Metadata-only media library. File bytes remain in object storage, never in TiDB. */
+export const mediaAssets = mysqlTable("media_assets", {
+  id: int("id").autoincrement().primaryKey(),
+  businessId: int("businessId").notNull(),
+  uploadedByType: mysqlEnum("uploadedByType", ["admin", "owner", "system"]).notNull(),
+  uploadedById: int("uploadedById"),
+  originalName: varchar("originalName", { length: 255 }).notNull(),
+  mimeType: varchar("mimeType", { length: 127 }).notNull(),
+  sizeBytes: int("sizeBytes").notNull(),
+  storageKey: varchar("storageKey", { length: 512 }).notNull().unique(),
+  url: text("url").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  archivedAt: timestamp("archivedAt"),
+}, (table) => [
+  index("media_assets_business_idx").on(table.businessId, table.createdAt),
+  index("media_assets_uploader_idx").on(table.uploadedByType, table.uploadedById),
+]);
+
+export type MediaAsset = typeof mediaAssets.$inferSelect;
