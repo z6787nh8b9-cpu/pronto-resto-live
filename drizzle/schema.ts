@@ -1,4 +1,4 @@
-import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean, json } from "drizzle-orm/mysql-core";
+import { int, mysqlEnum, mysqlTable, text, timestamp, varchar, decimal, boolean, json, index, uniqueIndex } from "drizzle-orm/mysql-core";
 
 /**
  * Core user table backing auth flow.
@@ -82,6 +82,199 @@ export const restaurants = mysqlTable("restaurants", {
 
 export type Restaurant = typeof restaurants.$inferSelect;
 export type InsertRestaurant = typeof restaurants.$inferInsert;
+
+/**
+ * Generic multi-sector business core.
+ * Existing restaurants are preserved and receive a matching business through
+ * legacyRestaurantId during the additive migration.
+ */
+export const businesses = mysqlTable("businesses", {
+  id: int("id").autoincrement().primaryKey(),
+  legacyRestaurantId: int("legacyRestaurantId").unique(),
+  slug: varchar("slug", { length: 100 }).notNull().unique(),
+  name: varchar("name", { length: 255 }).notNull(),
+  vertical: mysqlEnum("vertical", ["restaurant", "beauty", "retail", "service", "events", "other"]).default("other").notNull(),
+  status: mysqlEnum("status", ["draft", "published", "archived", "suspended"]).default("draft").notNull(),
+  subscriptionTier: mysqlEnum("subscriptionTier", ["menu", "pro", "premium"]).default("menu").notNull(),
+  subscriptionStatus: mysqlEnum("subscriptionStatus", ["active", "trial", "expired", "cancelled"]).default("trial").notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type Business = typeof businesses.$inferSelect;
+export type InsertBusiness = typeof businesses.$inferInsert;
+
+/** Public identity and visual settings for a business. */
+export const businessProfiles = mysqlTable("business_profiles", {
+  id: int("id").autoincrement().primaryKey(),
+  businessId: int("businessId").notNull().unique(),
+  displayName: varchar("displayName", { length: 255 }),
+  shortDescription: text("shortDescription"),
+  email: varchar("email", { length: 320 }),
+  phone: varchar("phone", { length: 32 }),
+  whatsapp: varchar("whatsapp", { length: 32 }),
+  address: text("address"),
+  logoUrl: text("logoUrl"),
+  heroImageUrl: text("heroImageUrl"),
+  primaryColor: varchar("primaryColor", { length: 16 }).default("#7D3A31"),
+  accentColor: varchar("accentColor", { length: 16 }).default("#FF9999"),
+  fontFamily: varchar("fontFamily", { length: 100 }).default("Playfair Display"),
+  locale: varchar("locale", { length: 10 }).default("fr").notNull(),
+  socialLinks: json("socialLinks").$type<Record<string, string>>(),
+  seoTitle: varchar("seoTitle", { length: 255 }),
+  seoDescription: text("seoDescription"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type BusinessProfile = typeof businessProfiles.$inferSelect;
+export type InsertBusinessProfile = typeof businessProfiles.$inferInsert;
+
+/**
+ * Temporary principal-based membership layer. It supports legacy owner/admin
+ * identities now and will later be backed by the unified account table.
+ */
+export const businessMembers = mysqlTable("business_members", {
+  id: int("id").autoincrement().primaryKey(),
+  businessId: int("businessId").notNull(),
+  principalType: mysqlEnum("principalType", ["restaurant_owner", "admin_account", "manus_user"]).notNull(),
+  principalId: int("principalId").notNull(),
+  role: mysqlEnum("role", ["owner", "administrator", "editor", "publisher", "analyst", "support"]).default("editor").notNull(),
+  status: mysqlEnum("status", ["active", "invited", "suspended"]).default("active").notNull(),
+  invitedByPrincipalId: int("invitedByPrincipalId"),
+  joinedAt: timestamp("joinedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => [
+  uniqueIndex("business_members_principal_unique").on(table.businessId, table.principalType, table.principalId),
+  index("business_members_business_idx").on(table.businessId),
+]);
+
+export type BusinessMember = typeof businessMembers.$inferSelect;
+export type InsertBusinessMember = typeof businessMembers.$inferInsert;
+
+/** Publishable business content: menus, services, products, price lists or portfolios. */
+export const catalogs = mysqlTable("catalogs", {
+  id: int("id").autoincrement().primaryKey(),
+  businessId: int("businessId").notNull(),
+  legacyRestaurantId: int("legacyRestaurantId"),
+  slug: varchar("slug", { length: 100 }).notNull(),
+  type: mysqlEnum("type", ["menu", "services", "products", "price_list", "portfolio", "events"]).notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  status: mysqlEnum("status", ["draft", "published", "archived"]).default("draft").notNull(),
+  isPrimary: boolean("isPrimary").default(false).notNull(),
+  displayOrder: int("displayOrder").default(0).notNull(),
+  source: mysqlEnum("source", ["manual", "legacy_migration", "csv_import", "document_import", "image_import"]).default("manual").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => [
+  uniqueIndex("catalogs_business_slug_unique").on(table.businessId, table.slug),
+  index("catalogs_business_status_idx").on(table.businessId, table.status),
+]);
+
+export type Catalog = typeof catalogs.$inferSelect;
+export type InsertCatalog = typeof catalogs.$inferInsert;
+
+/** Logical grouping within a catalog: category, range, treatment family or collection. */
+export const catalogCollections = mysqlTable("catalog_collections", {
+  id: int("id").autoincrement().primaryKey(),
+  catalogId: int("catalogId").notNull(),
+  legacyMenuCategoryId: int("legacyMenuCategoryId").unique(),
+  slug: varchar("slug", { length: 100 }).notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  imageUrl: text("imageUrl"),
+  displayOrder: int("displayOrder").default(0).notNull(),
+  status: mysqlEnum("status", ["active", "hidden", "archived"]).default("active").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => [
+  uniqueIndex("catalog_collections_catalog_slug_unique").on(table.catalogId, table.slug),
+  index("catalog_collections_catalog_order_idx").on(table.catalogId, table.displayOrder),
+]);
+
+export type CatalogCollection = typeof catalogCollections.$inferSelect;
+export type InsertCatalogCollection = typeof catalogCollections.$inferInsert;
+
+/** Generic catalog item capable of representing a dish, product, service or package. */
+export const catalogItems = mysqlTable("catalog_items", {
+  id: int("id").autoincrement().primaryKey(),
+  catalogId: int("catalogId").notNull(),
+  collectionId: int("collectionId"),
+  legacyMenuItemId: int("legacyMenuItemId").unique(),
+  itemType: mysqlEnum("itemType", ["product", "service", "package", "event"]).default("product").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  priceType: mysqlEnum("priceType", ["fixed", "from", "range", "quote", "free"]).default("fixed").notNull(),
+  price: decimal("price", { precision: 10, scale: 2 }),
+  priceMax: decimal("priceMax", { precision: 10, scale: 2 }),
+  priceLabel: varchar("priceLabel", { length: 100 }),
+  currency: varchar("currency", { length: 3 }).default("EUR").notNull(),
+  durationMinutes: int("durationMinutes"),
+  imageUrl: text("imageUrl"),
+  attributes: json("attributes").$type<Record<string, unknown>>(),
+  displayOrder: int("displayOrder").default(0).notNull(),
+  status: mysqlEnum("status", ["active", "hidden", "archived"]).default("active").notNull(),
+  isFeatured: boolean("isFeatured").default(false).notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => [
+  index("catalog_items_catalog_collection_order_idx").on(table.catalogId, table.collectionId, table.displayOrder),
+  index("catalog_items_legacy_menu_item_idx").on(table.legacyMenuItemId),
+]);
+
+export type CatalogItem = typeof catalogItems.$inferSelect;
+export type InsertCatalogItem = typeof catalogItems.$inferInsert;
+
+/**
+ * Controlled import lifecycle. Analysis only creates a draft; catalog data is
+ * changed exclusively after an explicit apply operation by an authorized user.
+ */
+export const importJobs = mysqlTable("import_jobs", {
+  id: int("id").autoincrement().primaryKey(),
+  businessId: int("businessId").notNull(),
+  targetCatalogId: int("targetCatalogId"),
+  sourceType: mysqlEnum("sourceType", ["csv", "pdf", "image"]).notNull(),
+  sourceFileName: varchar("sourceFileName", { length: 255 }).notNull(),
+  sourceMimeType: varchar("sourceMimeType", { length: 120 }).notNull(),
+  sourceUrl: text("sourceUrl").notNull(),
+  status: mysqlEnum("status", ["uploaded", "analyzing", "review_required", "applying", "applied", "failed"]).default("uploaded").notNull(),
+  draft: json("draft").$type<Record<string, unknown>>(),
+  validationErrors: json("validationErrors").$type<Array<{ path: string; message: string }>>(),
+  createdByPrincipalType: mysqlEnum("createdByPrincipalType", ["restaurant_owner", "admin_account", "manus_user"]).notNull(),
+  createdByPrincipalId: int("createdByPrincipalId").notNull(),
+  appliedAt: timestamp("appliedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => [
+  index("import_jobs_business_status_idx").on(table.businessId, table.status),
+  index("import_jobs_target_catalog_idx").on(table.targetCatalogId),
+]);
+
+export type ImportJob = typeof importJobs.$inferSelect;
+export type InsertImportJob = typeof importJobs.$inferInsert;
+
+/** Per-row traceability makes CSV corrections and AI review auditable. */
+export const importJobRows = mysqlTable("import_job_rows", {
+  id: int("id").autoincrement().primaryKey(),
+  importJobId: int("importJobId").notNull(),
+  rowNumber: int("rowNumber").notNull(),
+  rawData: json("rawData").$type<Record<string, unknown>>(),
+  normalizedData: json("normalizedData").$type<Record<string, unknown>>(),
+  confidence: decimal("confidence", { precision: 5, scale: 4 }),
+  status: mysqlEnum("status", ["accepted", "needs_review", "rejected"]).default("needs_review").notNull(),
+  validationErrors: json("validationErrors").$type<Array<{ path: string; message: string }>>(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+}, (table) => [
+  uniqueIndex("import_job_rows_job_row_unique").on(table.importJobId, table.rowNumber),
+  index("import_job_rows_job_status_idx").on(table.importJobId, table.status),
+]);
+
+export type ImportJobRow = typeof importJobRows.$inferSelect;
+export type InsertImportJobRow = typeof importJobRows.$inferInsert;
 
 /**
  * Menu categories

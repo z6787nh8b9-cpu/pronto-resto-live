@@ -15,6 +15,8 @@ import { invitationsRouter } from "./routers/invitations";
 import { chatRouter } from "./routers/chat";
 import { chatbotRequestsRouter } from "./routers/chatbotRequests";
 import { adminAuthRouter } from "./routers/adminAuth";
+import { businessesRouter } from "./routers/businesses";
+import { importsRouter } from "./routers/imports";
 
 export const appRouter = router({
     // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -66,6 +68,12 @@ export const appRouter = router({
 
   // Gallery routes
   gallery: galleryRouter,
+
+  // Generic multi-sector business core. Restaurant routes remain available during migration.
+  businesses: businessesRouter,
+
+  // Controlled CSV, PDF and image import lifecycle.
+  imports: importsRouter,
 });
 
 export type AppRouter = typeof appRouter;
