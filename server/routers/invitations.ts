@@ -3,7 +3,7 @@
  * Handles restaurant owner invitation system
  */
 
-import { router, publicProcedure } from "../_core/trpc";
+import { router, publicProcedure, adminProcedure, restaurantOwnerProcedure } from "../_core/trpc";
 import { z } from "zod";
 import { getDb } from "../db";
 import { invitations, restaurants } from "../../drizzle/schema";
@@ -14,7 +14,7 @@ export const invitationsRouter = router({
   /**
    * Create a new invitation for a restaurant (Super Admin only)
    */
-  create: publicProcedure
+  create: adminProcedure
     .input(
       z.object({
         restaurantId: z.number(),
@@ -114,15 +114,21 @@ export const invitationsRouter = router({
 
       return {
         valid: true,
-        invitation,
-        restaurant,
+        invitation: {
+          id: invitation.id,
+          status: invitation.status,
+          expiresAt: invitation.expiresAt,
+        },
+        restaurant: restaurant
+          ? { name: restaurant.name, slug: restaurant.slug }
+          : null,
       };
     }),
 
   /**
    * List ALL invitations (Super Admin only)
    */
-  listAll: publicProcedure
+  listAll: adminProcedure
     .query(async () => {
       const db = await getDb();
       if (!db) {
@@ -153,16 +159,31 @@ export const invitationsRouter = router({
   /**
    * List all invitations for a restaurant
    */
-  listByRestaurant: publicProcedure
+  listByRestaurant: restaurantOwnerProcedure
     .input(
       z.object({
         restaurantId: z.number(),
       })
     )
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) {
         throw new Error("Database not available");
+      }
+
+      const [restaurant] = await db
+        .select({ ownerId: restaurants.ownerId })
+        .from(restaurants)
+        .where(eq(restaurants.id, input.restaurantId))
+        .limit(1);
+
+      if (!restaurant) {
+        throw new Error("Restaurant not found");
+      }
+
+      const isPlatformAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      if (!isPlatformAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id) {
+        throw new Error("Forbidden");
       }
 
       const invitationsList = await db

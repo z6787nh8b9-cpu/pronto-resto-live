@@ -1,71 +1,59 @@
 /**
- * Rate Limiting Middleware
- * Protects against brute-force attacks and API abuse
+ * Rate limiting middleware for authentication and public API surfaces.
  */
 
-import rateLimit from 'express-rate-limit';
+import type { Request } from "express";
+import rateLimit, { ipKeyGenerator } from "express-rate-limit";
 
-/**
- * Rate limiter for admin login (STRICT)
- * - 5 attempts max per 15 minutes
- * - Prevents brute-force password attacks
- */
+const authKey = (req: Request) => {
+  const email = typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
+  return `${ipKeyGenerator(req.ip || "unknown")}:${email}`;
+};
+
+const authBlockedResponse = {
+  error: "Trop de tentatives de connexion. Réessayez dans 15 minutes.",
+};
+
+/** Strict protection for Super Admin password login. */
 export const adminLoginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // 5 attempts max per window
-  message: {
-    error: 'Trop de tentatives de connexion. Réessayez dans 15 minutes.'
-  },
-  standardHeaders: true, // Return rate limit info in `RateLimit-*` headers
-  legacyHeaders: false, // Disable `X-RateLimit-*` headers
-  skipSuccessfulRequests: false, // Count successful requests
-  skipFailedRequests: false, // Count failed requests
-  handler: (req, res) => {
-    console.log(`[Rate Limit] Admin login blocked for IP: ${req.ip}`);
-    res.status(429).json({
-      error: 'Trop de tentatives de connexion. Réessayez dans 15 minutes.'
-    });
-  }
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skipSuccessfulRequests: true,
+  keyGenerator: authKey,
+  handler: (_req, res) => res.status(429).json(authBlockedResponse),
 });
 
-/**
- * Rate limiter for restaurant OAuth (LENIENT)
- * - 20 attempts max per 15 minutes
- * - More permissive for OAuth flows
- */
+/** Protection for owner OAuth redirects and callbacks. */
 export const oauthLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 20, // 20 attempts max per window
-  message: {
-    error: 'Trop de tentatives de connexion OAuth. Réessayez dans 15 minutes.'
-  },
+  windowMs: 15 * 60 * 1000,
+  max: 20,
   standardHeaders: true,
   legacyHeaders: false,
-  handler: (req, res) => {
-    console.log(`[Rate Limit] OAuth blocked for IP: ${req.ip}`);
+  handler: (_req, res) =>
     res.status(429).json({
-      error: 'Trop de tentatives de connexion OAuth. Réessayez dans 15 minutes.'
-    });
-  }
+      error: "Trop de tentatives de connexion OAuth. Réessayez dans 15 minutes.",
+    }),
 });
 
-/**
- * Rate limiter for tRPC endpoints (GENERAL)
- * - 100 requests max per minute
- * - Prevents API abuse
- */
-export const apiLimiter = rateLimit({
-  windowMs: 1 * 60 * 1000, // 1 minute
-  max: 100, // 100 requests max per minute
-  message: {
-    error: 'Trop de requêtes. Ralentissez.'
-  },
+/** Strict protection for business-owner email/password login. */
+export const ownerEmailLoginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
   standardHeaders: true,
   legacyHeaders: false,
-  handler: (req, res) => {
-    console.log(`[Rate Limit] API abuse detected for IP: ${req.ip}`);
-    res.status(429).json({
-      error: 'Trop de requêtes. Ralentissez.'
-    });
-  }
+  skipSuccessfulRequests: true,
+  keyGenerator: authKey,
+  handler: (_req, res) => res.status(429).json(authBlockedResponse),
+});
+
+/** General guardrail for the tRPC gateway. */
+export const apiLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (_req, res) =>
+    res.status(429).json({ error: "Trop de requêtes. Ralentissez." }),
 });

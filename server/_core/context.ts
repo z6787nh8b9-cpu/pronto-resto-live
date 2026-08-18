@@ -21,14 +21,12 @@ export async function createContext(
   if (opts.req.user) {
     // req.user is set by Passport.js after Google/Facebook OAuth
     restaurantOwner = opts.req.user as RestaurantOwner;
-    console.log('[Context] Restaurant owner detected:', restaurantOwner?.email);
   }
 
   // Check for Manus OAuth user (Super Admin) ONLY if no Passport user
   if (!restaurantOwner) {
     try {
       user = await sdk.authenticateRequest(opts.req);
-      console.log('[Context] Manus OAuth user detected:', user?.email);
     } catch (error) {
       // Authentication is optional for public procedures.
       user = null;

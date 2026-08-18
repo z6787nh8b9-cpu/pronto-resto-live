@@ -5,7 +5,7 @@
 
 import { Express, Request, Response } from "express";
 import passport from "passport";
-import { oauthLimiter } from "./rate-limiters";
+import { oauthLimiter, ownerEmailLoginLimiter } from "./rate-limiters";
 
 
 /**
@@ -18,6 +18,7 @@ export function registerRestaurantAuthRoutes(app: Express) {
   // Google OAuth Routes
   app.get(
     "/api/auth/google",
+    oauthLimiter,
     (req: Request, res: Response, next) => {
       // Store invitation token in session if provided
       const invitationToken = req.query.token as string;
@@ -35,13 +36,9 @@ export function registerRestaurantAuthRoutes(app: Express) {
     "/api/auth/google/callback",
     oauthLimiter, // SECURITY: Rate limiter (20 attempts max per 15 minutes)
     passport.authenticate("google", {
-      failureRedirect: "/login?error=google_auth_failed",
+      failureRedirect: "/login-restaurant?error=google_auth_failed",
     }),
     async (req: Request, res: Response) => {
-      console.log('[OAuth Callback] User authenticated:', req.user);
-      // Session ID log removed for security (avoid session hijacking)
-      console.log('[OAuth Callback] Session data:', req.session);
-      
       // Manually call req.login() to ensure session is created
       if (!req.user) {
         console.error('[OAuth Callback] No user found after authentication!');
@@ -54,18 +51,12 @@ export function registerRestaurantAuthRoutes(app: Express) {
           console.error('[OAuth Callback] req.login() failed:', err);
           return res.redirect('/login-restaurant?error=session_failed');
         }
-        console.log('[OAuth Callback] req.login() successful, session created');
-        
         // NOW check if user claimed a restaurant via invitation
         const claimedRestaurantId = req.session.claimedRestaurantId;
-        
-        console.log('[OAuth Callback] Claimed restaurant ID:', claimedRestaurantId);
         
         if (claimedRestaurantId) {
           // Clear the claimed restaurant ID from session
           delete req.session.claimedRestaurantId;
-          console.log('[OAuth Callback] Redirecting to restaurant dashboard...');
-          
           // Get restaurant slug from database
           try {
             const { getDb } = await import("./db");
@@ -101,6 +92,7 @@ export function registerRestaurantAuthRoutes(app: Express) {
   // Facebook OAuth Routes
   app.get(
     "/api/auth/facebook",
+    oauthLimiter,
     (req: Request, res: Response, next) => {
       // Store invitation token in session if provided
       const invitationToken = req.query.token as string;
@@ -118,19 +110,15 @@ export function registerRestaurantAuthRoutes(app: Express) {
     "/api/auth/facebook/callback",
     oauthLimiter, // SECURITY: Rate limiter (20 attempts max per 15 minutes)
     passport.authenticate("facebook", {
-      failureRedirect: "/login?error=facebook_auth_failed",
+      failureRedirect: "/login-restaurant?error=facebook_auth_failed",
     }),
     async (req: Request, res: Response) => {
       // Check if user claimed a restaurant via invitation
       const claimedRestaurantId = req.session.claimedRestaurantId;
       
-      console.log('[OAuth Callback] Claimed restaurant ID:', claimedRestaurantId);
-      
       if (claimedRestaurantId) {
         // Clear the claimed restaurant ID from session
         delete req.session.claimedRestaurantId;
-        console.log('[OAuth Callback] Redirecting to restaurant dashboard...');
-        
         // Get restaurant slug from database
         try {
           const { getDb } = await import("./db");
@@ -195,8 +183,8 @@ declare global {
       email: string;
       name: string;
       avatarUrl: string | null;
-      provider?: "google" | "facebook"; // Optional for admins
-      providerId?: string; // Optional for admins
+      provider?: "google" | "facebook" | "email"; // Optional for admins
+      providerId?: string | null; // Optional for admins
       googleId?: string; // For admins
       invitationId?: number; // For admins
       restaurantId?: number; // For restaurant owners
@@ -221,7 +209,7 @@ declare module "express-session" {
  * Validates credentials against restaurant_owners table (provider = 'email')
  */
 export function registerEmailLoginRoute(app: Express) {
-  app.post("/api/auth/email-login", async (req: Request, res: Response) => {
+  app.post("/api/auth/email-login", ownerEmailLoginLimiter, async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
