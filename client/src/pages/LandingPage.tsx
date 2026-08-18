@@ -66,9 +66,9 @@ export default function LandingPage() {
       <main className="pronto-page overflow-x-hidden">
         <header className="sticky top-0 z-40 px-3 pt-3 sm:px-6 sm:pt-5">
           <div className="container max-w-7xl">
-            <div className="flex h-14 items-center justify-between rounded-full border border-white/70 bg-background/80 px-3 shadow-[0_12px_38px_oklch(0.22_0.025_53_/_0.08)] backdrop-blur-xl sm:h-16 sm:px-5">
+            <div className="flex h-[4.5rem] items-center justify-between rounded-full border border-white/70 bg-background/80 px-3 shadow-[0_12px_38px_oklch(0.22_0.025_53_/_0.08)] backdrop-blur-xl sm:h-20 sm:px-5">
               <a href="/" className="flex items-center" aria-label="PRONTO, accueil">
-                <img src="/pronto-logo-horizontal.png" alt="PRONTO" className="h-9 w-auto sm:h-10" />
+                <img src="/pronto-logo-horizontal.png" alt="PRONTO" className="h-14 w-auto origin-left scale-[1.25] sm:h-16 sm:scale-[1.55]" />
               </a>
               <nav className="hidden items-center gap-1 lg:flex" aria-label="Navigation principale">
                 <a className="rounded-full px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground" href="#fonctionnalites">Fonctionnalités</a>

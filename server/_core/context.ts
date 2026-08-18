@@ -1,6 +1,7 @@
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
 import type { User, RestaurantOwner, AdminAccount } from "../../drizzle/schema";
 import { sdk } from "./sdk";
+import { resolvePrincipal, type AuthenticatedPrincipal } from "./principal";
 
 export type TrpcContext = {
   req: CreateExpressContextOptions["req"];
@@ -8,6 +9,7 @@ export type TrpcContext = {
   user: User | null; // Manus OAuth user (Super Admin)
   restaurantOwner: RestaurantOwner | null; // Google/Facebook OAuth user
   adminAccount: AdminAccount | null; // Google OAuth admin (invited)
+  principal: AuthenticatedPrincipal | null;
 };
 
 export async function createContext(
@@ -51,5 +53,6 @@ export async function createContext(
     user,
     restaurantOwner,
     adminAccount,
+    principal: resolvePrincipal({ adminAccount, restaurantOwner, user }),
   };
 }

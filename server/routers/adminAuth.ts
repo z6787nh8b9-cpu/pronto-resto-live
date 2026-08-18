@@ -6,10 +6,12 @@
 import { z } from "zod";
 import bcrypt from "bcrypt";
 import { TRPCError } from "@trpc/server";
-import { publicProcedure, router } from "../_core/trpc";
+import { adminProcedure, publicProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
 import { adminAccounts, adminInvitations } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
+import { passwordPolicyError } from "../password-policy";
+import { recordSecurityEvent } from "../security-events";
 
 const SALT_ROUNDS = 10;
 
@@ -59,6 +61,9 @@ export const adminAuthRouter = router({
       if (existingAdmin) {
         throw new TRPCError({ code: "CONFLICT", message: "An account with this email already exists" });
       }
+
+      const policyError = passwordPolicyError(input.password);
+      if (policyError) throw new TRPCError({ code: "BAD_REQUEST", message: policyError });
 
       // Hash password
       const passwordHash = await bcrypt.hash(input.password, SALT_ROUNDS);
@@ -152,4 +157,24 @@ export const adminAuthRouter = router({
       avatarUrl: admin.avatarUrl,
     };
   }),
+
+  changePassword: adminProcedure
+    .input(z.object({ currentPassword: z.string().min(1), newPassword: z.string().min(1) }))
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.adminAccount) throw new TRPCError({ code: "FORBIDDEN", message: "Ce compte n'utilise pas une connexion par mot de passe." });
+      const policyError = passwordPolicyError(input.newPassword);
+      if (policyError) throw new TRPCError({ code: "BAD_REQUEST", message: policyError });
+
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+      const [account] = await db.select().from(adminAccounts).where(eq(adminAccounts.id, ctx.adminAccount.id)).limit(1);
+      if (!account || !(await bcrypt.compare(input.currentPassword, account.passwordHash))) {
+        await recordSecurityEvent({ req: ctx.req, principalType: "admin", principalId: ctx.adminAccount.id, eventType: "admin.password_change", outcome: "failure" });
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "Mot de passe actuel incorrect" });
+      }
+
+      await db.update(adminAccounts).set({ passwordHash: await bcrypt.hash(input.newPassword, SALT_ROUNDS) }).where(eq(adminAccounts.id, account.id));
+      await recordSecurityEvent({ req: ctx.req, principalType: "admin", principalId: account.id, eventType: "admin.password_change", outcome: "success" });
+      return { success: true };
+    }),
 });

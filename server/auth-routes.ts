@@ -6,6 +6,9 @@
 import { Express, Request, Response } from "express";
 import passport from "passport";
 import { oauthLimiter, ownerEmailLoginLimiter } from "./rate-limiters";
+import { recordSecurityEvent } from "./security-events";
+import { passwordPolicyError } from "./password-policy";
+import { notifyOwner } from "./_core/notification";
 
 
 /**
@@ -213,6 +216,7 @@ export function registerEmailLoginRoute(app: Express) {
     const { email, password } = req.body;
 
     if (!email || !password) {
+      await recordSecurityEvent({ req, principalType: "owner", eventType: "owner.email_login", outcome: "failure" });
       return res.status(400).json({ error: "Email et mot de passe requis" });
     }
 
@@ -232,12 +236,14 @@ export function registerEmailLoginRoute(app: Express) {
         .limit(1);
 
       if (!owner || !owner.passwordHash) {
+        await recordSecurityEvent({ req, principalType: "owner", eventType: "owner.email_login", outcome: "failure" });
         return res.status(401).json({ error: "Identifiants invalides" });
       }
 
       // Verify password
       const valid = await bcrypt.compare(password, owner.passwordHash);
       if (!valid) {
+        await recordSecurityEvent({ req, principalType: "owner", principalId: owner.id, eventType: "owner.email_login", outcome: "failure" });
         return res.status(401).json({ error: "Identifiants invalides" });
       }
 
@@ -249,9 +255,12 @@ export function registerEmailLoginRoute(app: Express) {
       // Create Passport session
       req.login(owner, async (err) => {
         if (err) {
-          console.error('[EmailLogin] req.login() failed:', err);
+          console.error("[EmailLogin] Unable to create owner session");
+          await recordSecurityEvent({ req, principalType: "owner", principalId: owner.id, eventType: "owner.email_login", outcome: "failure" });
           return res.status(500).json({ error: "Erreur de session" });
         }
+
+        await recordSecurityEvent({ req, principalType: "owner", principalId: owner.id, eventType: "owner.email_login", outcome: "success" });
 
         // Find the restaurant linked to this owner
         const [restaurant] = await db.select({ slug: restaurants.slug })
@@ -266,9 +275,65 @@ export function registerEmailLoginRoute(app: Express) {
         }
       });
 
-    } catch (err: any) {
-      console.error('[EmailLogin] Error:', err.message);
+    } catch {
+      console.error("[EmailLogin] Unexpected authentication failure");
+      await recordSecurityEvent({ req, principalType: "system", eventType: "owner.email_login", outcome: "failure" });
       return res.status(500).json({ error: "Erreur serveur" });
     }
+  });
+
+  app.post("/api/auth/change-password", ownerEmailLoginLimiter, async (req: Request, res: Response) => {
+    const ownerId = req.user?.id;
+    const { currentPassword, newPassword } = req.body;
+    if (!ownerId) return res.status(401).json({ error: "Connexion requise" });
+    if (!currentPassword || !newPassword) return res.status(400).json({ error: "Les deux mots de passe sont requis" });
+
+    const policyError = passwordPolicyError(newPassword);
+    if (policyError) return res.status(400).json({ error: policyError });
+
+    try {
+      const { getDb } = await import("./db");
+      const { restaurantOwners } = await import("../drizzle/schema");
+      const { eq } = await import("drizzle-orm");
+      const bcrypt = await import("bcrypt");
+      const db = await getDb();
+      if (!db) return res.status(500).json({ error: "Erreur base de données" });
+
+      const [owner] = await db.select().from(restaurantOwners).where(eq(restaurantOwners.id, ownerId)).limit(1);
+      if (!owner || owner.provider !== "email" || !owner.passwordHash) {
+        return res.status(409).json({ error: "Ce compte utilise un fournisseur de connexion externe." });
+      }
+      if (!(await bcrypt.compare(currentPassword, owner.passwordHash))) {
+        await recordSecurityEvent({ req, principalType: "owner", principalId: owner.id, eventType: "owner.password_change", outcome: "failure" });
+        return res.status(401).json({ error: "Mot de passe actuel incorrect" });
+      }
+
+      await db.update(restaurantOwners).set({ passwordHash: await bcrypt.hash(newPassword, 10) }).where(eq(restaurantOwners.id, owner.id));
+      await recordSecurityEvent({ req, principalType: "owner", principalId: owner.id, eventType: "owner.password_change", outcome: "success" });
+      return res.json({ success: true });
+    } catch {
+      await recordSecurityEvent({ req, principalType: "system", eventType: "owner.password_change", outcome: "failure" });
+      return res.status(500).json({ error: "Erreur serveur" });
+    }
+  });
+
+  app.post("/api/auth/password-help", ownerEmailLoginLimiter, async (req: Request, res: Response) => {
+    const email = typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
+    const genericResponse = { success: true, message: "Si un compte peut être associé à cette adresse, notre équipe vous contactera prochainement." };
+
+    if (!/^\S+@\S+\.\S+$/.test(email)) return res.status(200).json(genericResponse);
+
+    try {
+      await notifyOwner({
+        title: "PRONTO — demande de récupération d'accès",
+        content: `Une demande de récupération a été soumise pour l'adresse ${email}. Vérifiez l'identité du demandeur avant toute réinitialisation manuelle.`,
+      });
+      await recordSecurityEvent({ req, principalType: "system", eventType: "owner.password_help_request", outcome: "info" });
+    } catch {
+      // The public response remains neutral even when the notification service is temporarily unavailable.
+      await recordSecurityEvent({ req, principalType: "system", eventType: "owner.password_help_request", outcome: "failure" });
+    }
+
+    return res.status(200).json(genericResponse);
   });
 }

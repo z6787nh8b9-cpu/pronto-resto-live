@@ -1051,6 +1051,7 @@
 - [ ] Tester la connexion email/MDP sur /la-voile-rouge/dashboard
 
 ## REHAUSSEMENT DESIGN PRONTO (18 juin 2026)
+- [x] Agrandi le logo de navigation de la landing et ajusté son conteneur pour améliorer sa lisibilité
 - [ ] Auditer la landing page, les dashboards et les pages de menu afin d'identifier les améliorations visuelles prioritaires
 - [x] Défini et intégré des fondations premium partagées : typographie, couleurs, matériaux, transitions, focus et préférence de mouvement réduite
 - [x] Créé un indicateur de chargement local, accessible et respectueux de la préférence de mouvement réduite
@@ -1086,6 +1087,13 @@
 - [x] Ajouté les tests de permissions du noyau entreprise (4 tests passants)
 - [x] Corrigé le helper IA serveur pour utiliser un modèle réellement disponible et accepter une sélection de modèle explicite
 - [ ] Unifier les rôles, sessions, autorisations, invitations, récupération de compte et journalisation de sécurité
+- [x] Cartographié les comptes administrateur et propriétaire, leurs sessions et les routes qui les consomment
+- [x] Ajouté un journal minimal d'événements de sécurité sans stocker de mot de passe, session ou jeton brut
+- [ ] Ajouter un flux de demande et de confirmation de réinitialisation de mot de passe à usage unique et expirant
+- [x] Mis en place une demande de récupération neutre, limitée et notifiée à l'équipe, sans révéler l'existence d'un compte
+- [ ] Centraliser les opérations de connexion, déconnexion et récupération sans casser Google/Facebook ni le compte email de La Voile Rouge
+- [x] Ajouté un changement de mot de passe authentifié pour les comptes administrateur et propriétaire email, avec politique de mot de passe renforcée
+- [ ] Ajouter des tests de token expiré, token utilisé, rejet d'accès et journalisation sans données sensibles
 - [ ] Créer un parcours d'inscription et d'onboarding guidé par type d'entreprise et objectif de publication
 - [ ] Créer des imports robustes depuis CSV, photo et PDF avec aperçu, validation, correction et publication explicite
 - [x] Ajouté les tables import_jobs et import_job_rows avec statut, fichier source, brouillon normalisé et erreurs de validation
