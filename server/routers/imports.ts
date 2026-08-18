@@ -213,7 +213,7 @@ export const importsRouter = router({
       sourceType,
       fileName: z.string().trim().min(1).max(255),
       mimeType: z.string().trim().toLowerCase().max(120),
-      base64Data: z.string().min(32),
+      base64Data: z.string().min(32).max(14 * 1024 * 1024),
     }))
     .mutation(async ({ ctx, input }) => {
       await requireBusinessAccess(ctx, input.businessId);

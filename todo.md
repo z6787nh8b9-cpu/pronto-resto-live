@@ -1104,6 +1104,7 @@
 - [x] Créé des imports CSV, photo et PDF avec aperçu, validation, revue et publication explicitement contrôlée
 - [x] Ajouté les tables import_jobs et import_job_rows avec statut, fichier source, brouillon normalisé et erreurs de validation
 - [x] Créé un endpoint sécurisé d'analyse d'import qui valide fichier, type MIME, taille et accès à l'entreprise avant extraction
+- [x] Limité la taille de la chaîne base64 avant décodage afin d'éviter une surcharge mémoire lors d'un import
 - [x] Ajouté l'extraction CSV locale et l'extraction structurée IA pour image ou PDF, avec confiance par élément
 - [x] Créé une mutation d'application explicite du brouillon importé dans un catalogue, sans publication automatique
 - [x] Ajouté les tests de parsing, d'autorisation et de validation de fichier du flux d'import
