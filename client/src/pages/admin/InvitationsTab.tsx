@@ -72,7 +72,7 @@ export default function InvitationsTab() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Restaurant</TableHead>
+                  <TableHead>Entreprise</TableHead>
                   <TableHead>Statut</TableHead>
                   <TableHead>Créée le</TableHead>
                   <TableHead>Expire le</TableHead>

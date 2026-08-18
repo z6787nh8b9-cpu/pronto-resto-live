@@ -5,14 +5,14 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 interface LockedFeatureOverlayProps {
   featureName: string;
   tier: "pro" | "premium";
-  restaurantName: string;
+  businessName: string;
   children: React.ReactNode;
 }
 
-export function LockedFeatureOverlay({ featureName, tier, restaurantName, children }: LockedFeatureOverlayProps) {
+export function LockedFeatureOverlay({ featureName, tier, businessName, children }: LockedFeatureOverlayProps) {
   const tierLabel = tier === "pro" ? "PRO" : "PREMIUM";
   const whatsappNumber = "0749710723";
-  const whatsappMessage = `PRONTO ${restaurantName}, passage au forfait ${tierLabel}`;
+  const whatsappMessage = `PRONTO ${businessName}, passage au forfait ${tierLabel}`;
   const whatsappUrl = `https://wa.me/33${whatsappNumber.slice(1)}?text=${encodeURIComponent(whatsappMessage)}`;
 
   return (

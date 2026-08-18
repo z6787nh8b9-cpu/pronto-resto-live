@@ -1127,6 +1127,8 @@
 - [x] Ajouté un test d’intégration CSV validant l’application explicite en brouillon, sans publication automatique
 - [x] Vérifié par test que l’application d’import refuse tout brouillon non revu
 - [x] Vérifié par test que l’analyse rejette un fichier dont le MIME déclaré ne correspond pas au contenu binaire
+- [x] Renommé les propriétés d’interface restaurantName en businessName sans modifier les identifiants API legacy
+- [x] Généralisé l’intitulé de destination dans la liste d’invitations Super Admin
 - [x] Supprimé l'identifiant propriétaire codé en dur lors de la création d'une entreprise par le Super Admin
 - [x] Remplacé les procédures publiques de gestion des réservations par des contrôles propriétaire ou Super Admin et vérifié l'accès au restaurant ciblé
 - [x] Ajouté un test garantissant qu'un visiteur anonyme ne peut plus gérer paramètres, zones ni réservations

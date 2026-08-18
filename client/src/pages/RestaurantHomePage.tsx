@@ -601,7 +601,7 @@ export default function RestaurantHomePage() {
             <DialogHeader>
               <DialogTitle className="text-2xl font-serif">Réserver une table</DialogTitle>
             </DialogHeader>
-            <ReservationFlow restaurantId={restaurant.id} restaurantName={restaurant.name} />
+            <ReservationFlow restaurantId={restaurant.id} businessName={restaurant.name} />
           </DialogContent>
         </Dialog>
       )}
@@ -618,7 +618,7 @@ export default function RestaurantHomePage() {
             <EventRegistrationFlow
               event={selectedEvent}
               restaurantId={restaurant.id}
-              restaurantName={restaurant.name}
+              businessName={restaurant.name}
             />
           </DialogContent>
         </Dialog>
