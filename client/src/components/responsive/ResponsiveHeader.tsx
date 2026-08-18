@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
+import { ChevronRight, Menu } from "lucide-react";
 import {
   Sheet,
   SheetContent,
@@ -24,6 +24,7 @@ interface ResponsiveHeaderProps {
     label: string;
     onClick: () => void;
   };
+  breadcrumbs?: string[];
 }
 
 /**
@@ -48,6 +49,7 @@ export function ResponsiveHeader({
   primaryAction,
   secondaryActions,
   backButton,
+  breadcrumbs,
 }: ResponsiveHeaderProps) {
   return (
     <header className="sticky top-0 z-10 border-b bg-card/95 backdrop-blur supports-[backdrop-filter]:bg-card/80">
@@ -67,6 +69,11 @@ export function ResponsiveHeader({
             )}
             
             <div className="min-w-0 flex-1">
+              {breadcrumbs && breadcrumbs.length > 0 && (
+                <nav aria-label="Fil d’Ariane" className="mb-0.5 flex items-center gap-1 overflow-hidden text-[11px] text-muted-foreground">
+                  {breadcrumbs.map((crumb, index) => <div key={`${crumb}-${index}`} className="flex min-w-0 items-center gap-1">{index > 0 && <ChevronRight className="h-3 w-3 shrink-0" aria-hidden="true" />}<span className="truncate">{crumb}</span></div>)}
+                </nav>
+              )}
               <div className="flex items-center gap-2 flex-wrap">
                 {title === "PRONTO" ? (
                   <img src="/pronto-logo-horizontal.png" alt="PRONTO - Fini les 5 outils. Un seul suffit." className="h-24 sm:h-32" />
