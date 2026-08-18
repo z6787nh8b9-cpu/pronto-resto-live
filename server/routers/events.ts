@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { randomBytes } from "crypto";
 import { publicProcedure, protectedProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
 import { events, eventRegistrations } from "../../drizzle/schema";
@@ -86,7 +87,7 @@ export const eventsRouter = router({
         status: event.requiresApproval ? "pending" : "confirmed",
         paymentStatus: parseFloat(event.price) > 0 ? "pending" : "paid",
         paymentAmount: event.price,
-        confirmationToken: Math.random().toString(36).substring(2, 15),
+        confirmationToken: randomBytes(32).toString("base64url"),
         confirmedAt: event.requiresApproval ? null : new Date(),
       });
 
