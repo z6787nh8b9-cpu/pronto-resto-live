@@ -150,7 +150,7 @@ export default function InviteAccept() {
             <div className="text-center space-y-2">
               <h3 className="text-2xl font-semibold">Invitation valide !</h3>
               <p className="text-muted-foreground">
-                Vous avez été invité à gérer le restaurant :
+                Vous avez été invité à gérer l’entreprise :
               </p>
               <p className="text-xl font-bold text-amber-600">
                 {data.restaurant?.name}

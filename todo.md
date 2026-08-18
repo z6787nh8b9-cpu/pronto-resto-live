@@ -1122,6 +1122,9 @@
 - [x] Aligné l'accroche du formulaire de contact avec le positionnement multi-secteurs de PRONTO
 - [x] Généralisé l'aide de configuration chatbot du dashboard pour toutes les activités
 - [x] Généralisé les libellés de connexion pour accueillir toute entreprise tout en gardant les routes existantes
+- [x] Généralisé les derniers libellés visibles « restaurant » dans les invitations, réservations, événements, dashboard et supervision
+- [x] Aligné l’interface d’import sur le cycle réel d’analyse, revue, création de brouillon et publication séparée
+- [x] Ajouté un test d’intégration CSV validant l’application explicite en brouillon, sans publication automatique
 - [x] Supprimé l'identifiant propriétaire codé en dur lors de la création d'une entreprise par le Super Admin
 - [x] Remplacé les procédures publiques de gestion des réservations par des contrôles propriétaire ou Super Admin et vérifié l'accès au restaurant ciblé
 - [x] Ajouté un test garantissant qu'un visiteur anonyme ne peut plus gérer paramètres, zones ni réservations

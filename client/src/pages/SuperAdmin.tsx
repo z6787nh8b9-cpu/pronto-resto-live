@@ -229,7 +229,7 @@ export default function SuperAdmin() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Restaurants Actifs</CardTitle>
+              <CardTitle className="text-sm font-medium">Entreprises actives</CardTitle>
               <Store className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
@@ -261,18 +261,18 @@ export default function SuperAdmin() {
           </Card>
         </div>
 
-        {/* Restaurants Table avec ResponsiveTable */}
+        {/* Liste d'entreprises avec ResponsiveTable */}
         <Card>
           <CardHeader className="p-4 sm:p-6">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div>
-                <CardTitle className="text-lg sm:text-xl">Liste des Restaurants</CardTitle>
-                <CardDescription className="text-xs sm:text-sm">Gérez tous les restaurants de la plateforme</CardDescription>
+                <CardTitle className="text-lg sm:text-xl">Liste des entreprises</CardTitle>
+                <CardDescription className="text-xs sm:text-sm">Gérez toutes les entreprises de la plateforme</CardDescription>
               </div>
               <div className="relative w-full sm:w-64">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
-                  placeholder="Rechercher un restaurant..."
+                  placeholder="Rechercher une entreprise..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10 text-sm"
@@ -307,7 +307,7 @@ export default function SuperAdmin() {
                       onClick={() => window.open(`/${row.slug}`, '_blank')}
                       className="text-xs"
                     >
-                      🍽️ Public
+                      Voir la vitrine
                     </Button>
                     <Button
                       variant="outline"
@@ -315,7 +315,7 @@ export default function SuperAdmin() {
                       onClick={() => setLocation(`/${row.slug}/dashboard`)}
                       className="text-xs"
                     >
-                      📊 Dashboard
+                      Gérer l’espace
                     </Button>
                     <Button
                       variant="outline"
@@ -339,7 +339,7 @@ export default function SuperAdmin() {
                       variant="outline"
                       size="sm"
                       onClick={() => {
-                        if (confirm("Êtes-vous sûr de vouloir supprimer ce restaurant ?")) {
+                        if (confirm("Êtes-vous sûr de vouloir supprimer cette entreprise ?")) {
                           deleteMutation.mutate({ id: row.id });
                         }
                       }}
@@ -391,7 +391,7 @@ export default function SuperAdmin() {
                       onClick={() => window.open(`/${row.slug}`, '_blank')}
                       className="w-full sm:flex-1 text-xs"
                     >
-                      🍽️ Public
+                      Voir la vitrine
                     </Button>
                     <Button
                       variant="outline"
@@ -423,7 +423,7 @@ export default function SuperAdmin() {
                       variant="outline"
                       size="sm"
                       onClick={() => {
-                        if (confirm("Êtes-vous sûr de vouloir supprimer ce restaurant ?")) {
+                        if (confirm("Êtes-vous sûr de vouloir supprimer cette entreprise ?")) {
                           deleteMutation.mutate({ id: row.id });
                         }
                       }}
@@ -500,19 +500,19 @@ export default function SuperAdmin() {
       <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Créer un Nouveau Restaurant</DialogTitle>
-            <DialogDescription>Ajoutez un nouveau restaurant à la plateforme</DialogDescription>
+            <DialogTitle>Créer une nouvelle entreprise</DialogTitle>
+            <DialogDescription>Ajoutez une nouvelle entreprise à la plateforme</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleCreateSubmit}>
             <div className="grid gap-4 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Nom du Restaurant *</Label>
+                  <Label htmlFor="name">Nom de l’entreprise *</Label>
                   <Input id="name" name="name" required />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="slug">Slug (sous-domaine) *</Label>
-                  <Input id="slug" name="slug" placeholder="mon-restaurant" required />
+                  <Input id="slug" name="slug" placeholder="mon-entreprise" required />
                 </div>
               </div>
 
@@ -573,14 +573,14 @@ export default function SuperAdmin() {
       <Dialog open={!!editingRestaurant} onOpenChange={() => setEditingRestaurant(null)}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Modifier le Restaurant</DialogTitle>
-            <DialogDescription>Mettez à jour les informations du restaurant</DialogDescription>
+            <DialogTitle>Modifier l’entreprise</DialogTitle>
+            <DialogDescription>Mettez à jour les informations de l’entreprise</DialogDescription>
           </DialogHeader>
           {editingRestaurant && (
             <form onSubmit={handleUpdateSubmit}>
               <div className="grid gap-4 py-4">
                 <div className="space-y-2">
-                  <Label htmlFor="edit-name">Nom du Restaurant</Label>
+                  <Label htmlFor="edit-name">Nom de l’entreprise</Label>
                   <Input id="edit-name" name="name" defaultValue={editingRestaurant.name} />
                 </div>
 
@@ -680,7 +680,7 @@ export default function SuperAdmin() {
           <DialogHeader>
             <DialogTitle>Lien d'invitation généré</DialogTitle>
             <DialogDescription>
-              Envoyez ce lien au propriétaire du restaurant. Il expirera dans 24 heures.
+              Envoyez ce lien au propriétaire de l’entreprise. Il expirera dans 24 heures.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">

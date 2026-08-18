@@ -333,7 +333,7 @@ export function ReservationFlow({ restaurantId, restaurantName, onClose }: Reser
             <div className="space-y-4">
               <div className="p-4 bg-muted rounded-lg space-y-3">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Restaurant</span>
+                  <span className="text-muted-foreground">Établissement</span>
                   <span className="font-semibold">{restaurantName}</span>
                 </div>
                 <div className="flex justify-between">
@@ -404,7 +404,7 @@ export function ReservationFlow({ restaurantId, restaurantName, onClose }: Reser
                 </p>
               ) : (
                 <p className="text-orange-600">
-                  Votre réservation est en attente de confirmation par le restaurant.
+                  Votre réservation est en attente de confirmation par l’établissement.
                 </p>
               )}
             </div>

@@ -230,7 +230,7 @@ export default function AdminManageRestaurant() {
               </Button>
               <div>
                 <h1 className="text-2xl font-display font-bold text-pronto-primary">{restaurant.name}</h1>
-                <p className="text-sm text-muted-foreground">Gestion du Restaurant (Super Admin)</p>
+                <p className="text-sm text-muted-foreground">Gestion de l’entreprise (Super Admin)</p>
               </div>
             </div>
             <div className="flex gap-2">
@@ -437,14 +437,14 @@ export default function AdminManageRestaurant() {
           <TabsContent value="settings" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Informations du Restaurant</CardTitle>
+                <CardTitle>Informations de l’entreprise</CardTitle>
                 <CardDescription>Modifiez les informations de l'établissement</CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleRestaurantUpdate} className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label>Nom du Restaurant</Label>
+                      <Label>Nom de l’entreprise</Label>
                       <Input name="name" defaultValue={restaurant.name} />
                     </div>
                     <div className="space-y-2">
@@ -550,7 +550,7 @@ export default function AdminManageRestaurant() {
                     <Textarea
                       name="customInfo"
                       rows={4}
-                      placeholder="Ajoutez des informations spécifiques sur le restaurant..."
+                      placeholder="Ajoutez des informations spécifiques sur l’activité, les services ou les horaires..."
                       defaultValue={chatbotConfig?.customInfo || ""}
                     />
                   </div>

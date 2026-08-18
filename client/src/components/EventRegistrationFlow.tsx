@@ -68,7 +68,7 @@ export function EventRegistrationFlow({ event, restaurantId, restaurantName, onC
         </p>
         {event.requiresApproval ? (
           <p className="text-orange-600">
-            Votre inscription est en attente de validation par le restaurant.
+            Votre inscription est en attente de validation par l’entreprise.
           </p>
         ) : (
           <p className="text-green-600 font-semibold">Votre inscription est confirmée automatiquement.</p>

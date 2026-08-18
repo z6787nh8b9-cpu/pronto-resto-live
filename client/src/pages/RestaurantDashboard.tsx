@@ -836,10 +836,10 @@ export default function RestaurantDashboard() {
 
 	          <TabsContent value="import" className="space-y-6">
 	            <div>
-	              <h2 className="text-lg sm:text-xl md:text-2xl font-bold">Importez votre carte</h2>
-	              <p className="text-xs sm:text-sm text-muted-foreground">Créez un brouillon depuis un fichier, relisez-le, puis publiez uniquement lorsque tout est prêt.</p>
+		              <h2 className="text-lg sm:text-xl md:text-2xl font-bold">Importez votre catalogue</h2>
+		              <p className="text-xs sm:text-sm text-muted-foreground">Analysez un fichier, relisez le résultat, puis créez un brouillon. Sa publication reste une étape distincte et explicite.</p>
 	            </div>
-	            <CatalogImportCard restaurantId={restaurant.id} defaultCatalogName={`Carte — ${restaurant.name}`} />
+		            <CatalogImportCard restaurantId={restaurant.id} defaultCatalogName={`Catalogue — ${restaurant.name}`} />
 	          </TabsContent>
 
               <TabsContent value="media" className="space-y-6">
@@ -850,14 +850,14 @@ export default function RestaurantDashboard() {
           <TabsContent value="settings" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Informations du Restaurant</CardTitle>
+                <CardTitle>Informations de l’entreprise</CardTitle>
                 <CardDescription>Modifiez les informations de votre établissement</CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleUpdateRestaurantInfo} className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="rest-name">Nom du Restaurant</Label>
+                      <Label htmlFor="rest-name">Nom de l’entreprise</Label>
                       <Input id="rest-name" name="name" defaultValue={restaurant.name} required />
                     </div>
                     <div className="space-y-2">
@@ -886,7 +886,7 @@ export default function RestaurantDashboard() {
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <ImageUploader
-                      label="Logo du restaurant"
+                      label="Logo de l’entreprise"
                       currentImageUrl={logoUrl ?? restaurant.logoUrl ?? undefined}
                       onUploadComplete={setLogoUrl}
                       recommendedWidth={200}
