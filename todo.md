@@ -1071,7 +1071,7 @@
 - [x] Supprimé la connexion Super Admin par simple email et empêché toute ouverture de session sans preuve de contrôle du compte
 - [x] Appliqué une limite de débit dédiée à la connexion email/mot de passe des propriétaires d'entreprise
 - [x] Appliqué la limite générale de débit au gateway tRPC, sans gêner les parcours légitimes
-- [ ] Réduire les journaux d'authentification pour ne plus exposer email, session ni identifiants internes
+- [x] Réduit les journaux d'authentification et de proxy pour ne plus exposer email, session, identifiants ou réponses internes
 - [x] Réduit les limites globales de corps HTTP et préparé une stratégie d'upload dédiée
 - [x] Corrigé l'incompatibilité de types entre le pool mysql2 et express-mysql-session afin de rétablir la vérification TypeScript
 - [x] Mis à jour les tests d'invitation avec un contexte administrateur explicite, des données isolées et une vérification du refus anonyme
@@ -1098,7 +1098,9 @@
 - [x] Régénéré l'identifiant de session lors des connexions par mot de passe et détruit entièrement la session lors de la déconnexion
 - [x] Ajouté un changement de mot de passe authentifié pour les comptes administrateur et propriétaire email, avec politique de mot de passe renforcée
 - [x] Ajouté des tests de jeton expiré, jeton utilisé, rejet d'accès et journalisation sans données sensibles
-- [ ] Créer un parcours d'inscription et d'onboarding guidé par type d'entreprise et objectif de publication
+- [x] Créé un parcours d'onboarding guidé par type d'entreprise et objectif de publication
+- [x] Créé une table de progression d'onboarding par entreprise, avec type d'activité, objectif et étapes complétées
+- [x] Ajouté une première expérience guidée dans le dashboard pour choisir l'activité, préparer le catalogue puis publier
 - [ ] Créer des imports robustes depuis CSV, photo et PDF avec aperçu, validation, correction et publication explicite
 - [x] Ajouté les tables import_jobs et import_job_rows avec statut, fichier source, brouillon normalisé et erreurs de validation
 - [x] Créé un endpoint sécurisé d'analyse d'import qui valide fichier, type MIME, taille et accès à l'entreprise avant extraction
@@ -1107,6 +1109,11 @@
 - [x] Ajouté les tests de parsing, d'autorisation et de validation de fichier du flux d'import
 - [ ] Tester manuellement un import authentifié CSV, image et PDF avant mise en production du parcours d'import
 - [ ] Mettre en place une médiathèque et des traitements de fichiers sûrs, avec contrôle de type, taille et propriété
+- [x] Créé une table media_assets et un routeur d'upload rattaché à une entreprise avec validation de MIME, taille et propriété
+- [x] Ajouté une bibliothèque de médias dans le dashboard, avec aperçu, copie d'URL et archivage confirmé (la suppression physique du stockage sera ajoutée avec l'API de suppression)
+- [x] Ajouté des tests de validation de signature et de taille des médias avant l'écriture dans le stockage
+- [x] Ajouté des tests d'accès, de persistance et d'isolation pour l'onboarding et la médiathèque d'entreprise
+- [x] Ajouté un test d'archivage de média qui vérifie son retrait de la bibliothèque sans suppression physique
 - [ ] Refondre la navigation, les fils d'Ariane, les états vides, erreurs, chargements et confirmations d'action
 - [x] Repenser le dashboard entreprise autour de la publication, du catalogue, des contacts, des rendez-vous et des performances
 - [x] Ajouté une vue d'ensemble orientée actions et statuts, sans supprimer les onglets métier existants

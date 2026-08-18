@@ -21,8 +21,7 @@ export function registerStorageProxy(app: Express) {
         headers: { Authorization: `Bearer ${ENV.forgeApiKey}` },
       });
       if (!forgeResp.ok) {
-        const body = await forgeResp.text().catch(() => "");
-        console.error(`[StorageProxy] forge error: ${forgeResp.status} ${body}`);
+        console.error(`[StorageProxy] forge error: ${forgeResp.status}`);
         res.status(502).send("Storage backend error");
         return;
       }
@@ -33,8 +32,8 @@ export function registerStorageProxy(app: Express) {
       }
       res.set("Cache-Control", "no-store");
       res.redirect(307, url);
-    } catch (err) {
-      console.error("[StorageProxy] failed:", err);
+    } catch {
+      console.error("[StorageProxy] failed");
       res.status(502).send("Storage proxy error");
     }
   });

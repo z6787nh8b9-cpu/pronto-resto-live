@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { appRouter } from "./routers";
 import { getDb } from "./db";
-import { businesses, businessProfiles } from "../drizzle/schema";
+import { businessOnboarding, businesses, businessProfiles, mediaAssets } from "../drizzle/schema";
 
 const runId = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 const testSlug = `business-test-${runId}`;
@@ -37,6 +37,8 @@ afterAll(async () => {
   if (!db) return;
   const [business] = await db.select().from(businesses).where(eq(businesses.slug, testSlug)).limit(1);
   if (!business) return;
+  await db.delete(mediaAssets).where(eq(mediaAssets.businessId, business.id));
+  await db.delete(businessOnboarding).where(eq(businessOnboarding.businessId, business.id));
   await db.delete(businessProfiles).where(eq(businessProfiles.businessId, business.id));
   await db.delete(businesses).where(eq(businesses.id, business.id));
 });
@@ -78,6 +80,52 @@ describe("Generic business core", () => {
       .limit(1);
 
     await expect(unrelatedOwnerCaller.businesses.getWorkspace({ businessId: business.id })).rejects.toBeInstanceOf(TRPCError);
+  });
+
+  it("persists onboarding only for an authorized enterprise workspace", async () => {
+    const [business] = await (await getDb())!
+      .select()
+      .from(businesses)
+      .where(eq(businesses.slug, testSlug))
+      .limit(1);
+
+    const onboarding = await adminCaller.businesses.updateOnboarding({
+      businessId: business.id,
+      industry: "beauty",
+      primaryGoal: "Présenter des soins",
+      completedSteps: ["business_type", "catalog"],
+      status: "in_progress",
+    });
+    expect(onboarding).toMatchObject({ businessId: business.id, industry: "beauty", completedSteps: ["business_type", "catalog"] });
+    await expect(unrelatedOwnerCaller.businesses.getOnboarding({ businessId: business.id })).rejects.toBeInstanceOf(TRPCError);
+    await expect(unrelatedOwnerCaller.businesses.listMedia({ businessId: business.id })).rejects.toBeInstanceOf(TRPCError);
+  });
+
+  it("archives a media record without exposing it in the active library", async () => {
+    const db = await getDb();
+    const [business] = await db!
+      .select()
+      .from(businesses)
+      .where(eq(businesses.slug, testSlug))
+      .limit(1);
+    const created = await db!.insert(mediaAssets).values({
+      businessId: business.id,
+      uploadedByType: "admin",
+      uploadedById: 1,
+      originalName: "test.png",
+      mimeType: "image/png",
+      sizeBytes: 8,
+      storageKey: `tests/${runId}/test.png`,
+      url: "https://example.test/test.png",
+    });
+    const assetId = Number(created[0].insertId);
+
+    await adminCaller.businesses.archiveMedia({ businessId: business.id, assetId });
+    const activeAssets = await adminCaller.businesses.listMedia({ businessId: business.id });
+    expect(activeAssets.find((asset) => asset.id === assetId)).toBeUndefined();
+
+    const [archived] = await db!.select().from(mediaAssets).where(eq(mediaAssets.id, assetId)).limit(1);
+    expect(archived.archivedAt).toBeInstanceOf(Date);
   });
 
   it("exposes only published business identity to public visitors", async () => {
