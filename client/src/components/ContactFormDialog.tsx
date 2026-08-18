@@ -71,11 +71,11 @@ export function ContactFormDialog({ isOpen, onClose, source }: ContactFormDialog
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Nom du restaurant *</Label>
+            <Label htmlFor="name">Nom de l'entreprise *</Label>
             <Input
               id="name"
               name="name"
-              placeholder="Le Bistrot Parisien"
+              placeholder="Atelier Horizon"
               required
             />
           </div>
@@ -85,7 +85,7 @@ export function ContactFormDialog({ isOpen, onClose, source }: ContactFormDialog
               id="email"
               name="email"
               type="email"
-              placeholder="contact@restaurant.fr"
+              placeholder="contact@entreprise.fr"
               required
             />
           </div>
@@ -104,7 +104,7 @@ export function ContactFormDialog({ isOpen, onClose, source }: ContactFormDialog
             <Textarea
               id="message"
               name="message"
-              placeholder="Parlez-nous de votre restaurant..."
+              placeholder="Parlez-nous de votre activité et de vos besoins..."
               rows={3}
             />
           </div>
