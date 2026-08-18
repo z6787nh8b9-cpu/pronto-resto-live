@@ -1131,6 +1131,7 @@
 - [x] Migré l'upload historique vers les rôles propriétaire et Super Admin avec chemin de stockage rattaché à l'identité active
 - [x] Migré les traductions de gestion et de génération IA vers les rôles propriétaire et Super Admin avec vérification du restaurant ciblé
 - [x] Éliminé les anciens middlewares Manus des routeurs métier au profit des rôles propriétaire et Super Admin
+- [x] Ajouté des bornes de saisie strictes au chatbot public afin de contenir les coûts IA et les abus ; le garde-fou tRPC global reste appliqué
 - [x] Migré les procédures de galerie vers les rôles propriétaire et Super Admin avec vérification du restaurant ciblé
 - [x] Ajouté un fil d'Ariane lisible à l'espace entreprise et remplacé le retour ambigu vers Super Admin par un retour Accueil
 - [x] Remplacé la confirmation navigateur de retrait de média par une confirmation accessible cohérente avec l'interface
