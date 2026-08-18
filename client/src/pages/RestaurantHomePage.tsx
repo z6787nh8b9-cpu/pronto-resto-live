@@ -618,7 +618,6 @@ export default function RestaurantHomePage() {
             <EventRegistrationFlow
               event={selectedEvent}
               restaurantId={restaurant.id}
-              businessName={restaurant.name}
             />
           </DialogContent>
         </Dialog>
