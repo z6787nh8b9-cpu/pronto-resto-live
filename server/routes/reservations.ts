@@ -176,8 +176,10 @@ export const reservationsRouter = router({
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
       
-      // Convert date string to timestamp
       const reservationDate = new Date(input.reservationDate);
+      if (Number.isNaN(reservationDate.getTime())) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Date de réservation invalide." });
+      }
       
       // Generate confirmation token
       const confirmationToken = randomBytes(32).toString("base64url");
@@ -189,7 +191,32 @@ export const reservationsRouter = router({
         .where(eq(reservationSettings.restaurantId, input.restaurantId))
         .limit(1);
       
-      const autoConfirm = settings[0]?.autoConfirm || false;
+      const config = settings[0];
+      if (!config) throw new TRPCError({ code: "BAD_REQUEST", message: "Les réservations ne sont pas configurées pour cet établissement." });
+      if (input.partySize > config.maxPartySize) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Le nombre de personnes dépasse la capacité autorisée." });
+      }
+      const now = new Date();
+      const earliest = new Date(now.getTime() + config.minAdvanceHours * 60 * 60 * 1000);
+      const latest = new Date(now.getTime() + config.advanceBookingDays * 24 * 60 * 60 * 1000);
+      if (reservationDate < earliest || reservationDate > latest) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Ce créneau ne respecte pas le délai de réservation de l'établissement." });
+      }
+      const activeZones = await db.select().from(reservationZones).where(and(eq(reservationZones.restaurantId, input.restaurantId), eq(reservationZones.isActive, true)));
+      const selectedZone = input.zoneId ? activeZones.find((zone) => zone.id === input.zoneId) : null;
+      if (input.zoneId && !selectedZone) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "La zone sélectionnée est indisponible." });
+      }
+      const capacity = selectedZone ? selectedZone.capacity : activeZones.reduce((total, zone) => total + zone.capacity, 0);
+      if (capacity < input.partySize) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "La capacité disponible est insuffisante." });
+      }
+      const existingAtSlot = await db.select({ partySize: reservations.partySize, status: reservations.status, zoneId: reservations.zoneId }).from(reservations).where(and(eq(reservations.restaurantId, input.restaurantId), eq(reservations.reservationDate, reservationDate)));
+      const occupied = existingAtSlot.filter((reservation) => reservation.status !== "cancelled" && reservation.status !== "no_show" && (!selectedZone || reservation.zoneId === selectedZone.id)).reduce((total, reservation) => total + reservation.partySize, 0);
+      if (occupied + input.partySize > capacity) {
+        throw new TRPCError({ code: "CONFLICT", message: "Ce créneau n'est plus disponible pour ce nombre de personnes." });
+      }
+      const autoConfirm = config.autoConfirm;
       
       const result = await db.insert(reservations).values({
         ...input,

@@ -1118,9 +1118,9 @@
 - [x] Supprimé l'identifiant propriétaire codé en dur lors de la création d'une entreprise par le Super Admin
 - [x] Remplacé les procédures publiques de gestion des réservations par des contrôles propriétaire ou Super Admin et vérifié l'accès au restaurant ciblé
 - [x] Ajouté un test garantissant qu'un visiteur anonyme ne peut plus gérer paramètres, zones ni réservations
-- [ ] Retirer les créneaux fictifs et empêcher la création de réservation hors capacité, hors délai ou sur un créneau occupé
+- [x] Retiré les créneaux fictifs et empêché la création de réservation hors capacité, hors délai ou sur un créneau occupé
 - [x] Remplacé les créneaux fictifs par un calcul dynamique fondé sur les horaires, délais, zones actives et capacité cumulée
-- [ ] Réutiliser ces contrôles lors de la création publique de réservation afin de bloquer les demandes hors capacité ou hors délai
+- [x] Réutilisé les contrôles de délai, capacité et créneau lors de la création publique de réservation
 - [x] Remplacé le jeton de confirmation de réservation généré par Math.random par une valeur cryptographiquement sûre
 - [x] Ajouté un fil d'Ariane lisible à l'espace entreprise et remplacé le retour ambigu vers Super Admin par un retour Accueil
 - [x] Remplacé la confirmation navigateur de retrait de média par une confirmation accessible cohérente avec l'interface
