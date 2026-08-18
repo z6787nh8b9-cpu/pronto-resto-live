@@ -13,8 +13,6 @@ adminLoginRouter.post("/login", adminLoginLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    console.log("[Admin Login Route] Login attempt for:", email);
-
     // Validate inputs
     if (!email || !password) {
       console.error("[Admin Login Route] Missing email or password");
@@ -55,7 +53,6 @@ adminLoginRouter.post("/login", adminLoginLimiter, async (req, res) => {
       .limit(1);
 
     if (!admin) {
-      console.error("[Admin Login Route] Admin not found:", email);
       return res.status(401).send(`
         <!DOCTYPE html>
         <html>
@@ -83,7 +80,6 @@ adminLoginRouter.post("/login", adminLoginLimiter, async (req, res) => {
     const isValidPassword = await bcrypt.compare(password, admin.passwordHash);
 
     if (!isValidPassword) {
-      console.error("[Admin Login Route] Invalid password for:", email);
       return res.status(401).send(`
         <!DOCTYPE html>
         <html>
@@ -109,9 +105,6 @@ adminLoginRouter.post("/login", adminLoginLimiter, async (req, res) => {
 
     // Set session
     req.session.adminId = admin.id;
-
-    console.log("[Admin Login Route] Login successful for:", email, "- Admin ID:", admin.id);
-    console.log("[Admin Login Route] Session after login:", req.session);
 
     // Save session and redirect
     req.session.save((err) => {
@@ -140,8 +133,6 @@ adminLoginRouter.post("/login", adminLoginLimiter, async (req, res) => {
         `);
       }
 
-      console.log("[Admin Login Route] Session saved successfully, redirecting to /admin");
-      
       // HTTP 302 redirect to admin panel
       res.redirect(302, "/admin");
     });

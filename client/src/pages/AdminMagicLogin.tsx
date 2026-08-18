@@ -1,50 +1,19 @@
-import { useEffect } from "react";
-import { useLocation } from "wouter";
-import { trpc } from "@/lib/trpc";
-import { Loader2 } from "lucide-react";
+import { Link } from "wouter";
+import { ShieldCheck } from "lucide-react";
 
 export default function AdminMagicLogin() {
-  const [, setLocation] = useLocation();
-  const loginMutation = trpc.adminAuth.loginWithEmail.useMutation();
-
-  useEffect(() => {
-    // Get email from URL query params
-    const params = new URLSearchParams(window.location.search);
-    const email = params.get("email");
-
-    if (!email) {
-      setLocation("/admin/login");
-      return;
-    }
-
-    // Attempt automatic login
-    loginMutation.mutate(
-      { email },
-      {
-        onSuccess: () => {
-          // Redirect to admin panel
-          window.location.href = "/admin";
-        },
-        onError: (error) => {
-          console.error("Magic login failed:", error);
-          // Redirect to login page on error
-          setLocation("/admin/login");
-        },
-      }
-    );
-  }, []);
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 to-amber-50">
-      <div className="text-center">
-        <Loader2 className="h-12 w-12 animate-spin text-orange-600 mx-auto mb-4" />
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">
-          Connexion en cours...
-        </h2>
-        <p className="text-gray-600">
-          Vous allez être redirigé vers le panel administrateur
+    <main className="min-h-screen bg-background px-4 py-12 text-foreground">
+      <section className="mx-auto max-w-md rounded-3xl bg-card p-8 text-center shadow-sm ring-1 ring-border">
+        <ShieldCheck className="mx-auto mb-5 h-10 w-10 text-primary" />
+        <h1 className="text-2xl font-semibold">Connexion sécurisée requise</h1>
+        <p className="mt-3 text-sm leading-6 text-muted-foreground">
+          Les liens de connexion directe ne sont plus disponibles. Connectez-vous avec votre email et votre mot de passe.
         </p>
-      </div>
-    </div>
+        <Link href="/admin/login" className="mt-6 inline-flex rounded-full bg-primary px-5 py-3 text-sm font-medium text-primary-foreground transition-transform active:scale-[0.98]">
+          Accéder à la connexion administrateur
+        </Link>
+      </section>
+    </main>
   );
 }

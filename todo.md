@@ -1049,3 +1049,40 @@
 - [x] Créé le restaurantOwner La Voile Rouge (ID 30001) avec hash bcrypt
 - [x] Lié le restaurantOwner au restaurant la-voile-rouge via restaurants.ownerId
 - [ ] Tester la connexion email/MDP sur /la-voile-rouge/dashboard
+
+## REHAUSSEMENT DESIGN PRONTO (18 juin 2026)
+- [ ] Auditer la landing page, les dashboards et les pages de menu afin d'identifier les améliorations visuelles prioritaires
+- [ ] Définir et intégrer des fondations premium partagées : typographie, couleurs, matériaux, transitions et états de chargement
+- [ ] Moderniser la landing page avec une narration visuelle claire et des CTA à fort contraste
+- [ ] Moderniser le dashboard Super Admin sans altérer ses parcours métier ni ses contrôles d'accès
+- [ ] Moderniser le dashboard restaurateur sans altérer la gestion des menus, médias et paramètres
+- [ ] Affiner les pages publiques de menu pour préserver la lisibilité tout en renforçant l'identité de chaque restaurant
+- [ ] Vérifier les comportements mobile, clavier, réduction des animations, chargement et régressions fonctionnelles
+- [ ] Créer un checkpoint final de la refonte visuelle
+
+## REFONTE GLOBALE MULTI-SECTEURS (18 juin 2026)
+- [x] Réalisé l'audit global du produit, de l'architecture, de la sécurité, des données, de l'accessibilité et des parcours utilisateurs
+- [x] Documenté les risques prioritaires, les incohérences de modèle et les régressions potentielles dans docs/2026-08-18-audit-global-plateforme.md
+- [x] Identifié les urgences P0 : invitations publiques, connexion Super Admin par simple email, vulnérabilités de dépendances, build TypeScript et tests instables
+- [x] Restreint la création et les listings d'invitations aux seuls Super Admins autorisés
+- [x] Maintenu la validation publique d'une invitation avec un retour minimal et sans exposer les détails internes
+- [x] Supprimé la connexion Super Admin par simple email et empêché toute ouverture de session sans preuve de contrôle du compte
+- [x] Appliqué une limite de débit dédiée à la connexion email/mot de passe des propriétaires d'entreprise
+- [x] Appliqué la limite générale de débit au gateway tRPC, sans gêner les parcours légitimes
+- [ ] Réduire les journaux d'authentification pour ne plus exposer email, session ni identifiants internes
+- [x] Réduit les limites globales de corps HTTP et préparé une stratégie d'upload dédiée
+- [x] Corrigé l'incompatibilité de types entre le pool mysql2 et express-mysql-session afin de rétablir la vérification TypeScript
+- [x] Mis à jour les tests d'invitation avec un contexte administrateur explicite, des données isolées et une vérification du refus anonyme
+- [x] Conçu le modèle multi-secteurs : entreprise, profil public, catalogue, collection, item, service et rendez-vous
+- [x] Préparé la migration additive sans rupture des restaurants, menus, comptes et URLs existants dans docs/2026-08-18-architecture-multi-secteurs.md
+- [ ] Unifier les rôles, sessions, autorisations, invitations, récupération de compte et journalisation de sécurité
+- [ ] Créer un parcours d'inscription et d'onboarding guidé par type d'entreprise et objectif de publication
+- [ ] Créer des imports robustes depuis CSV, photo et PDF avec aperçu, validation, correction et publication explicite
+- [ ] Mettre en place une médiathèque et des traitements de fichiers sûrs, avec contrôle de type, taille et propriété
+- [ ] Refondre la navigation, les fils d'Ariane, les états vides, erreurs, chargements et confirmations d'action
+- [ ] Repenser le dashboard entreprise autour de la publication, du catalogue, des contacts, des rendez-vous et des performances
+- [ ] Repenser l'espace Super Admin pour la supervision, le support, les accès, les audits et la gestion multi-entreprises
+- [ ] Refondre la landing page afin d'adresser les commerces, prestataires et établissements au-delà de la restauration
+- [ ] Rendre les vitrines publiques adaptables au catalogue, aux prestations, à la réservation et à l'identité de marque de chaque secteur
+- [ ] Écrire et exécuter les tests unitaires, d'intégration et de régression couvrant les parcours critiques
+- [ ] Mettre en place les contrôles d'accessibilité, de performance, d'observabilité et de reprise après incident

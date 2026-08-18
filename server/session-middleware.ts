@@ -59,8 +59,8 @@ const connectionPool = mysql.createPool({
   queueLimit: 0
 });
 
-// Create MySQL session store with connection pool
-// @ts-expect-error - mysql2 v3.15+ supports VECTOR type (TiDB), but express-mysql-session types are outdated
+// express-mysql-session exposes an older mysql2 type surface. The pool is
+// runtime-compatible; the adapter narrows it at this library boundary only.
 const sessionStore = new MySQLStore({
   clearExpired: true, // Automatically delete expired sessions
   checkExpirationInterval: 900000, // Check every 15 minutes (900000 ms)
@@ -74,7 +74,7 @@ const sessionStore = new MySQLStore({
       data: 'data'
     }
   }
-}, connectionPool);
+}, connectionPool as never);
 
 // Handle session store errors
 sessionStore.on('error', (error) => {

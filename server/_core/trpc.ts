@@ -32,13 +32,6 @@ export const adminProcedure = t.procedure.use(
   t.middleware(async opts => {
     const { ctx, next } = opts;
 
-    // MODE DÉVELOPPEMENT : Autoriser l'accès sans authentification
-    const isDev = process.env.NODE_ENV === 'development';
-    
-    if (isDev) {
-      return next({ ctx });
-    }
-
     // Check if user is Manus OAuth admin
     const isManusAdmin = ctx.user && ctx.user.role === 'admin';
     
@@ -66,15 +59,8 @@ export const adminProcedure = t.procedure.use(
 const requireRestaurantOwnerOrAdmin = t.middleware(async opts => {
   const { ctx, next } = opts;
 
-  // MODE DÉVELOPPEMENT : Autoriser l'accès sans authentification
-  const isDev = process.env.NODE_ENV === 'development';
-  
-  if (isDev) {
-    return next({ ctx });
-  }
-
   // Check if user is Super Admin (Manus OAuth)
-  if (ctx.user && ctx.user.role === 'admin') {
+  if ((ctx.user && ctx.user.role === 'admin') || ctx.adminAccount) {
     return next({
       ctx: {
         ...ctx,

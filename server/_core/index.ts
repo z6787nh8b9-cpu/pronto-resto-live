@@ -1,5 +1,5 @@
 import "dotenv/config";
-import express from "express";
+import express, { type Express } from "express";
 import { createServer } from "http";
 import net from "net";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
@@ -8,6 +8,7 @@ import { registerStorageProxy } from "./storageProxy";
 import { registerRestaurantAuthRoutes, registerEmailLoginRoute } from "../auth-routes";
 import { adminLoginRouter } from "../admin-login-route";
 import { configureSessionMiddleware } from "../session-middleware";
+import { apiLimiter } from "../rate-limiters";
 
 import { appRouter } from "../routers";
 import { createContext } from "./context";
@@ -42,9 +43,10 @@ async function startServer() {
   // Trust proxy to correctly detect HTTPS behind reverse proxy (Manus infrastructure)
   // This allows secure cookies to work properly in production
   app.set('trust proxy', 1);
-  // Configure body parser with larger size limit for file uploads
-  app.use(express.json({ limit: "50mb" }));
-  app.use(express.urlencoded({ limit: "50mb", extended: true }));
+  // JSON is kept intentionally bounded. Media uploads move to a dedicated,
+  // signed storage flow rather than expanding the global API attack surface.
+  app.use(express.json({ limit: "10mb" }));
+  app.use(express.urlencoded({ limit: "1mb", extended: true }));
   
   // IMPORTANT: Configure session middleware GLOBALLY before any routes
   // This allows tRPC routes to access Passport.js session
@@ -64,6 +66,7 @@ async function startServer() {
   // tRPC API
   app.use(
     "/api/trpc",
+    apiLimiter,
     createExpressMiddleware({
       router: appRouter,
       createContext,
