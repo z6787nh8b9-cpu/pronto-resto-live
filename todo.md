@@ -1115,6 +1115,7 @@
 - [x] Ajouté des tests d'accès, de persistance et d'isolation pour l'onboarding et la médiathèque d'entreprise
 - [x] Ajouté un test d'archivage de média qui vérifie son retrait de la bibliothèque sans suppression physique
 - [ ] Refondre la navigation, les fils d'Ariane, les états vides, erreurs, chargements et confirmations d'action
+- [x] Localisé la page introuvable en français cohérent avec PRONTO
 - [x] Supprimé l'identifiant propriétaire codé en dur lors de la création d'une entreprise par le Super Admin
 - [x] Remplacé les procédures publiques de gestion des réservations par des contrôles propriétaire ou Super Admin et vérifié l'accès au restaurant ciblé
 - [x] Ajouté un test garantissant qu'un visiteur anonyme ne peut plus gérer paramètres, zones ni réservations
