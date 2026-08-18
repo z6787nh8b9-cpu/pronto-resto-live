@@ -1,9 +1,10 @@
 import { z } from "zod";
 import { publicProcedure, restaurantOwnerProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
-import { reservations, reservationZones, reservationSettings, restaurants } from "../../drizzle/schema";
+import { openingHours, reservations, reservationZones, reservationSettings, restaurants } from "../../drizzle/schema";
 import { eq, and, gte, lte, desc } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
+import { randomBytes } from "crypto";
 
 async function requireReservationManagementAccess(ctx: any, restaurantId: number) {
   const db = await getDb();
@@ -179,8 +180,7 @@ export const reservationsRouter = router({
       const reservationDate = new Date(input.reservationDate);
       
       // Generate confirmation token
-      const confirmationToken = Math.random().toString(36).substring(2, 15) + 
-                               Math.random().toString(36).substring(2, 15);
+      const confirmationToken = randomBytes(32).toString("base64url");
       
       // Get settings to check auto-confirm
       const settings = await db
@@ -310,19 +310,41 @@ export const reservationsRouter = router({
         });
       }
       
-      const { slotDuration } = settings[0];
-      
-      // TODO: Implement slot availability logic based on:
-      // - Opening hours for the day
-      // - Existing reservations
-      // - Zone capacities
-      // For now, return mock slots
-      
-      const slots = [
-        "12:00", "12:30", "13:00", "13:30",
-        "19:00", "19:30", "20:00", "20:30", "21:00"
-      ];
-      
+      const reservationDay = new Date(`${input.date}T00:00:00`);
+      if (Number.isNaN(reservationDay.getTime()) || !/^\d{4}-\d{2}-\d{2}$/.test(input.date)) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Date de réservation invalide." });
+      }
+      const config = settings[0];
+      if (input.partySize > config.maxPartySize) return [];
+      const now = new Date();
+      const earliest = new Date(now.getTime() + config.minAdvanceHours * 60 * 60 * 1000);
+      const latest = new Date(now.getTime() + config.advanceBookingDays * 24 * 60 * 60 * 1000);
+      if (reservationDay > latest) return [];
+
+      const [opening] = await db.select().from(openingHours).where(and(eq(openingHours.restaurantId, input.restaurantId), eq(openingHours.dayOfWeek, reservationDay.getDay()))).limit(1);
+      if (!opening || opening.isClosed || !opening.openTime || !opening.closeTime) return [];
+      const zones = await db.select().from(reservationZones).where(and(eq(reservationZones.restaurantId, input.restaurantId), eq(reservationZones.isActive, true)));
+      const capacity = zones.reduce((total, zone) => total + zone.capacity, 0);
+      if (capacity < input.partySize) return [];
+
+      const startOfDay = new Date(`${input.date}T00:00:00`);
+      const endOfDay = new Date(`${input.date}T23:59:59.999`);
+      const existing = await db.select({ reservationDate: reservations.reservationDate, partySize: reservations.partySize, status: reservations.status }).from(reservations).where(and(eq(reservations.restaurantId, input.restaurantId), gte(reservations.reservationDate, startOfDay), lte(reservations.reservationDate, endOfDay)));
+      const occupancy = new Map<number, number>();
+      for (const entry of existing) {
+        if (entry.status === "cancelled" || entry.status === "no_show") continue;
+        const key = entry.reservationDate.getTime();
+        occupancy.set(key, (occupancy.get(key) || 0) + entry.partySize);
+      }
+      const [openHour, openMinute] = opening.openTime.split(":").map(Number);
+      const [closeHour, closeMinute] = opening.closeTime.split(":").map(Number);
+      const openAt = new Date(`${input.date}T00:00:00`); openAt.setHours(openHour, openMinute, 0, 0);
+      const closeAt = new Date(`${input.date}T00:00:00`); closeAt.setHours(closeHour, closeMinute, 0, 0);
+      const slots: string[] = [];
+      for (let cursor = new Date(openAt); cursor.getTime() + config.slotDuration * 60_000 <= closeAt.getTime(); cursor = new Date(cursor.getTime() + config.slotDuration * 60_000)) {
+        const occupied = occupancy.get(cursor.getTime()) || 0;
+        if (cursor >= earliest && occupied + input.partySize <= capacity) slots.push(cursor.toTimeString().slice(0, 5));
+      }
       return slots;
     }),
 });
