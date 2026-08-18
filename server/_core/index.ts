@@ -9,6 +9,7 @@ import { registerRestaurantAuthRoutes, registerEmailLoginRoute } from "../auth-r
 import { adminLoginRouter } from "../admin-login-route";
 import { configureSessionMiddleware } from "../session-middleware";
 import { apiLimiter } from "../rate-limiters";
+import { applySecurityHeaders, healthPayload } from "./security";
 
 import { appRouter } from "../routers";
 import { createContext } from "./context";
@@ -39,10 +40,13 @@ export let app: Express;
 async function startServer() {
   app = express();
   const server = createServer(app);
+  app.disable("x-powered-by");
   
   // Trust proxy to correctly detect HTTPS behind reverse proxy (Manus infrastructure)
   // This allows secure cookies to work properly in production
   app.set('trust proxy', 1);
+  app.use(applySecurityHeaders);
+  app.get("/healthz", (_req, res) => res.status(200).json(healthPayload()));
   // JSON is kept intentionally bounded. Media uploads move to a dedicated,
   // signed storage flow rather than expanding the global API attack surface.
   app.use(express.json({ limit: "10mb" }));

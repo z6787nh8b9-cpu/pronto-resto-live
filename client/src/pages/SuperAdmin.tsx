@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Edit, Trash2, TrendingUp, Store, MessageSquare, Settings, Megaphone, Shield, Mail, Copy, Check, Search } from "lucide-react";
+import { Plus, Edit, Trash2, TrendingUp, Store, MessageSquare, Settings, Megaphone, Shield, Mail, Copy, Check, Search, ArrowUpRight, Building2, FileUp } from "lucide-react";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
 // import { useAuth } from "@/_core/hooks/useAuth"; // Remplacé par trpc.adminAuth.me
@@ -23,7 +23,7 @@ import RequestsTab from "./admin/RequestsTab";
 export default function SuperAdmin() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [editingRestaurant, setEditingRestaurant] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState("restaurants");
+  const [activeTab, setActiveTab] = useState("overview");
   const [invitationUrl, setInvitationUrl] = useState<string | null>(null);
   const [copiedInvitation, setCopiedInvitation] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -37,6 +37,12 @@ export default function SuperAdmin() {
   // Queries - MUST be before any conditional returns (React hooks rules)
   const { data: stats } = trpc.admin.getStats.useQuery(undefined, { enabled: isDev || !!adminUser });
   const { data: restaurants, refetch } = trpc.admin.listRestaurants.useQuery(undefined, { enabled: isDev || !!adminUser });
+
+  useEffect(() => {
+    if (!isDev && !loading && !adminUser) {
+      setLocation("/admin/login");
+    }
+  }, [adminUser, isDev, loading, setLocation]);
 
   // Mutations
   const createMutation = trpc.admin.createRestaurant.useMutation({
@@ -104,8 +110,6 @@ export default function SuperAdmin() {
 
   // Redirect to login if not authenticated as admin
   if (!isDev && !adminUser) {
-    // Not authenticated - redirect to admin login
-    setLocation('/admin/login');
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -158,59 +162,22 @@ export default function SuperAdmin() {
       {/* Header avec ResponsiveHeader */}
       <ResponsiveHeader
         title="PRONTO"
-        subtitle="Super Admin Dashboard"
+        subtitle="Pilotage multi-entreprises"
         primaryAction={{
-          label: "Nouveau Restaurant",
+          label: "Nouvelle entreprise",
           onClick: () => setIsCreateDialogOpen(true),
           icon: <Plus className="h-4 w-4" />,
         }}
-        secondaryActions={
-          <>
-            <Button
-              variant={activeTab === "restaurants" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setActiveTab("restaurants")}
-              className="w-full sm:w-auto justify-start"
-            >
-              <Store className="h-4 w-4 mr-2" />
-              Restaurants
-            </Button>
-            <Button
-              variant={activeTab === "advertisements" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setActiveTab("advertisements")}
-              className="w-full sm:w-auto justify-start"
-            >
-              <Megaphone className="h-4 w-4 mr-2" />
-              Publicités
-            </Button>
-
-            <Button
-              variant={activeTab === "invitations" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setActiveTab("invitations")}
-              className="w-full sm:w-auto justify-start"
-            >
-              <Mail className="h-4 w-4 mr-2" />
-              Invitations
-            </Button>
-            <Button
-              variant={activeTab === "requests" ? "default" : "ghost"}
-              size="sm"
-              onClick={() => setActiveTab("requests")}
-              className="w-full sm:w-auto justify-start"
-            >
-              <MessageSquare className="h-4 w-4 mr-2" />
-              Demandes
-            </Button>
-          </>
-        }
       />
 
       <main className="container px-4 sm:px-6 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          {/* Desktop Tabs */}
-          <TabsList className="mb-6 hidden sm:flex">
+          <div className="-mx-4 mb-6 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+          <TabsList className="inline-flex min-w-max gap-1">
+            <TabsTrigger value="overview">
+              <Building2 className="h-4 w-4 mr-2" />
+              Vue d’ensemble
+            </TabsTrigger>
             <TabsTrigger value="restaurants">
               <Store className="h-4 w-4 mr-2" />
               Restaurants
@@ -232,6 +199,31 @@ export default function SuperAdmin() {
               Demandes
             </TabsTrigger>
           </TabsList>
+          </div>
+
+          <TabsContent value="overview" className="space-y-6">
+            <section className="pronto-shell overflow-hidden p-1.5">
+              <div className="relative overflow-hidden rounded-[calc(1.5rem-0.375rem)] bg-pronto-primary-deep px-5 py-8 text-white sm:px-8 sm:py-10">
+                <div className="absolute -right-10 top-0 h-56 w-56 rounded-full bg-pronto-accent/20 blur-3xl" />
+                <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+                  <div className="max-w-2xl"><p className="font-body text-xs font-semibold uppercase tracking-[0.14em] text-white/65">Centre de contrôle</p><h2 className="mt-3 text-4xl text-white sm:text-5xl">Une vue claire sur votre réseau d’entreprises.</h2><p className="mt-4 max-w-xl leading-7 text-white/70">Surveillez l’activité, préparez les accès et intervenez au bon endroit, sans mélanger supervision et travail quotidien des équipes.</p></div>
+                  <Button onClick={() => setIsCreateDialogOpen(true)} className="group h-12 w-full rounded-full bg-white px-5 text-pronto-primary hover:bg-pronto-beige sm:w-auto">Ajouter une entreprise <span className="ml-2 grid h-6 w-6 place-items-center rounded-full bg-pronto-primary/10 transition-transform duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-px"><Plus className="h-3.5 w-3.5" /></span></Button>
+                </div>
+              </div>
+            </section>
+
+            <section className="grid gap-4 sm:grid-cols-3">
+              <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Entreprises actives</p><p className="mt-2 font-display text-5xl">{stats?.activeRestaurants || 0}</p><p className="mt-2 text-sm text-muted-foreground">Comptes actuellement actifs.</p></div>
+              <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Revenus suivis</p><p className="mt-2 font-display text-5xl">{stats?.totalRevenue || 0}€</p><p className="mt-2 text-sm text-muted-foreground">Valeur des abonnements enregistrés.</p></div>
+              <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Conversations assistées</p><p className="mt-2 font-display text-5xl">{stats?.totalConversations || 0}</p><p className="mt-2 text-sm text-muted-foreground">Interactions gérées par l’assistance.</p></div>
+            </section>
+
+            <section className="grid gap-4 lg:grid-cols-3">
+              <button type="button" onClick={() => setActiveTab("restaurants")} className="pronto-panel group p-5 text-left transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1"><span className="grid h-11 w-11 place-items-center rounded-2xl bg-pronto-primary/10 text-pronto-primary"><Store className="h-5 w-5" /></span><h3 className="mt-7 text-3xl">Entreprises</h3><p className="mt-3 leading-7 text-muted-foreground">Ouvrez, recherchez et gérez les espaces actuellement hébergés sur la plateforme.</p><span className="mt-6 inline-flex items-center text-sm font-semibold text-pronto-primary">Ouvrir la liste <ArrowUpRight className="ml-1.5 h-4 w-4 transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-0.5" /></span></button>
+              <button type="button" onClick={() => setActiveTab("invitations")} className="pronto-panel group p-5 text-left transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1"><span className="grid h-11 w-11 place-items-center rounded-2xl bg-pronto-accent/25 text-pronto-primary"><Mail className="h-5 w-5" /></span><h3 className="mt-7 text-3xl">Accès & invitations</h3><p className="mt-3 leading-7 text-muted-foreground">Accompagnez les propriétaires dans une prise en main sécurisée de leur espace.</p><span className="mt-6 inline-flex items-center text-sm font-semibold text-pronto-primary">Gérer les accès <ArrowUpRight className="ml-1.5 h-4 w-4 transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-0.5" /></span></button>
+              <button type="button" onClick={() => setActiveTab("requests")} className="pronto-panel group p-5 text-left transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1"><span className="grid h-11 w-11 place-items-center rounded-2xl bg-secondary text-pronto-primary"><FileUp className="h-5 w-5" /></span><h3 className="mt-7 text-3xl">Demandes à traiter</h3><p className="mt-3 leading-7 text-muted-foreground">Gardez une entrée unique pour les demandes de support et les signaux à suivre.</p><span className="mt-6 inline-flex items-center text-sm font-semibold text-pronto-primary">Voir les demandes <ArrowUpRight className="ml-1.5 h-4 w-4 transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-0.5" /></span></button>
+            </section>
+          </TabsContent>
 
           <TabsContent value="restaurants">
         {/* Stats Cards */}

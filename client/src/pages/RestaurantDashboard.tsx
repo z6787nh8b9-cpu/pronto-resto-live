@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { Plus, Edit, Trash2, GripVertical, Settings, Eye, MessageSquare, BarChart3, Star, Globe, Clock, CalendarDays, PartyPopper, Lock, ChevronUp, ChevronDown } from "lucide-react";
+import { Plus, Edit, Trash2, GripVertical, Settings, Eye, MessageSquare, BarChart3, Star, Globe, Clock, CalendarDays, PartyPopper, Lock, ChevronUp, ChevronDown, ArrowUpRight, FileUp, LayoutDashboard, Store } from "lucide-react";
 import { toast } from "sonner";
 
 import { useParams, useLocation } from "wouter";
@@ -29,12 +29,13 @@ import { ResponsiveHeader, ResponsiveTabs } from "@/components/responsive";
 import { UpgradeModal } from "@/components/UpgradeModal";
 import { LockedFeatureOverlay } from "@/components/LockedFeatureOverlay";
 import { CatalogImportCard } from "@/components/CatalogImportCard";
+import { LoadingState } from "@/components/LoadingState";
 
 export default function RestaurantDashboard() {
   const params: { slug?: string } = useParams();
   const slug = params.slug;
   const [, navigate] = useLocation();
-  const [activeTab, setActiveTab] = useState("menu");
+  const [activeTab, setActiveTab] = useState("overview");
   const [isAddCategoryOpen, setIsAddCategoryOpen] = useState(false);
   const [isEditCategoryOpen, setIsEditCategoryOpen] = useState(false);
   const [isAddItemOpen, setIsAddItemOpen] = useState(false);
@@ -447,7 +448,7 @@ export default function RestaurantDashboard() {
   if (!restaurant) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p>Chargement...</p>
+        <LoadingState label="Préparation de votre espace" />
       </div>
     );
   }
@@ -457,14 +458,14 @@ export default function RestaurantDashboard() {
       {/* Header avec ResponsiveHeader */}
       <ResponsiveHeader
         title={restaurant.name}
-        subtitle="Gestion du Restaurant (Super Admin)"
+        subtitle="Espace entreprise"
         badge={
           <Badge variant={restaurant.subscriptionTier === "premium" ? "default" : "secondary"} className="text-xs px-2 py-0.5">
             {restaurant.subscriptionTier === "premium" ? "Premium" : "Basic"}
           </Badge>
         }
         primaryAction={{
-          label: "Voir la page publique",
+          label: "Voir la vitrine",
           onClick: () => window.open(`/${restaurant.slug}`, '_blank'),
           icon: <Eye className="h-4 w-4" />,
         }}
@@ -477,7 +478,8 @@ export default function RestaurantDashboard() {
       <main className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
-            <TabsList className="inline-flex lg:grid w-auto lg:w-full grid-cols-5 xl:grid-cols-10 gap-1 lg:gap-2 min-w-full lg:min-w-0">
+            <TabsList className="inline-flex lg:grid w-auto lg:w-full grid-cols-5 xl:grid-cols-12 gap-1 lg:gap-2 min-w-full lg:min-w-0">
+            <TabsTrigger value="overview">Vue d’ensemble</TabsTrigger>
             <TabsTrigger value="menu">Menu</TabsTrigger>
             <TabsTrigger value="import">Importer</TabsTrigger>
             <TabsTrigger value="settings">Paramètres</TabsTrigger>
@@ -532,6 +534,36 @@ export default function RestaurantDashboard() {
             <TabsTrigger value="analytics">Statistiques</TabsTrigger>
           </TabsList>
           </div>
+
+          <TabsContent value="overview" className="space-y-6">
+            <section className="pronto-shell overflow-hidden p-1.5">
+              <div className="relative overflow-hidden rounded-[calc(1.5rem-0.375rem)] bg-pronto-primary-deep px-5 py-8 text-white sm:px-8 sm:py-10">
+                <div className="absolute -right-12 -top-16 h-64 w-64 rounded-full bg-pronto-accent/20 blur-3xl" />
+                <div className="relative flex flex-col gap-7 lg:flex-row lg:items-end lg:justify-between">
+                  <div className="max-w-2xl">
+                    <p className="font-body text-xs font-semibold uppercase tracking-[0.14em] text-white/65">Votre espace de travail</p>
+                    <h2 className="mt-3 text-4xl text-white sm:text-5xl">Tout ce qui rend <span className="italic">{restaurant.name}</span> clair, prêt et partageable.</h2>
+                    <p className="mt-4 max-w-xl leading-7 text-white/70">Préparez vos contenus, gardez une vue sur l’essentiel et choisissez ce que vous rendez visible sur votre vitrine.</p>
+                  </div>
+                  <Button onClick={() => setActiveTab("import")} className="group h-12 w-full rounded-full bg-white px-5 text-pronto-primary hover:bg-pronto-beige sm:w-auto">
+                    Importer un contenu <span className="ml-2 grid h-6 w-6 place-items-center rounded-full bg-pronto-primary/10 transition-transform duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-px"><FileUp className="h-3.5 w-3.5" /></span>
+                  </Button>
+                </div>
+              </div>
+            </section>
+
+            <section className="grid gap-4 sm:grid-cols-3">
+              <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Collections actives</p><p className="mt-2 font-display text-5xl text-foreground">{categories?.length ?? 0}</p><p className="mt-2 text-sm text-muted-foreground">Organisez-les dans l’onglet Menu.</p></div>
+              <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Éléments publiables</p><p className="mt-2 font-display text-5xl text-foreground">{menuItems?.length ?? 0}</p><p className="mt-2 text-sm text-muted-foreground">Plats, produits ou prestations selon votre activité.</p></div>
+              <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Formule actuelle</p><p className="mt-2 font-display text-4xl capitalize text-foreground">{restaurant.subscriptionTier}</p><p className="mt-2 text-sm text-muted-foreground">Les fonctions disponibles évoluent avec votre formule.</p></div>
+            </section>
+
+            <section className="grid gap-4 lg:grid-cols-3">
+              <button type="button" onClick={() => setActiveTab("menu")} className="pronto-panel group p-5 text-left transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1"><span className="grid h-11 w-11 place-items-center rounded-2xl bg-pronto-primary/10 text-pronto-primary"><LayoutDashboard className="h-5 w-5" /></span><h3 className="mt-7 text-3xl">Organiser</h3><p className="mt-3 leading-7 text-muted-foreground">Ajoutez et réordonnez les catégories comme vous les présentez à vos clients.</p><span className="mt-6 inline-flex items-center text-sm font-semibold text-pronto-primary">Gérer le catalogue <ArrowUpRight className="ml-1.5 h-4 w-4 transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-0.5" /></span></button>
+              <button type="button" onClick={() => setActiveTab("settings")} className="pronto-panel group p-5 text-left transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1"><span className="grid h-11 w-11 place-items-center rounded-2xl bg-pronto-accent/25 text-pronto-primary"><Settings className="h-5 w-5" /></span><h3 className="mt-7 text-3xl">Personnaliser</h3><p className="mt-3 leading-7 text-muted-foreground">Mettez à jour vos informations, votre image et vos coordonnées au même endroit.</p><span className="mt-6 inline-flex items-center text-sm font-semibold text-pronto-primary">Ouvrir les réglages <ArrowUpRight className="ml-1.5 h-4 w-4 transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-0.5" /></span></button>
+              <button type="button" onClick={() => window.open(`/${restaurant.slug}`, "_blank", "noopener,noreferrer")} className="pronto-panel group p-5 text-left transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1"><span className="grid h-11 w-11 place-items-center rounded-2xl bg-secondary text-pronto-primary"><Store className="h-5 w-5" /></span><h3 className="mt-7 text-3xl">Vérifier la vitrine</h3><p className="mt-3 leading-7 text-muted-foreground">Consultez le résultat public dans un nouvel onglet, comme le ferait un visiteur.</p><span className="mt-6 inline-flex items-center text-sm font-semibold text-pronto-primary">Voir la page publique <ArrowUpRight className="ml-1.5 h-4 w-4 transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-0.5" /></span></button>
+            </section>
+          </TabsContent>
 
           {/* Menu Tab */}
           <TabsContent value="menu" className="space-y-6">

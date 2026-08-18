@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MessageCircle, Phone, X, Send, Leaf, WheatOff } from "lucide-react";
+import { MessageCircle, Phone, X, Send, Leaf, WheatOff, Search, Sparkles } from "lucide-react";
 import { useParams, useLocation } from "wouter";
 import { toast } from "sonner";
 import { nanoid } from "nanoid";
@@ -14,6 +14,7 @@ import ReactMarkdown from "react-markdown";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import { useTranslation } from "@/hooks/useTranslation";
 import { AdvertisementDisplay, DishItemAd } from "@/components/AdvertisementDisplay";
+import { LoadingState } from "@/components/LoadingState";
 
 export default function RestaurantMenuPage() {
   const params: { slug?: string } = useParams();
@@ -22,6 +23,7 @@ export default function RestaurantMenuPage() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
   const [chatInput, setChatInput] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [sessionId] = useState(() => nanoid());
   const [filters, setFilters] = useState({
     vegetarian: false,
@@ -88,9 +90,7 @@ export default function RestaurantMenuPage() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <p className="text-muted-foreground">Chargement...</p>
-      </div>
+      <div className="min-h-screen bg-background"><LoadingState label="Ouverture de la vitrine" /></div>
     );
   }
 
@@ -104,12 +104,18 @@ export default function RestaurantMenuPage() {
 
   const categories = menuData?.categories || [];
   const allItems = menuData?.items || [];
+  const hasDietaryMetadata = allItems.some((item) => item.isVegetarian || item.isVegan || item.isGlutenFree);
   
   // Apply filters
   const items = allItems.filter((item) => {
     if (filters.vegetarian && !item.isVegetarian) return false;
     if (filters.vegan && !item.isVegan) return false;
     if (filters.glutenFree && !item.isGlutenFree) return false;
+    if (searchQuery.trim()) {
+      const needle = searchQuery.trim().toLocaleLowerCase("fr-FR");
+      const haystack = `${item.name} ${item.description || ""}`.toLocaleLowerCase("fr-FR");
+      if (!haystack.includes(needle)) return false;
+    }
     return true;
   });
   
@@ -158,8 +164,8 @@ export default function RestaurantMenuPage() {
         </div>
       </header>
 
-      {/* Hero section avec image de fond */}
-      <section className="relative z-10 py-16 md:py-24 overflow-hidden">
+      {/* Hero de vitrine */}
+      <section className="relative z-10 overflow-hidden py-16 md:py-24">
         {/* Image de fond avec blur */}
         {restaurant.heroImageUrl && (
           <div 
@@ -172,22 +178,25 @@ export default function RestaurantMenuPage() {
           />
         )}
         
-        {/* Overlay sombre pour lisibilité */}
-        <div className="absolute inset-0 bg-black/50" />
+        <div className="absolute inset-0 bg-black/55" />
         
         {/* Contenu */}
         <div className="container relative z-10">
-          <div className="max-w-3xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white drop-shadow-lg">Notre Menu</h2>
-            <p className="text-lg text-white/90 drop-shadow-md">{restaurant.description}</p>
+          <div className="mx-auto max-w-3xl text-center">
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.13em] text-white/85 backdrop-blur-sm"><Sparkles className="h-3.5 w-3.5" /> Vitrine PRONTO</span>
+            <h2 className="mt-5 text-4xl text-white drop-shadow-lg md:text-5xl">Découvrez notre sélection</h2>
+            {restaurant.description && <p className="mt-4 text-lg leading-8 text-white/90 drop-shadow-md">{restaurant.description}</p>}
           </div>
         </div>
       </section>
 
-      {/* Filtres */}
+      {/* Recherche et filtres */}
       <section className={`relative z-10 py-6 border-b ${!hasFullpageAd ? 'bg-background' : ''}`}>
-        <div className="container">
-          <div className="flex flex-wrap gap-2 justify-center">
+        <div className="container max-w-5xl">
+          <div className="mx-auto max-w-xl">
+            <div className="relative"><Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><Input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Rechercher dans la sélection" className="h-12 rounded-2xl border-border/80 bg-card pl-11 shadow-sm" aria-label="Rechercher dans la sélection" /></div>
+          </div>
+          {hasDietaryMetadata && <div className="mt-4 flex flex-wrap justify-center gap-2">
             <Button
               variant={filters.vegetarian ? "default" : "outline"}
               size="sm"
@@ -215,18 +224,18 @@ export default function RestaurantMenuPage() {
               <WheatOff className="h-4 w-4" />
               Sans gluten
             </Button>
-          </div>
+          </div>}
         </div>
       </section>
 
-      {/* Menu avec tabs horizontales */}
+      {/* Collections de la vitrine */}
       <section className={`relative z-10 py-12 ${!hasFullpageAd ? 'bg-background' : ''}`}>
         <div className="container max-w-5xl">
           {categories.length > 0 ? (
             <Tabs defaultValue={categories[0]?.id.toString()} className="w-full">
-              <TabsList className="w-full justify-start overflow-x-auto flex-nowrap mb-8">
+              <TabsList className="mb-8 flex w-full justify-start overflow-x-auto flex-nowrap rounded-2xl bg-secondary/70 p-1.5">
                 {categories.map((category) => (
-                  <TabsTrigger key={category.id} value={category.id.toString()} className="whitespace-nowrap">
+                  <TabsTrigger key={category.id} value={category.id.toString()} className="whitespace-nowrap rounded-xl px-4 py-2.5">
                     {category.name}
                   </TabsTrigger>
                 ))}
@@ -238,19 +247,21 @@ export default function RestaurantMenuPage() {
                   <TabsContent key={category.id} value={category.id.toString()} className="space-y-4">
                     {categoryItems.length > 0 ? (
                       <>
-                        {categoryItems.map((item, index) => (
-                          <>
+                        {categoryItems.map((item, index) => {
+                          const itemPrice = Number(item.price);
+                          const hasPrice = Number.isFinite(itemPrice) && itemPrice > 0;
+                          return (
+                          <Fragment key={item.id}>
                             {/* Insérer un dish_item ad tous les 4 plats si disponible */}
                             {index > 0 && index % 4 === 0 && dishItemAds[Math.floor(index / 4) - 1] && (
                               <DishItemAd key={`ad-${dishItemAds[Math.floor(index / 4) - 1].id}`} advertisement={dishItemAds[Math.floor(index / 4) - 1]} />
                             )}
-                            {/* Plat normal */}
-                            <Card key={item.id} className="overflow-hidden hover:shadow-md transition-shadow">
-                          <CardContent className="p-6">
-                            <div className="flex justify-between items-start gap-4">
+                            <Card className="overflow-hidden border-border/80 bg-card shadow-[0_1px_2px_oklch(0.22_0.025_53_/_0.05)] transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-0.5 hover:shadow-[0_14px_28px_oklch(0.22_0.025_53_/_0.09)]">
+                          <CardContent className="p-5 sm:p-6">
+                            <div className="flex items-start justify-between gap-4">
                               <div className="flex-1">
                                 <div className="flex items-start gap-3 mb-2">
-                                  <h3 className="text-lg font-semibold">{item.name}</h3>
+                                  <h3 className="text-xl font-semibold tracking-[-0.02em]">{item.name}</h3>
                                   <div className="flex gap-1">
                                     {item.isVegetarian && (
                                       <Badge variant="secondary" className="text-xs gap-1">
@@ -270,7 +281,7 @@ export default function RestaurantMenuPage() {
                                   </div>
                                 </div>
                                 {item.description && (
-                                  <p className="text-sm text-muted-foreground mb-2">{item.description}</p>
+                                  <p className="mb-2 text-sm leading-6 text-muted-foreground">{item.description}</p>
                                 )}
                                 {item.allergens && (
                                   <p className="text-xs text-muted-foreground">
@@ -278,23 +289,22 @@ export default function RestaurantMenuPage() {
                                   </p>
                                 )}
                               </div>
-                              <div className="text-right">
-                                <p className="text-xl font-bold" style={{ color: primaryColor }}>
-                                  {Number(item.price).toFixed(2)}€
-                                </p>
+                              <div className="shrink-0 text-right">
+                                {hasPrice && <p className="text-xl font-bold" style={{ color: primaryColor }}>{itemPrice.toFixed(2)}€</p>}
                                 {item.imageUrl && (
                                   <img
                                     src={item.imageUrl}
                                     alt={item.name}
-                                    className="mt-2 w-24 h-24 object-cover rounded-md"
+                                    className="mt-3 h-24 w-24 rounded-xl object-cover shadow-sm"
                                   />
                                 )}
                               </div>
                             </div>
                           </CardContent>
                         </Card>
-                          </>
-                        ))}
+                          </Fragment>
+                          );
+                        })}
                         
                         {/* Ajouter les dish_item ads restants à la fin de chaque catégorie */}
                         {dishItemAds.slice(Math.floor(categoryItems.length / 4)).map((ad: any) => (
@@ -302,7 +312,7 @@ export default function RestaurantMenuPage() {
                         ))}
                       </>
                     ) : (
-                      <p className="text-center text-muted-foreground py-8">Aucun plat dans cette catégorie</p>
+                      <p className="py-10 text-center text-muted-foreground">Aucun élément ne correspond à votre recherche dans cette collection.</p>
                     )}
                   </TabsContent>
                 );
@@ -310,7 +320,7 @@ export default function RestaurantMenuPage() {
             </Tabs>
           ) : (
             <div className="text-center py-12">
-              <p className="text-muted-foreground">Aucune catégorie disponible pour le moment</p>
+              <p className="text-muted-foreground">Aucune collection disponible pour le moment</p>
             </div>
           )}
         </div>

@@ -1052,7 +1052,8 @@
 
 ## REHAUSSEMENT DESIGN PRONTO (18 juin 2026)
 - [ ] Auditer la landing page, les dashboards et les pages de menu afin d'identifier les améliorations visuelles prioritaires
-- [ ] Définir et intégrer des fondations premium partagées : typographie, couleurs, matériaux, transitions et états de chargement
+- [x] Défini et intégré des fondations premium partagées : typographie, couleurs, matériaux, transitions, focus et préférence de mouvement réduite
+- [x] Créé un indicateur de chargement local, accessible et respectueux de la préférence de mouvement réduite
 - [ ] Moderniser la landing page avec une narration visuelle claire et des CTA à fort contraste
 - [ ] Moderniser le dashboard Super Admin sans altérer ses parcours métier ni ses contrôles d'accès
 - [ ] Moderniser le dashboard restaurateur sans altérer la gestion des menus, médias et paramètres
@@ -1095,9 +1096,32 @@
 - [ ] Tester manuellement un import authentifié CSV, image et PDF avant mise en production du parcours d'import
 - [ ] Mettre en place une médiathèque et des traitements de fichiers sûrs, avec contrôle de type, taille et propriété
 - [ ] Refondre la navigation, les fils d'Ariane, les états vides, erreurs, chargements et confirmations d'action
-- [ ] Repenser le dashboard entreprise autour de la publication, du catalogue, des contacts, des rendez-vous et des performances
-- [ ] Repenser l'espace Super Admin pour la supervision, le support, les accès, les audits et la gestion multi-entreprises
-- [ ] Refondre la landing page afin d'adresser les commerces, prestataires et établissements au-delà de la restauration
-- [ ] Rendre les vitrines publiques adaptables au catalogue, aux prestations, à la réservation et à l'identité de marque de chaque secteur
-- [ ] Écrire et exécuter les tests unitaires, d'intégration et de régression couvrant les parcours critiques
-- [ ] Mettre en place les contrôles d'accessibilité, de performance, d'observabilité et de reprise après incident
+- [x] Repenser le dashboard entreprise autour de la publication, du catalogue, des contacts, des rendez-vous et des performances
+- [x] Ajouté une vue d'ensemble orientée actions et statuts, sans supprimer les onglets métier existants
+- [x] Généralisé le vocabulaire du dashboard pour présenter un espace entreprise, tout en gardant la compatibilité restaurant
+- [x] Mis en valeur les parcours catalogue, import, vitrine et informations de contact avec une navigation plus lisible
+- [x] Vérifié l'accès propriétaire de La Voile Rouge et la conservation du scroll horizontal des onglets pour les petits écrans
+- [x] Refait l'espace Super Admin pour la supervision, le support, les accès et la gestion multi-entreprises
+- [x] Ajouté une vue opérationnelle multi-entreprises avec métriques, accès rapides et actions de supervision
+- [x] Clarifié le vocabulaire restaurants vers entreprises sans modifier les procédures legacy existantes
+- [x] Regroupé les actions sensibles et rendu leurs confirmations, erreurs et retours d'état explicites via les composants existants
+- [x] Vérifié que les données et boutons Super Admin restent accessibles au clavier et que les onglets défilent horizontalement sur petits écrans
+- [x] Déplacé la redirection Super Admin hors de la phase de rendu React pour éviter les effets de bord et les boucles de navigation
+- [x] Refondue la landing page afin d'adresser les commerces, prestataires et établissements au-delà de la restauration
+- [x] Repositionné le message autour des catalogues, services et réservations, sans promesses sectorielles exclusives
+- [x] Ajouté un parcours d'entrée clair par activité avec accès à la connexion, au contact et à une vitrine de démonstration
+- [x] Recomposé les sections marketing selon une narration attention, intérêt, désir et action, en préservant le formulaire de contact et l'assistance existants
+- [x] Contrôlé le rendu desktop, les contrastes, les focus et la préférence de mouvement réduit de la nouvelle landing
+- [x] Rendu les vitrines publiques adaptables au catalogue, aux prestations, à la réservation et à l'identité de marque de chaque secteur
+- [x] Ajouté une présentation de vitrine qui identifie sans ambiguïté l'entreprise et son contenu public
+- [x] Rendu le vocabulaire de recherche et des collections neutre entre menu, produits et prestations
+- [x] Préservé les itinéraires, images hero, publicités et filtres existants des restaurants pendant l'adaptation
+- [x] Vérifié visuellement la vitrine La Voile Rouge et l'accessibilité de sa navigation publique
+- [x] Supprimé la collection legacy vide dupliquée « Vins au verre » sans toucher aux trois éléments publiés
+- [x] Écrit et exécuté les tests unitaires, d'intégration et de régression couvrant les parcours critiques (26 tests passants)
+- [x] Mis en place les contrôles d'accessibilité, de performance, d'observabilité et de reprise après incident
+- [x] Ajouté des en-têtes HTTP de sécurité cohérents et retiré la signature technique Express
+- [x] Ajouté une sonde de santé exploitable par l'hébergement sans révéler d'informations sensibles
+- [x] Renforcé la limite d'erreur front-end afin d'isoler un écran en défaut et guider l'utilisateur vers une reprise sûre
+- [x] Vérifié les parcours publics, propriétaire et Super Admin après les changements transverses
+- [x] Documenté les procédures de reprise, les alertes utiles et les risques résiduels connus

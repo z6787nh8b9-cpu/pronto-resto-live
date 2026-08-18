@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { AlertTriangle, RotateCcw } from "lucide-react";
+import { AlertTriangle, ArrowRight, RotateCcw } from "lucide-react";
 import { Component, ReactNode } from "react";
 
 interface Props {
@@ -24,32 +24,27 @@ class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="flex items-center justify-center min-h-screen p-8 bg-background">
-          <div className="flex flex-col items-center w-full max-w-2xl p-8">
+        <div className="flex min-h-screen items-center justify-center bg-background p-6">
+          <div className="pronto-shell w-full max-w-xl p-1.5">
+          <div className="flex flex-col items-center rounded-[calc(1.5rem-0.375rem)] bg-card p-8 text-center sm:p-12">
             <AlertTriangle
-              size={48}
-              className="text-destructive mb-6 flex-shrink-0"
+              size={44}
+              className="mb-6 flex-shrink-0 text-pronto-primary"
             />
 
-            <h2 className="text-xl mb-4">An unexpected error occurred.</h2>
+            <p className="pronto-eyebrow">Reprise sécurisée</p>
+            <h2 className="mt-5 text-4xl">Cette page a besoin d’être relancée.</h2>
 
-            <div className="p-4 w-full rounded bg-muted overflow-auto mb-6">
-              <pre className="text-sm text-muted-foreground whitespace-break-spaces">
-                {this.state.error?.stack}
-              </pre>
-            </div>
+            <p className="mt-4 max-w-md leading-7 text-muted-foreground">Aucune donnée n’a été modifiée. Vous pouvez réessayer ou revenir à l’accueil pour reprendre votre parcours.</p>
 
-            <button
-              onClick={() => window.location.reload()}
-              className={cn(
-                "flex items-center gap-2 px-4 py-2 rounded-lg",
-                "bg-primary text-primary-foreground",
-                "hover:opacity-90 cursor-pointer"
-              )}
-            >
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <button onClick={() => window.location.reload()} className={cn("flex items-center justify-center gap-2 rounded-full bg-pronto-primary px-5 py-3 text-primary-foreground transition-transform duration-500 hover:-translate-y-0.5 hover:bg-pronto-primary-deep active:scale-[0.98]")}>
               <RotateCcw size={16} />
-              Reload Page
+              Réessayer
             </button>
+            <a href="/" className="flex items-center justify-center gap-2 rounded-full border border-border px-5 py-3 text-sm font-medium transition-colors hover:bg-secondary">Retour à l’accueil <ArrowRight size={16} /></a>
+            </div>
+          </div>
           </div>
         </div>
       );
