@@ -1086,14 +1086,18 @@
 - [x] Ajouté le routeur businesses avec lecture publique minimale, accès workspace et vérification de rôle par entreprise
 - [x] Ajouté les tests de permissions du noyau entreprise (4 tests passants)
 - [x] Corrigé le helper IA serveur pour utiliser un modèle réellement disponible et accepter une sélection de modèle explicite
-- [ ] Unifier les rôles, sessions, autorisations, invitations, récupération de compte et journalisation de sécurité
+- [x] Unifié les rôles, sessions, autorisations, invitations, récupération de compte et journalisation de sécurité autour d'un principal typé et de sessions renforcées
 - [x] Cartographié les comptes administrateur et propriétaire, leurs sessions et les routes qui les consomment
 - [x] Ajouté un journal minimal d'événements de sécurité sans stocker de mot de passe, session ou jeton brut
-- [ ] Ajouter un flux de demande et de confirmation de réinitialisation de mot de passe à usage unique et expirant
+- [x] Ajouté un flux de demande et de confirmation de réinitialisation de mot de passe à usage unique et expirant
+- [x] Ajouté une table de jetons de réinitialisation hachés, expirants et à usage unique
+- [x] Généré un lien de réinitialisation uniquement pour les propriétaires utilisant l'email/mot de passe, sans révéler l'existence du compte au navigateur
+- [x] Ajouté une confirmation de réinitialisation avec politique de mot de passe et invalidation atomique du jeton
 - [x] Mis en place une demande de récupération neutre, limitée et notifiée à l'équipe, sans révéler l'existence d'un compte
-- [ ] Centraliser les opérations de connexion, déconnexion et récupération sans casser Google/Facebook ni le compte email de La Voile Rouge
+- [x] Centralisé les opérations de connexion, déconnexion et récupération sans casser Google/Facebook ni le compte email de La Voile Rouge
+- [x] Régénéré l'identifiant de session lors des connexions par mot de passe et détruit entièrement la session lors de la déconnexion
 - [x] Ajouté un changement de mot de passe authentifié pour les comptes administrateur et propriétaire email, avec politique de mot de passe renforcée
-- [ ] Ajouter des tests de token expiré, token utilisé, rejet d'accès et journalisation sans données sensibles
+- [x] Ajouté des tests de jeton expiré, jeton utilisé, rejet d'accès et journalisation sans données sensibles
 - [ ] Créer un parcours d'inscription et d'onboarding guidé par type d'entreprise et objectif de publication
 - [ ] Créer des imports robustes depuis CSV, photo et PDF avec aperçu, validation, correction et publication explicite
 - [x] Ajouté les tables import_jobs et import_job_rows avec statut, fichier source, brouillon normalisé et erreurs de validation

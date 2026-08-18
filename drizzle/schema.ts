@@ -819,3 +819,18 @@ export const securityEvents = mysqlTable("security_events", {
 
 export type SecurityEvent = typeof securityEvents.$inferSelect;
 export type InsertSecurityEvent = typeof securityEvents.$inferInsert;
+
+/** Password recovery tokens are stored only as hashes and expire after a short window. */
+export const passwordResetTokens = mysqlTable("password_reset_tokens", {
+  id: int("id").autoincrement().primaryKey(),
+  ownerId: int("ownerId").notNull(),
+  tokenHash: varchar("tokenHash", { length: 64 }).notNull().unique(),
+  expiresAt: timestamp("expiresAt").notNull(),
+  usedAt: timestamp("usedAt"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => [
+  index("password_reset_owner_idx").on(table.ownerId, table.createdAt),
+  index("password_reset_expiry_idx").on(table.expiresAt),
+]);
+
+export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
