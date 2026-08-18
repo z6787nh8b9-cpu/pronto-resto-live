@@ -1119,6 +1119,7 @@
 - [ ] Refondre la navigation, les fils d'Ariane, les états vides, erreurs, chargements et confirmations d'action
 - [x] Localisé la page introuvable en français cohérent avec PRONTO
 - [x] Généralisé le formulaire de contact pour parler d'entreprise et d'activité plutôt que de restaurant
+- [x] Aligné l'accroche du formulaire de contact avec le positionnement multi-secteurs de PRONTO
 - [x] Supprimé l'identifiant propriétaire codé en dur lors de la création d'une entreprise par le Super Admin
 - [x] Remplacé les procédures publiques de gestion des réservations par des contrôles propriétaire ou Super Admin et vérifié l'accès au restaurant ciblé
 - [x] Ajouté un test garantissant qu'un visiteur anonyme ne peut plus gérer paramètres, zones ni réservations
