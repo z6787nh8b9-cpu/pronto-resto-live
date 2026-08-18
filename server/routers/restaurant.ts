@@ -2,7 +2,7 @@ import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { router } from "../_core/trpc";
 // Removed obsolete tenantMiddleware import
-import { publicProcedure, protectedProcedure, restaurantOwnerProcedure } from "../_core/trpc";
+import { publicProcedure, restaurantOwnerProcedure } from "../_core/trpc";
 import {
   getRestaurantsByOwnerId,
   updateRestaurant,
