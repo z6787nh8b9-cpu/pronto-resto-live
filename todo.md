@@ -1127,6 +1127,7 @@
 - [x] Remplacé le jeton d'inscription événementielle généré par Math.random par une valeur cryptographiquement sûre
 - [x] Migré les procédures événement vers les rôles propriétaire et Super Admin avec vérification du restaurant ciblé
 - [x] Migré les procédures d'horaires vers les rôles propriétaire et Super Admin avec vérification du restaurant ciblé
+- [x] Migré l'upload historique vers les rôles propriétaire et Super Admin avec chemin de stockage rattaché à l'identité active
 - [x] Migré les procédures de galerie vers les rôles propriétaire et Super Admin avec vérification du restaurant ciblé
 - [x] Ajouté un fil d'Ariane lisible à l'espace entreprise et remplacé le retour ambigu vers Super Admin par un retour Accueil
 - [x] Remplacé la confirmation navigateur de retrait de média par une confirmation accessible cohérente avec l'interface

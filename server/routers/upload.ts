@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { router, protectedProcedure } from "../_core/trpc";
+import { router, restaurantOwnerProcedure } from "../_core/trpc";
 import { storagePut } from "../storage";
 import { nanoid } from "nanoid";
 
 export const uploadRouter = router({
-  uploadImage: protectedProcedure
+  uploadImage: restaurantOwnerProcedure
     .input(
       z.object({
         base64Data: z.string(),
@@ -25,7 +25,9 @@ export const uploadRouter = router({
       // Generate unique filename
       const ext = input.filename.split(".").pop() || "jpg";
       const uniqueFilename = `${nanoid()}.${ext}`;
-      const fileKey = `uploads/${ctx.user.id}/${uniqueFilename}`;
+      const actorId = ctx.restaurantOwner?.id ?? ctx.adminAccount?.id ?? ctx.user?.id;
+      if (!actorId) throw new Error("Unauthorized");
+      const fileKey = `uploads/${actorId}/${uniqueFilename}`;
 
       // Upload to S3
       const { url } = await storagePut(fileKey, buffer, input.mimeType);
