@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { publicProcedure, protectedProcedure, router } from "../_core/trpc";
+import { adminProcedure, publicProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
 import { chatbotRequests } from "../../drizzle/schema";
 import { eq, desc } from "drizzle-orm";
@@ -50,7 +50,7 @@ export const chatbotRequestsRouter = router({
     }),
 
   // Protected procedure - only Super Admins can list requests
-  list: protectedProcedure.query(async () => {
+  list: adminProcedure.query(async () => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
     const requests = await db
@@ -62,7 +62,7 @@ export const chatbotRequestsRouter = router({
   }),
 
   // Protected procedure - update request status
-  updateStatus: protectedProcedure
+  updateStatus: adminProcedure
     .input(
       z.object({
         id: z.number(),

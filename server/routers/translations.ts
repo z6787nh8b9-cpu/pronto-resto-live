@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, publicProcedure, protectedProcedure, restaurantOwnerProcedure } from "../_core/trpc";
+import { router, publicProcedure, restaurantOwnerProcedure } from "../_core/trpc";
 import { getDb } from "../db";
 import { translations, restaurants, menuCategories, menuItems } from "../../drizzle/schema";
 import { eq, and } from "drizzle-orm";
@@ -33,7 +33,7 @@ export const translationsRouter = router({
   /**
    * Translate all content for a restaurant (batch translation)
    */
-  translateAll: protectedProcedure
+  translateAll: restaurantOwnerProcedure
     .input(z.object({
       restaurantId: z.number(),
       targetLanguage: z.enum(["en", "it", "de", "es"]),
@@ -54,7 +54,8 @@ export const translationsRouter = router({
       }
 
       // Check if user owns this restaurant or is admin
-      if (restaurant.ownerId !== ctx.user.id && ctx.user.role !== "admin") {
+      const isAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      if (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id) {
         throw new Error("Unauthorized");
       }
 
@@ -158,7 +159,7 @@ export const translationsRouter = router({
   /**
    * Update a translation manually (correction)
    */
-  updateTranslation: protectedProcedure
+  updateTranslation: restaurantOwnerProcedure
     .input(z.object({
       translationId: z.number(),
       translatedText: z.string(),
@@ -190,7 +191,8 @@ export const translationsRouter = router({
       }
 
       // Check if user owns this restaurant or is admin
-      if (restaurant.ownerId !== ctx.user.id && ctx.user.role !== "admin") {
+      const isAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      if (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id) {
         throw new Error("Unauthorized");
       }
 
@@ -358,7 +360,7 @@ export const translationsRouter = router({
   /**
    * Get all translations for management (dashboard)
    */
-  getTranslationsForManagement: protectedProcedure
+  getTranslationsForManagement: restaurantOwnerProcedure
     .input(z.object({
       restaurantId: z.number(),
     }))
@@ -378,7 +380,8 @@ export const translationsRouter = router({
       }
 
       // Check if user owns this restaurant or is admin
-      if (restaurant.ownerId !== ctx.user.id && ctx.user.role !== "admin") {
+      const isAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      if (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id) {
         throw new Error("Unauthorized");
       }
 
