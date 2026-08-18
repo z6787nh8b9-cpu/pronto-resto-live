@@ -988,7 +988,7 @@ export default function RestaurantDashboard() {
                     <Textarea
                       name="customInfo"
                       rows={4}
-                      placeholder="Ajoutez des informations spécifiques sur votre restaurant (histoire, spécialités, horaires...)"
+                      placeholder="Ajoutez les informations utiles sur votre activité (histoire, spécialités, services, horaires...)"
                       defaultValue={chatbotConfig?.customInfo || ""}
                     />
                   </div>
