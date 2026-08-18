@@ -22,15 +22,14 @@ export async function verifyRecaptcha(
   token: string,
   expectedAction?: string
 ): Promise<boolean> {
+  if (process.env.NODE_ENV === "development" && token === "development-bypass") {
+    return true;
+  }
+
   const secretKey = process.env.RECAPTCHA_SECRET_KEY;
 
   if (!secretKey) {
     console.error("[reCAPTCHA] RECAPTCHA_SECRET_KEY not configured");
-    // In development, allow requests without verification
-    if (process.env.NODE_ENV === "development") {
-      console.warn("[reCAPTCHA] Skipping verification in development mode");
-      return true;
-    }
     throw new Error("reCAPTCHA configuration error");
   }
 
