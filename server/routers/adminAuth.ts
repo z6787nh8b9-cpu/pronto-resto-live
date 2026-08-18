@@ -116,11 +116,7 @@ export const adminAuthRouter = router({
    * Logout current admin
    */
   logout: publicProcedure.mutation(async ({ ctx }) => {
-    if (ctx.req.session.adminId) {
-      ctx.req.session.adminId = undefined;
-      await ctx.req.session.save();
-    }
-
+    await new Promise<void>((resolve, reject) => ctx.req.session.destroy((error) => error ? reject(error) : resolve()));
     return { success: true };
   }),
 

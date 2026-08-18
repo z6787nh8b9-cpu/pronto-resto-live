@@ -9,6 +9,7 @@ import { oauthLimiter, ownerEmailLoginLimiter } from "./rate-limiters";
 import { recordSecurityEvent } from "./security-events";
 import { passwordPolicyError } from "./password-policy";
 import { notifyOwner } from "./_core/notification";
+import { createPasswordResetSecret, hashPasswordResetSecret, isPasswordResetExpired, PASSWORD_RESET_TTL_MS } from "./password-reset";
 
 
 /**
@@ -153,8 +154,8 @@ export function registerRestaurantAuthRoutes(app: Express) {
     }
   );
 
-  // Logout route
-  app.get("/api/auth/logout", (req: Request, res: Response) => {
+// Logout route
+app.get("/api/auth/logout", (req: Request, res: Response) => {
     req.logout((err) => {
       if (err) {
         return res.status(500).json({ error: "Logout failed" });
@@ -165,10 +166,21 @@ export function registerRestaurantAuthRoutes(app: Express) {
         }
         res.redirect("/");
       });
+  });
+});
+
+  app.post("/api/auth/logout", (req: Request, res: Response) => {
+    req.logout((logoutError) => {
+      if (logoutError) return res.status(500).json({ error: "Logout failed" });
+      req.session.destroy((sessionError) => {
+        if (sessionError) return res.status(500).json({ error: "Session destruction failed" });
+        res.clearCookie("connect.sid");
+        return res.json({ success: true });
+      });
     });
   });
 
-  // Get current user route
+// Get current user route
   app.get("/api/auth/me", (req: Request, res: Response) => {
     if (req.isAuthenticated()) {
       res.json({ user: req.user });
@@ -252,6 +264,14 @@ export function registerEmailLoginRoute(app: Express) {
         .set({ lastSignedIn: new Date() })
         .where(eq(restaurantOwners.id, owner.id));
 
+      // Regenerate before login to prevent session fixation across account changes.
+      req.session.regenerate((sessionError) => {
+        if (sessionError) {
+          console.error("[EmailLogin] Unable to regenerate owner session");
+          void recordSecurityEvent({ req, principalType: "owner", principalId: owner.id, eventType: "owner.email_login", outcome: "failure" });
+          return res.status(500).json({ error: "Erreur de session" });
+        }
+
       // Create Passport session
       req.login(owner, async (err) => {
         if (err) {
@@ -273,6 +293,7 @@ export function registerEmailLoginRoute(app: Express) {
         } else {
           return res.json({ success: true, redirectTo: "/" });
         }
+      });
       });
 
     } catch {
@@ -324,10 +345,26 @@ export function registerEmailLoginRoute(app: Express) {
     if (!/^\S+@\S+\.\S+$/.test(email)) return res.status(200).json(genericResponse);
 
     try {
-      await notifyOwner({
-        title: "PRONTO — demande de récupération d'accès",
-        content: `Une demande de récupération a été soumise pour l'adresse ${email}. Vérifiez l'identité du demandeur avant toute réinitialisation manuelle.`,
-      });
+      const { getDb } = await import("./db");
+      const { passwordResetTokens, restaurantOwners } = await import("../drizzle/schema");
+      const { eq, and } = await import("drizzle-orm");
+      const db = await getDb();
+      const [owner] = db ? await db.select().from(restaurantOwners)
+        .where(and(eq(restaurantOwners.email, email), eq(restaurantOwners.provider, "email"))).limit(1) : [];
+
+      if (owner && db) {
+        const secret = createPasswordResetSecret();
+        const expiresAt = new Date(Date.now() + PASSWORD_RESET_TTL_MS);
+        await db.insert(passwordResetTokens).values({ ownerId: owner.id, tokenHash: hashPasswordResetSecret(secret), expiresAt });
+
+        const fallbackOrigin = `${req.protocol}://${req.get("host")}`;
+        const resetUrl = new URL("/reset-password", process.env.PUBLIC_URL || fallbackOrigin);
+        resetUrl.searchParams.set("token", secret);
+        await notifyOwner({
+          title: "PRONTO — lien de récupération d'accès à transmettre après vérification",
+          content: `Demande de récupération pour ${email}. Après vérification de l'identité, transmettez ce lien à usage unique (valide une heure) : ${resetUrl.toString()}`,
+        });
+      }
       await recordSecurityEvent({ req, principalType: "system", eventType: "owner.password_help_request", outcome: "info" });
     } catch {
       // The public response remains neutral even when the notification service is temporarily unavailable.
@@ -335,5 +372,42 @@ export function registerEmailLoginRoute(app: Express) {
     }
 
     return res.status(200).json(genericResponse);
+  });
+
+  app.post("/api/auth/reset-password", ownerEmailLoginLimiter, async (req: Request, res: Response) => {
+    const token = typeof req.body?.token === "string" ? req.body.token : "";
+    const newPassword = typeof req.body?.newPassword === "string" ? req.body.newPassword : "";
+    const policyError = passwordPolicyError(newPassword);
+    if (!token || policyError) return res.status(400).json({ error: policyError || "Lien invalide ou expiré" });
+
+    try {
+      const { getDb } = await import("./db");
+      const { passwordResetTokens, restaurantOwners } = await import("../drizzle/schema");
+      const { and, eq, isNull } = await import("drizzle-orm");
+      const bcrypt = await import("bcrypt");
+      const db = await getDb();
+      if (!db) throw new Error("Database unavailable");
+
+      const tokenHash = hashPasswordResetSecret(token);
+      const [resetToken] = await db.select().from(passwordResetTokens).where(eq(passwordResetTokens.tokenHash, tokenHash)).limit(1);
+      if (!resetToken || resetToken.usedAt || isPasswordResetExpired(resetToken.expiresAt)) {
+        await recordSecurityEvent({ req, principalType: "system", eventType: "owner.password_reset", outcome: "failure" });
+        return res.status(400).json({ error: "Lien invalide ou expiré" });
+      }
+
+      const claim = await db.update(passwordResetTokens).set({ usedAt: new Date() })
+        .where(and(eq(passwordResetTokens.id, resetToken.id), isNull(passwordResetTokens.usedAt)));
+      if (Number(claim[0].affectedRows) !== 1) return res.status(400).json({ error: "Lien invalide ou expiré" });
+
+      const [owner] = await db.select().from(restaurantOwners).where(eq(restaurantOwners.id, resetToken.ownerId)).limit(1);
+      if (!owner || owner.provider !== "email") return res.status(400).json({ error: "Lien invalide ou expiré" });
+
+      await db.update(restaurantOwners).set({ passwordHash: await bcrypt.hash(newPassword, 10) }).where(eq(restaurantOwners.id, owner.id));
+      await recordSecurityEvent({ req, principalType: "owner", principalId: owner.id, eventType: "owner.password_reset", outcome: "success" });
+      return res.json({ success: true });
+    } catch {
+      await recordSecurityEvent({ req, principalType: "system", eventType: "owner.password_reset", outcome: "failure" });
+      return res.status(500).json({ error: "Erreur serveur" });
+    }
   });
 }

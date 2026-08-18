@@ -13,6 +13,7 @@ import LandingPage from "./pages/LandingPage";
 import RestaurantHomePage from "./pages/RestaurantHomePage";
 import RestaurantMenuPage from "./pages/RestaurantMenuPage";
 import RestaurantLogin from "./pages/RestaurantLogin";
+import PasswordReset from "./pages/PasswordReset";
 import InviteAccept from "./pages/InviteAccept";
 import AdminInvite from "./pages/AdminInvite";
 import AdminLogin from "./pages/AdminLogin";
@@ -37,6 +38,9 @@ function Router() {
       
       {/* Restaurant owner login */}
       <Route path="/login-restaurant" component={RestaurantLogin} />
+
+      {/* Password recovery confirmation */}
+      <Route path="/reset-password" component={PasswordReset} />
       
       {/* Invitation acceptance */}
       <Route path="/invite/:token" component={InviteAccept} />
