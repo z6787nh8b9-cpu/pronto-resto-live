@@ -14,11 +14,11 @@ import { fr } from "date-fns/locale";
 
 interface ReservationFlowProps {
   restaurantId: number;
-  restaurantName: string;
+  businessName: string;
   onClose?: () => void;
 }
 
-export function ReservationFlow({ restaurantId, restaurantName, onClose }: ReservationFlowProps) {
+export function ReservationFlow({ restaurantId, businessName, onClose }: ReservationFlowProps) {
   const [step, setStep] = useState(1);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [selectedTime, setSelectedTime] = useState("");
@@ -334,7 +334,7 @@ export function ReservationFlow({ restaurantId, restaurantName, onClose }: Reser
               <div className="p-4 bg-muted rounded-lg space-y-3">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Établissement</span>
-                  <span className="font-semibold">{restaurantName}</span>
+                  <span className="font-semibold">{businessName}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Date</span>

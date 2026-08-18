@@ -12,11 +12,11 @@ import { toast } from "sonner";
 interface EventRegistrationFlowProps {
   event: any;
   restaurantId: number;
-  restaurantName: string;
+  businessName: string;
   onClose?: () => void;
 }
 
-export function EventRegistrationFlow({ event, restaurantId, restaurantName, onClose }: EventRegistrationFlowProps) {
+export function EventRegistrationFlow({ event, restaurantId, businessName, onClose }: EventRegistrationFlowProps) {
   const [customerName, setCustomerName] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");

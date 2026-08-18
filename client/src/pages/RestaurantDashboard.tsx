@@ -1007,7 +1007,7 @@ export default function RestaurantDashboard() {
               <LockedFeatureOverlay
                 featureName="Personnalisation visuelle"
                 tier="premium"
-                restaurantName={restaurant?.name || ""}
+                businessName={restaurant?.name || ""}
               >
                 {restaurant && <Customization restaurantId={restaurant.id} />}
               </LockedFeatureOverlay>
@@ -1022,7 +1022,7 @@ export default function RestaurantDashboard() {
               <LockedFeatureOverlay
                 featureName="Galerie photos"
                 tier="premium"
-                restaurantName={restaurant?.name || ""}
+                businessName={restaurant?.name || ""}
               >
                 {restaurant && <Gallery restaurantId={restaurant.id} />}
               </LockedFeatureOverlay>
@@ -1072,7 +1072,7 @@ export default function RestaurantDashboard() {
               <LockedFeatureOverlay
                 featureName="Traductions automatiques"
                 tier="pro"
-                restaurantName={restaurant?.name || ""}
+                businessName={restaurant?.name || ""}
               >
                 <Translations />
               </LockedFeatureOverlay>
@@ -1087,7 +1087,7 @@ export default function RestaurantDashboard() {
               <LockedFeatureOverlay
                 featureName="Horaires d'ouverture"
                 tier="premium"
-                restaurantName={restaurant?.name || ""}
+                businessName={restaurant?.name || ""}
               >
                 <OpeningHours />
               </LockedFeatureOverlay>
@@ -1102,7 +1102,7 @@ export default function RestaurantDashboard() {
               <LockedFeatureOverlay
                 featureName="Système de réservations"
                 tier="premium"
-                restaurantName={restaurant?.name || ""}
+                businessName={restaurant?.name || ""}
               >
                 {restaurant && <Reservations restaurantId={restaurant.id} />}
               </LockedFeatureOverlay>
@@ -1117,7 +1117,7 @@ export default function RestaurantDashboard() {
               <LockedFeatureOverlay
                 featureName="Gestion d'événements"
                 tier="premium"
-                restaurantName={restaurant?.name || ""}
+                businessName={restaurant?.name || ""}
               >
                 {restaurant && <Events restaurantId={restaurant.id} />}
               </LockedFeatureOverlay>
