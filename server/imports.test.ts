@@ -71,6 +71,18 @@ describe("Controlled catalog imports", () => {
     })).rejects.toBeInstanceOf(TRPCError);
   });
 
+  it("rejects a binary payload whose bytes do not match the declared PDF MIME type", async () => {
+    await expect(adminCaller.imports.analyze({
+      businessId: 1,
+      catalogName: "Contrôle MIME",
+      catalogType: "services",
+      sourceType: "pdf",
+      fileName: "faux-document.pdf",
+      mimeType: "application/pdf",
+      base64Data: "data:application/pdf;base64,bm90IGEgcGRmIGZpbGU=",
+    })).rejects.toBeInstanceOf(TRPCError);
+  });
+
   it("refuses malformed CSV files that do not provide an item name", () => {
     expect(() => draftFromCsv(Buffer.from("Prix;Durée\n10;30\n", "utf8"), "Test", "services"))
       .toThrow("Aucun nom d'élément");
@@ -94,6 +106,23 @@ describe("Controlled catalog imports", () => {
       "Catalogue de validation",
       "services",
     );
+    const pendingJobResult = await db!.insert(importJobs).values({
+      businessId,
+      sourceType: "csv",
+      sourceFileName: "analyse-en-cours.csv",
+      sourceMimeType: "text/csv",
+      sourceUrl: "https://example.test/imports/analyse-en-cours.csv",
+      status: "analyzing",
+      draft,
+      validationErrors: [],
+      createdByPrincipalType: "admin_account",
+      createdByPrincipalId: 1,
+    });
+    const pendingImportJobId = Number(pendingJobResult[0].insertId);
+    await expect(adminCaller.imports.applyDraft({ businessId, importJobId: pendingImportJobId })).rejects.toBeInstanceOf(TRPCError);
+    const catalogsBeforeReview = await db!.select().from(catalogs).where(eq(catalogs.businessId, businessId));
+    expect(catalogsBeforeReview).toHaveLength(0);
+
     const jobResult = await db!.insert(importJobs).values({
       businessId,
       sourceType: "csv",
