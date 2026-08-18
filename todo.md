@@ -1125,7 +1125,8 @@
 - [x] Restreint la génération de traductions IA aux propriétaires autorisés et Super Admins afin d'éviter les déclenchements coûteux publics
 - [x] Ajouté un test garantissant qu'un visiteur anonyme ne peut pas déclencher une traduction IA
 - [x] Remplacé le jeton d'inscription événementielle généré par Math.random par une valeur cryptographiquement sûre
-- [ ] Migrer les procédures événement et horaires de l'ancien contrôle Manus vers les rôles propriétaire et Super Admin
+- [x] Migré les procédures événement vers les rôles propriétaire et Super Admin avec vérification du restaurant ciblé
+- [ ] Migrer les procédures d'horaires de l'ancien contrôle Manus vers les rôles propriétaire et Super Admin
 - [x] Migré les procédures de galerie vers les rôles propriétaire et Super Admin avec vérification du restaurant ciblé
 - [x] Ajouté un fil d'Ariane lisible à l'espace entreprise et remplacé le retour ambigu vers Super Admin par un retour Accueil
 - [x] Remplacé la confirmation navigateur de retrait de média par une confirmation accessible cohérente avec l'interface
