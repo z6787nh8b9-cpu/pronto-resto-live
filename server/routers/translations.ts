@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { router, publicProcedure, protectedProcedure } from "../_core/trpc";
+import { router, publicProcedure, protectedProcedure, restaurantOwnerProcedure } from "../_core/trpc";
 import { getDb } from "../db";
 import { translations, restaurants, menuCategories, menuItems } from "../../drizzle/schema";
 import { eq, and } from "drizzle-orm";
@@ -211,12 +211,12 @@ export const translationsRouter = router({
   /**
    * Auto-translate content when visitor changes language (public, one-time per language)
    */
-  autoTranslatePublic: publicProcedure
+  autoTranslatePublic: restaurantOwnerProcedure
     .input(z.object({
       restaurantId: z.number(),
       targetLanguage: z.enum(["en", "it", "de", "es"]),
     }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new Error('Database not available');
       
@@ -250,6 +250,11 @@ export const translationsRouter = router({
 
       if (!restaurant) {
         throw new Error("Restaurant not found");
+      }
+
+      const isPlatformAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      if (!isPlatformAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id) {
+        throw new Error("Unauthorized");
       }
 
       const results = [];

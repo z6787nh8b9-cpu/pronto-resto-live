@@ -1122,6 +1122,8 @@
 - [x] Remplacé les créneaux fictifs par un calcul dynamique fondé sur les horaires, délais, zones actives et capacité cumulée
 - [x] Réutilisé les contrôles de délai, capacité et créneau lors de la création publique de réservation
 - [x] Remplacé le jeton de confirmation de réservation généré par Math.random par une valeur cryptographiquement sûre
+- [x] Restreint la génération de traductions IA aux propriétaires autorisés et Super Admins afin d'éviter les déclenchements coûteux publics
+- [x] Ajouté un test garantissant qu'un visiteur anonyme ne peut pas déclencher une traduction IA
 - [x] Ajouté un fil d'Ariane lisible à l'espace entreprise et remplacé le retour ambigu vers Super Admin par un retour Accueil
 - [x] Remplacé la confirmation navigateur de retrait de média par une confirmation accessible cohérente avec l'interface
 - [x] Repenser le dashboard entreprise autour de la publication, du catalogue, des contacts, des rendez-vous et des performances
