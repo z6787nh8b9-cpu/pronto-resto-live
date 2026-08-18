@@ -26,7 +26,9 @@ export default function RestaurantLogin() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [recoveryMessage, setRecoveryMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isRecoveryLoading, setIsRecoveryLoading] = useState(false);
 
   const handleGoogleLogin = () => {
     const authUrl = `/api/auth/google${token ? `?token=${token}` : ""}`;
@@ -62,6 +64,29 @@ export default function RestaurantLogin() {
       setEmailError("Erreur de connexion. Veuillez réessayer.");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handlePasswordHelp = async () => {
+    setEmailError(null);
+    setRecoveryMessage(null);
+    if (!email.trim()) {
+      setEmailError("Saisissez votre adresse e-mail pour demander une récupération.");
+      return;
+    }
+    setIsRecoveryLoading(true);
+    try {
+      const response = await fetch("/api/auth/password-help", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await response.json();
+      setRecoveryMessage(data.message || "Votre demande a été transmise à notre équipe.");
+    } catch {
+      setRecoveryMessage("Votre demande a été prise en compte. Réessayez plus tard si nécessaire.");
+    } finally {
+      setIsRecoveryLoading(false);
     }
   };
 
@@ -162,6 +187,12 @@ export default function RestaurantLogin() {
               </Alert>
             )}
 
+            {recoveryMessage && (
+              <Alert className="border-pronto-primary/20 bg-pronto-primary/5 py-2">
+                <AlertDescription className="text-sm text-foreground">{recoveryMessage}</AlertDescription>
+              </Alert>
+            )}
+
             <Button
               type="submit"
               className="w-full h-11 bg-amber-600 hover:bg-amber-700 text-white font-medium"
@@ -169,6 +200,9 @@ export default function RestaurantLogin() {
             >
               {isLoading ? "Connexion..." : "Se connecter"}
             </Button>
+            <button type="button" onClick={handlePasswordHelp} disabled={isRecoveryLoading} className="w-full text-center text-sm font-medium text-pronto-primary transition-colors hover:text-pronto-primary-deep disabled:opacity-60">
+              {isRecoveryLoading ? "Transmission…" : "Mot de passe oublié ?"}
+            </button>
           </form>
 
           <div className="relative">

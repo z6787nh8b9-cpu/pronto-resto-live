@@ -4,6 +4,7 @@ import { getDb } from "./db";
 import { adminAccounts } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { adminLoginLimiter } from "./rate-limiters";
+import { recordSecurityEvent } from "./security-events";
 
 export const adminLoginRouter = Router();
 
@@ -15,7 +16,7 @@ adminLoginRouter.post("/login", adminLoginLimiter, async (req, res) => {
 
     // Validate inputs
     if (!email || !password) {
-      console.error("[Admin Login Route] Missing email or password");
+      await recordSecurityEvent({ req, principalType: "admin", eventType: "admin.email_login", outcome: "failure" });
       return res.status(400).send(`
         <!DOCTYPE html>
         <html>
@@ -42,7 +43,8 @@ adminLoginRouter.post("/login", adminLoginLimiter, async (req, res) => {
     // Find admin by email
     const db = await getDb();
     if (!db) {
-      console.error("[Admin Login Route] Database connection failed");
+      console.error("[Admin Login Route] Database connection unavailable");
+      await recordSecurityEvent({ req, principalType: "system", eventType: "admin.email_login", outcome: "failure" });
       return res.status(500).send("Database error");
     }
     
@@ -53,6 +55,7 @@ adminLoginRouter.post("/login", adminLoginLimiter, async (req, res) => {
       .limit(1);
 
     if (!admin) {
+      await recordSecurityEvent({ req, principalType: "admin", eventType: "admin.email_login", outcome: "failure" });
       return res.status(401).send(`
         <!DOCTYPE html>
         <html>
@@ -80,6 +83,7 @@ adminLoginRouter.post("/login", adminLoginLimiter, async (req, res) => {
     const isValidPassword = await bcrypt.compare(password, admin.passwordHash);
 
     if (!isValidPassword) {
+      await recordSecurityEvent({ req, principalType: "admin", principalId: admin.id, eventType: "admin.email_login", outcome: "failure" });
       return res.status(401).send(`
         <!DOCTYPE html>
         <html>
@@ -109,7 +113,8 @@ adminLoginRouter.post("/login", adminLoginLimiter, async (req, res) => {
     // Save session and redirect
     req.session.save((err) => {
       if (err) {
-        console.error("[Admin Login Route] Session save error:", err);
+        console.error("[Admin Login Route] Unable to save admin session");
+        void recordSecurityEvent({ req, principalType: "admin", principalId: admin.id, eventType: "admin.email_login", outcome: "failure" });
         return res.status(500).send(`
           <!DOCTYPE html>
           <html>
@@ -134,10 +139,12 @@ adminLoginRouter.post("/login", adminLoginLimiter, async (req, res) => {
       }
 
       // HTTP 302 redirect to admin panel
+      void recordSecurityEvent({ req, principalType: "admin", principalId: admin.id, eventType: "admin.email_login", outcome: "success" });
       res.redirect(302, "/admin");
     });
-  } catch (error) {
-    console.error("[Admin Login Route] Unexpected error:", error);
+  } catch {
+    console.error("[Admin Login Route] Unexpected authentication failure");
+    await recordSecurityEvent({ req, principalType: "system", eventType: "admin.email_login", outcome: "failure" });
     res.status(500).send(`
       <!DOCTYPE html>
       <html>

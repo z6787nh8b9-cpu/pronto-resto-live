@@ -798,3 +798,24 @@ export const adminAccounts = mysqlTable("admin_accounts", {
 
 export type AdminAccount = typeof adminAccounts.$inferSelect;
 export type InsertAdminAccount = typeof adminAccounts.$inferInsert;
+
+/**
+ * Security events are intentionally sparse: no password, raw token, session ID,
+ * email address or raw IP address is persisted in this table.
+ */
+export const securityEvents = mysqlTable("security_events", {
+  id: int("id").autoincrement().primaryKey(),
+  principalType: mysqlEnum("principalType", ["admin", "owner", "system"]).notNull(),
+  principalId: int("principalId"),
+  eventType: varchar("eventType", { length: 100 }).notNull(),
+  outcome: mysqlEnum("outcome", ["success", "failure", "info"]).notNull(),
+  ipHash: varchar("ipHash", { length: 64 }),
+  route: varchar("route", { length: 255 }),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => [
+  index("security_events_principal_idx").on(table.principalType, table.principalId, table.createdAt),
+  index("security_events_event_idx").on(table.eventType, table.createdAt),
+]);
+
+export type SecurityEvent = typeof securityEvents.$inferSelect;
+export type InsertSecurityEvent = typeof securityEvents.$inferInsert;
