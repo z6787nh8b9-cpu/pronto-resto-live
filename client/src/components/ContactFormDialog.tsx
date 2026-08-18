@@ -64,9 +64,9 @@ export function ContactFormDialog({ isOpen, onClose, source }: ContactFormDialog
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Essai gratuit 14 jours</DialogTitle>
+          <DialogTitle>Parlons de votre activité</DialogTitle>
           <DialogDescription>
-            Remplissez ce formulaire et nous vous recontacterons rapidement pour démarrer votre essai gratuit.
+            Décrivez votre besoin ; nous vous recontacterons rapidement pour préparer votre espace PRONTO.
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
