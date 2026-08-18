@@ -1,7 +1,7 @@
-import { router, protectedProcedure, publicProcedure } from "../_core/trpc";
+import { router, restaurantOwnerProcedure, publicProcedure } from "../_core/trpc";
 import { z } from "zod";
 import { getDb } from "../db";
-import { openingHours } from "../../drizzle/schema";
+import { openingHours, restaurants } from "../../drizzle/schema";
 import { eq, and } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 
@@ -23,7 +23,7 @@ export const openingHoursRouter = router({
     }),
 
   // Set opening hours for a specific day (protected)
-  setOpeningHours: protectedProcedure
+  setOpeningHours: restaurantOwnerProcedure
     .input(
       z.object({
         restaurantId: z.number(),
@@ -33,9 +33,12 @@ export const openingHoursRouter = router({
         isClosed: z.boolean(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+      const [restaurant] = await db.select().from(restaurants).where(eq(restaurants.id, input.restaurantId)).limit(1);
+      const isAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      if (!restaurant || (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id)) throw new TRPCError({ code: "FORBIDDEN" });
 
       // Check if entry exists
       const existing = await db
@@ -75,7 +78,7 @@ export const openingHoursRouter = router({
     }),
 
   // Batch set opening hours (protected)
-  batchSetOpeningHours: protectedProcedure
+  batchSetOpeningHours: restaurantOwnerProcedure
     .input(
       z.object({
         restaurantId: z.number(),
@@ -89,9 +92,12 @@ export const openingHoursRouter = router({
         ),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+      const [restaurant] = await db.select().from(restaurants).where(eq(restaurants.id, input.restaurantId)).limit(1);
+      const isAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      if (!restaurant || (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id)) throw new TRPCError({ code: "FORBIDDEN" });
 
       // Process each day
       for (const dayData of input.hours) {
