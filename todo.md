@@ -1101,7 +1101,7 @@
 - [x] Créé un parcours d'onboarding guidé par type d'entreprise et objectif de publication
 - [x] Créé une table de progression d'onboarding par entreprise, avec type d'activité, objectif et étapes complétées
 - [x] Ajouté une première expérience guidée dans le dashboard pour choisir l'activité, préparer le catalogue puis publier
-- [ ] Créer des imports robustes depuis CSV, photo et PDF avec aperçu, validation, correction et publication explicite
+- [x] Créé des imports CSV, photo et PDF avec aperçu, validation, revue et publication explicitement contrôlée
 - [x] Ajouté les tables import_jobs et import_job_rows avec statut, fichier source, brouillon normalisé et erreurs de validation
 - [x] Créé un endpoint sécurisé d'analyse d'import qui valide fichier, type MIME, taille et accès à l'entreprise avant extraction
 - [x] Ajouté l'extraction CSV locale et l'extraction structurée IA pour image ou PDF, avec confiance par élément
@@ -1109,7 +1109,7 @@
 - [x] Ajouté les tests de parsing, d'autorisation et de validation de fichier du flux d'import
 - [ ] Tester manuellement un import authentifié CSV, image et PDF avant mise en production du parcours d'import
 - [ ] Exécuter un import CSV contrôlé sur un espace de test, vérifier le brouillon créé puis nettoyer toutes les données de validation
-- [ ] Mettre en place une médiathèque et des traitements de fichiers sûrs, avec contrôle de type, taille et propriété
+- [x] Mis en place une médiathèque avec contrôle de type, taille, propriété et archivage réversible par entreprise
 - [x] Créé une table media_assets et un routeur d'upload rattaché à une entreprise avec validation de MIME, taille et propriété
 - [x] Ajouté une bibliothèque de médias dans le dashboard, avec aperçu, copie d'URL et archivage confirmé (la suppression physique du stockage sera ajoutée avec l'API de suppression)
 - [x] Ajouté des tests de validation de signature et de taille des médias avant l'écriture dans le stockage
@@ -1117,6 +1117,7 @@
 - [x] Ajouté un test d'archivage de média qui vérifie son retrait de la bibliothèque sans suppression physique
 - [ ] Refondre la navigation, les fils d'Ariane, les états vides, erreurs, chargements et confirmations d'action
 - [x] Localisé la page introuvable en français cohérent avec PRONTO
+- [x] Généralisé le formulaire de contact pour parler d'entreprise et d'activité plutôt que de restaurant
 - [x] Supprimé l'identifiant propriétaire codé en dur lors de la création d'une entreprise par le Super Admin
 - [x] Remplacé les procédures publiques de gestion des réservations par des contrôles propriétaire ou Super Admin et vérifié l'accès au restaurant ciblé
 - [x] Ajouté un test garantissant qu'un visiteur anonyme ne peut plus gérer paramètres, zones ni réservations
