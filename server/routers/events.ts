@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { randomBytes } from "crypto";
-import { publicProcedure, protectedProcedure, router } from "../_core/trpc";
+import { publicProcedure, restaurantOwnerProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
-import { events, eventRegistrations } from "../../drizzle/schema";
+import { events, eventRegistrations, restaurants } from "../../drizzle/schema";
 import { eq, and, gte, desc } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 
@@ -101,11 +101,14 @@ export const eventsRouter = router({
     }),
 
   // Protected: Get all events for restaurant owner
-  getEvents: protectedProcedure
+  getEvents: restaurantOwnerProcedure
     .input(z.object({ restaurantId: z.number() }))
-    .query(async ({ input }) => {
+    .query(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+      const [restaurant] = await db.select().from(restaurants).where(eq(restaurants.id, input.restaurantId)).limit(1);
+      const isAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      if (!restaurant || (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id)) throw new TRPCError({ code: "FORBIDDEN" });
 
       const eventsList = await db
         .select()
@@ -117,7 +120,7 @@ export const eventsRouter = router({
     }),
 
   // Protected: Create a new event
-  createEvent: protectedProcedure
+  createEvent: restaurantOwnerProcedure
     .input(
       z.object({
         restaurantId: z.number(),
@@ -132,9 +135,12 @@ export const eventsRouter = router({
         registrationDeadline: z.string().optional(), // ISO date string
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+      const [restaurant] = await db.select().from(restaurants).where(eq(restaurants.id, input.restaurantId)).limit(1);
+      const isAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      if (!restaurant || (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id)) throw new TRPCError({ code: "FORBIDDEN" });
 
       const [event] = await db.insert(events).values({
         restaurantId: input.restaurantId,
@@ -154,7 +160,7 @@ export const eventsRouter = router({
     }),
 
   // Protected: Update an event
-  updateEvent: protectedProcedure
+  updateEvent: restaurantOwnerProcedure
     .input(
       z.object({
         eventId: z.number(),
@@ -173,9 +179,13 @@ export const eventsRouter = router({
         }),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+      const [event] = await db.select().from(events).where(eq(events.id, input.eventId)).limit(1);
+      const [restaurant] = event ? await db.select().from(restaurants).where(eq(restaurants.id, event.restaurantId)).limit(1) : [];
+      const isAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      if (!restaurant || (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id)) throw new TRPCError({ code: "FORBIDDEN" });
 
       const updateData: any = {};
       if (input.data.title) updateData.title = input.data.title;
@@ -199,11 +209,15 @@ export const eventsRouter = router({
     }),
 
   // Protected: Delete an event
-  deleteEvent: protectedProcedure
+  deleteEvent: restaurantOwnerProcedure
     .input(z.object({ eventId: z.number() }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+      const [event] = await db.select().from(events).where(eq(events.id, input.eventId)).limit(1);
+      const [restaurant] = event ? await db.select().from(restaurants).where(eq(restaurants.id, event.restaurantId)).limit(1) : [];
+      const isAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      if (!restaurant || (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id)) throw new TRPCError({ code: "FORBIDDEN" });
 
       // Delete all registrations first
       await db.delete(eventRegistrations).where(eq(eventRegistrations.eventId, input.eventId));
@@ -215,11 +229,15 @@ export const eventsRouter = router({
     }),
 
   // Protected: Get all registrations for an event
-  getEventRegistrations: protectedProcedure
+  getEventRegistrations: restaurantOwnerProcedure
     .input(z.object({ eventId: z.number() }))
-    .query(async ({ input }) => {
+    .query(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+      const [event] = await db.select().from(events).where(eq(events.id, input.eventId)).limit(1);
+      const [restaurant] = event ? await db.select().from(restaurants).where(eq(restaurants.id, event.restaurantId)).limit(1) : [];
+      const isAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      if (!restaurant || (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id)) throw new TRPCError({ code: "FORBIDDEN" });
 
       const registrations = await db
         .select()
@@ -231,16 +249,21 @@ export const eventsRouter = router({
     }),
 
   // Protected: Update registration status
-  updateRegistrationStatus: protectedProcedure
+  updateRegistrationStatus: restaurantOwnerProcedure
     .input(
       z.object({
         registrationId: z.number(),
         status: z.enum(["pending", "confirmed", "cancelled", "attended", "no_show"]),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+      const [registration] = await db.select().from(eventRegistrations).where(eq(eventRegistrations.id, input.registrationId)).limit(1);
+      const [event] = registration ? await db.select().from(events).where(eq(events.id, registration.eventId)).limit(1) : [];
+      const [restaurant] = event ? await db.select().from(restaurants).where(eq(restaurants.id, event.restaurantId)).limit(1) : [];
+      const isAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      if (!restaurant || (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id)) throw new TRPCError({ code: "FORBIDDEN" });
 
       await db
         .update(eventRegistrations)
