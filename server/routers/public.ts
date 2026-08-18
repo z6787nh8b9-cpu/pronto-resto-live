@@ -38,11 +38,11 @@ export const publicRouter = router({
   chat: publicProcedure
     .input(
       z.object({
-        restaurantId: z.number(),
-        sessionId: z.string(),
-        message: z.string(),
-        userIp: z.string().optional(),
-        userAgent: z.string().optional(),
+        restaurantId: z.number().int().positive(),
+        sessionId: z.string().trim().min(8).max(128),
+        message: z.string().trim().min(1).max(800),
+        userIp: z.string().max(64).optional(),
+        userAgent: z.string().max(512).optional(),
       })
     )
     .mutation(async ({ input }) => {
