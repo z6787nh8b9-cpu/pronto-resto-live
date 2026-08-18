@@ -67,6 +67,11 @@ export function CatalogImportCard({ restaurantId, defaultCatalogName }: { restau
     if (!source) return toast.error("Formats acceptés : CSV, PDF, JPG, PNG ou WEBP.");
     if (!catalogName.trim()) return toast.error("Donnez un nom au catalogue.");
 
+    const byteLimit = source.sourceType === "csv" ? 2 * 1024 * 1024 : source.sourceType === "image" ? 8 * 1024 * 1024 : 10 * 1024 * 1024;
+    if (file.size > byteLimit) {
+      return toast.error(`Ce ${source.sourceType === "csv" ? "CSV" : source.sourceType === "image" ? "fichier image" : "PDF"} dépasse la taille maximale autorisée.`);
+    }
+
     try {
       const base64Data = await fileToDataUrl(file);
       analyzeImport.mutate({
