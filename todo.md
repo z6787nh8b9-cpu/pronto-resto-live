@@ -1073,11 +1073,26 @@
 - [x] Réduit les limites globales de corps HTTP et préparé une stratégie d'upload dédiée
 - [x] Corrigé l'incompatibilité de types entre le pool mysql2 et express-mysql-session afin de rétablir la vérification TypeScript
 - [x] Mis à jour les tests d'invitation avec un contexte administrateur explicite, des données isolées et une vérification du refus anonyme
+- [x] Mis à niveau les dépendances de production vulnérables et validé build et tests ; audit réduit à 0 critique et 3 hautes transitives
+- [ ] Préparer séparément la migration Express 5 et la mise à niveau des composants de rendu pour traiter les alertes transitives restantes sans casser les routes publiques
 - [x] Conçu le modèle multi-secteurs : entreprise, profil public, catalogue, collection, item, service et rendez-vous
 - [x] Préparé la migration additive sans rupture des restaurants, menus, comptes et URLs existants dans docs/2026-08-18-architecture-multi-secteurs.md
+- [x] Ajouté les tables génériques businesses, business_profiles, business_members, catalogs, catalog_collections et catalog_items au schéma Drizzle
+- [x] Ajouté les contraintes d'unicité, index et champs de compatibilité legacy sans supprimer les tables restaurants/menu existantes
+- [x] Généré, lu et appliqué la migration SQL additive dans TiDB Cloud, avec vérification des six tables créées
+- [x] Migré les restaurants, propriétaires, catégories et plats existants vers leur équivalent générique par script idempotent (6 entreprises, 23 collections, 139 éléments)
+- [x] Ajouté le routeur businesses avec lecture publique minimale, accès workspace et vérification de rôle par entreprise
+- [x] Ajouté les tests de permissions du noyau entreprise (4 tests passants)
+- [x] Corrigé le helper IA serveur pour utiliser un modèle réellement disponible et accepter une sélection de modèle explicite
 - [ ] Unifier les rôles, sessions, autorisations, invitations, récupération de compte et journalisation de sécurité
 - [ ] Créer un parcours d'inscription et d'onboarding guidé par type d'entreprise et objectif de publication
 - [ ] Créer des imports robustes depuis CSV, photo et PDF avec aperçu, validation, correction et publication explicite
+- [x] Ajouté les tables import_jobs et import_job_rows avec statut, fichier source, brouillon normalisé et erreurs de validation
+- [x] Créé un endpoint sécurisé d'analyse d'import qui valide fichier, type MIME, taille et accès à l'entreprise avant extraction
+- [x] Ajouté l'extraction CSV locale et l'extraction structurée IA pour image ou PDF, avec confiance par élément
+- [x] Créé une mutation d'application explicite du brouillon importé dans un catalogue, sans publication automatique
+- [x] Ajouté les tests de parsing, d'autorisation et de validation de fichier du flux d'import
+- [ ] Tester manuellement un import authentifié CSV, image et PDF avant mise en production du parcours d'import
 - [ ] Mettre en place une médiathèque et des traitements de fichiers sûrs, avec contrôle de type, taille et propriété
 - [ ] Refondre la navigation, les fils d'Ariane, les états vides, erreurs, chargements et confirmations d'action
 - [ ] Repenser le dashboard entreprise autour de la publication, du catalogue, des contacts, des rendez-vous et des performances

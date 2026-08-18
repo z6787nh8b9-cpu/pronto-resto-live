@@ -96,6 +96,10 @@ La direction recommandée est une **plateforme éditoriale et opérationnelle** 
 5. Recomposer les dashboards et les vitrines autour du nouveau modèle.
 6. Lancer la nouvelle landing multi-secteurs seulement après validation des flux de compte, publication et import.
 
+## Mise à jour du jalon de sécurisation
+
+Le premier jalon a rétabli la vérification TypeScript et validé 17 tests automatisés. La mise à niveau ciblée des dépendances a supprimé la vulnérabilité critique identifiée au départ et réduit l’audit de **1 critique / 23 hautes / 50 modérées** à **0 critique / 3 hautes / 30 modérées**. Les trois alertes élevées restantes sont transitives : `path-to-regexp` via Express 4 et `lodash`/`lodash-es` via des composants de visualisation ou de rendu. Leur traitement propre nécessite une mise à niveau majeure, testée séparément, d’Express et des composants concernés ; il ne sera pas forcé dans une migration de sécurité silencieuse.
+
 ## Décisions de conception à préserver
 
 Les restaurants existants, leurs slugs, leurs cartes, leurs médias et leurs dashboards restent accessibles. La logique de réservation, d’événement et de menu reste un module vertical « restaurant » au-dessus du noyau générique. La prochaine migration ne renomme ni ne supprime les tables existantes en production : elle ajoute les nouveaux concepts, migre progressivement les données et ne bascule un parcours qu’après des tests d’équivalence.

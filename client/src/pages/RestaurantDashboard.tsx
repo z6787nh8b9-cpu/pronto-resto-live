@@ -28,6 +28,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { ResponsiveHeader, ResponsiveTabs } from "@/components/responsive";
 import { UpgradeModal } from "@/components/UpgradeModal";
 import { LockedFeatureOverlay } from "@/components/LockedFeatureOverlay";
+import { CatalogImportCard } from "@/components/CatalogImportCard";
 
 export default function RestaurantDashboard() {
   const params: { slug?: string } = useParams();
@@ -478,6 +479,7 @@ export default function RestaurantDashboard() {
           <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
             <TabsList className="inline-flex lg:grid w-auto lg:w-full grid-cols-5 xl:grid-cols-10 gap-1 lg:gap-2 min-w-full lg:min-w-0">
             <TabsTrigger value="menu">Menu</TabsTrigger>
+            <TabsTrigger value="import">Importer</TabsTrigger>
             <TabsTrigger value="settings">Paramètres</TabsTrigger>
             <TabsTrigger value="chatbot">Chatbot IA</TabsTrigger>
             <TabsTrigger 
@@ -787,9 +789,17 @@ export default function RestaurantDashboard() {
                 </Card>
               ))}
             </div>
-          </TabsContent>
+	          </TabsContent>
 
-          {/* Settings Tab */}
+	          <TabsContent value="import" className="space-y-6">
+	            <div>
+	              <h2 className="text-lg sm:text-xl md:text-2xl font-bold">Importez votre carte</h2>
+	              <p className="text-xs sm:text-sm text-muted-foreground">Créez un brouillon depuis un fichier, relisez-le, puis publiez uniquement lorsque tout est prêt.</p>
+	            </div>
+	            <CatalogImportCard restaurantId={restaurant.id} defaultCatalogName={`Carte — ${restaurant.name}`} />
+	          </TabsContent>
+
+	          {/* Settings Tab */}
           <TabsContent value="settings" className="space-y-6">
             <Card>
               <CardHeader>
