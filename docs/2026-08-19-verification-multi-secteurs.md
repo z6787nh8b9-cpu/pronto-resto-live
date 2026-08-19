@@ -23,3 +23,5 @@ La vitrine La Voile Rouge conserve ses contrôles de langue, menu, réservation 
 Une capture Chromium en largeur smartphone (390 px) confirme également le repli de hero, la troncature saine du chrome flottant et l’espacement entre le bouton de chat et le badge reCAPTCHA. Les actions flottantes restaurant sont relevées sur mobile et reviennent à leur position compacte à partir du format `sm`.
 
 La même revue mobile sur la vitrine beauté confirme que les tarifs génériques se placent sous le nom de la prestation avant le breakpoint `sm`. Ils restent ainsi dans la colonne de lecture, sans compétition visuelle avec le badge reCAPTCHA, tout en reprenant l’alignement latéral sur bureau.
+
+Les collections et cartes génériques bénéficient désormais d’une révélation unique à leur entrée dans le viewport. Elle s’appuie sur `IntersectionObserver`, n’ajoute aucun écouteur de scroll continu et conserve la visibilité immédiate avec la préférence de mouvement réduit. Une capture mobile après défilement confirme la restitution des collections situées sous le premier viewport.

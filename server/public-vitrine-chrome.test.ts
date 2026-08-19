@@ -40,4 +40,16 @@ describe("public storefront chrome", () => {
 
     expect(genericStorefront).toContain("flex flex-col items-start gap-1 sm:flex-row");
   });
+
+  it("uses intersection-based scroll reveals with a reduced-motion fallback", () => {
+    const reveal = source("client/src/components/ScrollReveal.tsx");
+    const genericStorefront = source("client/src/pages/BusinessPublicPage.tsx");
+    const styles = source("client/src/index.css");
+
+    expect(reveal).toContain("IntersectionObserver");
+    expect(reveal).not.toContain('addEventListener("scroll"');
+    expect(genericStorefront).toContain("ScrollReveal");
+    expect(styles).toContain("prefers-reduced-motion: reduce");
+    expect(styles).toContain("--pronto-ease-out");
+  });
 });

@@ -4,6 +4,7 @@ import { Clock3, MessageCircle, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
 import { PublicVitrineChrome } from "@/components/PublicVitrineChrome";
+import { ScrollReveal } from "@/components/ScrollReveal";
 
 const verticalLabel: Record<string, string> = {
   beauty: "Beauté & bien-être",
@@ -62,10 +63,10 @@ export default function BusinessPublicPage({ preview = false }: { preview?: bool
           <div><p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">{catalog?.catalog?.type === "products" ? "Collections" : "Prestations"}</p><h2 className="mt-2 font-display text-4xl">{catalog?.catalog?.name || "Notre sélection"}</h2></div>
           {profile?.whatsapp && <Button asChild className="rounded-2xl"><a href={`https://wa.me/${profile.whatsapp.replace(/\D/g, "")}`}><MessageCircle className="mr-2 h-4 w-4" />Nous contacter</a></Button>}
         </div>
-        {catalog?.collections.map((collection) => <div key={collection.id} className="mb-12 last:mb-0">
-          <div className="mb-5"><h3 className="text-2xl font-semibold tracking-[-0.025em]">{collection.name}</h3>{collection.description && <p className="mt-1 text-sm text-muted-foreground">{collection.description}</p>}</div>
+        {catalog?.collections.map((collection, collectionIndex) => <div key={collection.id} className="mb-12 last:mb-0">
+          <ScrollReveal delay={collectionIndex * 60} className="mb-5"><h3 className="text-2xl font-semibold tracking-[-0.025em]">{collection.name}</h3>{collection.description && <p className="mt-1 text-sm text-muted-foreground">{collection.description}</p>}</ScrollReveal>
           <div className="grid gap-4 sm:grid-cols-2">
-            {(itemsByCollection.get(collection.id) ?? []).map((item) => <article key={item.id} className="vitrine-surface rounded-[1.45rem] border border-border/75 bg-white p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_8px_25px_rgba(62,42,25,0.06)]"><div className="rounded-[1.05rem] border border-white/70 bg-card p-5"><div className="flex flex-col items-start gap-1 sm:flex-row sm:justify-between sm:gap-4"><h4 className="font-semibold">{item.name}</h4><span className="text-sm font-semibold text-pronto-primary">{formatPrice(item)}</span></div>{item.description && <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.description}</p>}{item.durationMinutes && <p className="mt-4 flex items-center gap-1.5 text-xs text-muted-foreground"><Clock3 className="h-3.5 w-3.5" />{item.durationMinutes} min</p>}</div></article>)}
+            {(itemsByCollection.get(collection.id) ?? []).map((item, itemIndex) => <ScrollReveal key={item.id} delay={60 + itemIndex * 70}><article className="vitrine-surface rounded-[1.45rem] border border-border/75 bg-white p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_8px_25px_rgba(62,42,25,0.06)]"><div className="rounded-[1.05rem] border border-white/70 bg-card p-5"><div className="flex flex-col items-start gap-1 sm:flex-row sm:justify-between sm:gap-4"><h4 className="font-semibold">{item.name}</h4><span className="text-sm font-semibold text-pronto-primary">{formatPrice(item)}</span></div>{item.description && <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.description}</p>}{item.durationMinutes && <p className="mt-4 flex items-center gap-1.5 text-xs text-muted-foreground"><Clock3 className="h-3.5 w-3.5" />{item.durationMinutes} min</p>}</div></article></ScrollReveal>)}
           </div>
         </div>)}
         {!catalog?.catalog && <div className="rounded-[1.45rem] border border-dashed p-8 text-muted-foreground">Ce catalogue sera disponible prochainement.</div>}

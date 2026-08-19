@@ -86,6 +86,7 @@
   --pronto-peach: 24 59% 86%;
   --pronto-taupe: 25 17% 43%;
   --pronto-sage: 151 16% 40%;
+  --pronto-ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   
   --primary: var(--pronto-primary);
   --primary-foreground: var(--pronto-beige);
@@ -193,6 +194,30 @@
 }
 
 @layer components {
+  .pronto-reveal {
+    transition: opacity 240ms var(--pronto-ease-out) var(--reveal-delay, 0ms), transform 240ms var(--pronto-ease-out) var(--reveal-delay, 0ms);
+  }
+
+  .pronto-reveal[data-reveal-state="pending"] {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  .pronto-reveal[data-reveal-state="visible"] {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pronto-reveal {
+      transition: opacity 180ms ease;
+    }
+
+    .pronto-reveal[data-reveal-state="pending"] {
+      transform: none;
+    }
+  }
+
   /**
    * Custom container utility that centers content and adds responsive padding.
    *

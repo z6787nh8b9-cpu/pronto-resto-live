@@ -1212,7 +1212,7 @@
 
 ## REPRISE PRODUIT APRÈS DÉCOUPLAGE (19 août 2026)
 - [x] Isoler les adaptateurs de stockage, IA, cartes et notifications derrière des interfaces PRONTO neutres en attendant leur remplacement
-- [x] Reprendre la validation visuelle protégée des vitrines beauté, retail et services — beauté et retail validés visuellement ; services validé fonctionnellement et textuellement, revue visuelle différée après indisponibilité du navigateur
+- [x] Reprendre la validation visuelle protégée des vitrines beauté, retail et services — les trois vitrines ont été validées visuellement sur bureau ; beauté et restauration ont aussi fait l’objet de captures mobiles reproductibles
 - [x] Consolider l’installation PWA B2B et la configuration Capacitor avant toute génération de projets stores
 - [x] Ajouter un contrôle d’installation PWA et une notification de mise à jour accessibles depuis le dashboard B2B
 
@@ -1221,3 +1221,4 @@
 - [x] Ajouter un repli de hero haut de gamme quand une vitrine restaurant ne possède pas encore d’image de couverture
 - [x] Décaler les actions flottantes de la vitrine restaurant sur mobile pour éviter le badge reCAPTCHA
 - [x] Réorganiser le prix des cartes génériques sur mobile afin de préserver sa lisibilité près du badge reCAPTCHA
+- [x] Ajouter une révélation de collections et cartes génériques au scroll, avec mode réduit et sans écouteur de scroll continu
