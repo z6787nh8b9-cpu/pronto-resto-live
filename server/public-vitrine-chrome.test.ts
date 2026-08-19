@@ -22,7 +22,9 @@ describe("public storefront chrome", () => {
     const menuStorefront = source("client/src/pages/RestaurantMenuPage.tsx");
     const homeStorefront = source("client/src/pages/RestaurantHomePage.tsx");
 
-    expect(menuStorefront).toContain("!restaurant.heroImageUrl");
+    expect(menuStorefront).toContain("heroImageFailed");
+    expect(menuStorefront).toContain("onError={() => setHeroImageFailed(true)}");
+    expect(menuStorefront).toContain("radial-gradient(circle_at_18%_18%");
     expect(homeStorefront).toContain("!restaurant.heroImageUrl");
     expect(homeStorefront).toContain("min-h-[100dvh]");
   });

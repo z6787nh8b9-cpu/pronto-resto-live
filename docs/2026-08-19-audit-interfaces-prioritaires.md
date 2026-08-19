@@ -27,3 +27,15 @@ L’indice de défilement a été ajouté et contrôlé sur smartphone : un fond
 ## Cohérence multi-secteurs du dashboard
 
 Le libellé visible de l’onglet `Catalogue`, son en-tête et son aide contextuelle ont été généralisés. La revue navigateur confirme ce wording dans le dashboard La Voile Rouge, tandis que l’identifiant interne `menu` reste inchangé : les URL, l’état d’onglet et les procédures legacy restent donc compatibles.
+
+## Première revue mobile Super Admin
+
+La capture à 390 px confirme un hero compact, des indicateurs empilés lisibles et des actions principales adaptées à la largeur mobile. Elle affiche cependant une superposition apparente du header au milieu du document. Comme la capture de contrôle défile volontairement avant de produire une image longue, ce comportement est traité comme un possible artefact de composition tant qu’il n’est pas reproduit dans une capture de viewport fixe. Une vérification ciblée au premier viewport est requise avant tout changement de composant.
+
+La vérification du viewport mobile fixe ne reproduit pas cette superposition : le logo, l’action de création, l’intitulé, les onglets et le hero sont correctement séparés. Le phénomène observé dans l’image longue est donc un artefact de capture après défilement, et aucun correctif de header n’est nécessaire.
+
+## Catalogue public
+
+Le catalogue La Voile Rouge reste lisible sur bureau et smartphone : recherche, filtres, catégories défilables et prix sont hiérarchisés proprement. Le premier viewport mobile ne présente aucun débordement. Le hero sans image de couverture repose toutefois sur un gris neutre qui affaiblit la continuité avec la vitrine et la direction éditoriale PRONTO. La priorité retenue est d’appliquer le même repli contrasté et texturé que sur la vitrine historique, sans modifier les cas qui disposent d’une vraie image de couverture.
+
+La vérification technique a révélé qu’une URL de couverture historique était indisponible. Le catalogue détecte désormais l’échec de chargement et bascule automatiquement vers son fond radial contrasté. Les revues bureau et smartphone confirment un hero lisible, cohérent avec la vitrine et sans rupture de mise en page.

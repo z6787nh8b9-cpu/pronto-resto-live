@@ -25,6 +25,7 @@ export default function RestaurantMenuPage() {
   const [chatMessages, setChatMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
   const [chatInput, setChatInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [heroImageFailed, setHeroImageFailed] = useState(false);
   const [sessionId] = useState(() => nanoid());
   const [filters, setFilters] = useState({
     vegetarian: false,
@@ -74,6 +75,10 @@ export default function RestaurantMenuPage() {
       });
     }
   }, [restaurant?.id]);
+
+  useEffect(() => {
+    setHeroImageFailed(false);
+  }, [restaurant?.heroImageUrl]);
 
   const handleSendMessage = () => {
     if (!chatInput.trim() || !restaurant) return;
@@ -126,6 +131,7 @@ export default function RestaurantMenuPage() {
 
   const primaryColor = restaurant.primaryColor || "#ef4444";
   const accentColor = restaurant.accentColor || "#fbbf24";
+  const shouldShowHeroImage = Boolean(restaurant.heroImageUrl) && !heroImageFailed;
 
   // Séparer les publicités dish_item des autres formats
   const dishItemAds = advertisements?.filter((ad: any) => ad.format === "dish_item") || [];
@@ -144,17 +150,9 @@ export default function RestaurantMenuPage() {
       {/* Hero de vitrine */}
       <section className="relative z-10 overflow-hidden pb-16 pt-32 md:pb-24 md:pt-40">
         {/* Image de fond avec blur */}
-        {restaurant.heroImageUrl && (
-          <div 
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ 
-              backgroundImage: `url(${restaurant.heroImageUrl})`,
-              filter: 'blur(8px)',
-              transform: 'scale(1.1)' // Pour éviter les bords blancs du blur
-            }}
-          />
-        )}
-        {!restaurant.heroImageUrl && <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,#7e4837_0%,#3e231c_46%,#160d0a_100%)]" />}
+        {shouldShowHeroImage ? (
+          <img src={restaurant.heroImageUrl!} alt="" aria-hidden="true" onError={() => setHeroImageFailed(true)} className="absolute inset-0 h-full w-full scale-110 object-cover blur-[8px]" />
+        ) : <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,#7e4837_0%,#3e231c_46%,#160d0a_100%)]" />}
         
         <div className="absolute inset-0 bg-black/55" />
         
