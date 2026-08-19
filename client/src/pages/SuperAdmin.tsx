@@ -538,13 +538,13 @@ export default function SuperAdmin() {
                   <Input id="whatsapp" name="whatsapp" />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="subscriptionTier">Plan d'Abonnement</Label>
+                  <Label htmlFor="subscriptionTier">Formule d'abonnement</Label>
                   <Select name="subscriptionTier" defaultValue="menu">
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="menu">Menu - 19€/mois</SelectItem>
+                      <SelectItem value="menu">Essentiel - 19€/mois</SelectItem>
                       <SelectItem value="pro">Pro - 29€/mois</SelectItem>
                       <SelectItem value="premium">Premium - 39€/mois</SelectItem>
                     </SelectContent>
@@ -620,13 +620,13 @@ export default function SuperAdmin() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="edit-subscriptionTier">Plan</Label>
+                    <Label htmlFor="edit-subscriptionTier">Formule</Label>
                     <Select name="subscriptionTier" defaultValue={editingRestaurant.subscriptionTier}>
                       <SelectTrigger>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="menu">Menu - 19€/mois</SelectItem>
+                        <SelectItem value="menu">Essentiel - 19€/mois</SelectItem>
                         <SelectItem value="pro">Pro - 29€/mois</SelectItem>
                         <SelectItem value="premium">Premium - 39€/mois</SelectItem>
                       </SelectContent>
