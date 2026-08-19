@@ -723,6 +723,7 @@
 - [x] Vérifié le secteur déjà choisi dans l’onboarding : il est prioritaire sur le repli du profil entreprise après hydratation
 - [x] Généralisé les boutons Nouvelle Catégorie et Ajouter un plat du dashboard propriétaire
 - [x] Généralisé les dernières actions et confirmations de catégorie de la gestion détaillée Super Admin
+- [x] Généralisé l’invitation de la vue d’ensemble à organiser des catégories
 
 ## 🔒 Google reCAPTCHA Enterprise invisible (16 février 2026)
 - [x] Ajouter le script reCAPTCHA dans client/index.html
