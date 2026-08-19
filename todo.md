@@ -1191,6 +1191,7 @@
 - [x] Ajouter une limite de débit dédiée au point d’entrée de récupération de mot de passe, validée par stress test local
 - [x] Éliminer ou encadrer les références client sensibles et diagnostics techniques révélés par le scan de sources
 - [x] Corriger les faiblesses critiques identifiées et ajouter les régressions correspondantes
+- [x] Déplacer les overrides pnpm vers leur configuration reconnue et revalider l’audit de dépendances sans avertissement
 - [x] Bloquer explicitement les mutations tRPC provenant d’une origine étrangère et couvrir le refus CSRF par test HTTP
 - [x] Définir le périmètre minimum de la PWA B2B et le plan Capacitor iOS/Android pour les stores
 - [x] Implémenter le manifeste, le service worker, les métadonnées installables et la stratégie de cache de la PWA B2B
@@ -1198,12 +1199,14 @@
 
 ## DÉCOUPLAGE MANUS ET AUTONOMIE PRONTO (19 août 2026)
 - [x] Cartographier les imports, SDK, routes, redirections, variables et mentions Manus dans le code et les pages publiques
-- [ ] Classer chaque dépendance Manus : supprimable, à remplacer ou structurellement requise pour l’hébergement actuel
+- [x] Classer chaque dépendance Manus : supprimable, à remplacer ou structurellement requise pour l’hébergement actuel
 - [x] Retirer les parcours Manus OAuth et redirections non nécessaires aux accès métier PRONTO — redirections client, runtime Vite, callback OAuth et fallback serveur retirés
 - [ ] Remplacer le parcours d’invitation Super Admin hérité par une création locale email/mot de passe sécurisée avant de le réactiver
-- [ ] Retirer les mentions et liens Manus visibles depuis les interfaces publiques et d’administration — assets chatbot migrés vers une route PRONTO neutre ; scan final des anciens médias en cours
+- [x] Retirer les mentions et liens Manus visibles depuis les interfaces publiques et d’administration — assets chatbot migrés vers une route PRONTO neutre et bundle public contrôlé
+- [x] Retirer le collecteur de debug et le script analytique Manus encore injectés dans le bundle de production
+- [x] Supprimer les artefacts publics de debug Manus de `client/public` et confirmer un bundle de production sans référence visible
 - [ ] Valider que les parcours propriétaires, Super Admin, vitrines et PWA fonctionnent sans dépendance Manus applicative
-- [ ] Documenter séparément les dépendances d’hébergement Manus qui ne peuvent être retirées sans migration d’infrastructure
+- [x] Documenter séparément les dépendances d’hébergement Manus qui ne peuvent être retirées sans migration d’infrastructure
 
 ## REPRISE PRODUIT APRÈS DÉCOUPLAGE (19 août 2026)
 - [x] Isoler les adaptateurs de stockage, IA, cartes et notifications derrière des interfaces PRONTO neutres en attendant leur remplacement
