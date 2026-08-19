@@ -1,9 +1,10 @@
 import { TRPCError } from "@trpc/server";
 import { and, asc, desc, eq, isNotNull, isNull } from "drizzle-orm";
-import { randomUUID } from "crypto";
+import { createHash, randomBytes, randomUUID } from "crypto";
 import { z } from "zod";
 import {
   businesses,
+  businessMemberInvitations,
   businessMembers,
   businessOnboarding,
   businessProfiles,
@@ -236,6 +237,44 @@ export const businessesRouter = router({
       await db.update(businessMembers).set(changes).where(eq(businessMembers.id, member.id));
       const [updated] = await db.select().from(businessMembers).where(eq(businessMembers.id, member.id)).limit(1);
       return updated!;
+    }),
+
+  createMemberInvitation: restaurantOwnerProcedure
+    .input(z.object({
+      businessId: z.number().int().positive(),
+      email: z.string().trim().toLowerCase().email().max(320),
+      role: managedMemberRole,
+    }))
+    .mutation(async ({ ctx, input }) => {
+      await requireBusinessRoleManagement(ctx, input.businessId);
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
+      const token = randomBytes(32).toString("hex");
+      await db.insert(businessMemberInvitations).values({
+        businessId: input.businessId,
+        email: input.email,
+        role: input.role,
+        tokenHash: createHash("sha256").update(token).digest("hex"),
+        invitedByPrincipalId: ctx.restaurantOwner?.id ?? 0,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      });
+      return { token, expiresInDays: 7 };
+    }),
+
+  acceptMemberInvitation: restaurantOwnerProcedure
+    .input(z.object({ token: z.string().regex(/^[a-f0-9]{64}$/i) }))
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.restaurantOwner) throw new TRPCError({ code: "UNAUTHORIZED", message: "Connexion requise." });
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
+      const hash = createHash("sha256").update(input.token).digest("hex");
+      const [invite] = await db.select().from(businessMemberInvitations)
+        .where(and(eq(businessMemberInvitations.tokenHash, hash), eq(businessMemberInvitations.status, "pending"))).limit(1);
+      if (!invite || invite.expiresAt <= new Date()) throw new TRPCError({ code: "NOT_FOUND", message: "Invitation invalide ou expirée." });
+      if (invite.email.toLowerCase() !== ctx.restaurantOwner.email.toLowerCase()) throw new TRPCError({ code: "FORBIDDEN", message: "Cette invitation est destinée à une autre adresse email." });
+      await db.insert(businessMembers).values({ businessId: invite.businessId, principalType: "restaurant_owner", principalId: ctx.restaurantOwner.id, role: invite.role, status: "active" });
+      await db.update(businessMemberInvitations).set({ status: "accepted", acceptedByPrincipalId: ctx.restaurantOwner.id, acceptedAt: new Date() }).where(eq(businessMemberInvitations.id, invite.id));
+      return { businessId: invite.businessId, role: invite.role };
     }),
 
   create: adminProcedure
