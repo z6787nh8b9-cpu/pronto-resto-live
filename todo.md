@@ -714,6 +714,7 @@
 - [x] Corrigé la section vide de la page publique en conditionnant et centrant les blocs contact et horaires
 - [x] Sécurisé les lectures analytiques par propriétaire ou Super Admin avant de restaurer les indicateurs du dashboard
 - [x] Généralisé le contexte métier et les promesses du chatbot à toutes les activités PRONTO
+- [x] Aligné l’accès de gestion des Super Admins email avec les Super Admins OAuth sans élargir les droits propriétaires
 
 ## 🔒 Google reCAPTCHA Enterprise invisible (16 février 2026)
 - [x] Ajouter le script reCAPTCHA dans client/index.html
