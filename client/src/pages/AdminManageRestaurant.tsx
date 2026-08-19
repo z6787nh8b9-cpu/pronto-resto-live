@@ -586,7 +586,7 @@ export default function AdminManageRestaurant() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium">Plats au menu</CardTitle>
+                  <CardTitle className="text-sm font-medium">Éléments du catalogue</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{menuItems?.length || 0}</div>

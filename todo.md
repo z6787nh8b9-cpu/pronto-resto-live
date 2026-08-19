@@ -717,6 +717,7 @@
 - [x] Aligné l’accès de gestion des Super Admins email avec les Super Admins OAuth sans élargir les droits propriétaires
 - [x] Aligné la liste des entreprises du propriétaire sur l’identité OAuth ou email active
 - [x] Vérifié et renforcé l’appartenance propriétaire sur les mutations restaurant restantes
+- [x] Généralisé les indicateurs analytiques encore formulés en plats ou menu
 
 ## 🔒 Google reCAPTCHA Enterprise invisible (16 février 2026)
 - [x] Ajouter le script reCAPTCHA dans client/index.html
