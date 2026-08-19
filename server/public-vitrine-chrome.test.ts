@@ -29,6 +29,14 @@ describe("public storefront chrome", () => {
     expect(homeStorefront).toContain("min-h-[100dvh]");
   });
 
+  it("does not render an empty allergen label in public catalogue cards", () => {
+    const menuStorefront = source("client/src/pages/RestaurantMenuPage.tsx");
+
+    expect(menuStorefront).toContain("const allergens = Array.isArray(item.allergens)");
+    expect(menuStorefront).toContain("{hasAllergens && (");
+    expect(menuStorefront).toContain("allergens.join(\", \")");
+  });
+
   it("keeps mobile restaurant action stacks clear of the reCAPTCHA badge", () => {
     const homeStorefront = source("client/src/pages/RestaurantHomePage.tsx");
     const legacyStorefront = source("client/src/pages/PublicRestaurantPage.tsx");

@@ -1052,7 +1052,7 @@
 
 ## REHAUSSEMENT DESIGN PRONTO (18 juin 2026)
 - [x] Agrandi le logo de navigation de la landing et ajusté son conteneur pour améliorer sa lisibilité
-- [ ] Auditer la landing page, les dashboards et les pages de menu afin d'identifier les améliorations visuelles prioritaires
+- [x] Auditer la landing page, les dashboards et les pages de menu afin d'identifier les améliorations visuelles prioritaires — audit documenté et correctifs P0 appliqués
 - [x] Défini et intégré des fondations premium partagées : typographie, couleurs, matériaux, transitions, focus et préférence de mouvement réduite
 - [x] Créé un indicateur de chargement local, accessible et respectueux de la préférence de mouvement réduite
 - [ ] Moderniser la landing page avec une narration visuelle claire et des CTA à fort contraste
@@ -1235,3 +1235,4 @@
 
 ## AUDIT CATALOGUE PUBLIC (19 août 2026)
 - [x] Remplacer le hero gris du catalogue sans couverture par un repli contrasté cohérent avec la vitrine publique, y compris en cas de chargement d’image échoué
+- [x] Masquer le libellé d’allergènes lorsque la donnée est vide ou constituée d’espaces

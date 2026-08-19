@@ -226,6 +226,8 @@ export default function RestaurantMenuPage() {
                         {categoryItems.map((item, index) => {
                           const itemPrice = Number(item.price);
                           const hasPrice = Number.isFinite(itemPrice) && itemPrice > 0;
+                          const allergens = Array.isArray(item.allergens) ? item.allergens.filter((allergen): allergen is string => typeof allergen === "string" && allergen.trim().length > 0) : [];
+                          const hasAllergens = allergens.length > 0;
                           return (
                           <Fragment key={item.id}>
                             {/* Insérer un dish_item ad tous les 4 plats si disponible */}
@@ -259,9 +261,9 @@ export default function RestaurantMenuPage() {
                                 {item.description && (
                                   <p className="mb-2 text-sm leading-6 text-muted-foreground">{item.description}</p>
                                 )}
-                                {item.allergens && (
+                                {hasAllergens && (
                                   <p className="text-xs text-muted-foreground">
-                                    <span className="font-medium">Allergènes :</span> {item.allergens}
+                                    <span className="font-medium">Allergènes :</span> {allergens.join(", ")}
                                   </p>
                                 )}
                               </div>
