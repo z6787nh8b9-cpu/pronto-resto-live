@@ -199,6 +199,17 @@
     transition: transform 180ms var(--ease-out), box-shadow 180ms var(--ease-out), border-color 180ms ease;
   }
 
+  .vitrine-reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 300ms var(--ease-out), transform 300ms var(--ease-out);
+  }
+
+  .vitrine-reveal[data-visible="true"] {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
   @media (hover: hover) and (pointer: fine) {
     .vitrine-surface:hover { transform: translateY(-2px); }
   }
@@ -206,6 +217,7 @@
   @media (prefers-reduced-motion: reduce) {
     .vitrine-surface { transition: opacity 160ms ease, border-color 160ms ease; }
     .vitrine-surface:hover { transform: none; }
+    .vitrine-reveal { opacity: 1; transform: none; transition: opacity 160ms ease; }
   }
   /**
    * Custom container utility that centers content and adds responsive padding.

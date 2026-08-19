@@ -16,6 +16,7 @@ import { ReservationFlow } from "@/components/ReservationFlow";
 import { EventRegistrationFlow } from "@/components/EventRegistrationFlow";
 import { AdvertisementDisplay, DishItemAd } from "@/components/AdvertisementDisplay";
 import { PublicVitrineChrome } from "@/components/PublicVitrineChrome";
+import { useRevealOnView } from "@/hooks/useRevealOnView";
 
 export default function RestaurantHomePage() {
   const params: { slug?: string } = useParams();
@@ -28,6 +29,7 @@ export default function RestaurantHomePage() {
   const [chatMessages, setChatMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
   const [chatInput, setChatInput] = useState("");
   const [sessionId] = useState(() => nanoid());
+  const featuredReveal = useRevealOnView<HTMLElement>();
 
   // Get restaurant data
   const { data: restaurant, isLoading } = trpc.public.getRestaurant.useQuery(
@@ -203,7 +205,7 @@ export default function RestaurantHomePage() {
 
       {/* Featured Dishes - Grid moderne */}
       {featuredDishes.length > 0 && (
-        <section className="py-24 bg-neutral-50">
+        <section ref={featuredReveal.ref} data-visible={featuredReveal.isVisible} className="vitrine-reveal py-24 bg-neutral-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-4xl font-serif font-bold text-neutral-900 mb-4">
