@@ -718,6 +718,7 @@
 - [x] Aligné la liste des entreprises du propriétaire sur l’identité OAuth ou email active
 - [x] Vérifié et renforcé l’appartenance propriétaire sur les mutations restaurant restantes
 - [x] Généralisé les indicateurs analytiques encore formulés en plats ou menu
+- [x] Généralisé les libellés menu et plat visibles dans la gestion détaillée Super Admin
 
 ## 🔒 Google reCAPTCHA Enterprise invisible (16 février 2026)
 - [x] Ajouter le script reCAPTCHA dans client/index.html

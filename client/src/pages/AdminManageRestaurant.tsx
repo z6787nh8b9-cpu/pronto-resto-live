@@ -87,7 +87,7 @@ export default function AdminManageRestaurant() {
 
   const createItemMutation = trpc.restaurant.createMenuItem.useMutation({
     onSuccess: () => {
-      toast.success("Plat ajouté");
+      toast.success("Élément ajouté");
       setIsAddItemOpen(false);
       refetchItems();
     },
@@ -107,7 +107,7 @@ export default function AdminManageRestaurant() {
 
   const updateItemMutation = trpc.restaurant.updateMenuItem.useMutation({
     onSuccess: () => {
-      toast.success("Plat mis à jour");
+      toast.success("Élément mis à jour");
       setIsEditItemOpen(false);
       setSelectedItem(null);
       refetchItems();
@@ -116,7 +116,7 @@ export default function AdminManageRestaurant() {
 
   const deleteItemMutation = trpc.restaurant.deleteMenuItem.useMutation({
     onSuccess: () => {
-      toast.success("Plat supprimé");
+      toast.success("Élément supprimé");
       refetchItems();
     },
   });
@@ -130,7 +130,7 @@ export default function AdminManageRestaurant() {
 
   const reorderItemsMutation = trpc.restaurant.reorderItems.useMutation({
     onSuccess: () => {
-      toast.success("Ordre des plats mis à jour");
+      toast.success("Ordre des éléments mis à jour");
       refetchItems();
     },
   });
@@ -249,7 +249,7 @@ export default function AdminManageRestaurant() {
       <main className="container py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="menu">Menu</TabsTrigger>
+            <TabsTrigger value="menu">Catalogue</TabsTrigger>
             <TabsTrigger value="settings">Paramètres</TabsTrigger>
             <TabsTrigger value="chatbot">Chatbot IA</TabsTrigger>
             <TabsTrigger value="analytics">Statistiques</TabsTrigger>
@@ -259,8 +259,8 @@ export default function AdminManageRestaurant() {
           <TabsContent value="menu" className="space-y-6">
             <div className="flex justify-between items-center">
               <div>
-                <h2 className="text-2xl font-bold">Gestion du Menu</h2>
-                <p className="text-muted-foreground">Organisez les catégories et plats</p>
+                <h2 className="text-2xl font-bold">Gestion du catalogue</h2>
+                <p className="text-muted-foreground">Organisez vos collections et vos éléments</p>
               </div>
               <Button onClick={() => setIsAddCategoryOpen(true)}>
                 <Plus className="mr-2 h-4 w-4" />
@@ -324,7 +324,7 @@ export default function AdminManageRestaurant() {
                         }}
                       >
                         <Plus className="mr-2 h-4 w-4" />
-                        Ajouter un plat
+                        Ajouter un élément
                       </Button>
                     </div>
                   </CardHeader>
@@ -603,13 +603,13 @@ export default function AdminManageRestaurant() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Nouvelle Catégorie</DialogTitle>
-            <DialogDescription>Ajoutez une nouvelle catégorie au menu</DialogDescription>
+            <DialogDescription>Ajoutez une nouvelle collection à votre catalogue</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleCreateCategory}>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
                 <Label htmlFor="cat-name">Nom de la catégorie *</Label>
-                <Input id="cat-name" name="name" placeholder="Entrées, Plats, Desserts..." required />
+                <Input id="cat-name" name="name" placeholder="Collections, gammes, catégories..." required />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="cat-desc">Description</Label>
@@ -630,14 +630,14 @@ export default function AdminManageRestaurant() {
       <Dialog open={isAddItemOpen} onOpenChange={setIsAddItemOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Nouveau Plat</DialogTitle>
-            <DialogDescription>Ajoutez un nouveau plat au menu</DialogDescription>
+            <DialogTitle>Nouvel élément</DialogTitle>
+            <DialogDescription>Ajoutez un nouvel élément à votre catalogue</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleCreateItem}>
             <div className="space-y-4 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="item-name">Nom du plat *</Label>
+                  <Label htmlFor="item-name">Nom de l’élément *</Label>
                   <Input id="item-name" name="name" required />
                 </div>
                 <div className="space-y-2">
@@ -735,8 +735,8 @@ export default function AdminManageRestaurant() {
       <Dialog open={isEditItemOpen} onOpenChange={setIsEditItemOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Éditer le Plat</DialogTitle>
-            <DialogDescription>Modifiez les informations du plat</DialogDescription>
+            <DialogTitle>Éditer l’élément</DialogTitle>
+            <DialogDescription>Modifiez les informations de l’élément</DialogDescription>
           </DialogHeader>
           <form onSubmit={(e) => {
             e.preventDefault();
@@ -770,7 +770,7 @@ export default function AdminManageRestaurant() {
             <div className="space-y-4 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="edit-item-name">Nom du plat *</Label>
+                  <Label htmlFor="edit-item-name">Nom de l’élément *</Label>
                   <Input id="edit-item-name" name="name" defaultValue={selectedItem?.name} required />
                 </div>
                 <div className="space-y-2">
