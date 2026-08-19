@@ -113,6 +113,11 @@ export default function RestaurantDashboard() {
   // Check if feature is available
   const canAccessTranslations = restaurant?.subscriptionTier === "pro" || restaurant?.subscriptionTier === "premium";
   const canAccessPremiumFeatures = restaurant?.subscriptionTier === "premium";
+  const currentTierLabel = restaurant?.subscriptionTier === "premium"
+    ? "Premium"
+    : restaurant?.subscriptionTier === "pro"
+      ? "Pro"
+      : "Essentiel";
 
   // Handle locked tab click
   const handleLockedTabClick = (featureName: string, requiredTier: "pro" | "premium", e: React.MouseEvent) => {
@@ -464,13 +469,13 @@ export default function RestaurantDashboard() {
     <div className="min-h-screen bg-background">
       {/* Header avec ResponsiveHeader */}
       <ResponsiveHeader
-        title={restaurant.name}
-        subtitle="Espace entreprise"
-        badge={
-          <Badge variant={restaurant.subscriptionTier === "premium" ? "default" : "secondary"} className="text-xs px-2 py-0.5">
-            {restaurant.subscriptionTier === "premium" ? "Premium" : "Basic"}
-          </Badge>
-        }
+          title={restaurant.name}
+          subtitle="Espace entreprise"
+          badge={
+            <Badge variant={restaurant.subscriptionTier === "premium" ? "default" : "secondary"} className="text-xs px-2 py-0.5">
+            {currentTierLabel}
+            </Badge>
+          }
         primaryAction={{
           label: "Voir la vitrine",
           onClick: () => window.open(`/${restaurant.slug}`, '_blank'),
@@ -564,7 +569,7 @@ export default function RestaurantDashboard() {
             <section className="grid gap-4 sm:grid-cols-3">
               <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Collections actives</p><p className="mt-2 font-display text-5xl text-foreground">{categories?.length ?? 0}</p><p className="mt-2 text-sm text-muted-foreground">Organisez-les dans l’onglet Catalogue.</p></div>
               <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Éléments publiables</p><p className="mt-2 font-display text-5xl text-foreground">{menuItems?.length ?? 0}</p><p className="mt-2 text-sm text-muted-foreground">Plats, produits ou prestations selon votre activité.</p></div>
-              <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Formule actuelle</p><p className="mt-2 font-display text-4xl capitalize text-foreground">{restaurant.subscriptionTier}</p><p className="mt-2 text-sm text-muted-foreground">Les fonctions disponibles évoluent avec votre formule.</p></div>
+              <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Formule actuelle</p><p className="mt-2 font-display text-4xl text-foreground">{currentTierLabel}</p><p className="mt-2 text-sm text-muted-foreground">Les fonctions disponibles évoluent avec votre formule.</p></div>
             </section>
 
             <section className="grid gap-4 lg:grid-cols-3">
