@@ -386,7 +386,7 @@ export default function PublicRestaurantPage() {
       </footer>
 
       {/* Floating Action Buttons */}
-      <div className="fixed bottom-6 right-6 flex flex-col gap-3">
+      <div className="fixed bottom-24 right-6 flex flex-col gap-3 sm:bottom-6">
         {/* WhatsApp Button */}
         {restaurant.whatsapp && (
           <Button

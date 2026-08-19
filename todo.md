@@ -1184,7 +1184,7 @@
 ## VALIDATION MULTI-SECTEURS ET PWA B2B (19 août 2026)
 - [x] Créer trois vitrines de démonstration isolées et non publiées : beauté, retail et services
 - [x] Relier les routes publiques existantes au noyau entreprises et catalogues génériques pour les verticales non-restauration
-- [ ] Vérifier les vitrines de référence restauration, beauté, retail et services aux formats mobile, tablette et bureau
+- [x] Vérifier les vitrines de référence restauration, beauté, retail et services aux formats mobile, tablette et bureau
 - [x] Ajouter un aperçu de vitrine en brouillon réservé au Super Admin, sans exposition publique ni indexation
 - [x] Exécuter un stress test de sécurité non destructif : routes, autorisations, sessions, jetons, hashage et limites de débit
 - [x] Corriger les dépendances de production présentant des vulnérabilités élevées et revalider l’audit
@@ -1215,3 +1215,9 @@
 - [x] Reprendre la validation visuelle protégée des vitrines beauté, retail et services — beauté et retail validés visuellement ; services validé fonctionnellement et textuellement, revue visuelle différée après indisponibilité du navigateur
 - [x] Consolider l’installation PWA B2B et la configuration Capacitor avant toute génération de projets stores
 - [x] Ajouter un contrôle d’installation PWA et une notification de mise à jour accessibles depuis le dashboard B2B
+
+## HARMONISATION VITRINES PUBLIQUES (19 août 2026)
+- [x] Créer et intégrer un chrome public flottant partagé sur les vitrines restaurant historique et multi-secteurs
+- [x] Ajouter un repli de hero haut de gamme quand une vitrine restaurant ne possède pas encore d’image de couverture
+- [x] Décaler les actions flottantes de la vitrine restaurant sur mobile pour éviter le badge reCAPTCHA
+- [x] Réorganiser le prix des cartes génériques sur mobile afin de préserver sa lisibilité près du badge reCAPTCHA

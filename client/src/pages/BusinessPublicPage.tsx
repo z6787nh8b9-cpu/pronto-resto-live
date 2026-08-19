@@ -1,8 +1,9 @@
 import { useMemo } from "react";
 import { useLocation, useParams } from "wouter";
-import { Clock3, MessageCircle, Sparkles, Store } from "lucide-react";
+import { Clock3, MessageCircle, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
+import { PublicVitrineChrome } from "@/components/PublicVitrineChrome";
 
 const verticalLabel: Record<string, string> = {
   beauty: "Beauté & bien-être",
@@ -20,18 +21,6 @@ function formatPrice(item: { priceType: string; price: string | number | null; p
   if (item.priceType === "range") return `${display(item.price)} – ${display(item.priceMax)}`;
   if (item.priceType === "from") return `À partir de ${display(item.price)}`;
   return display(item.price) || item.priceLabel || "Tarif sur demande";
-}
-
-function BusinessPublicChrome({ name, logoUrl, onOpenCatalog }: { name: string; logoUrl?: string | null; onOpenCatalog: () => void }) {
-  return <header className="pointer-events-none fixed inset-x-0 top-0 z-40 px-3 pt-3 sm:px-5 sm:pt-5">
-    <div className="pointer-events-auto mx-auto flex min-h-14 max-w-6xl items-center justify-between gap-2 rounded-[1.4rem] border border-white/55 bg-white/78 px-2.5 py-2 shadow-[0_16px_48px_rgba(49,33,21,0.12)] backdrop-blur-xl supports-[backdrop-filter]:bg-white/70">
-      <div className="flex min-w-0 items-center gap-2.5 px-2 py-1.5">
-        {logoUrl ? <img src={logoUrl} alt="" className="h-8 w-8 rounded-full border border-black/[0.07] object-cover" /> : <span className="flex h-8 w-8 items-center justify-center rounded-full bg-pronto-primary text-white"><Store className="h-4 w-4" /></span>}
-        <span className="truncate font-semibold tracking-[-0.025em] text-foreground">{name}</span>
-      </div>
-      <button type="button" onClick={onOpenCatalog} className="h-10 rounded-[1rem] px-3 text-sm font-medium text-foreground transition-colors hover:bg-black/[0.05]">Catalogue</button>
-    </div>
-  </header>;
 }
 
 export default function BusinessPublicPage({ preview = false }: { preview?: boolean }) {
@@ -54,11 +43,10 @@ export default function BusinessPublicPage({ preview = false }: { preview?: bool
   const profile = business.profile;
   return (
     <main className="min-h-[100dvh] bg-[#fbf8f3] text-foreground">
-      <BusinessPublicChrome
+      <PublicVitrineChrome
         name={profile?.displayName || business.slug}
         logoUrl={profile?.logoUrl}
-        onOpenCatalog={() => document.getElementById("catalogue")?.scrollIntoView({ behavior: "smooth" })}
-      />
+      ><button type="button" onClick={() => document.getElementById("catalogue")?.scrollIntoView({ behavior: "smooth" })} className="h-10 rounded-[1rem] px-3 text-sm font-medium text-foreground transition-[background-color,transform] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-black/[0.05] active:scale-[0.98]">Catalogue</button></PublicVitrineChrome>
       <section className="relative flex min-h-[58dvh] items-end overflow-hidden px-5 pb-14 pt-28 sm:px-8">
         {profile?.heroImageUrl && <img src={profile.heroImageUrl} alt="" className="absolute inset-0 h-full w-full scale-105 object-cover blur-[8px]" />}
         <div className="absolute inset-0 bg-gradient-to-b from-[#21150f]/85 via-[#21150f]/68 to-[#21150f]/30" />
@@ -77,7 +65,7 @@ export default function BusinessPublicPage({ preview = false }: { preview?: bool
         {catalog?.collections.map((collection) => <div key={collection.id} className="mb-12 last:mb-0">
           <div className="mb-5"><h3 className="text-2xl font-semibold tracking-[-0.025em]">{collection.name}</h3>{collection.description && <p className="mt-1 text-sm text-muted-foreground">{collection.description}</p>}</div>
           <div className="grid gap-4 sm:grid-cols-2">
-            {(itemsByCollection.get(collection.id) ?? []).map((item) => <article key={item.id} className="vitrine-surface rounded-[1.45rem] border border-border/75 bg-white p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_8px_25px_rgba(62,42,25,0.06)]"><div className="rounded-[1.05rem] border border-white/70 bg-card p-5"><div className="flex items-start justify-between gap-4"><h4 className="font-semibold">{item.name}</h4><span className="shrink-0 text-sm font-semibold text-pronto-primary">{formatPrice(item)}</span></div>{item.description && <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.description}</p>}{item.durationMinutes && <p className="mt-4 flex items-center gap-1.5 text-xs text-muted-foreground"><Clock3 className="h-3.5 w-3.5" />{item.durationMinutes} min</p>}</div></article>)}
+            {(itemsByCollection.get(collection.id) ?? []).map((item) => <article key={item.id} className="vitrine-surface rounded-[1.45rem] border border-border/75 bg-white p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_8px_25px_rgba(62,42,25,0.06)]"><div className="rounded-[1.05rem] border border-white/70 bg-card p-5"><div className="flex flex-col items-start gap-1 sm:flex-row sm:justify-between sm:gap-4"><h4 className="font-semibold">{item.name}</h4><span className="text-sm font-semibold text-pronto-primary">{formatPrice(item)}</span></div>{item.description && <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{item.description}</p>}{item.durationMinutes && <p className="mt-4 flex items-center gap-1.5 text-xs text-muted-foreground"><Clock3 className="h-3.5 w-3.5" />{item.durationMinutes} min</p>}</div></article>)}
           </div>
         </div>)}
         {!catalog?.catalog && <div className="rounded-[1.45rem] border border-dashed p-8 text-muted-foreground">Ce catalogue sera disponible prochainement.</div>}

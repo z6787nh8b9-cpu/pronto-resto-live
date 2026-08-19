@@ -15,6 +15,7 @@ import { LanguageSelector } from "@/components/LanguageSelector";
 import { useTranslation } from "@/hooks/useTranslation";
 import { AdvertisementDisplay, DishItemAd } from "@/components/AdvertisementDisplay";
 import { LoadingState } from "@/components/LoadingState";
+import { PublicVitrineChrome } from "@/components/PublicVitrineChrome";
 
 export default function RestaurantMenuPage() {
   const params: { slug?: string } = useParams();
@@ -134,38 +135,14 @@ export default function RestaurantMenuPage() {
   const hasFullpageAd = advertisements?.some((ad: any) => ad.format === "fullpage") || false;
 
   return (
-    <div className="min-h-screen bg-background relative">
-      {/* Header avec logo et navigation */}
-      <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between">
-          <div className="flex items-center gap-4">
-            {restaurant.logoUrl && (
-              <img src={restaurant.logoUrl} alt={restaurant.name} className="h-10 w-auto object-contain" />
-            )}
-            <h1 className="text-xl font-bold">{restaurant.name}</h1>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            {/* Sélecteur de langue si PRO ou PREMIUM */}
-            {(restaurant.subscriptionTier === "pro" || restaurant.subscriptionTier === "premium") && (
-              <LanguageSelector
-                currentLanguage={currentLanguage}
-                onLanguageChange={setCurrentLanguage}
-              />
-            )}
-            
-            {/* Bouton retour à l'accueil si PREMIUM */}
-            {restaurant.subscriptionTier === "premium" && (
-              <Button variant="ghost" onClick={() => navigate(`/${slug}`)}>
-                Accueil
-              </Button>
-            )}
-          </div>
-        </div>
-      </header>
+    <div className="min-h-[100dvh] bg-background relative">
+      <PublicVitrineChrome name={restaurant.name} logoUrl={restaurant.logoUrl}>
+        {(restaurant.subscriptionTier === "pro" || restaurant.subscriptionTier === "premium") && <LanguageSelector currentLanguage={currentLanguage} onLanguageChange={setCurrentLanguage} />}
+        {restaurant.subscriptionTier === "premium" && <button type="button" onClick={() => navigate(`/${slug}`)} className="hidden h-10 rounded-[1rem] px-3 text-sm font-medium text-foreground transition-[background-color,transform] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-black/[0.05] active:scale-[0.98] sm:inline-flex">Accueil</button>}
+      </PublicVitrineChrome>
 
       {/* Hero de vitrine */}
-      <section className="relative z-10 overflow-hidden py-16 md:py-24">
+      <section className="relative z-10 overflow-hidden pb-16 pt-32 md:pb-24 md:pt-40">
         {/* Image de fond avec blur */}
         {restaurant.heroImageUrl && (
           <div 
@@ -177,6 +154,7 @@ export default function RestaurantMenuPage() {
             }}
           />
         )}
+        {!restaurant.heroImageUrl && <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,#7e4837_0%,#3e231c_46%,#160d0a_100%)]" />}
         
         <div className="absolute inset-0 bg-black/55" />
         

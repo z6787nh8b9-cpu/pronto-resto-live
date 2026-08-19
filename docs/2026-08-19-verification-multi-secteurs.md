@@ -10,4 +10,16 @@ Les aperçus protégés ont été vérifiés sur l’environnement de développe
 
 La structure de vitrine reste cohérente entre les secteurs : navigation flottante, hero sombre et lisible, collections ou prestations, cartes à double contour et indication de prix contextualisée. Aucun aperçu brouillon n’est rendu disponible via la route publique.
 
-L’aperçu services a également restitué son nom, son badge « Aperçu Super Admin — non publié », son activité Services et son catalogue dans la session Super Admin. La capture graphique n’a pas pu être réinterrogée après une indisponibilité ponctuelle du navigateur ; le contrôle est donc consigné comme **validation fonctionnelle et textuelle**, à compléter par une revue visuelle lors du prochain passage navigateur disponible.
+## Contrôle bureau complémentaire
+
+Le 19 août 2026, les aperçus beauté, retail et services ont été revus directement dans le navigateur sur grand écran. Le badge brouillon, le chrome flottant, le hero contrasté et les surfaces concentriques restent lisibles. Les valeurs « À partir de », « Sur devis », « Sans frais », prix fixe et fourchette de prix sont rendues avec un niveau de hiérarchie cohérent. La vitrine services restitue notamment la durée de l’échange découverte, sans introduire de vocabulaire restaurant.
+
+Les trois aperçus restent réservés à une session Super Admin. Les données de démonstration demeurent en statut `draft` en base, ce qui conserve leur refus par la route publique.
+
+## Régression restaurant historique
+
+La vitrine La Voile Rouge conserve ses contrôles de langue, menu, réservation et contact après l’adoption du chrome flottant commun. Quand aucune image de couverture n’est renseignée, un fond radial sombre et contrasté prend désormais le relais afin de préserver la lisibilité du hero. Le chargement fonctionnel a été vérifié dans le navigateur ; une capture de la vue a été rendue indisponible par une réinitialisation ponctuelle du navigateur, sans erreur applicative associée.
+
+Une capture Chromium en largeur smartphone (390 px) confirme également le repli de hero, la troncature saine du chrome flottant et l’espacement entre le bouton de chat et le badge reCAPTCHA. Les actions flottantes restaurant sont relevées sur mobile et reviennent à leur position compacte à partir du format `sm`.
+
+La même revue mobile sur la vitrine beauté confirme que les tarifs génériques se placent sous le nom de la prestation avant le breakpoint `sm`. Ils restent ainsi dans la colonne de lecture, sans compétition visuelle avec le badge reCAPTCHA, tout en reprenant l’alignement latéral sur bureau.

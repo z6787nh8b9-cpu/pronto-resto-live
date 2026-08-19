@@ -15,6 +15,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { ReservationFlow } from "@/components/ReservationFlow";
 import { EventRegistrationFlow } from "@/components/EventRegistrationFlow";
 import { AdvertisementDisplay, DishItemAd } from "@/components/AdvertisementDisplay";
+import { PublicVitrineChrome } from "@/components/PublicVitrineChrome";
 
 export default function RestaurantHomePage() {
   const params: { slug?: string } = useParams();
@@ -141,50 +142,13 @@ export default function RestaurantHomePage() {
   const otherFormatAds = advertisements?.filter((ad: any) => ad.format !== "dish_item") || [];
 
   return (
-    <div className="min-h-screen bg-white relative">
-      {/* Header moderne et minimaliste */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-neutral-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            {/* Logo */}
-            <div className="flex items-center gap-3">
-              {restaurant.logoUrl && (
-                <img 
-                  src={restaurant.logoUrl} 
-                  alt={restaurant.name}
-                  className="h-12 w-12 object-cover rounded-full"
-                />
-              )}
-              <span className="text-xl font-semibold text-neutral-900 tracking-tight">
-                {restaurant.name}
-              </span>
-            </div>
-
-            {/* Navigation */}
-            <nav className="hidden md:flex items-center gap-8">
-              <LanguageSelector 
-                currentLanguage={currentLanguage}
-                onLanguageChange={setCurrentLanguage}
-              />
-              <button
-                onClick={() => navigate(`/${slug}/menu`)}
-                className="text-sm font-medium text-neutral-700 hover:text-neutral-900 transition-colors"
-              >
-                Menu
-              </button>
-              <button
-                onClick={() => setIsReservationOpen(true)}
-                className="text-sm font-medium text-neutral-700 hover:text-neutral-900 transition-colors"
-              >
-                Réserver
-              </button>
-            </nav>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-[100dvh] bg-white relative">
+      <PublicVitrineChrome name={restaurant.name} logoUrl={restaurant.logoUrl}>
+        <div className="hidden items-center gap-1.5 md:flex"><LanguageSelector currentLanguage={currentLanguage} onLanguageChange={setCurrentLanguage} /><button type="button" onClick={() => navigate(`/${slug}/menu`)} className="h-10 rounded-[1rem] px-3 text-sm font-medium text-foreground transition-[background-color,transform] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-black/[0.05] active:scale-[0.98]">Menu</button><button type="button" onClick={() => setIsReservationOpen(true)} className="h-10 rounded-[1rem] px-3 text-sm font-medium text-foreground transition-[background-color,transform] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-black/[0.05] active:scale-[0.98]">Réserver</button></div>
+      </PublicVitrineChrome>
 
       {/* Hero Section - Design moderne avec overlay subtil */}
-      <section className="relative h-[70vh] min-h-[500px] mt-20">
+      <section className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-[#190d09] px-4 pb-12 pt-28">
         {restaurant.heroImageUrl && (
           <div className="absolute inset-0">
             <img
@@ -195,8 +159,9 @@ export default function RestaurantHomePage() {
             <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-white"></div>
           </div>
         )}
+        {!restaurant.heroImageUrl && <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,#9a5740_0%,#4a281e_42%,#190d09_100%)]" />}
         
-        <div className="relative h-full flex items-center justify-center">
+        <div className="relative flex w-full items-center justify-center">
           <div className="text-center px-4 max-w-3xl mx-auto">
             <h1 className="text-5xl md:text-7xl font-serif font-bold text-white mb-6 tracking-tight">
               {translate("restaurant", restaurant.id, "name", restaurant.name)}
@@ -497,7 +462,7 @@ export default function RestaurantHomePage() {
       </footer>
 
       {/* Floating Action Buttons */}
-      <div className="fixed bottom-6 right-6 flex flex-col gap-3 z-40">
+      <div className="fixed bottom-24 right-6 z-40 flex flex-col gap-3 sm:bottom-6">
         {restaurant.whatsapp && (
           <a
             href={`https://wa.me/${restaurant.whatsapp.replace(/\s/g, "")}`}
