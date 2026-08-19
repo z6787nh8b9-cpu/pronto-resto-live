@@ -1210,6 +1210,7 @@
 - [x] Documenté les procédures de reprise, les alertes utiles et les risques résiduels connus
 
 ## 🔐 PRIORITÉ ABSOLUE — DURCISSEMENT AUTHENTIFICATION, SESSION ET DROITS (19 août 2026)
+- [x] Supprimer toute exposition de jetons, URLs techniques ou configuration OAuth depuis les vues Super Admin de production
 - [x] Écrire les tests d’invitation membre : acceptation unique, expiration, correspondance stricte de l’adresse email et isolation inter-entreprises
 - [x] Auditer la durée de vie effective du cookie, des sessions MySQL et des sessions Passport en développement et en production — cookie et stockage MySQL limités à 24 h avec expiration glissante, nettoyage périodique et session Passport persistante
 - [x] Appliquer et tester une expiration glissante bornée pour éviter la déconnexion d’un utilisateur actif tout en conservant une durée de session limitée
