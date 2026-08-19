@@ -1222,3 +1222,6 @@
 - [x] Décaler les actions flottantes de la vitrine restaurant sur mobile pour éviter le badge reCAPTCHA
 - [x] Réorganiser le prix des cartes génériques sur mobile afin de préserver sa lisibilité près du badge reCAPTCHA
 - [x] Ajouter une révélation de collections et cartes génériques au scroll, avec mode réduit et sans écouteur de scroll continu
+
+## DÉCOUPLAGE TECHNIQUE COMPLÉMENTAIRE (19 août 2026)
+- [x] Retirer le collecteur de debug de développement et sa route nommée Manus, sans toucher aux journaux serveur standard
