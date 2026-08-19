@@ -111,7 +111,7 @@ export default function AdminInviteAccept() {
             </h3>
             <ul className="text-sm text-amber-800 space-y-1 ml-6 list-disc">
               <li>Accès complet au panel d'administration</li>
-              <li>Gestion des restaurants et utilisateurs</li>
+              <li>Gestion des entreprises et utilisateurs</li>
               <li>Configuration de la plateforme</li>
               <li>Gestion des publicités et contenus</li>
             </ul>
