@@ -1211,7 +1211,7 @@
 
 ## 🔐 PRIORITÉ ABSOLUE — DURCISSEMENT AUTHENTIFICATION, SESSION ET DROITS (19 août 2026)
 - [x] Écrire les tests d’invitation membre : acceptation unique, expiration, correspondance stricte de l’adresse email et isolation inter-entreprises
-- [ ] Auditer la durée de vie effective du cookie, des sessions MySQL et des sessions Passport en développement et en production
+- [x] Auditer la durée de vie effective du cookie, des sessions MySQL et des sessions Passport en développement et en production — cookie et stockage MySQL limités à 24 h avec expiration glissante, nettoyage périodique et session Passport persistante
 - [x] Appliquer et tester une expiration glissante bornée pour éviter la déconnexion d’un utilisateur actif tout en conservant une durée de session limitée
 - [x] Vérifier la régénération de session après toute connexion et changement de privilège, ainsi que l’invalidation globale lors d’un changement de mot de passe
 - [x] Mettre en place une version d’authentification contrôlée pour invalider toutes les sessions antérieures après un changement ou une réinitialisation de mot de passe
@@ -1224,7 +1224,7 @@
 - [x] Ajouter des limites de débit et une journalisation minimisée pour la création et l’acceptation d’invitations membres
 - [x] Journaliser la création et l’acceptation d’invitations membres sans persister le jeton ou l’adresse invitée
 - [x] Installer une limite de débit dédiée aux mutations d’invitation membre, plus stricte que le garde-fou tRPC général
-- [ ] Exécuter un protocole de validation manuelle en production : connexion, déconnexion, reconnexion, récupération et changement de mot de passe propriétaire — connexion, persistance, déconnexion et refus post-déconnexion validés ; récupération et changement restent à valider sans modifier les identifiants actifs
+- [ ] Exécuter un protocole de validation manuelle en production : connexion, déconnexion, reconnexion, récupération et changement de mot de passe propriétaire — connexion, persistance, déconnexion, refus post-déconnexion et demande de récupération neutre validés ; consommation du lien à usage unique et changement restent à valider avec le lien transmis après vérification d’identité
 - [ ] Exécuter un protocole de validation manuelle en production : connexion Super Admin et refus post-déconnexion validés ; isolation des entreprises et accès transverses restent à confirmer sans modifier de données
 
 ## 🎨 REFONTE DES VITRINES D’ÉTABLISSEMENTS — DESIGN APPLE ET HAUT DE GAMME (19 août 2026)
