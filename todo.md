@@ -1227,3 +1227,4 @@
 - [x] Retirer le collecteur de debug de développement et sa route nommée Manus, sans toucher aux journaux serveur standard
 - [x] Retirer les anciens types de principal Manus du schéma et des commentaires hérités après migration additive validée
 - [x] Retirer les fallbacks de droits vers le principal hérité dans les routeurs d’horaires et de traduction
+- [x] Documenter la rétention de la table de compatibilité historique, inutilisée par les routeurs, avant toute suppression destructive
