@@ -104,6 +104,11 @@ export default function RestaurantDashboard() {
     { enabled: Boolean(restaurant?.id) }
   );
 
+  const { data: businessMembers, refetch: refetchBusinessMembers } = trpc.businesses.listMembers.useQuery(
+    { businessId: businessWorkspace?.id || 0 },
+    { enabled: Boolean(businessWorkspace?.id) }
+  );
+
   // Get chatbot config
   const { data: chatbotConfig } = trpc.restaurant.getChatbotConfig.useQuery(
     { restaurantId: restaurant?.id || 0 },
@@ -197,6 +202,14 @@ export default function RestaurantDashboard() {
       toast.success("Informations mises à jour");
       window.location.reload(); // Reload to see changes
     },
+  });
+
+  const updateBusinessMemberMutation = trpc.businesses.updateMember.useMutation({
+    onSuccess: () => {
+      toast.success("Accès du membre mis à jour");
+      refetchBusinessMembers();
+    },
+    onError: (error) => toast.error(error.message),
   });
 
   const handleUpdateRestaurantInfo = (e: React.FormEvent<HTMLFormElement>) => {
@@ -942,6 +955,58 @@ export default function RestaurantDashboard() {
                   </div>
                   <Button type="submit">Sauvegarder</Button>
                 </form>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Accès de l’entreprise</CardTitle>
+                <CardDescription>Le propriétaire et les Super Admins contrôlent les rôles. Les accès opérationnels restent limités à cet espace.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {!businessWorkspace ? (
+                  <p className="text-sm text-muted-foreground">Chargement des accès…</p>
+                ) : businessMembers?.length ? businessMembers.map((member) => (
+                  <div key={member.id} className="flex flex-col gap-3 rounded-2xl border border-border/70 p-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="min-w-0">
+                      <p className="font-medium">{member.name || `Membre ${member.principalId}`}</p>
+                      <p className="truncate text-sm text-muted-foreground">{member.email || member.principalType.replace("_", " ")}</p>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {member.role === "owner" ? (
+                        <Badge variant="secondary">Propriétaire</Badge>
+                      ) : (
+                        <Select
+                          value={member.role}
+                          onValueChange={(role) => updateBusinessMemberMutation.mutate({ businessId: businessWorkspace.id, memberId: member.id, role: role as "administrator" | "editor" | "publisher" | "analyst" | "support" })}
+                          disabled={updateBusinessMemberMutation.isPending}
+                        >
+                          <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="administrator">Administrateur</SelectItem>
+                            <SelectItem value="editor">Éditeur</SelectItem>
+                            <SelectItem value="publisher">Publication</SelectItem>
+                            <SelectItem value="analyst">Analyse</SelectItem>
+                            <SelectItem value="support">Support</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      )}
+                      {member.role !== "owner" && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => updateBusinessMemberMutation.mutate({ businessId: businessWorkspace.id, memberId: member.id, status: member.status === "active" ? "suspended" : "active" })}
+                          disabled={updateBusinessMemberMutation.isPending}
+                        >
+                          {member.status === "active" ? "Suspendre" : "Réactiver"}
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                )) : (
+                  <p className="text-sm text-muted-foreground">Aucun membre supplémentaire n’est encore rattaché à cette entreprise.</p>
+                )}
               </CardContent>
             </Card>
           </TabsContent>

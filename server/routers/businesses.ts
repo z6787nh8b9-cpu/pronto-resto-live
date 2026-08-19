@@ -11,6 +11,7 @@ import {
   catalogItems,
   catalogs,
   mediaAssets,
+  restaurantOwners,
 } from "../../drizzle/schema";
 import { getDb } from "../db";
 import { adminProcedure, publicProcedure, restaurantOwnerProcedure, router } from "../_core/trpc";
@@ -52,6 +53,32 @@ export async function requireBusinessAccess(ctx: TrpcContext, businessId: number
     throw new TRPCError({ code: "FORBIDDEN", message: "Vous n'avez pas accès à cette entreprise." });
   }
 }
+
+async function requireBusinessRoleManagement(ctx: TrpcContext, businessId: number) {
+  if (isPlatformAdmin(ctx)) return;
+  if (!ctx.restaurantOwner) {
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "Connexion requise." });
+  }
+
+  const db = await getDb();
+  if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
+  const [membership] = await db
+    .select({ role: businessMembers.role })
+    .from(businessMembers)
+    .where(and(
+      eq(businessMembers.businessId, businessId),
+      eq(businessMembers.principalType, "restaurant_owner"),
+      eq(businessMembers.principalId, ctx.restaurantOwner.id),
+      eq(businessMembers.status, "active"),
+    ))
+    .limit(1);
+
+  if (membership?.role !== "owner") {
+    throw new TRPCError({ code: "FORBIDDEN", message: "Seul le propriétaire peut gérer les membres." });
+  }
+}
+
+const managedMemberRole = z.enum(["administrator", "editor", "publisher", "analyst", "support"]);
 
 export const businessesRouter = router({
   /** Public identity: intentionally excludes owners, account IDs and internal statuses. */
@@ -148,6 +175,67 @@ export const businessesRouter = router({
       const [profile] = await db.select().from(businessProfiles).where(eq(businessProfiles.businessId, input.businessId)).limit(1);
       const businessCatalogs = await db.select().from(catalogs).where(eq(catalogs.businessId, input.businessId)).orderBy(asc(catalogs.displayOrder));
       return { business, profile: profile ?? null, catalogs: businessCatalogs };
+    }),
+
+  listMembers: restaurantOwnerProcedure
+    .input(z.object({ businessId: z.number().int().positive() }))
+    .query(async ({ ctx, input }) => {
+      await requireBusinessRoleManagement(ctx, input.businessId);
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
+
+      return db
+        .select({
+          id: businessMembers.id,
+          principalType: businessMembers.principalType,
+          principalId: businessMembers.principalId,
+          role: businessMembers.role,
+          status: businessMembers.status,
+          joinedAt: businessMembers.joinedAt,
+          createdAt: businessMembers.createdAt,
+          name: restaurantOwners.name,
+          email: restaurantOwners.email,
+        })
+        .from(businessMembers)
+        .leftJoin(restaurantOwners, and(
+          eq(restaurantOwners.id, businessMembers.principalId),
+          eq(businessMembers.principalType, "restaurant_owner"),
+        ))
+        .where(eq(businessMembers.businessId, input.businessId))
+        .orderBy(asc(businessMembers.createdAt));
+    }),
+
+  updateMember: restaurantOwnerProcedure
+    .input(z.object({
+      businessId: z.number().int().positive(),
+      memberId: z.number().int().positive(),
+      role: managedMemberRole.optional(),
+      status: z.enum(["active", "suspended"]).optional(),
+    }).refine((value) => value.role !== undefined || value.status !== undefined, {
+      message: "Aucune modification de membre demandée.",
+    }))
+    .mutation(async ({ ctx, input }) => {
+      await requireBusinessRoleManagement(ctx, input.businessId);
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
+
+      const [member] = await db
+        .select()
+        .from(businessMembers)
+        .where(and(eq(businessMembers.id, input.memberId), eq(businessMembers.businessId, input.businessId)))
+        .limit(1);
+      if (!member) throw new TRPCError({ code: "NOT_FOUND", message: "Membre introuvable." });
+      if (member.role === "owner") {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Le propriétaire ne peut pas être modifié depuis cette action." });
+      }
+
+      const changes = {
+        ...(input.role ? { role: input.role } : {}),
+        ...(input.status ? { status: input.status } : {}),
+      };
+      await db.update(businessMembers).set(changes).where(eq(businessMembers.id, member.id));
+      const [updated] = await db.select().from(businessMembers).where(eq(businessMembers.id, member.id)).limit(1);
+      return updated!;
     }),
 
   create: adminProcedure

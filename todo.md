@@ -724,6 +724,7 @@
 - [x] Généralisé les boutons Nouvelle Catégorie et Ajouter un plat du dashboard propriétaire
 - [x] Généralisé les dernières actions et confirmations de catégorie de la gestion détaillée Super Admin
 - [x] Généralisé l’invitation de la vue d’ensemble à organiser des catégories
+- [x] Ajouté une gestion isolée des rôles et membres d’entreprise pour les propriétaires autorisés
 
 ## 🔒 Google reCAPTCHA Enterprise invisible (16 février 2026)
 - [x] Ajouter le script reCAPTCHA dans client/index.html

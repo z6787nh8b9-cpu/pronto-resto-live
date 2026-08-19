@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { appRouter } from "./routers";
 import { getDb } from "./db";
-import { businessOnboarding, businesses, businessProfiles, mediaAssets } from "../drizzle/schema";
+import { businessMembers, businessOnboarding, businesses, businessProfiles, mediaAssets } from "../drizzle/schema";
 
 const runId = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 const testSlug = `business-test-${runId}`;
@@ -32,12 +32,21 @@ const unrelatedOwnerCaller = appRouter.createCaller({
   res: {},
 } as any);
 
+const ownerCaller = appRouter.createCaller({
+  adminAccount: null,
+  user: null,
+  restaurantOwner: { id: 777777, email: "owner@pronto.local" },
+  req: { session: {} },
+  res: {},
+} as any);
+
 afterAll(async () => {
   const db = await getDb();
   if (!db) return;
   const [business] = await db.select().from(businesses).where(eq(businesses.slug, testSlug)).limit(1);
   if (!business) return;
   await db.delete(mediaAssets).where(eq(mediaAssets.businessId, business.id));
+  await db.delete(businessMembers).where(eq(businessMembers.businessId, business.id));
   await db.delete(businessOnboarding).where(eq(businessOnboarding.businessId, business.id));
   await db.delete(businessProfiles).where(eq(businessProfiles.businessId, business.id));
   await db.delete(businesses).where(eq(businesses.id, business.id));
@@ -100,6 +109,33 @@ describe("Generic business core", () => {
     expect(onboarding).toMatchObject({ businessId: business.id, industry: "beauty", completedSteps: ["business_type", "catalog"] });
     await expect(unrelatedOwnerCaller.businesses.getOnboarding({ businessId: business.id })).rejects.toBeInstanceOf(TRPCError);
     await expect(unrelatedOwnerCaller.businesses.listMedia({ businessId: business.id })).rejects.toBeInstanceOf(TRPCError);
+  });
+
+  it("lets an owner manage non-owner members without exposing cross-business access", async () => {
+    const db = await getDb();
+    const [business] = await db!
+      .select()
+      .from(businesses)
+      .where(eq(businesses.slug, testSlug))
+      .limit(1);
+    await db!.insert(businessMembers).values([
+      { businessId: business.id, principalType: "restaurant_owner", principalId: 777777, role: "owner", status: "active" },
+      { businessId: business.id, principalType: "restaurant_owner", principalId: 777778, role: "editor", status: "active" },
+    ]);
+
+    const members = await ownerCaller.businesses.listMembers({ businessId: business.id });
+    const editor = members.find((member) => member.principalId === 777778);
+    expect(editor).toMatchObject({ role: "editor", status: "active" });
+
+    const updated = await ownerCaller.businesses.updateMember({
+      businessId: business.id,
+      memberId: editor!.id,
+      role: "publisher",
+      status: "suspended",
+    });
+    expect(updated).toMatchObject({ role: "publisher", status: "suspended" });
+    await expect(unrelatedOwnerCaller.businesses.listMembers({ businessId: business.id })).rejects.toBeInstanceOf(TRPCError);
+    await expect(unrelatedOwnerCaller.businesses.updateMember({ businessId: business.id, memberId: editor!.id, role: "analyst" })).rejects.toBeInstanceOf(TRPCError);
   });
 
   it("archives and restores a media record without exposing it to an unrelated owner", async () => {
