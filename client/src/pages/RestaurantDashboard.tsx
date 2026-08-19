@@ -488,7 +488,7 @@ export default function RestaurantDashboard() {
           <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
             <TabsList className="inline-flex lg:grid w-auto lg:w-full grid-cols-5 xl:grid-cols-12 gap-1 lg:gap-2 min-w-full lg:min-w-0">
             <TabsTrigger value="overview">Vue d’ensemble</TabsTrigger>
-            <TabsTrigger value="menu">Menu</TabsTrigger>
+            <TabsTrigger value="menu">Catalogue</TabsTrigger>
             <TabsTrigger value="import">Importer</TabsTrigger>
             <TabsTrigger value="media">Médiathèque</TabsTrigger>
             <TabsTrigger value="settings">Paramètres</TabsTrigger>
@@ -562,7 +562,7 @@ export default function RestaurantDashboard() {
             </section>
 
             <section className="grid gap-4 sm:grid-cols-3">
-              <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Collections actives</p><p className="mt-2 font-display text-5xl text-foreground">{categories?.length ?? 0}</p><p className="mt-2 text-sm text-muted-foreground">Organisez-les dans l’onglet Menu.</p></div>
+              <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Collections actives</p><p className="mt-2 font-display text-5xl text-foreground">{categories?.length ?? 0}</p><p className="mt-2 text-sm text-muted-foreground">Organisez-les dans l’onglet Catalogue.</p></div>
               <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Éléments publiables</p><p className="mt-2 font-display text-5xl text-foreground">{menuItems?.length ?? 0}</p><p className="mt-2 text-sm text-muted-foreground">Plats, produits ou prestations selon votre activité.</p></div>
               <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Formule actuelle</p><p className="mt-2 font-display text-4xl capitalize text-foreground">{restaurant.subscriptionTier}</p><p className="mt-2 text-sm text-muted-foreground">Les fonctions disponibles évoluent avec votre formule.</p></div>
             </section>
