@@ -34,6 +34,13 @@ import { BusinessOnboardingCard } from "@/components/BusinessOnboardingCard";
 import { BusinessMediaLibrary } from "@/components/BusinessMediaLibrary";
 import { PwaInstallControl } from "@/components/PwaInstallControl";
 
+function DashboardMetricValue({ value, isLoading, label }: { value: number; isLoading: boolean; label: string }) {
+  if (isLoading) {
+    return <span className="mt-3 flex h-12 items-center" role="status" aria-label={`Chargement : ${label}`}><span className="h-10 w-14 animate-pulse rounded-xl bg-muted" /><span className="sr-only">Chargement</span></span>;
+  }
+  return <p className="mt-2 font-display text-5xl text-foreground">{value}</p>;
+}
+
 export default function RestaurantDashboard() {
   const params: { slug?: string } = useParams();
   const slug = params.slug;
@@ -90,12 +97,12 @@ export default function RestaurantDashboard() {
   }, [accessError, restaurant?.id, navigate]);
 
   // Get menu data
-  const { data: categories, refetch: refetchCategories } = trpc.restaurant.getCategories.useQuery(
+  const { data: categories, refetch: refetchCategories, isLoading: isCategoriesLoading } = trpc.restaurant.getCategories.useQuery(
     { restaurantId: restaurant?.id || 0 },
     { enabled: !!restaurant?.id }
   );
 
-  const { data: menuItems, refetch: refetchItems } = trpc.restaurant.getMenuItems.useQuery(
+  const { data: menuItems, refetch: refetchItems, isLoading: isMenuItemsLoading } = trpc.restaurant.getMenuItems.useQuery(
     { restaurantId: restaurant?.id || 0 },
     { enabled: !!restaurant?.id }
   );
@@ -564,8 +571,8 @@ export default function RestaurantDashboard() {
             </section>
 
             <section className="grid gap-4 sm:grid-cols-3">
-              <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Collections actives</p><p className="mt-2 font-display text-5xl text-foreground">{categories?.length ?? 0}</p><p className="mt-2 text-sm text-muted-foreground">Organisez-les dans l’onglet Menu.</p></div>
-              <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Éléments publiables</p><p className="mt-2 font-display text-5xl text-foreground">{menuItems?.length ?? 0}</p><p className="mt-2 text-sm text-muted-foreground">Plats, produits ou prestations selon votre activité.</p></div>
+              <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Collections actives</p><DashboardMetricValue label="collections actives" isLoading={isCategoriesLoading} value={categories?.length ?? 0} /><p className="mt-2 text-sm text-muted-foreground">Organisez-les dans l’onglet Menu.</p></div>
+              <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Éléments publiables</p><DashboardMetricValue label="éléments publiables" isLoading={isMenuItemsLoading} value={menuItems?.length ?? 0} /><p className="mt-2 text-sm text-muted-foreground">Plats, produits ou prestations selon votre activité.</p></div>
               <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Formule actuelle</p><p className="mt-2 font-display text-4xl capitalize text-foreground">{restaurant.subscriptionTier}</p><p className="mt-2 text-sm text-muted-foreground">Les fonctions disponibles évoluent avec votre formule.</p></div>
             </section>
 

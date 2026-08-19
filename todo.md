@@ -1048,7 +1048,7 @@
 - [x] Étendu le schéma restaurant_owners avec provider 'email' et champ passwordHash
 - [x] Créé le restaurantOwner La Voile Rouge (ID 30001) avec hash bcrypt
 - [x] Lié le restaurantOwner au restaurant la-voile-rouge via restaurants.ownerId
-- [ ] Tester la connexion email/MDP sur /la-voile-rouge/dashboard
+- [x] Tester la connexion email/MDP sur /la-voile-rouge/dashboard — connexion, déconnexion et reconnexion validées lors du jalon de sécurité production
 
 ## REHAUSSEMENT DESIGN PRONTO (18 juin 2026)
 - [x] Agrandi le logo de navigation de la landing et ajusté son conteneur pour améliorer sa lisibilité
@@ -1228,3 +1228,6 @@
 - [x] Retirer les anciens types de principal Manus du schéma et des commentaires hérités après migration additive validée
 - [x] Retirer les fallbacks de droits vers le principal hérité dans les routeurs d’horaires et de traduction
 - [x] Documenter la rétention de la table de compatibilité historique, inutilisée par les routeurs, avant toute suppression destructive
+
+## AUDIT DASHBOARD ENTREPRISE (19 août 2026)
+- [x] Remplacer les compteurs à zéro transitoires du dashboard entreprise par des états de chargement non trompeurs
