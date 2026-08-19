@@ -173,6 +173,22 @@ scripts/                  Migration de compatibilité et données de référence
 
 ---
 
+## Scripts de démonstration et secrets
+
+Les scripts du dossier [`scripts/`](./scripts) servent à préparer ou migrer des données de référence. Ils ne contiennent aucun identifiant exploitable et ne doivent jamais recevoir de secret dans le code, un commit, une sortie de journal ou un fichier versionné.
+
+Les scripts de données de démonstration demandent explicitement les variables d’environnement suivantes au moment de leur exécution :
+
+| Variable | Usage |
+| --- | --- |
+| `DATABASE_URL` | Connexion à la base de données cible |
+| `LAVOILE_ROUGE_SEED_EMAIL` | Adresse du compte propriétaire de démonstration |
+| `LAVOILE_ROUGE_SEED_PASSWORD` | Mot de passe choisi localement pour ce compte |
+
+Chargez ces valeurs depuis un gestionnaire de secrets ou votre environnement local, puis exécutez les scripts uniquement contre un environnement explicitement identifié. Ne créez pas de fichier `.env` versionné et renouvelez immédiatement toute valeur qui aurait été communiquée par erreur.
+
+---
+
 ## Exploitation et déploiement
 
 Le projet est déployé via l’environnement Manus. Avant toute publication, créez un point de contrôle, exécutez les contrôles de type et les tests concernés, puis publiez depuis l’interface de gestion.
