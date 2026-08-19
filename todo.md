@@ -1236,3 +1236,6 @@
 ## AUDIT CATALOGUE PUBLIC (19 août 2026)
 - [x] Remplacer le hero gris du catalogue sans couverture par un repli contrasté cohérent avec la vitrine publique, y compris en cas de chargement d’image échoué
 - [x] Masquer le libellé d’allergènes lorsque la donnée est vide ou constituée d’espaces
+
+## RÉGRESSION RECAPTCHA DÉVELOPPEMENT (19 août 2026)
+- [x] Empêcher le rendu du badge reCAPTCHA invalide sur les hôtes de développement et conserver la vérification de production

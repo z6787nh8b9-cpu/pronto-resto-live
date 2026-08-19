@@ -41,3 +41,5 @@ Le catalogue La Voile Rouge reste lisible sur bureau et smartphone : recherche, 
 La vérification technique a révélé qu’une URL de couverture historique était indisponible. Le catalogue détecte désormais l’échec de chargement et bascule automatiquement vers son fond radial contrasté. Les revues bureau et smartphone confirment un hero lisible, cohérent avec la vitrine et sans rupture de mise en page.
 
 Les cartes de catalogue n’affichent désormais l’intitulé d’allergènes que si une liste utile est effectivement renseignée. La revue navigateur confirme la suppression des libellés vides sur les entrées de La Voile Rouge, avec des descriptions et prix conservés dans une lecture plus nette.
+
+Le script reCAPTCHA n’est plus injecté globalement dans la landing de développement. La revue navigateur confirme la disparition de l’avertissement de clé de site, tandis que le formulaire conserve son jeton de développement côté client et charge la protection Google uniquement pour une soumission de production.
