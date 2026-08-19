@@ -11,44 +11,27 @@ export const router = t.router;
 export const middleware = t.middleware;
 export const publicProcedure = t.procedure;
 
-const requireUser = t.middleware(async opts => {
+const requireProntoAccount = t.middleware(async opts => {
   const { ctx, next } = opts;
 
-  if (!ctx.user) {
+  if (!ctx.restaurantOwner && !ctx.adminAccount) {
     throw new TRPCError({ code: "UNAUTHORIZED", message: UNAUTHED_ERR_MSG });
   }
 
-  return next({
-    ctx: {
-      ...ctx,
-      user: ctx.user,
-    },
-  });
+  return next({ ctx });
 });
 
-export const protectedProcedure = t.procedure.use(requireUser);
+export const protectedProcedure = t.procedure.use(requireProntoAccount);
 
 export const adminProcedure = t.procedure.use(
   t.middleware(async opts => {
     const { ctx, next } = opts;
 
-    // Check if user is Manus OAuth admin
-    const isManusAdmin = ctx.user && ctx.user.role === 'admin';
-    
-    // Check if user is Google OAuth invited admin
-    const isInvitedAdmin = !!ctx.adminAccount;
-
-    if (!isManusAdmin && !isInvitedAdmin) {
+    if (!ctx.adminAccount) {
       throw new TRPCError({ code: "FORBIDDEN", message: NOT_ADMIN_ERR_MSG });
     }
 
-    return next({
-      ctx: {
-        ...ctx,
-        user: ctx.user,
-        adminAccount: ctx.adminAccount,
-      },
-    });
+    return next({ ctx });
   }),
 );
 
@@ -59,8 +42,7 @@ export const adminProcedure = t.procedure.use(
 const requireRestaurantOwnerOrAdmin = t.middleware(async opts => {
   const { ctx, next } = opts;
 
-  // Check if user is Super Admin (Manus OAuth)
-  if ((ctx.user && ctx.user.role === 'admin') || ctx.adminAccount) {
+  if (ctx.adminAccount) {
     return next({
       ctx: {
         ...ctx,

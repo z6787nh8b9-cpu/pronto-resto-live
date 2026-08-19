@@ -11,7 +11,7 @@ async function requireReservationManagementAccess(ctx: any, restaurantId: number
   if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
   const [restaurant] = await db.select({ ownerId: restaurants.ownerId }).from(restaurants).where(eq(restaurants.id, restaurantId)).limit(1);
   if (!restaurant) throw new TRPCError({ code: "NOT_FOUND", message: "Restaurant not found" });
-  const isPlatformAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+  const isPlatformAdmin = Boolean(ctx.adminAccount);
   if (!isPlatformAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id) {
     throw new TRPCError({ code: "FORBIDDEN", message: "Vous n'avez pas accès à ces réservations." });
   }

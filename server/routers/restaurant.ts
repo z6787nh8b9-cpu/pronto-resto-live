@@ -52,8 +52,8 @@ export const restaurantRouter = router({
         throw new TRPCError({ code: "NOT_FOUND", message: "Restaurant non trouvé" });
       }
 
-      // Super Admin has access to all restaurants
-      if (ctx.user && ctx.user.role === 'admin') {
+      // Local Super Admin has access to all restaurants.
+      if (ctx.adminAccount) {
         return { authorized: true, restaurant, isAdmin: true };
       }
 
@@ -78,8 +78,8 @@ export const restaurantRouter = router({
 
   // Get restaurants owned by current user
   getMyRestaurants: restaurantOwnerProcedure.query(async ({ ctx }) => {
-    if (!ctx.user) return [];
-    return await getRestaurantsByOwnerId(ctx.user.id);
+    if (!ctx.restaurantOwner) return [];
+    return await getRestaurantsByOwnerId(ctx.restaurantOwner.id);
   }),
 
   // Update restaurant settings
@@ -104,16 +104,17 @@ export const restaurantRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      // Verify ownership
-      const userId = ctx.restaurantOwner?.id || ctx.user?.id;
+      if (ctx.adminAccount) {
+        return await updateRestaurant(input.restaurantId, input.data);
+      }
+      const userId = ctx.restaurantOwner?.id;
       if (!userId) {
         throw new Error("Unauthorized");
       }
       const restaurants = await getRestaurantsByOwnerId(userId);
       const ownsRestaurant = restaurants.some((r) => r.id === input.restaurantId);
 
-      // Super admin can edit any restaurant
-      if (!ownsRestaurant && ctx.user?.role !== "admin") {
+      if (!ownsRestaurant) {
         throw new Error("Unauthorized");
       }
 
@@ -342,8 +343,7 @@ export const restaurantRouter = router({
 
       // Generate unique filename
       const ext = input.filename.split(".").pop();
-      // Use restaurantOwner ID if available, otherwise use super admin user ID
-      const userId = ctx.restaurantOwner?.id || ctx.user?.id || 'unknown';
+      const userId = ctx.restaurantOwner?.id ?? ctx.adminAccount?.id ?? 'unknown';
       const key = `restaurants/${userId}/${nanoid()}.${ext}`;
 
       // Upload to S3

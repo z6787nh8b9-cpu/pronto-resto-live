@@ -181,7 +181,7 @@ export const invitationsRouter = router({
         throw new Error("Restaurant not found");
       }
 
-      const isPlatformAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      const isPlatformAdmin = Boolean(ctx.adminAccount);
       if (!isPlatformAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id) {
         throw new Error("Forbidden");
       }

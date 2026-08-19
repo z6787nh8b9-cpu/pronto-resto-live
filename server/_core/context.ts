@@ -1,12 +1,11 @@
 import type { CreateExpressContextOptions } from "@trpc/server/adapters/express";
 import type { User, RestaurantOwner, AdminAccount } from "../../drizzle/schema";
-import { sdk } from "./sdk";
 import { resolvePrincipal, type AuthenticatedPrincipal } from "./principal";
 
 export type TrpcContext = {
   req: CreateExpressContextOptions["req"];
   res: CreateExpressContextOptions["res"];
-  user: User | null; // Manus OAuth user (Super Admin)
+  user: User | null; // Legacy platform identity, intentionally disabled during decoupling
   restaurantOwner: RestaurantOwner | null; // Google/Facebook OAuth user
   adminAccount: AdminAccount | null; // Google OAuth admin (invited)
   principal: AuthenticatedPrincipal | null;
@@ -23,16 +22,6 @@ export async function createContext(
   if (opts.req.user) {
     // req.user is set by Passport.js after Google/Facebook OAuth
     restaurantOwner = opts.req.user as RestaurantOwner;
-  }
-
-  // Check for Manus OAuth user (Super Admin) ONLY if no Passport user
-  if (!restaurantOwner) {
-    try {
-      user = await sdk.authenticateRequest(opts.req);
-    } catch (error) {
-      // Authentication is optional for public procedures.
-      user = null;
-    }
   }
 
   // Check for admin account session (email/password invited admin)

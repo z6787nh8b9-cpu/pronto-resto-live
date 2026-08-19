@@ -56,6 +56,7 @@ function Router() {
       <Route path="/admin/magic-login" component={AdminMagicLogin} />
       
       {/* Super Admin routes */}
+      <Route path="/admin/preview/:slug">{() => <BusinessPublicPage preview />}</Route>
       <Route path="/admin" component={SuperAdmin} />
       <Route path="/admin/restaurants/:id" component={AdminManageRestaurant} />
       
@@ -63,7 +64,7 @@ function Router() {
       <Route path="/:slug/dashboard" component={RestaurantDashboard} />
       
       {/* Restaurant menu page (all tiers) */}
-      <Route path="/b/:slug" component={BusinessPublicPage} />
+      <Route path="/b/:slug">{() => <BusinessPublicPage />}</Route>
       <Route path="/:slug/menu" component={RestaurantMenuPage} />
       
       {/* Restaurant home page (PREMIUM only, auto-redirects to /menu for MENU/PRO) */}

@@ -25,7 +25,7 @@ export const uploadRouter = router({
       // Generate unique filename
       const ext = input.filename.split(".").pop() || "jpg";
       const uniqueFilename = `${nanoid()}.${ext}`;
-      const actorId = ctx.restaurantOwner?.id ?? ctx.adminAccount?.id ?? ctx.user?.id;
+      const actorId = ctx.restaurantOwner?.id ?? ctx.adminAccount?.id;
       if (!actorId) throw new Error("Unauthorized");
       const fileKey = `uploads/${actorId}/${uniqueFilename}`;
 

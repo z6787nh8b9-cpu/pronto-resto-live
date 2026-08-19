@@ -25,7 +25,7 @@ const onboardingSteps = z.enum(["business_type", "catalog", "media", "profile", 
 const acceptedMediaTypeSchema = z.enum(acceptedMediaTypes);
 
 function isPlatformAdmin(ctx: TrpcContext) {
-  return Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+  return Boolean(ctx.adminAccount);
 }
 
 export async function requireBusinessAccess(ctx: TrpcContext, businessId: number) {
@@ -123,6 +123,37 @@ export const businessesRouter = router({
         eq(catalogItems.status, "active"),
       )).orderBy(asc(catalogItems.displayOrder));
       return { catalog, collections, items };
+    }),
+
+  /** Draft preview reserved to Super Admin; this data is never available to public callers. */
+  getPreviewBySlug: adminProcedure
+    .input(z.object({ slug: z.string().trim().min(2).max(100) }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
+      const [business] = await db.select({
+        id: businesses.id,
+        slug: businesses.slug,
+        name: businesses.name,
+        vertical: businesses.vertical,
+        profile: {
+          displayName: businessProfiles.displayName,
+          shortDescription: businessProfiles.shortDescription,
+          whatsapp: businessProfiles.whatsapp,
+          logoUrl: businessProfiles.logoUrl,
+          heroImageUrl: businessProfiles.heroImageUrl,
+        },
+      }).from(businesses).leftJoin(businessProfiles, eq(businessProfiles.businessId, businesses.id))
+        .where(eq(businesses.slug, input.slug)).limit(1);
+      if (!business) throw new TRPCError({ code: "NOT_FOUND", message: "Entreprise introuvable." });
+      const [catalog] = await db.select().from(catalogs).where(and(
+        eq(catalogs.businessId, business.id),
+        eq(catalogs.isPrimary, true),
+      )).orderBy(asc(catalogs.displayOrder)).limit(1);
+      if (!catalog) return { business, catalog: null, collections: [], items: [] };
+      const collections = await db.select().from(catalogCollections).where(eq(catalogCollections.catalogId, catalog.id)).orderBy(asc(catalogCollections.displayOrder));
+      const items = await db.select().from(catalogItems).where(eq(catalogItems.catalogId, catalog.id)).orderBy(asc(catalogItems.displayOrder));
+      return { business, catalog, collections, items };
     }),
 
   getByLegacyRestaurant: restaurantOwnerProcedure
@@ -342,7 +373,7 @@ export const businessesRouter = router({
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
       const principalType = isPlatformAdmin(ctx) ? "admin" : "owner";
-      const principalId = isPlatformAdmin(ctx) ? ctx.adminAccount?.id ?? ctx.user?.id ?? null : ctx.restaurantOwner?.id ?? null;
+      const principalId = isPlatformAdmin(ctx) ? ctx.adminAccount?.id ?? null : ctx.restaurantOwner?.id ?? null;
       const result = await db.insert(mediaAssets).values({
         businessId: input.businessId,
         uploadedByType: principalType,

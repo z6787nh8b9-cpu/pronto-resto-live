@@ -4,7 +4,7 @@ import react from "@vitejs/plugin-react";
 import fs from "node:fs";
 import path from "node:path";
 import { defineConfig, type Plugin, type ViteDevServer } from "vite";
-import { vitePluginManusRuntime } from "vite-plugin-manus-runtime";
+import { VitePWA } from "vite-plugin-pwa";
 
 // =============================================================================
 // Manus Debug Collector - Vite Plugin
@@ -150,7 +150,31 @@ function vitePluginManusDebugCollector(): Plugin {
   };
 }
 
-const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector()];
+const plugins = [
+  react(),
+  tailwindcss(),
+  jsxLocPlugin(),
+  VitePWA({
+    registerType: "prompt",
+    includeAssets: ["pronto-logo-white.png"],
+    manifest: {
+      name: "PRONTO B2B",
+      short_name: "PRONTO",
+      description: "Pilotage sécurisé de votre vitrine et catalogue professionnel.",
+      theme_color: "#5d321f",
+      background_color: "#fbf8f3",
+      display: "standalone",
+      start_url: "/",
+      scope: "/",
+      icons: [{ src: "/pronto-logo-white.png", sizes: "3334x2829", type: "image/png", purpose: "any" }],
+    },
+    workbox: {
+      navigateFallback: "/index.html",
+      globPatterns: ["**/*.{js,css,html,ico,png,svg,webp,woff2}"],
+      runtimeCaching: [],
+    },
+  }),
+];
 
 export default defineConfig({
   plugins,

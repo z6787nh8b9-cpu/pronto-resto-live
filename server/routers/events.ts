@@ -107,7 +107,7 @@ export const eventsRouter = router({
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
       const [restaurant] = await db.select().from(restaurants).where(eq(restaurants.id, input.restaurantId)).limit(1);
-      const isAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      const isAdmin = Boolean(ctx.adminAccount);
       if (!restaurant || (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id)) throw new TRPCError({ code: "FORBIDDEN" });
 
       const eventsList = await db
@@ -139,7 +139,7 @@ export const eventsRouter = router({
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
       const [restaurant] = await db.select().from(restaurants).where(eq(restaurants.id, input.restaurantId)).limit(1);
-      const isAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      const isAdmin = Boolean(ctx.adminAccount);
       if (!restaurant || (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id)) throw new TRPCError({ code: "FORBIDDEN" });
 
       const [event] = await db.insert(events).values({
@@ -184,7 +184,7 @@ export const eventsRouter = router({
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
       const [event] = await db.select().from(events).where(eq(events.id, input.eventId)).limit(1);
       const [restaurant] = event ? await db.select().from(restaurants).where(eq(restaurants.id, event.restaurantId)).limit(1) : [];
-      const isAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      const isAdmin = Boolean(ctx.adminAccount);
       if (!restaurant || (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id)) throw new TRPCError({ code: "FORBIDDEN" });
 
       const updateData: any = {};
@@ -216,7 +216,7 @@ export const eventsRouter = router({
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
       const [event] = await db.select().from(events).where(eq(events.id, input.eventId)).limit(1);
       const [restaurant] = event ? await db.select().from(restaurants).where(eq(restaurants.id, event.restaurantId)).limit(1) : [];
-      const isAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      const isAdmin = Boolean(ctx.adminAccount);
       if (!restaurant || (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id)) throw new TRPCError({ code: "FORBIDDEN" });
 
       // Delete all registrations first
@@ -236,7 +236,7 @@ export const eventsRouter = router({
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
       const [event] = await db.select().from(events).where(eq(events.id, input.eventId)).limit(1);
       const [restaurant] = event ? await db.select().from(restaurants).where(eq(restaurants.id, event.restaurantId)).limit(1) : [];
-      const isAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      const isAdmin = Boolean(ctx.adminAccount);
       if (!restaurant || (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id)) throw new TRPCError({ code: "FORBIDDEN" });
 
       const registrations = await db
@@ -262,7 +262,7 @@ export const eventsRouter = router({
       const [registration] = await db.select().from(eventRegistrations).where(eq(eventRegistrations.id, input.registrationId)).limit(1);
       const [event] = registration ? await db.select().from(events).where(eq(events.id, registration.eventId)).limit(1) : [];
       const [restaurant] = event ? await db.select().from(restaurants).where(eq(restaurants.id, event.restaurantId)).limit(1) : [];
-      const isAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      const isAdmin = Boolean(ctx.adminAccount);
       if (!restaurant || (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id)) throw new TRPCError({ code: "FORBIDDEN" });
 
       await db

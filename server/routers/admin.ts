@@ -3,7 +3,7 @@ import { router, publicProcedure } from "../_core/trpc";
 import { adminProcedure } from "../_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { getDb } from "../db";
-import { advertisements, users, adminInvitations, adminAccounts } from "../../drizzle/schema";
+import { advertisements, adminInvitations, adminAccounts } from "../../drizzle/schema";
 import { randomBytes } from "crypto";
 import { eq, sql } from "drizzle-orm";
 import {
@@ -202,22 +202,12 @@ export const adminRouter = router({
 
   // ===== ADMIN MANAGEMENT =====
 
-  // List all admins
+  // List local PRONTO Super Admin accounts only.
   listAdmins: adminProcedure.query(async () => {
     const db = await getDb();
     if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
-    // Get admins from users table (Manus OAuth)
-    const manusAdmins = await db.select({
-      id: users.id,
-      email: users.email,
-      name: users.name,
-      createdAt: users.createdAt,
-      lastSignedIn: users.lastSignedIn,
-      source: sql<string>`'manus'`,
-    }).from(users).where(eq(users.role, 'admin'));
-
-    // Get admins from admin_accounts table (Email/Password)
+    // Local email/password administration is the only active model.
     const emailAdmins = await db.select({
       id: adminAccounts.id,
       email: adminAccounts.email,
@@ -227,48 +217,26 @@ export const adminRouter = router({
       source: sql<string>`'email'`,
     }).from(adminAccounts);
 
-    // Merge both lists and sort by creation date (newest first)
-    const allAdmins = [...manusAdmins, ...emailAdmins].sort((a, b) => 
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
-
-    return allAdmins;
+    return emailAdmins.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
   }),
 
-  // Promote user to admin
+  // Legacy platform promotions are intentionally disabled during decoupling.
   promoteToAdmin: adminProcedure
     .input(z.object({ userId: z.number() }))
     .mutation(async ({ input }) => {
-      const db = await getDb();
-      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
-
-      await db.update(users).set({ role: 'admin' }).where(eq(users.id, input.userId));
-      return { success: true };
+      throw new TRPCError({ code: "BAD_REQUEST", message: "Utilisez les invitations Super Admin PRONTO pour créer un accès local." });
     }),
 
-  // Demote admin to user
+  // Legacy platform demotions are intentionally disabled during decoupling.
   demoteToUser: adminProcedure
     .input(z.object({ userId: z.number() }))
     .mutation(async ({ input, ctx }) => {
-      const db = await getDb();
-      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
-
-      // Prevent demoting yourself
-      if (ctx.user && input.userId === ctx.user.id) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: "Cannot demote yourself" });
-      }
-
-      await db.update(users).set({ role: 'user' }).where(eq(users.id, input.userId));
-      return { success: true };
+      throw new TRPCError({ code: "BAD_REQUEST", message: "Les comptes plateforme ne font plus partie des accès PRONTO." });
     }),
 
-  // List all users (for promoting to admin)
+  // No platform identities are listed or promoted in PRONTO.
   listAllUsers: adminProcedure.query(async () => {
-    const db = await getDb();
-    if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
-
-    const allUsers = await db.select().from(users);
-    return allUsers;
+    return [] as Array<{ id: number; name: string | null; email: string | null; role: "user" | "admin" }>;
   }),
 
   // Generate admin invitation link (no email required)
@@ -288,7 +256,7 @@ export const adminRouter = router({
       await db.insert(adminInvitations).values({
         token,
         expiresAt,
-        createdBy: ctx.user!.id,
+        createdBy: ctx.adminAccount!.id,
       });
 
       return { success: true, token };
@@ -340,45 +308,11 @@ export const adminRouter = router({
       return { valid: true };
     }),
 
-  // Accept admin invitation (requires authentication)
+  // The historical invitation acceptance expected a platform identity. It is
+  // deliberately disabled until a local email/password acceptance flow ships.
   acceptAdminInvitation: publicProcedure
     .input(z.object({ token: z.string() }))
     .mutation(async ({ input, ctx }) => {
-      const db = await getDb();
-      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
-
-      // User must be authenticated
-      if (!ctx.user) {
-        throw new TRPCError({ code: "UNAUTHORIZED", message: "You must be logged in to accept an invitation" });
-      }
-
-      // Find invitation
-      const [invitation] = await db.select().from(adminInvitations)
-        .where(eq(adminInvitations.token, input.token))
-        .limit(1);
-
-      if (!invitation) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Invitation not found" });
-      }
-
-      if (invitation.usedAt) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: "This invitation has already been used" });
-      }
-
-      if (new Date(invitation.expiresAt) < new Date()) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: "This invitation has expired" });
-      }
-
-      // No email check needed - invitation is open to anyone with the link
-
-      // Promote user to admin
-      await db.update(users).set({ role: 'admin' }).where(eq(users.id, ctx.user.id));
-
-      // Mark invitation as used
-      await db.update(adminInvitations)
-        .set({ usedAt: new Date() })
-        .where(eq(adminInvitations.id, invitation.id));
-
-      return { success: true };
+      throw new TRPCError({ code: "BAD_REQUEST", message: "Le parcours d’invitation hérité est désactivé pendant la migration vers les comptes PRONTO locaux." });
     }),
 });

@@ -5,8 +5,8 @@ import { httpBatchLink, TRPCClientError } from "@trpc/client";
 import { createRoot } from "react-dom/client";
 import superjson from "superjson";
 import App from "./App";
-import { getLoginUrl } from "./const";
 import "./index.css";
+import { registerProntoPwa } from "./lib/pwa";
 
 const queryClient = new QueryClient();
 
@@ -18,7 +18,9 @@ const redirectToLoginIfUnauthorized = (error: unknown) => {
 
   if (!isUnauthorized) return;
 
-  window.location.href = getLoginUrl();
+  // Pages owning a business or Super Admin flow display their own local login
+  // action. A global handler must never redirect a visitor to a third party.
+  console.warn("[PRONTO] Authentification requise pour cette ressource.");
 };
 
 queryClient.getQueryCache().subscribe(event => {
@@ -59,3 +61,5 @@ createRoot(document.getElementById("root")!).render(
     </QueryClientProvider>
   </trpc.Provider>
 );
+
+registerProntoPwa();

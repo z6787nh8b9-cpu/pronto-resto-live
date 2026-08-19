@@ -3,8 +3,7 @@ import express, { type Express } from "express";
 import { createServer } from "http";
 import net from "net";
 import { createExpressMiddleware } from "@trpc/server/adapters/express";
-import { registerOAuthRoutes } from "./oauth";
-import { registerStorageProxy } from "./storageProxy";
+import { registerAssetProxy } from "./storageProxy";
 import { registerRestaurantAuthRoutes, registerEmailLoginRoute } from "../auth-routes";
 import { adminLoginRouter } from "../admin-login-route";
 import { configureSessionMiddleware } from "../session-middleware";
@@ -42,8 +41,7 @@ async function startServer() {
   const server = createServer(app);
   app.disable("x-powered-by");
   
-  // Trust proxy to correctly detect HTTPS behind reverse proxy (Manus infrastructure)
-  // This allows secure cookies to work properly in production
+  // Trust the first reverse proxy so HTTPS cookies remain correct in production.
   app.set('trust proxy', 1);
   app.use(applySecurityHeaders);
   app.get("/healthz", (_req, res) => res.status(200).json(healthPayload()));
@@ -56,10 +54,8 @@ async function startServer() {
   // This allows tRPC routes to access Passport.js session
   configureSessionMiddleware(app);
   
-  // Storage proxy for /manus-storage/* paths
-  registerStorageProxy(app);
-  // OAuth callback under /api/oauth/callback (Manus OAuth)
-  registerOAuthRoutes(app);
+  // Neutral application route for externally stored assets.
+  registerAssetProxy(app);
   // Restaurant owner OAuth routes (Google & Facebook)
   registerRestaurantAuthRoutes(app);
   // Restaurant owner email/password login

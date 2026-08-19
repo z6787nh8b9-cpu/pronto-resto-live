@@ -32,6 +32,7 @@ import { CatalogImportCard } from "@/components/CatalogImportCard";
 import { LoadingState } from "@/components/LoadingState";
 import { BusinessOnboardingCard } from "@/components/BusinessOnboardingCard";
 import { BusinessMediaLibrary } from "@/components/BusinessMediaLibrary";
+import { PwaInstallControl } from "@/components/PwaInstallControl";
 
 export default function RestaurantDashboard() {
   const params: { slug?: string } = useParams();
@@ -482,6 +483,7 @@ export default function RestaurantDashboard() {
         }}
         breadcrumbs={["Espace entreprise", restaurant.name]}
       />
+      <PwaInstallControl />
 
       <main className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>

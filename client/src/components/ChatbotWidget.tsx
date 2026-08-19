@@ -99,10 +99,10 @@ export default function ChatbotWidget() {
         >
           <style>{`
             @keyframes chatbotFrames {
-              0%, 100% { background-image: url('https://files.manuscdn.com/user_upload_by_module/session_file/99899876/qdHdlqxJDrcPieHz.png'); }
-              25% { background-image: url('https://files.manuscdn.com/user_upload_by_module/session_file/99899876/DGisotQskbdxgMVc.png'); }
-              50% { background-image: url('https://files.manuscdn.com/user_upload_by_module/session_file/99899876/oFlNfKqUXBqweiVF.png'); }
-              75% { background-image: url('https://files.manuscdn.com/user_upload_by_module/session_file/99899876/oUpwZebeGHEroreA.png'); }
+              0%, 100% { background-image: url('/assets/chatbot-1_1848865b.png'); }
+              25% { background-image: url('/assets/chatbot-2_3ea45b9c.png'); }
+              50% { background-image: url('/assets/chatbot-3_c895e799.png'); }
+              75% { background-image: url('/assets/chatbot-4_ea804970.png'); }
             }
             @keyframes chatbotPulse {
               0%, 100% { transform: scale(1); }
@@ -112,7 +112,7 @@ export default function ChatbotWidget() {
           <div 
             className="w-full h-full rounded-full"
             style={{
-              backgroundImage: 'url(https://files.manuscdn.com/user_upload_by_module/session_file/99899876/qdHdlqxJDrcPieHz.png)',
+              backgroundImage: 'url(/assets/chatbot-1_1848865b.png)',
               backgroundSize: 'contain',
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat',
