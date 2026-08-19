@@ -1226,7 +1226,7 @@
 - [x] Journaliser la création et l’acceptation d’invitations membres sans persister le jeton ou l’adresse invitée
 - [x] Installer une limite de débit dédiée aux mutations d’invitation membre, plus stricte que le garde-fou tRPC général
 - [x] Exécuter un protocole de validation manuelle en production : connexion, déconnexion, reconnexion, récupération et changement de mot de passe propriétaire — demande neutre, consommation du lien à usage unique, reconnexion après réinitialisation et refus de réutilisation validés le 19 août 2026
-- [ ] Exécuter un protocole de validation manuelle en production : connexion Super Admin et refus post-déconnexion validés ; isolation des entreprises et accès transverses restent à confirmer sans modifier de données
+- [x] Exécuter un protocole de validation manuelle en production : connexion, supervision transversale en lecture seule des entreprises et refus post-déconnexion validés le 19 août 2026, sans modification de données
 
 ## 🎨 REFONTE DES VITRINES D’ÉTABLISSEMENTS — DESIGN APPLE ET HAUT DE GAMME (19 août 2026)
 - [x] Auditer RestaurantHomePage et RestaurantMenuPage : hiérarchie, espaces, z-index, contrastes, responsive, états vides et sorties de parcours
