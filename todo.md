@@ -1224,7 +1224,7 @@
 - [x] Ajouter des limites de débit et une journalisation minimisée pour la création et l’acceptation d’invitations membres
 - [x] Journaliser la création et l’acceptation d’invitations membres sans persister le jeton ou l’adresse invitée
 - [x] Installer une limite de débit dédiée aux mutations d’invitation membre, plus stricte que le garde-fou tRPC général
-- [ ] Exécuter un protocole de validation manuelle en production : connexion, déconnexion, reconnexion, récupération et changement de mot de passe propriétaire — connexion, persistance, déconnexion, refus post-déconnexion et demande de récupération neutre validés ; consommation du lien à usage unique et changement restent à valider avec le lien transmis après vérification d’identité
+- [x] Exécuter un protocole de validation manuelle en production : connexion, déconnexion, reconnexion, récupération et changement de mot de passe propriétaire — demande neutre, consommation du lien à usage unique, reconnexion après réinitialisation et refus de réutilisation validés le 19 août 2026
 - [ ] Exécuter un protocole de validation manuelle en production : connexion Super Admin et refus post-déconnexion validés ; isolation des entreprises et accès transverses restent à confirmer sans modifier de données
 
 ## 🎨 REFONTE DES VITRINES D’ÉTABLISSEMENTS — DESIGN APPLE ET HAUT DE GAMME (19 août 2026)
