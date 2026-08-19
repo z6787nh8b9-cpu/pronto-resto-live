@@ -1,4 +1,4 @@
-import { eq, desc, and, sql } from "drizzle-orm";
+import { eq, desc, and, gte, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import * as schema from "../drizzle/schema";
 import { 
@@ -391,6 +391,31 @@ export async function getPageViewsByRestaurantId(restaurantId: number, limit: nu
     .where(eq(pageViews.restaurantId, restaurantId))
     .orderBy(desc(pageViews.createdAt))
     .limit(limit);
+}
+
+export async function getRestaurantAnalyticsSummary(restaurantId: number, periodStart: Date) {
+  const db = await getDb();
+  if (!db) {
+    return { pageViewsThisMonth: 0, conversationsThisMonth: 0, totalConversations: 0 };
+  }
+
+  const [pageViewCount] = await db
+    .select({ total: sql<number>`COUNT(*)` })
+    .from(pageViews)
+    .where(and(eq(pageViews.restaurantId, restaurantId), gte(pageViews.createdAt, periodStart)));
+
+  const [conversationCount] = await db
+    .select({ total: sql<number>`COUNT(*)` })
+    .from(chatbotConversations)
+    .where(and(eq(chatbotConversations.restaurantId, restaurantId), gte(chatbotConversations.createdAt, periodStart)));
+
+  const config = await getChatbotConfigByRestaurantId(restaurantId);
+
+  return {
+    pageViewsThisMonth: Number(pageViewCount?.total || 0),
+    conversationsThisMonth: Number(conversationCount?.total || 0),
+    totalConversations: Number(config.totalConversations || 0),
+  };
 }
 
 // ===== SUBSCRIPTION TRANSACTION FUNCTIONS =====

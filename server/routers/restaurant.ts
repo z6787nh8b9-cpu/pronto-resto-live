@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { router } from "../_core/trpc";
+import type { TrpcContext } from "../_core/context";
 // Removed obsolete tenantMiddleware import
 import { publicProcedure, restaurantOwnerProcedure } from "../_core/trpc";
 import {
@@ -19,10 +20,43 @@ import {
   upsertChatbotConfig,
   getPageViewsByRestaurantId,
   getChatbotConversationsByRestaurantId,
+  getRestaurantAnalyticsSummary,
   getDb,
 } from "../db";
 import { menuCategories, menuItems, restaurants } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
+
+type RestaurantAccessContext = TrpcContext & { isAdmin?: boolean };
+
+async function assertRestaurantAccess(ctx: RestaurantAccessContext, restaurantId: number) {
+  const db = await getDb();
+  if (!db) {
+    throw new Error("Database not available");
+  }
+
+  const [restaurant] = await db
+    .select()
+    .from(restaurants)
+    .where(eq(restaurants.id, restaurantId))
+    .limit(1);
+
+  if (!restaurant) {
+    throw new TRPCError({ code: "NOT_FOUND", message: "Restaurant non trouvé" });
+  }
+
+  if (ctx.isAdmin) {
+    return restaurant;
+  }
+
+  if (ctx.restaurantOwner?.id === restaurant.ownerId) {
+    return restaurant;
+  }
+
+  throw new TRPCError({
+    code: "FORBIDDEN",
+    message: "Vous n'avez pas accès à ce restaurant",
+  });
+}
 
 export const restaurantRouter = router({
   /**
@@ -36,39 +70,8 @@ export const restaurantRouter = router({
       })
     )
     .query(async ({ ctx, input }) => {
-      const db = await getDb();
-      if (!db) {
-        throw new Error("Database not available");
-      }
-
-      // Get restaurant
-      const [restaurant] = await db
-        .select()
-        .from(restaurants)
-        .where(eq(restaurants.id, input.restaurantId))
-        .limit(1);
-
-      if (!restaurant) {
-        throw new TRPCError({ code: "NOT_FOUND", message: "Restaurant non trouvé" });
-      }
-
-      // Super Admin has access to all restaurants
-      if (ctx.user && ctx.user.role === 'admin') {
-        return { authorized: true, restaurant, isAdmin: true };
-      }
-
-      // Restaurant owner can only access their own restaurant
-      if (ctx.restaurantOwner) {
-        if (restaurant.ownerId !== ctx.restaurantOwner.id) {
-          throw new TRPCError({
-            code: "FORBIDDEN",
-            message: "Vous n'avez pas accès à ce restaurant",
-          });
-        }
-        return { authorized: true, restaurant, isAdmin: false };
-      }
-
-      throw new TRPCError({ code: "UNAUTHORIZED", message: "Non autorisé" });
+      const restaurant = await assertRestaurantAccess(ctx, input.restaurantId);
+      return { authorized: true, restaurant, isAdmin: Boolean(ctx.isAdmin) };
     }),
 
   // Get current restaurant (based on tenant context) - DEPRECATED
@@ -261,21 +264,33 @@ export const restaurantRouter = router({
         welcomeMessage: z.string().optional(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      await assertRestaurantAccess(ctx, input.restaurantId);
       return await upsertChatbotConfig(input);
     }),
 
   // Analytics
   getPageViews: restaurantOwnerProcedure
     .input(z.object({ restaurantId: z.number(), limit: z.number().default(1000) }))
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
+      await assertRestaurantAccess(ctx, input.restaurantId);
       return await getPageViewsByRestaurantId(input.restaurantId, input.limit);
     }),
 
   getChatbotConversations: restaurantOwnerProcedure
     .input(z.object({ restaurantId: z.number(), limit: z.number().default(100) }))
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
+      await assertRestaurantAccess(ctx, input.restaurantId);
       return await getChatbotConversationsByRestaurantId(input.restaurantId, input.limit);
+    }),
+
+  getAnalyticsSummary: restaurantOwnerProcedure
+    .input(z.object({ restaurantId: z.number() }))
+    .query(async ({ input, ctx }) => {
+      await assertRestaurantAccess(ctx, input.restaurantId);
+      const now = new Date();
+      const periodStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      return await getRestaurantAnalyticsSummary(input.restaurantId, periodStart);
     }),
 
   // Reorder Categories

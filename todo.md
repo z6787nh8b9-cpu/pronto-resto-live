@@ -508,7 +508,7 @@
 - [ ] Restaurer la section Événements sur RestaurantHomePage
 - [ ] Restaurer la section Horaires d'ouverture sur RestaurantHomePage
 - [ ] Restaurer la section Réservations sur RestaurantHomePage
-- [ ] Restaurer les stats (vues, conversations) dans le dashboard
+- [x] Restauré les stats de vues et conversations dans le dashboard via un agrégat serveur isolé
 - [ ] Restaurer le toggle de désactivation du chatbot dans le dashboard
 - [ ] Restaurer la configuration des zones/tables/réservations dans le dashboard
 - [ ] Implémenter la limitation des favoris selon la formule (Basic: 1, Pro: 3, Premium: 5)
@@ -712,6 +712,7 @@
 - [x] Connecter bouton "Essai gratuit" footer au formulaire (source: FOOTER)
 - [x] Ajouter texte "0€ de frais d'installation" sous la section tarifs
 - [x] Corrigé la section vide de la page publique en conditionnant et centrant les blocs contact et horaires
+- [x] Sécurisé les lectures analytiques par propriétaire ou Super Admin avant de restaurer les indicateurs du dashboard
 
 ## 🔒 Google reCAPTCHA Enterprise invisible (16 février 2026)
 - [x] Ajouter le script reCAPTCHA dans client/index.html
