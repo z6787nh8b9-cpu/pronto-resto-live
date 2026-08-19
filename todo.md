@@ -1139,6 +1139,7 @@
 - [x] Généralisé les libellés des invitations Super Admin encore orientés restaurants
 - [x] Harmonisé les options de formule Super Admin en Essentiel, Pro et Premium sans modifier les valeurs legacy
 - [x] Prérempli l’activité de l’onboarding depuis le profil de l’entreprise pour éviter le biais restaurant
+- [x] Vérifié par test que l’espace entreprise expose son activité pour l’onboarding multi-secteurs
 - [x] Rédigé un README professionnel couvrant l’architecture, la sécurité, les parcours et l’exploitation de PRONTO
 - [x] Synchronisé l’état validé du projet vers le dépôt GitHub z6787nh8b9-cpu/pronto-resto-live
 - [x] Supprimé l'identifiant propriétaire codé en dur lors de la création d'une entreprise par le Super Admin

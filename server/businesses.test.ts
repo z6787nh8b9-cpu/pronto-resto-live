@@ -61,6 +61,7 @@ describe("Generic business core", () => {
     });
 
     const workspace = await adminCaller.businesses.getWorkspace({ businessId: business.id });
+    expect(workspace.business).toMatchObject({ vertical: "beauty" });
     expect(workspace.profile).toMatchObject({ displayName: "Studio de démonstration" });
   });
 
