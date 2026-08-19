@@ -1132,6 +1132,8 @@
 - [x] Retiré la propriété businessName inutilisée du parcours d’inscription événementielle
 - [x] Généralisé les libellés visibles « Menu » du dashboard en « Catalogue » sans modifier l’onglet legacy
 - [x] Remplacé l’affichage de formule « Menu » par une appellation multi-secteurs sans modifier la souscription stockée
+- [x] Couvert par tests l’archivage et la restauration réversible d’un média d’entreprise autorisé
+- [x] Exposé la restauration contrôlée d’un média archivé dans la médiathèque entreprise
 - [x] Rédigé un README professionnel couvrant l’architecture, la sécurité, les parcours et l’exploitation de PRONTO
 - [x] Synchronisé l’état validé du projet vers le dépôt GitHub z6787nh8b9-cpu/pronto-resto-live
 - [x] Supprimé l'identifiant propriétaire codé en dur lors de la création d'une entreprise par le Super Admin
