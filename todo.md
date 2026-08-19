@@ -509,8 +509,8 @@
 - [ ] Restaurer la section Horaires d'ouverture sur RestaurantHomePage
 - [ ] Restaurer la section Réservations sur RestaurantHomePage
 - [x] Restauré les stats de vues et conversations dans le dashboard via un agrégat serveur isolé
-- [ ] Restaurer le toggle de désactivation du chatbot dans le dashboard
-- [ ] Restaurer la configuration des zones/tables/réservations dans le dashboard
+- [x] Contrôlé le toggle de désactivation du chatbot déjà présent dans le dashboard et protégé par la mutation propriétaire/Super Admin
+- [x] Contrôlé la configuration des zones, capacités, tables et créneaux déjà disponible dans le dashboard
 - [ ] Implémenter la limitation des favoris selon la formule (Basic: 1, Pro: 3, Premium: 5)
 - [ ] Ajouter une bulle info quand l'utilisateur atteint la limite de favoris
 - [ ] Restaurer la mise en avant visuelle des favoris sur la page publique (étoile dorée + badge)
@@ -713,6 +713,7 @@
 - [x] Ajouter texte "0€ de frais d'installation" sous la section tarifs
 - [x] Corrigé la section vide de la page publique en conditionnant et centrant les blocs contact et horaires
 - [x] Sécurisé les lectures analytiques par propriétaire ou Super Admin avant de restaurer les indicateurs du dashboard
+- [x] Généralisé le contexte métier et les promesses du chatbot à toutes les activités PRONTO
 
 ## 🔒 Google reCAPTCHA Enterprise invisible (16 février 2026)
 - [x] Ajouter le script reCAPTCHA dans client/index.html
