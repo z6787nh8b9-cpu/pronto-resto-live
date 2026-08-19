@@ -1224,13 +1224,14 @@
 - [x] Ajouter des limites de débit et une journalisation minimisée pour la création et l’acceptation d’invitations membres
 - [x] Journaliser la création et l’acceptation d’invitations membres sans persister le jeton ou l’adresse invitée
 - [x] Installer une limite de débit dédiée aux mutations d’invitation membre, plus stricte que le garde-fou tRPC général
-- [ ] Exécuter un protocole de validation manuelle en production : connexion, déconnexion, reconnexion, récupération et changement de mot de passe propriétaire
-- [ ] Exécuter un protocole de validation manuelle en production : connexion Super Admin, isolation des entreprises et refus des accès transverses
+- [ ] Exécuter un protocole de validation manuelle en production : connexion, déconnexion, reconnexion, récupération et changement de mot de passe propriétaire — connexion, persistance, déconnexion et refus post-déconnexion validés ; récupération et changement restent à valider sans modifier les identifiants actifs
+- [ ] Exécuter un protocole de validation manuelle en production : connexion Super Admin et refus post-déconnexion validés ; isolation des entreprises et accès transverses restent à confirmer sans modifier de données
 
 ## 🎨 REFONTE DES VITRINES D’ÉTABLISSEMENTS — DESIGN APPLE ET HAUT DE GAMME (19 août 2026)
-- [ ] Auditer RestaurantHomePage et RestaurantMenuPage : hiérarchie, espaces, z-index, contrastes, responsive, états vides et sorties de parcours
+- [x] Auditer RestaurantHomePage et RestaurantMenuPage : hiérarchie, espaces, z-index, contrastes, responsive, états vides et sorties de parcours
+- [x] Créer un chrome public partagé : navigation flottante, actions prioritaires regroupées, profondeur et z-index cohérents
 - [ ] Définir un socle visuel premium multi-secteurs : typographies sans serif et serif non génériques, rythme vertical, matériaux et tokens cohérents
-- [ ] Refondre le hero public : image 1920×600, flou d’arrière-plan 8px, voile sombre lisible, navigation flottante et hiérarchie de marque
+- [x] Refondre le hero public : image 1920×600, flou d’arrière-plan 8px, voile sombre lisible, navigation flottante et hiérarchie de marque
 - [ ] Remplacer les cartes, contrôles et CTA incohérents par des composants à double contour, focus visible et micro-interactions accessibles
 - [ ] Ajouter des entrées de contenu performantes via IntersectionObserver, des transitions interruptibles et le respect de la réduction des animations
 - [ ] Vérifier chaque vitrine restaurateur, beauté, retail et service aux formats mobile, tablette et bureau sans modifier les URL ni données historiques

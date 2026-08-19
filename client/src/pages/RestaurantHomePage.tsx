@@ -15,6 +15,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { ReservationFlow } from "@/components/ReservationFlow";
 import { EventRegistrationFlow } from "@/components/EventRegistrationFlow";
 import { AdvertisementDisplay, DishItemAd } from "@/components/AdvertisementDisplay";
+import { PublicVitrineChrome } from "@/components/PublicVitrineChrome";
 
 export default function RestaurantHomePage() {
   const params: { slug?: string } = useParams();
@@ -144,75 +145,44 @@ export default function RestaurantHomePage() {
 
   return (
     <div className="min-h-screen bg-white relative">
-      {/* Header moderne et minimaliste */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-neutral-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            {/* Logo */}
-            <div className="flex items-center gap-3">
-              {restaurant.logoUrl && (
-                <img 
-                  src={restaurant.logoUrl} 
-                  alt={restaurant.name}
-                  className="h-12 w-12 object-cover rounded-full"
-                />
-              )}
-              <span className="text-xl font-semibold text-neutral-900 tracking-tight">
-                {restaurant.name}
-              </span>
-            </div>
-
-            {/* Navigation */}
-            <nav className="hidden md:flex items-center gap-8">
-              <LanguageSelector 
-                currentLanguage={currentLanguage}
-                onLanguageChange={setCurrentLanguage}
-              />
-              <button
-                onClick={() => navigate(`/${slug}/menu`)}
-                className="text-sm font-medium text-neutral-700 hover:text-neutral-900 transition-colors"
-              >
-                Menu
-              </button>
-              <button
-                onClick={() => setIsReservationOpen(true)}
-                className="text-sm font-medium text-neutral-700 hover:text-neutral-900 transition-colors"
-              >
-                Réserver
-              </button>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <PublicVitrineChrome
+        name={restaurant.name}
+        logoUrl={restaurant.logoUrl}
+        slug={slug}
+        languageControl={<LanguageSelector currentLanguage={currentLanguage} onLanguageChange={setCurrentLanguage} />}
+        onOpenCatalog={() => navigate(`/${slug}/menu`)}
+        onReserve={restaurant.featuresEnabled?.reservations ? () => setIsReservationOpen(true) : undefined}
+      />
 
       {/* Hero Section - Design moderne avec overlay subtil */}
-      <section className="relative h-[70vh] min-h-[500px] mt-20">
+      <section className="relative min-h-[100dvh] overflow-hidden pt-24 sm:pt-28">
         {restaurant.heroImageUrl && (
           <div className="absolute inset-0">
             <img
               src={restaurant.heroImageUrl}
               alt={restaurant.name}
-              className="w-full h-full object-cover"
+              className="h-full w-full scale-105 object-cover blur-[8px]"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-white"></div>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/45 to-black/20"></div>
           </div>
         )}
         
         <div className="relative h-full flex items-center justify-center">
-          <div className="text-center px-4 max-w-3xl mx-auto">
-            <h1 className="text-5xl md:text-7xl font-serif font-bold text-white mb-6 tracking-tight">
+          <div className="mx-auto max-w-3xl px-5 pb-20 pt-28 text-center sm:pt-36">
+            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-white/70">Votre vitrine</p>
+            <h1 className="mb-6 font-display text-5xl text-white sm:text-6xl md:text-7xl">
               {translate("restaurant", restaurant.id, "name", restaurant.name)}
             </h1>
             {restaurant.description && (
-              <p className="text-lg md:text-xl text-white/90 mb-8 font-light leading-relaxed">
+              <p className="mb-9 text-lg leading-relaxed text-white/90 md:text-xl">
                 {translate("restaurant", restaurant.id, "description", restaurant.description)}
               </p>
             )}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col justify-center gap-3 sm:flex-row">
               <Button
                 size="lg"
                 onClick={() => navigate(`/${slug}/menu`)}
-                className="bg-white text-neutral-900 hover:bg-neutral-100 px-8 py-6 text-base font-medium rounded-none"
+                className="h-14 rounded-[1.1rem] border border-white/80 bg-white px-7 text-base font-semibold text-neutral-900 shadow-[0_12px_30px_rgba(0,0,0,0.18)] hover:bg-white/90"
               >
                 Découvrir le menu
               </Button>
@@ -221,7 +191,7 @@ export default function RestaurantHomePage() {
                   size="lg"
                   variant="outline"
                   onClick={() => setIsReservationOpen(true)}
-                  className="border-2 border-white text-white hover:bg-white hover:text-neutral-900 px-8 py-6 text-base font-medium rounded-none"
+                  className="h-14 rounded-[1.1rem] border border-white/35 bg-white/10 px-7 text-base font-semibold text-white backdrop-blur-sm hover:bg-white hover:text-neutral-900"
                 >
                   Réserver une table
                 </Button>

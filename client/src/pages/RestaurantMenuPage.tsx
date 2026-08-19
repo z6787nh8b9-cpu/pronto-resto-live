@@ -15,6 +15,7 @@ import { LanguageSelector } from "@/components/LanguageSelector";
 import { useTranslation } from "@/hooks/useTranslation";
 import { AdvertisementDisplay, DishItemAd } from "@/components/AdvertisementDisplay";
 import { LoadingState } from "@/components/LoadingState";
+import { PublicVitrineChrome } from "@/components/PublicVitrineChrome";
 
 export default function RestaurantMenuPage() {
   const params: { slug?: string } = useParams();
@@ -135,37 +136,16 @@ export default function RestaurantMenuPage() {
 
   return (
     <div className="min-h-screen bg-background relative">
-      {/* Header avec logo et navigation */}
-      <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container flex h-16 items-center justify-between">
-          <div className="flex items-center gap-4">
-            {restaurant.logoUrl && (
-              <img src={restaurant.logoUrl} alt={restaurant.name} className="h-10 w-auto object-contain" />
-            )}
-            <h1 className="text-xl font-bold">{restaurant.name}</h1>
-          </div>
-          
-          <div className="flex items-center gap-2">
-            {/* Sélecteur de langue si PRO ou PREMIUM */}
-            {(restaurant.subscriptionTier === "pro" || restaurant.subscriptionTier === "premium") && (
-              <LanguageSelector
-                currentLanguage={currentLanguage}
-                onLanguageChange={setCurrentLanguage}
-              />
-            )}
-            
-            {/* Bouton retour à l'accueil si PREMIUM */}
-            {restaurant.subscriptionTier === "premium" && (
-              <Button variant="ghost" onClick={() => navigate(`/${slug}`)}>
-                Accueil
-              </Button>
-            )}
-          </div>
-        </div>
-      </header>
+      <PublicVitrineChrome
+        name={restaurant.name}
+        logoUrl={restaurant.logoUrl}
+        slug={slug}
+        languageControl={(restaurant.subscriptionTier === "pro" || restaurant.subscriptionTier === "premium") ? <LanguageSelector currentLanguage={currentLanguage} onLanguageChange={setCurrentLanguage} /> : undefined}
+        onOpenCatalog={() => window.scrollTo({ top: document.getElementById("collections")?.offsetTop ?? 0, behavior: "smooth" })}
+      />
 
       {/* Hero de vitrine */}
-      <section className="relative z-10 overflow-hidden py-16 md:py-24">
+      <section className="relative z-10 min-h-[52dvh] overflow-hidden pb-16 pt-28 md:pb-24 md:pt-36">
         {/* Image de fond avec blur */}
         {restaurant.heroImageUrl && (
           <div 
@@ -181,10 +161,10 @@ export default function RestaurantMenuPage() {
         <div className="absolute inset-0 bg-black/55" />
         
         {/* Contenu */}
-        <div className="container relative z-10">
+          <div className="container relative z-10">
           <div className="mx-auto max-w-3xl text-center">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.13em] text-white/85 backdrop-blur-sm"><Sparkles className="h-3.5 w-3.5" /> Vitrine PRONTO</span>
-            <h2 className="mt-5 text-4xl text-white drop-shadow-lg md:text-5xl">Découvrez notre sélection</h2>
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-black/10 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.13em] text-white/85 backdrop-blur-sm"><Sparkles className="h-3.5 w-3.5" /> Votre vitrine</span>
+            <h2 className="mt-5 font-display text-4xl text-white drop-shadow-lg md:text-5xl">Découvrez notre sélection</h2>
             {restaurant.description && <p className="mt-4 text-lg leading-8 text-white/90 drop-shadow-md">{restaurant.description}</p>}
           </div>
         </div>
@@ -229,7 +209,7 @@ export default function RestaurantMenuPage() {
       </section>
 
       {/* Collections de la vitrine */}
-      <section className={`relative z-10 py-12 ${!hasFullpageAd ? 'bg-background' : ''}`}>
+      <section id="collections" className={`relative z-10 py-12 ${!hasFullpageAd ? 'bg-background' : ''}`}>
         <div className="container max-w-5xl">
           {categories.length > 0 ? (
             <Tabs defaultValue={categories[0]?.id.toString()} className="w-full">
