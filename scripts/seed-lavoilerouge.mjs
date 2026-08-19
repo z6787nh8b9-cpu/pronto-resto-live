@@ -1,11 +1,18 @@
 import mysql from 'mysql2/promise';
 import bcrypt from 'bcrypt';
 
+const seedOwnerEmail = process.env.LAVOILE_ROUGE_SEED_EMAIL;
+const seedOwnerPassword = process.env.LAVOILE_ROUGE_SEED_PASSWORD;
+
+if (!seedOwnerEmail || !seedOwnerPassword) {
+  throw new Error('LAVOILE_ROUGE_SEED_EMAIL et LAVOILE_ROUGE_SEED_PASSWORD sont requis pour exécuter ce script.');
+}
+
 const conn = await mysql.createConnection(process.env.DATABASE_URL);
 
 try {
   // 1. Hash password
-  const passwordHash = await bcrypt.hash('REDACTED_SEED_PASSWORD', 10);
+  const passwordHash = await bcrypt.hash(seedOwnerPassword, 10);
   console.log('Password hashed');
 
   // 2. Create admin account
@@ -13,7 +20,7 @@ try {
     `INSERT INTO admin_accounts (email, name, passwordHash, createdAt, updatedAt, lastSignedIn)
      VALUES (?, ?, ?, NOW(), NOW(), NOW())
      ON DUPLICATE KEY UPDATE name = VALUES(name)`,
-    ['restaurant.lavoilerouge@gmail.com', 'La Voile Rouge', passwordHash]
+    [seedOwnerEmail, 'La Voile Rouge', passwordHash]
   );
   console.log('Admin account created, ID:', accountResult.insertId);
 
@@ -157,7 +164,7 @@ try {
 
   console.log('\n✅ La Voile Rouge setup complete!');
   console.log('Restaurant ID:', restaurantId);
-  console.log('Login: restaurant.lavoilerouge@gmail.com / REDACTED_SEED_PASSWORD');
+  console.log('Login owner:', seedOwnerEmail);
   console.log('Public page: /la-voile-rouge/menu');
   console.log('Dashboard: /la-voile-rouge/dashboard');
 
