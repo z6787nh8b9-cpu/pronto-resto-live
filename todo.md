@@ -715,6 +715,7 @@
 - [x] Sécurisé les lectures analytiques par propriétaire ou Super Admin avant de restaurer les indicateurs du dashboard
 - [x] Généralisé le contexte métier et les promesses du chatbot à toutes les activités PRONTO
 - [x] Aligné l’accès de gestion des Super Admins email avec les Super Admins OAuth sans élargir les droits propriétaires
+- [x] Aligné la liste des entreprises du propriétaire sur l’identité OAuth ou email active
 
 ## 🔒 Google reCAPTCHA Enterprise invisible (16 février 2026)
 - [x] Ajouter le script reCAPTCHA dans client/index.html
