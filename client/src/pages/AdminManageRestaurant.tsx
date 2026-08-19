@@ -79,7 +79,7 @@ export default function AdminManageRestaurant() {
   // Mutations
   const createCategoryMutation = trpc.restaurant.createCategory.useMutation({
     onSuccess: () => {
-      toast.success("Catégorie créée");
+      toast.success("Collection créée");
       setIsAddCategoryOpen(false);
       refetchCategories();
     },
@@ -123,7 +123,7 @@ export default function AdminManageRestaurant() {
 
   const reorderCategoriesMutation = trpc.restaurant.reorderCategories.useMutation({
     onSuccess: () => {
-      toast.success("Ordre des catégories mis à jour");
+      toast.success("Ordre des collections mis à jour");
       refetchCategories();
     },
   });
@@ -264,7 +264,7 @@ export default function AdminManageRestaurant() {
               </div>
               <Button onClick={() => setIsAddCategoryOpen(true)}>
                 <Plus className="mr-2 h-4 w-4" />
-                Nouvelle Catégorie
+                Nouvelle collection
               </Button>
             </div>
 
@@ -602,13 +602,13 @@ export default function AdminManageRestaurant() {
       <Dialog open={isAddCategoryOpen} onOpenChange={setIsAddCategoryOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Nouvelle Catégorie</DialogTitle>
+            <DialogTitle>Nouvelle collection</DialogTitle>
             <DialogDescription>Ajoutez une nouvelle collection à votre catalogue</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleCreateCategory}>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label htmlFor="cat-name">Nom de la catégorie *</Label>
+                <Label htmlFor="cat-name">Nom de la collection *</Label>
                 <Input id="cat-name" name="name" placeholder="Collections, gammes, catégories..." required />
               </div>
               <div className="space-y-2">
