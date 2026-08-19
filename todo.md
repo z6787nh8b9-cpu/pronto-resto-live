@@ -711,7 +711,7 @@
 - [x] Connecter bouton "Essai gratuit" hero au formulaire (source: HERO)
 - [x] Connecter bouton "Essai gratuit" footer au formulaire (source: FOOTER)
 - [x] Ajouter texte "0€ de frais d'installation" sous la section tarifs
-- [ ] Corriger la section vide (ligne 436) qui semble mal foutue
+- [x] Corrigé la section vide de la page publique en conditionnant et centrant les blocs contact et horaires
 
 ## 🔒 Google reCAPTCHA Enterprise invisible (16 février 2026)
 - [x] Ajouter le script reCAPTCHA dans client/index.html

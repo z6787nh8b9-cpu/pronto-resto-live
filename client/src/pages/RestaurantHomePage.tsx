@@ -135,6 +135,8 @@ export default function RestaurantHomePage() {
                          menuData?.items?.slice(0, 6) || [];
 
   const daysOfWeek = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+  const hasContactInfo = Boolean(restaurant.phone || restaurant.email || restaurant.address);
+  const hasOpeningHours = Boolean(openingHours && openingHours.length > 0);
 
   // Séparer les publicités dish_item des autres formats
   const dishItemAds = advertisements?.filter((ad: any) => ad.format === "dish_item") || [];
@@ -402,11 +404,12 @@ export default function RestaurantHomePage() {
       )}
 
       {/* Contact & Info Section */}
+      {(hasContactInfo || hasOpeningHours) && (
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+          <div className={hasContactInfo && hasOpeningHours ? "grid grid-cols-1 lg:grid-cols-2 gap-16" : "mx-auto max-w-3xl"}>
             {/* Contact Info */}
-            <div>
+            {hasContactInfo && (<div>
               <h2 className="text-3xl font-serif font-bold text-neutral-900 mb-8">
                 Nous contacter
               </h2>
@@ -449,10 +452,10 @@ export default function RestaurantHomePage() {
                   </div>
                 )}
               </div>
-            </div>
+            </div>)}
 
             {/* Opening Hours */}
-            {openingHours && openingHours.length > 0 && (
+            {hasOpeningHours && openingHours && (
               <div>
                 <h2 className="text-3xl font-serif font-bold text-neutral-900 mb-8">
                   Horaires d'ouverture
@@ -478,6 +481,7 @@ export default function RestaurantHomePage() {
           </div>
         </div>
       </section>
+      )}
 
       {/* Advertisements - MENU tier only (tous formats sauf dish_item) */}
       {restaurant.subscriptionTier === "menu" && restaurant.showAds && otherFormatAds && otherFormatAds.length > 0 && (

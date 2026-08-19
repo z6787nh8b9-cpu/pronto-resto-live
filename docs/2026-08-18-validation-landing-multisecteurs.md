@@ -17,3 +17,5 @@ Le dashboard de La Voile Rouge est accessible dans l’environnement de dévelop
 Après l’harmonisation finale, l’onglet d’organisation est affiché comme **Catalogue** tandis que sa valeur interne legacy reste inchangée. Le niveau historique `menu` est rendu comme **Essentiel** dans le badge et la carte de formule ; aucune donnée de souscription n’est transformée par cet ajustement d’affichage.
 
 La passe suivante confirme que les raccourcis de la vue d’ensemble conservent des libellés neutres pour les collections, produits et prestations. L’onboarding affiche l’activité déjà définie par l’entreprise, sans imposer un choix restauration à une activité différente.
+
+La page publique de La Voile Rouge a été contrôlée après la correction de la section contact. Lorsqu’un seul bloc d’information est disponible, il est rendu en colonne centrée ; lorsque ni contact ni horaires ne sont renseignés, la section entière n’est plus affichée.
