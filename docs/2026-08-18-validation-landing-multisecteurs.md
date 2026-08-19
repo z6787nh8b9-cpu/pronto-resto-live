@@ -13,3 +13,5 @@ La vitrine de La Voile Rouge a également été vérifiée dans l’environnemen
 ## Dashboard de référence
 
 Le dashboard de La Voile Rouge est accessible dans l’environnement de développement. Son fil d’Ariane, ses onglets, les raccourcis d’action et le bloc d’onboarding se chargent correctement. Les statistiques et cartes de pilotage utilisent un vocabulaire compatible avec les catalogues, produits et prestations, tout en laissant aux entreprises restaurants leurs onglets métier historiques.
+
+Après l’harmonisation finale, l’onglet d’organisation est affiché comme **Catalogue** tandis que sa valeur interne legacy reste inchangée. Le niveau historique `menu` est rendu comme **Essentiel** dans le badge et la carte de formule ; aucune donnée de souscription n’est transformée par cet ajustement d’affichage.
