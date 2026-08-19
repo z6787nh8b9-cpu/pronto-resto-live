@@ -520,25 +520,25 @@
 
 ### Phase 1 : Configuration OAuth et table d'invitations
 - [ ] Ajouter les credentials OAuth Google et Facebook aux secrets
-- [ ] Créer la table `invitations` dans le schéma Drizzle
-- [ ] Ajouter le champ `ownerId` à la table `restaurants`
-- [ ] Générer et appliquer la migration SQL
+- [x] Créer la table `invitations` dans le schéma Drizzle
+- [x] Ajouter le champ `ownerId` à la table `restaurants`
+- [x] Générer et appliquer la migration SQL
 
 ### Phase 2 : Routes OAuth
-- [ ] Créer les routes `/api/auth/google` et `/api/auth/google/callback`
-- [ ] Créer les routes `/api/auth/facebook` et `/api/auth/facebook/callback`
-- [ ] Implémenter la logique de création/association des users
+- [x] Créer les routes `/api/auth/google` et `/api/auth/google/callback`
+- [x] Créer les routes `/api/auth/facebook` et `/api/auth/facebook/callback`
+- [x] Implémenter la logique de création/association des users
 
 ### Phase 3 : Système d'invitations
-- [ ] Créer la mutation tRPC `createInvitation` (Super Admin)
-- [ ] Créer la mutation tRPC `acceptInvitation` (public)
-- [ ] Créer la page `/invite/[token]`
-- [ ] Implémenter l'expiration automatique (24h)
+- [x] Créer la mutation tRPC `createInvitation` (Super Admin)
+- [x] Créer la mutation tRPC `acceptInvitation` (public)
+- [x] Créer la page `/invite/[token]`
+- [x] Implémenter l'expiration automatique (24h)
 
 ### Phase 4 : Protection des dashboards
-- [ ] Créer le middleware `protectedRestaurantProcedure`
-- [ ] Vérifier que `user.restaurantId === restaurant.id`
-- [ ] Autoriser les Super Admins à accéder à tous les dashboards
+- [x] Créer le middleware `protectedRestaurantProcedure`
+- [x] Vérifier que `user.restaurantId === restaurant.id`
+- [x] Autoriser les Super Admins à accéder à tous les dashboards
 
 ### Phase 5 : Page de login
 - [ ] Créer la page `/login` avec boutons OAuth
@@ -548,8 +548,8 @@
 ### Phase 6 : Tests
 - [x] Tester le flux complet d'invitation
 - [ ] Tester la connexion Google et Facebook
-- [ ] Tester la protection des dashboards
-- [ ] Vérifier que les Super Admins peuvent accéder à tout
+- [x] Tester la protection des dashboards
+- [x] Vérifier que les Super Admins peuvent accéder à tout
 
 
 ## 🔐 SYSTÈME D'AUTHENTIFICATION RESTAURATEURS (OAuth Google/Facebook)
@@ -682,7 +682,7 @@
 ## 📢 Système de publicités configurable
 - [x] Créer table `advertisements` pour stocker les publicités
 - [x] Créer onglet "Publicités" dans Super Admin avec configuration des formats
-- [- [x] Implémenter format publicité : Pastille
+- [x] Implémenter format publicité : Pastille
 - [x] Implémenter format publicité : Footer
 - [x] Implémenter format publicité : Pleine page arrière-plan
 - [x] Implémenter format publicité : Pop-up
@@ -1039,7 +1039,7 @@
 - [x] Créé la catégorie "Burgers" et saisi les 3 plats (18.50€ à 21€)
 - [x] Créé la catégorie "Desserts" et saisi les 13 desserts (2€ à 12€)
 - [x] Config chatbot créée (ton chaleureux, message de bienvenue)
-- [ ] Vérifier la page publique et le dashboard
+- [x] Vérifier la page publique et le dashboard
 
 ## CONNEXION EMAIL/MDP RESTAURATEUR (18 juin 2026)
 - [x] Analysé la page de connexion restaurateur et les routes auth existantes
@@ -1052,13 +1052,13 @@
 
 ## REHAUSSEMENT DESIGN PRONTO (18 juin 2026)
 - [x] Agrandi le logo de navigation de la landing et ajusté son conteneur pour améliorer sa lisibilité
-- [ ] Auditer la landing page, les dashboards et les pages de menu afin d'identifier les améliorations visuelles prioritaires
+- [x] Auditer la landing page, les dashboards et les pages de menu afin d'identifier les améliorations visuelles prioritaires
 - [x] Défini et intégré des fondations premium partagées : typographie, couleurs, matériaux, transitions, focus et préférence de mouvement réduite
 - [x] Créé un indicateur de chargement local, accessible et respectueux de la préférence de mouvement réduite
-- [ ] Moderniser la landing page avec une narration visuelle claire et des CTA à fort contraste
-- [ ] Moderniser le dashboard Super Admin sans altérer ses parcours métier ni ses contrôles d'accès
-- [ ] Moderniser le dashboard restaurateur sans altérer la gestion des menus, médias et paramètres
-- [ ] Affiner les pages publiques de menu pour préserver la lisibilité tout en renforçant l'identité de chaque restaurant
+- [x] Moderniser la landing page avec une narration visuelle claire et des CTA à fort contraste
+- [x] Moderniser le dashboard Super Admin sans altérer ses parcours métier ni ses contrôles d'accès
+- [x] Moderniser le dashboard restaurateur sans altérer la gestion des menus, médias et paramètres
+- [x] Affiner les pages publiques de menu pour préserver la lisibilité tout en renforçant l'identité de chaque restaurant
 - [ ] Vérifier les comportements mobile, clavier, réduction des animations, chargement et régressions fonctionnelles
 - [ ] Créer un checkpoint final de la refonte visuelle
 
