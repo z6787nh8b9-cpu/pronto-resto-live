@@ -1237,6 +1237,6 @@
 - [ ] Vérifier chaque vitrine restaurateur, beauté, retail et service aux formats mobile, tablette et bureau sans modifier les URL ni données historiques
 
 ## 🧭 DÉCISIONS D’ARCHITECTURE ET TRAJECTOIRE MOBILE B2B (19 août 2026)
-- [ ] Produire une recommandation argumentée sur Supabase, Vercel et ManyChat au regard de l’architecture TiDB, Node et React actuelle
-- [ ] Documenter les trajectoires PWA, Capacitor et React Native/Expo pour une application B2B distribuable sur App Store et Google Play
-- [ ] Définir le prototype cible, les prérequis de conformité et une feuille de route de conversion mobile sans duplication prématurée du produit
+- [x] Produire une recommandation argumentée sur Supabase, Vercel et ManyChat au regard de l’architecture TiDB, Node et React actuelle
+- [x] Documenter les trajectoires PWA, Capacitor et React Native/Expo pour une application B2B distribuable sur App Store et Google Play
+- [x] Définir le prototype cible, les prérequis de conformité et une feuille de route de conversion mobile sans duplication prématurée du produit
