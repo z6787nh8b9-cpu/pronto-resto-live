@@ -1207,7 +1207,7 @@
 - [x] Retirer les mentions et liens Manus visibles depuis les interfaces publiques et d’administration — assets chatbot migrés vers une route PRONTO neutre et bundle public contrôlé
 - [x] Retirer le collecteur de debug et le script analytique Manus encore injectés dans le bundle de production
 - [x] Supprimer les artefacts publics de debug Manus de `client/public` et confirmer un bundle de production sans référence visible
-- [ ] Valider que les parcours propriétaires, Super Admin, vitrines et PWA fonctionnent sans dépendance Manus applicative
+- [x] Valider que les parcours propriétaires, Super Admin, vitrines et PWA fonctionnent sans dépendance Manus applicative
 - [x] Documenter séparément les dépendances d’hébergement Manus qui ne peuvent être retirées sans migration d’infrastructure
 
 ## REPRISE PRODUIT APRÈS DÉCOUPLAGE (19 août 2026)
