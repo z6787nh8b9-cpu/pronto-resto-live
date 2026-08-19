@@ -89,10 +89,10 @@ export default function Customization({ restaurantId }: CustomizationProps) {
         <CardHeader>
           <div className="flex items-center gap-2">
             <Upload className="h-5 w-5" />
-            <CardTitle>Logo du restaurant</CardTitle>
+            <CardTitle>Logo de l’entreprise</CardTitle>
           </div>
           <CardDescription>
-            Uploadez le logo de votre restaurant (format PNG, JPG, max 5MB)
+            Uploadez le logo de votre entreprise (format PNG, JPG, max 5MB)
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -250,7 +250,7 @@ export default function Customization({ restaurantId }: CustomizationProps) {
             </Select>
             {!isPremium && (
               <p className="text-xs text-muted-foreground">
-                Le thème "Pronto Service" est disponible pour tous les forfaits. Les 4 autres thèmes sont réservés aux restaurants PREMIUM.
+                Le thème "Pronto Service" est disponible pour tous les forfaits. Les 4 autres thèmes sont réservés aux entreprises en formule PREMIUM.
               </p>
             )}
           </div>
@@ -281,7 +281,7 @@ export default function Customization({ restaurantId }: CustomizationProps) {
               )}
               {theme === "marble-rome" && (
                 <p className="text-sm text-muted-foreground">
-                  <strong>Marble Rome</strong> : Luxe sombre inspiré de Restaurant Onyx. Marbre, or, typographie élégante, gastronomie haute gamme.
+                  <strong>Marble Rome</strong> : Luxe sombre, marbre, or et typographie élégante pour une présence haut de gamme.
                 </p>
               )}
             </div>
@@ -325,13 +325,13 @@ export default function Customization({ restaurantId }: CustomizationProps) {
               className="text-2xl"
               style={{ fontFamily }}
             >
-              Votre restaurant, en ligne en 5 minutes
+              Votre activité, en ligne en 5 minutes
             </p>
             <p
               className="text-sm text-muted-foreground mt-2"
               style={{ fontFamily }}
             >
-              Créez une page web élégante pour votre restaurant avec menu interactif et chatbot IA.
+              Créez une vitrine élégante pour votre activité avec catalogue interactif et assistant IA.
             </p>
           </div>
         </CardContent>
