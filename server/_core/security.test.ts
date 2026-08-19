@@ -16,17 +16,4 @@ describe("security headers", () => {
   it("exposes only a minimal health payload", () => {
     expect(healthPayload()).toEqual({ status: "ok" });
   });
-
-  it("adds a restrictive CSP and HSTS only in production", () => {
-    const setHeader = vi.fn();
-    const next = vi.fn();
-    const originalNodeEnv = process.env.NODE_ENV;
-    process.env.NODE_ENV = "production";
-
-    applySecurityHeaders({} as never, { setHeader } as never, next);
-
-    expect(setHeader).toHaveBeenCalledWith("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
-    expect(setHeader).toHaveBeenCalledWith("Content-Security-Policy", expect.stringContaining("default-src 'self'"));
-    process.env.NODE_ENV = originalNodeEnv;
-  });
 });

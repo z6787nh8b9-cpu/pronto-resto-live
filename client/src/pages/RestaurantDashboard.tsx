@@ -104,30 +104,15 @@ export default function RestaurantDashboard() {
     { enabled: Boolean(restaurant?.id) }
   );
 
-  const { data: businessMembers, refetch: refetchBusinessMembers } = trpc.businesses.listMembers.useQuery(
-    { businessId: businessWorkspace?.id || 0 },
-    { enabled: Boolean(businessWorkspace?.id) }
-  );
-
   // Get chatbot config
   const { data: chatbotConfig } = trpc.restaurant.getChatbotConfig.useQuery(
     { restaurantId: restaurant?.id || 0 },
     { enabled: !!restaurant?.id }
   );
 
-  const { data: analyticsSummary } = trpc.restaurant.getAnalyticsSummary.useQuery(
-    { restaurantId: restaurant?.id || 0 },
-    { enabled: !!restaurant?.id && Boolean(accessCheck?.authorized) }
-  );
-
   // Check if feature is available
   const canAccessTranslations = restaurant?.subscriptionTier === "pro" || restaurant?.subscriptionTier === "premium";
   const canAccessPremiumFeatures = restaurant?.subscriptionTier === "premium";
-  const currentTierLabel = restaurant?.subscriptionTier === "premium"
-    ? "Premium"
-    : restaurant?.subscriptionTier === "pro"
-      ? "Pro"
-      : "Essentiel";
 
   // Handle locked tab click
   const handleLockedTabClick = (featureName: string, requiredTier: "pro" | "premium", e: React.MouseEvent) => {
@@ -148,7 +133,7 @@ export default function RestaurantDashboard() {
 
   const createItemMutation = trpc.restaurant.createMenuItem.useMutation({
     onSuccess: () => {
-      toast.success("Élément ajouté");
+      toast.success("Plat ajouté");
       setIsAddItemOpen(false);
       refetchItems();
     },
@@ -164,7 +149,7 @@ export default function RestaurantDashboard() {
 
   const updateItemMutation = trpc.restaurant.updateMenuItem.useMutation({
     onSuccess: () => {
-      toast.success("Élément modifié");
+      toast.success("Plat modifié");
       setIsEditItemOpen(false);
       refetchItems();
     },
@@ -172,7 +157,7 @@ export default function RestaurantDashboard() {
 
   const deleteItemMutation = trpc.restaurant.deleteMenuItem.useMutation({
     onSuccess: () => {
-      toast.success("Élément supprimé");
+      toast.success("Plat supprimé");
       refetchItems();
     },
   });
@@ -192,7 +177,7 @@ export default function RestaurantDashboard() {
 
   const reorderItemsMutation = trpc.restaurant.reorderItems.useMutation({
     onSuccess: () => {
-      toast.success("Ordre des éléments mis à jour");
+      toast.success("Ordre des plats mis à jour");
       refetchItems();
     },
   });
@@ -202,14 +187,6 @@ export default function RestaurantDashboard() {
       toast.success("Informations mises à jour");
       window.location.reload(); // Reload to see changes
     },
-  });
-
-  const updateBusinessMemberMutation = trpc.businesses.updateMember.useMutation({
-    onSuccess: () => {
-      toast.success("Accès du membre mis à jour");
-      refetchBusinessMembers();
-    },
-    onError: (error) => toast.error(error.message),
   });
 
   const handleUpdateRestaurantInfo = (e: React.FormEvent<HTMLFormElement>) => {
@@ -487,13 +464,13 @@ export default function RestaurantDashboard() {
     <div className="min-h-screen bg-background">
       {/* Header avec ResponsiveHeader */}
       <ResponsiveHeader
-          title={restaurant.name}
-          subtitle="Espace entreprise"
-          badge={
-            <Badge variant={restaurant.subscriptionTier === "premium" ? "default" : "secondary"} className="text-xs px-2 py-0.5">
-            {currentTierLabel}
-            </Badge>
-          }
+        title={restaurant.name}
+        subtitle="Espace entreprise"
+        badge={
+          <Badge variant={restaurant.subscriptionTier === "premium" ? "default" : "secondary"} className="text-xs px-2 py-0.5">
+            {restaurant.subscriptionTier === "premium" ? "Premium" : "Basic"}
+          </Badge>
+        }
         primaryAction={{
           label: "Voir la vitrine",
           onClick: () => window.open(`/${restaurant.slug}`, '_blank'),
@@ -511,7 +488,7 @@ export default function RestaurantDashboard() {
           <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
             <TabsList className="inline-flex lg:grid w-auto lg:w-full grid-cols-5 xl:grid-cols-12 gap-1 lg:gap-2 min-w-full lg:min-w-0">
             <TabsTrigger value="overview">Vue d’ensemble</TabsTrigger>
-            <TabsTrigger value="menu">Catalogue</TabsTrigger>
+            <TabsTrigger value="menu">Menu</TabsTrigger>
             <TabsTrigger value="import">Importer</TabsTrigger>
             <TabsTrigger value="media">Médiathèque</TabsTrigger>
             <TabsTrigger value="settings">Paramètres</TabsTrigger>
@@ -585,13 +562,13 @@ export default function RestaurantDashboard() {
             </section>
 
             <section className="grid gap-4 sm:grid-cols-3">
-              <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Collections actives</p><p className="mt-2 font-display text-5xl text-foreground">{categories?.length ?? 0}</p><p className="mt-2 text-sm text-muted-foreground">Organisez-les dans l’onglet Catalogue.</p></div>
-              <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Éléments publiables</p><p className="mt-2 font-display text-5xl text-foreground">{menuItems?.length ?? 0}</p><p className="mt-2 text-sm text-muted-foreground">Produits, services ou autres éléments selon votre activité.</p></div>
-              <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Formule actuelle</p><p className="mt-2 font-display text-4xl text-foreground">{currentTierLabel}</p><p className="mt-2 text-sm text-muted-foreground">Les fonctions disponibles évoluent avec votre formule.</p></div>
+              <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Collections actives</p><p className="mt-2 font-display text-5xl text-foreground">{categories?.length ?? 0}</p><p className="mt-2 text-sm text-muted-foreground">Organisez-les dans l’onglet Menu.</p></div>
+              <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Éléments publiables</p><p className="mt-2 font-display text-5xl text-foreground">{menuItems?.length ?? 0}</p><p className="mt-2 text-sm text-muted-foreground">Plats, produits ou prestations selon votre activité.</p></div>
+              <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Formule actuelle</p><p className="mt-2 font-display text-4xl capitalize text-foreground">{restaurant.subscriptionTier}</p><p className="mt-2 text-sm text-muted-foreground">Les fonctions disponibles évoluent avec votre formule.</p></div>
             </section>
 
             <section className="grid gap-4 lg:grid-cols-3">
-              <button type="button" onClick={() => setActiveTab("menu")} className="pronto-panel group p-5 text-left transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1"><span className="grid h-11 w-11 place-items-center rounded-2xl bg-pronto-primary/10 text-pronto-primary"><LayoutDashboard className="h-5 w-5" /></span><h3 className="mt-7 text-3xl">Organiser</h3><p className="mt-3 leading-7 text-muted-foreground">Ajoutez et réordonnez vos collections et vos éléments comme vous les présentez à vos clients.</p><span className="mt-6 inline-flex items-center text-sm font-semibold text-pronto-primary">Gérer le catalogue <ArrowUpRight className="ml-1.5 h-4 w-4 transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-0.5" /></span></button>
+              <button type="button" onClick={() => setActiveTab("menu")} className="pronto-panel group p-5 text-left transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1"><span className="grid h-11 w-11 place-items-center rounded-2xl bg-pronto-primary/10 text-pronto-primary"><LayoutDashboard className="h-5 w-5" /></span><h3 className="mt-7 text-3xl">Organiser</h3><p className="mt-3 leading-7 text-muted-foreground">Ajoutez et réordonnez les catégories comme vous les présentez à vos clients.</p><span className="mt-6 inline-flex items-center text-sm font-semibold text-pronto-primary">Gérer le catalogue <ArrowUpRight className="ml-1.5 h-4 w-4 transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-0.5" /></span></button>
               <button type="button" onClick={() => setActiveTab("settings")} className="pronto-panel group p-5 text-left transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1"><span className="grid h-11 w-11 place-items-center rounded-2xl bg-pronto-accent/25 text-pronto-primary"><Settings className="h-5 w-5" /></span><h3 className="mt-7 text-3xl">Personnaliser</h3><p className="mt-3 leading-7 text-muted-foreground">Mettez à jour vos informations, votre image et vos coordonnées au même endroit.</p><span className="mt-6 inline-flex items-center text-sm font-semibold text-pronto-primary">Ouvrir les réglages <ArrowUpRight className="ml-1.5 h-4 w-4 transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-0.5" /></span></button>
               <button type="button" onClick={() => window.open(`/${restaurant.slug}`, "_blank", "noopener,noreferrer")} className="pronto-panel group p-5 text-left transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1"><span className="grid h-11 w-11 place-items-center rounded-2xl bg-secondary text-pronto-primary"><Store className="h-5 w-5" /></span><h3 className="mt-7 text-3xl">Vérifier la vitrine</h3><p className="mt-3 leading-7 text-muted-foreground">Consultez le résultat public dans un nouvel onglet, comme le ferait un visiteur.</p><span className="mt-6 inline-flex items-center text-sm font-semibold text-pronto-primary">Voir la page publique <ArrowUpRight className="ml-1.5 h-4 w-4 transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-0.5" /></span></button>
             </section>
@@ -603,12 +580,12 @@ export default function RestaurantDashboard() {
           <TabsContent value="menu" className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
               <div>
-                <h2 className="text-lg sm:text-xl md:text-2xl font-bold">Gestion du catalogue</h2>
-                <p className="text-xs sm:text-sm text-muted-foreground">Organisez vos collections et vos éléments</p>
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold">Gestion du Menu</h2>
+                <p className="text-xs sm:text-sm text-muted-foreground">Organisez vos catégories et plats</p>
               </div>
               <Button onClick={() => setIsAddCategoryOpen(true)} size="sm" className="w-full sm:w-auto text-xs sm:text-sm">
                 <Plus className="mr-2 h-4 w-4" />
-                Nouvelle collection
+                Nouvelle Catégorie
               </Button>
             </div>
 
@@ -700,7 +677,7 @@ export default function RestaurantDashboard() {
                           }}
                         >
                           <Plus className="mr-2 h-4 w-4" />
-                          Ajouter un élément
+                          Ajouter un plat
                         </Button>
                       </div>
                     </div>
@@ -957,58 +934,6 @@ export default function RestaurantDashboard() {
                 </form>
               </CardContent>
             </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>Accès de l’entreprise</CardTitle>
-                <CardDescription>Le propriétaire et les Super Admins contrôlent les rôles. Les accès opérationnels restent limités à cet espace.</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {!businessWorkspace ? (
-                  <p className="text-sm text-muted-foreground">Chargement des accès…</p>
-                ) : businessMembers?.length ? businessMembers.map((member) => (
-                  <div key={member.id} className="flex flex-col gap-3 rounded-2xl border border-border/70 p-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="min-w-0">
-                      <p className="font-medium">{member.name || `Membre ${member.principalId}`}</p>
-                      <p className="truncate text-sm text-muted-foreground">{member.email || member.principalType.replace("_", " ")}</p>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-2">
-                      {member.role === "owner" ? (
-                        <Badge variant="secondary">Propriétaire</Badge>
-                      ) : (
-                        <Select
-                          value={member.role}
-                          onValueChange={(role) => updateBusinessMemberMutation.mutate({ businessId: businessWorkspace.id, memberId: member.id, role: role as "administrator" | "editor" | "publisher" | "analyst" | "support" })}
-                          disabled={updateBusinessMemberMutation.isPending}
-                        >
-                          <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="administrator">Administrateur</SelectItem>
-                            <SelectItem value="editor">Éditeur</SelectItem>
-                            <SelectItem value="publisher">Publication</SelectItem>
-                            <SelectItem value="analyst">Analyse</SelectItem>
-                            <SelectItem value="support">Support</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      )}
-                      {member.role !== "owner" && (
-                        <Button
-                          type="button"
-                          variant="outline"
-                          size="sm"
-                          onClick={() => updateBusinessMemberMutation.mutate({ businessId: businessWorkspace.id, memberId: member.id, status: member.status === "active" ? "suspended" : "active" })}
-                          disabled={updateBusinessMemberMutation.isPending}
-                        >
-                          {member.status === "active" ? "Suspendre" : "Réactiver"}
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                )) : (
-                  <p className="text-sm text-muted-foreground">Aucun membre supplémentaire n’est encore rattaché à cette entreprise.</p>
-                )}
-              </CardContent>
-            </Card>
           </TabsContent>
 
           {/* Chatbot Tab */}
@@ -1112,7 +1037,7 @@ export default function RestaurantDashboard() {
                   <CardTitle className="text-sm font-medium">Vues de la page</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{analyticsSummary?.pageViewsThisMonth || 0}</div>
+                  <div className="text-2xl font-bold">0</div>
                   <p className="text-xs text-muted-foreground">Ce mois-ci</p>
                 </CardContent>
               </Card>
@@ -1122,14 +1047,14 @@ export default function RestaurantDashboard() {
                   <CardTitle className="text-sm font-medium">Conversations Chatbot</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{analyticsSummary?.conversationsThisMonth || 0}</div>
-                  <p className="text-xs text-muted-foreground">Ce mois-ci · {analyticsSummary?.totalConversations || chatbotConfig?.totalConversations || 0} au total</p>
+                  <div className="text-2xl font-bold">{chatbotConfig?.totalConversations || 0}</div>
+                  <p className="text-xs text-muted-foreground">Total</p>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium">Éléments du catalogue</CardTitle>
+                  <CardTitle className="text-sm font-medium">Plats au menu</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{menuItems?.length || 0}</div>
@@ -1205,14 +1130,14 @@ export default function RestaurantDashboard() {
       <Dialog open={isAddCategoryOpen} onOpenChange={setIsAddCategoryOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Nouvelle collection</DialogTitle>
-            <DialogDescription>Ajoutez une nouvelle collection à votre catalogue</DialogDescription>
+            <DialogTitle>Nouvelle Catégorie</DialogTitle>
+            <DialogDescription>Ajoutez une nouvelle catégorie à votre menu</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleCreateCategory}>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
                 <Label htmlFor="cat-name">Nom de la catégorie *</Label>
-                <Input id="cat-name" name="name" placeholder="Collections, gammes, catégories..." required />
+                <Input id="cat-name" name="name" placeholder="Entrées, Plats, Desserts..." required />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="cat-desc">Description</Label>
@@ -1247,14 +1172,14 @@ export default function RestaurantDashboard() {
       <Dialog open={isAddItemOpen} onOpenChange={setIsAddItemOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Nouvel élément</DialogTitle>
-            <DialogDescription>Ajoutez un nouvel élément à votre catalogue</DialogDescription>
+            <DialogTitle>Nouveau Plat</DialogTitle>
+            <DialogDescription>Ajoutez un nouveau plat à votre menu</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleCreateItem}>
             <div className="space-y-4 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="item-name">Nom de l’élément *</Label>
+                  <Label htmlFor="item-name">Nom du plat *</Label>
                   <Input id="item-name" name="name" required />
                 </div>
                 <div className="space-y-2">
@@ -1316,7 +1241,7 @@ export default function RestaurantDashboard() {
               </div>
 
               <ImageUploader
-                label="Image de l’élément"
+                label="Image du plat"
                 currentImageUrl={itemImageUrl}
                 onUploadComplete={setItemImageUrl}
               />
@@ -1387,14 +1312,14 @@ export default function RestaurantDashboard() {
       <Dialog open={isEditItemOpen} onOpenChange={setIsEditItemOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Modifier l’élément</DialogTitle>
-            <DialogDescription>Modifiez les informations de l’élément</DialogDescription>
+            <DialogTitle>Modifier le Plat</DialogTitle>
+            <DialogDescription>Modifiez les informations du plat</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleUpdateItem}>
             <div className="space-y-4 py-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="edit-item-name">Nom de l’élément *</Label>
+                  <Label htmlFor="edit-item-name">Nom du plat *</Label>
                   <Input
                     id="edit-item-name"
                     name="name"
@@ -1464,7 +1389,7 @@ export default function RestaurantDashboard() {
                     defaultChecked={editingItem?.isFeatured}
                     className="rounded"
                   />
-                  <Label htmlFor="edit-featured">Élément mis en avant</Label>
+                  <Label htmlFor="edit-featured">⭐ Plat en favori</Label>
                 </div>
               </div>
 
@@ -1539,7 +1464,7 @@ export default function RestaurantDashboard() {
               </div>
 
               <ImageUploader
-                label="Image de l’élément"
+                label="Image du plat"
                 currentImageUrl={itemImageUrl}
                 onUploadComplete={setItemImageUrl}
               />

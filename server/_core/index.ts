@@ -8,9 +8,8 @@ import { registerStorageProxy } from "./storageProxy";
 import { registerRestaurantAuthRoutes, registerEmailLoginRoute } from "../auth-routes";
 import { adminLoginRouter } from "../admin-login-route";
 import { configureSessionMiddleware } from "../session-middleware";
-import { apiLimiter, memberInvitationLimiter } from "../rate-limiters";
+import { apiLimiter, requireSameOrigin } from "../rate-limiters";
 import { applySecurityHeaders, healthPayload } from "./security";
-import { requireSameOrigin } from "./origin-guard";
 
 import { appRouter } from "../routers";
 import { createContext } from "./context";
@@ -68,13 +67,11 @@ async function startServer() {
   // Admin login route (classic HTML form POST)
   app.use("/api/admin", adminLoginRouter);
   // Admin authentication is also available via tRPC (see routers/adminAuth.ts)
-  app.use("/api/trpc/businesses.createMemberInvitation", memberInvitationLimiter);
-  app.use("/api/trpc/businesses.acceptMemberInvitation", memberInvitationLimiter);
   // tRPC API
   app.use(
     "/api/trpc",
-    apiLimiter,
     requireSameOrigin,
+    apiLimiter,
     createExpressMiddleware({
       router: appRouter,
       createContext,

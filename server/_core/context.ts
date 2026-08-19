@@ -35,22 +35,15 @@ export async function createContext(
     }
   }
 
-  // Check for admin account session (email/password invited admin). The stored
-  // version must match the account so a password change invalidates old sessions.
-  if (opts.req.session?.adminId && opts.req.session.adminAuthVersion) {
+  // Check for admin account session (email/password invited admin)
+  if (opts.req.session?.adminId) {
     const { getDb } = await import("../db");
     const { adminAccounts } = await import("../../drizzle/schema");
     const { eq } = await import("drizzle-orm");
     const db = await getDb();
     if (db) {
       const [account] = await db.select().from(adminAccounts).where(eq(adminAccounts.id, opts.req.session.adminId)).limit(1);
-      if (account?.authVersion === opts.req.session.adminAuthVersion) {
-        adminAccount = account;
-      } else {
-        delete opts.req.session.adminId;
-        delete opts.req.session.adminAuthVersion;
-        await opts.req.session.save();
-      }
+      adminAccount = account || null;
     }
   }
 

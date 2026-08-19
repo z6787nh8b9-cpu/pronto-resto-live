@@ -508,9 +508,9 @@
 - [ ] Restaurer la section Événements sur RestaurantHomePage
 - [ ] Restaurer la section Horaires d'ouverture sur RestaurantHomePage
 - [ ] Restaurer la section Réservations sur RestaurantHomePage
-- [x] Restauré les stats de vues et conversations dans le dashboard via un agrégat serveur isolé
-- [x] Contrôlé le toggle de désactivation du chatbot déjà présent dans le dashboard et protégé par la mutation propriétaire/Super Admin
-- [x] Contrôlé la configuration des zones, capacités, tables et créneaux déjà disponible dans le dashboard
+- [ ] Restaurer les stats (vues, conversations) dans le dashboard
+- [ ] Restaurer le toggle de désactivation du chatbot dans le dashboard
+- [ ] Restaurer la configuration des zones/tables/réservations dans le dashboard
 - [ ] Implémenter la limitation des favoris selon la formule (Basic: 1, Pro: 3, Premium: 5)
 - [ ] Ajouter une bulle info quand l'utilisateur atteint la limite de favoris
 - [ ] Restaurer la mise en avant visuelle des favoris sur la page publique (étoile dorée + badge)
@@ -520,25 +520,25 @@
 
 ### Phase 1 : Configuration OAuth et table d'invitations
 - [ ] Ajouter les credentials OAuth Google et Facebook aux secrets
-- [x] Créer la table `invitations` dans le schéma Drizzle
-- [x] Ajouter le champ `ownerId` à la table `restaurants`
-- [x] Générer et appliquer la migration SQL
+- [ ] Créer la table `invitations` dans le schéma Drizzle
+- [ ] Ajouter le champ `ownerId` à la table `restaurants`
+- [ ] Générer et appliquer la migration SQL
 
 ### Phase 2 : Routes OAuth
-- [x] Créer les routes `/api/auth/google` et `/api/auth/google/callback`
-- [x] Créer les routes `/api/auth/facebook` et `/api/auth/facebook/callback`
-- [x] Implémenter la logique de création/association des users
+- [ ] Créer les routes `/api/auth/google` et `/api/auth/google/callback`
+- [ ] Créer les routes `/api/auth/facebook` et `/api/auth/facebook/callback`
+- [ ] Implémenter la logique de création/association des users
 
 ### Phase 3 : Système d'invitations
-- [x] Créer la mutation tRPC `createInvitation` (Super Admin)
-- [x] Créer la mutation tRPC `acceptInvitation` (public)
-- [x] Créer la page `/invite/[token]`
-- [x] Implémenter l'expiration automatique (24h)
+- [ ] Créer la mutation tRPC `createInvitation` (Super Admin)
+- [ ] Créer la mutation tRPC `acceptInvitation` (public)
+- [ ] Créer la page `/invite/[token]`
+- [ ] Implémenter l'expiration automatique (24h)
 
 ### Phase 4 : Protection des dashboards
-- [x] Créer le middleware `protectedRestaurantProcedure`
-- [x] Vérifier que `user.restaurantId === restaurant.id`
-- [x] Autoriser les Super Admins à accéder à tous les dashboards
+- [ ] Créer le middleware `protectedRestaurantProcedure`
+- [ ] Vérifier que `user.restaurantId === restaurant.id`
+- [ ] Autoriser les Super Admins à accéder à tous les dashboards
 
 ### Phase 5 : Page de login
 - [ ] Créer la page `/login` avec boutons OAuth
@@ -548,8 +548,8 @@
 ### Phase 6 : Tests
 - [x] Tester le flux complet d'invitation
 - [ ] Tester la connexion Google et Facebook
-- [x] Tester la protection des dashboards
-- [x] Vérifier que les Super Admins peuvent accéder à tout
+- [ ] Tester la protection des dashboards
+- [ ] Vérifier que les Super Admins peuvent accéder à tout
 
 
 ## 🔐 SYSTÈME D'AUTHENTIFICATION RESTAURATEURS (OAuth Google/Facebook)
@@ -682,7 +682,7 @@
 ## 📢 Système de publicités configurable
 - [x] Créer table `advertisements` pour stocker les publicités
 - [x] Créer onglet "Publicités" dans Super Admin avec configuration des formats
-- [x] Implémenter format publicité : Pastille
+- [- [x] Implémenter format publicité : Pastille
 - [x] Implémenter format publicité : Footer
 - [x] Implémenter format publicité : Pleine page arrière-plan
 - [x] Implémenter format publicité : Pop-up
@@ -711,21 +711,7 @@
 - [x] Connecter bouton "Essai gratuit" hero au formulaire (source: HERO)
 - [x] Connecter bouton "Essai gratuit" footer au formulaire (source: FOOTER)
 - [x] Ajouter texte "0€ de frais d'installation" sous la section tarifs
-- [x] Corrigé la section vide de la page publique en conditionnant et centrant les blocs contact et horaires
-- [x] Sécurisé les lectures analytiques par propriétaire ou Super Admin avant de restaurer les indicateurs du dashboard
-- [x] Généralisé le contexte métier et les promesses du chatbot à toutes les activités PRONTO
-- [x] Aligné l’accès de gestion des Super Admins email avec les Super Admins OAuth sans élargir les droits propriétaires
-- [x] Aligné la liste des entreprises du propriétaire sur l’identité OAuth ou email active
-- [x] Vérifié et renforcé l’appartenance propriétaire sur les mutations restaurant restantes
-- [x] Généralisé les indicateurs analytiques encore formulés en plats ou menu
-- [x] Généralisé les libellés menu et plat visibles dans la gestion détaillée Super Admin
-- [x] Généralisé les libellés menu et plat visibles dans le dashboard propriétaire
-- [x] Vérifié le secteur déjà choisi dans l’onboarding : il est prioritaire sur le repli du profil entreprise après hydratation
-- [x] Généralisé les boutons Nouvelle Catégorie et Ajouter un plat du dashboard propriétaire
-- [x] Généralisé les dernières actions et confirmations de catégorie de la gestion détaillée Super Admin
-- [x] Généralisé l’invitation de la vue d’ensemble à organiser des catégories
-- [x] Ajouté une gestion isolée des rôles et membres d’entreprise pour les propriétaires autorisés
-- [ ] Ajouter des tests dédiés d’acceptation unique et d’isolation pour l’invitation sécurisée de membres
+- [ ] Corriger la section vide (ligne 436) qui semble mal foutue
 
 ## 🔒 Google reCAPTCHA Enterprise invisible (16 février 2026)
 - [x] Ajouter le script reCAPTCHA dans client/index.html
@@ -1053,7 +1039,7 @@
 - [x] Créé la catégorie "Burgers" et saisi les 3 plats (18.50€ à 21€)
 - [x] Créé la catégorie "Desserts" et saisi les 13 desserts (2€ à 12€)
 - [x] Config chatbot créée (ton chaleureux, message de bienvenue)
-- [x] Vérifier la page publique et le dashboard
+- [ ] Vérifier la page publique et le dashboard
 
 ## CONNEXION EMAIL/MDP RESTAURATEUR (18 juin 2026)
 - [x] Analysé la page de connexion restaurateur et les routes auth existantes
@@ -1066,13 +1052,13 @@
 
 ## REHAUSSEMENT DESIGN PRONTO (18 juin 2026)
 - [x] Agrandi le logo de navigation de la landing et ajusté son conteneur pour améliorer sa lisibilité
-- [x] Auditer la landing page, les dashboards et les pages de menu afin d'identifier les améliorations visuelles prioritaires
+- [ ] Auditer la landing page, les dashboards et les pages de menu afin d'identifier les améliorations visuelles prioritaires
 - [x] Défini et intégré des fondations premium partagées : typographie, couleurs, matériaux, transitions, focus et préférence de mouvement réduite
 - [x] Créé un indicateur de chargement local, accessible et respectueux de la préférence de mouvement réduite
-- [x] Moderniser la landing page avec une narration visuelle claire et des CTA à fort contraste
-- [x] Moderniser le dashboard Super Admin sans altérer ses parcours métier ni ses contrôles d'accès
-- [x] Moderniser le dashboard restaurateur sans altérer la gestion des menus, médias et paramètres
-- [x] Affiner les pages publiques de menu pour préserver la lisibilité tout en renforçant l'identité de chaque restaurant
+- [ ] Moderniser la landing page avec une narration visuelle claire et des CTA à fort contraste
+- [ ] Moderniser le dashboard Super Admin sans altérer ses parcours métier ni ses contrôles d'accès
+- [ ] Moderniser le dashboard restaurateur sans altérer la gestion des menus, médias et paramètres
+- [ ] Affiner les pages publiques de menu pour préserver la lisibilité tout en renforçant l'identité de chaque restaurant
 - [ ] Vérifier les comportements mobile, clavier, réduction des animations, chargement et régressions fonctionnelles
 - [ ] Créer un checkpoint final de la refonte visuelle
 
@@ -1144,21 +1130,7 @@
 - [x] Renommé les propriétés d’interface restaurantName en businessName sans modifier les identifiants API legacy
 - [x] Généralisé l’intitulé de destination dans la liste d’invitations Super Admin
 - [x] Retiré la propriété businessName inutilisée du parcours d’inscription événementielle
-- [x] Généralisé les libellés visibles « Menu » du dashboard en « Catalogue » sans modifier l’onglet legacy
-- [x] Remplacé l’affichage de formule « Menu » par une appellation multi-secteurs sans modifier la souscription stockée
-- [x] Couvert par tests l’archivage et la restauration réversible d’un média d’entreprise autorisé
-- [x] Exposé la restauration contrôlée d’un média archivé dans la médiathèque entreprise
-- [x] Harmonisé les libellés de formule dans la supervision Super Admin sans modifier les souscriptions stockées
-- [x] Harmonisé le badge de formule de la page détaillée Super Admin sans modifier la souscription stockée
-- [x] Généralisé les libellés des invitations Super Admin encore orientés restaurants
-- [x] Harmonisé les options de formule Super Admin en Essentiel, Pro et Premium sans modifier les valeurs legacy
-- [x] Prérempli l’activité de l’onboarding depuis le profil de l’entreprise pour éviter le biais restaurant
-- [x] Vérifié par test que l’espace entreprise expose son activité pour l’onboarding multi-secteurs
-- [x] Retiré les identifiants codés en dur du script de démonstration versionné et assaini l’historique Git public
-- [x] Documenté l’exécution des scripts de démonstration sans secrets versionnés
-- [x] Généralisé les libellés de personnalisation, réservation et événement encore centrés restaurant dans le dashboard
-- [x] Rédigé un README professionnel couvrant l’architecture, la sécurité, les parcours et l’exploitation de PRONTO
-- [x] Synchronisé l’état validé du projet vers le dépôt GitHub z6787nh8b9-cpu/pronto-resto-live
+- [ ] Généraliser les libellés visibles « Menu » du dashboard en « Catalogue » sans modifier l’onglet legacy
 - [x] Supprimé l'identifiant propriétaire codé en dur lors de la création d'une entreprise par le Super Admin
 - [x] Remplacé les procédures publiques de gestion des réservations par des contrôles propriétaire ou Super Admin et vérifié l'accès au restaurant ciblé
 - [x] Ajouté un test garantissant qu'un visiteur anonyme ne peut plus gérer paramètres, zones ni réservations
@@ -1209,35 +1181,14 @@
 - [x] Vérifié les parcours publics, propriétaire et Super Admin après les changements transverses
 - [x] Documenté les procédures de reprise, les alertes utiles et les risques résiduels connus
 
-## 🔐 PRIORITÉ ABSOLUE — DURCISSEMENT AUTHENTIFICATION, SESSION ET DROITS (19 août 2026)
-- [x] Supprimer toute exposition de jetons, URLs techniques ou configuration OAuth depuis les vues Super Admin de production
-- [x] Écrire les tests d’invitation membre : acceptation unique, expiration, correspondance stricte de l’adresse email et isolation inter-entreprises
-- [x] Auditer la durée de vie effective du cookie, des sessions MySQL et des sessions Passport en développement et en production — cookie et stockage MySQL limités à 24 h avec expiration glissante, nettoyage périodique et session Passport persistante
-- [x] Appliquer et tester une expiration glissante bornée pour éviter la déconnexion d’un utilisateur actif tout en conservant une durée de session limitée
-- [x] Vérifier la régénération de session après toute connexion et changement de privilège, ainsi que l’invalidation globale lors d’un changement de mot de passe
-- [x] Mettre en place une version d’authentification contrôlée pour invalider toutes les sessions antérieures après un changement ou une réinitialisation de mot de passe
-- [x] Couvrir par test la rotation de version d’authentification et le rejet d’une session Super Admin antérieure
-- [x] Unifier la destruction serveur et l’effacement du cookie de chaque chemin de déconnexion propriétaire, Super Admin et Manus
-- [x] Vérifier et compléter les protections CSRF des mutations critiques, sans dégrader OAuth ni les formulaires publics légitimes
-- [x] Ajouter un contrôle d’origine explicite aux mutations tRPC et aux changements de mot de passe authentifiés
-- [x] Auditer les en-têtes de sécurité réellement servis en production : CSP, HSTS, anti-clickjacking, cookies et cache — CSP, HSTS, anti-clickjacking, anti-MIME, referrer et permissions-policy confirmés le 19 août 2026
-- [x] Ajouter et tester une politique CSP de production restrictive, compatible avec reCAPTCHA, polices et médias de vitrines
-- [x] Ajouter des limites de débit et une journalisation minimisée pour la création et l’acceptation d’invitations membres
-- [x] Journaliser la création et l’acceptation d’invitations membres sans persister le jeton ou l’adresse invitée
-- [x] Installer une limite de débit dédiée aux mutations d’invitation membre, plus stricte que le garde-fou tRPC général
-- [x] Exécuter un protocole de validation manuelle en production : connexion, déconnexion, reconnexion, récupération et changement de mot de passe propriétaire — demande neutre, consommation du lien à usage unique, reconnexion après réinitialisation et refus de réutilisation validés le 19 août 2026
-- [x] Exécuter un protocole de validation manuelle en production : connexion, supervision transversale en lecture seule des entreprises et refus post-déconnexion validés le 19 août 2026, sans modification de données
-
-## 🎨 REFONTE DES VITRINES D’ÉTABLISSEMENTS — DESIGN APPLE ET HAUT DE GAMME (19 août 2026)
-- [x] Auditer RestaurantHomePage et RestaurantMenuPage : hiérarchie, espaces, z-index, contrastes, responsive, états vides et sorties de parcours
-- [x] Créer un chrome public partagé : navigation flottante, actions prioritaires regroupées, profondeur et z-index cohérents
-- [x] Définir un socle visuel premium multi-secteurs : typographies sans serif et serif non génériques, rythme vertical, matériaux et tokens cohérents
-- [x] Refondre le hero public : image 1920×600, flou d’arrière-plan 8px, voile sombre lisible, navigation flottante et hiérarchie de marque
-- [x] Remplacer les cartes, contrôles et CTA incohérents par des composants à double contour, focus visible et micro-interactions accessibles
-- [x] Ajouter des entrées de contenu performantes via IntersectionObserver, des transitions interruptibles et le respect de la réduction des animations
-- [ ] Vérifier chaque vitrine restaurateur, beauté, retail et service aux formats mobile, tablette et bureau sans modifier les URL ni données historiques
-
-## 🧭 DÉCISIONS D’ARCHITECTURE ET TRAJECTOIRE MOBILE B2B (19 août 2026)
-- [x] Produire une recommandation argumentée sur Supabase, Vercel et ManyChat au regard de l’architecture TiDB, Node et React actuelle
-- [x] Documenter les trajectoires PWA, Capacitor et React Native/Expo pour une application B2B distribuable sur App Store et Google Play
-- [x] Définir le prototype cible, les prérequis de conformité et une feuille de route de conversion mobile sans duplication prématurée du produit
+## VALIDATION MULTI-SECTEURS ET PWA B2B (19 août 2026)
+- [x] Créer trois vitrines de démonstration isolées et non publiées : beauté, retail et services
+- [x] Relier les routes publiques existantes au noyau entreprises et catalogues génériques pour les verticales non-restauration
+- [ ] Vérifier les vitrines de référence restauration, beauté, retail et services aux formats mobile, tablette et bureau
+- [x] Exécuter un stress test de sécurité non destructif : routes, autorisations, sessions, jetons, hashage et limites de débit
+- [x] Corriger les dépendances de production présentant des vulnérabilités élevées et revalider l’audit
+- [x] Ajouter une limite de débit dédiée au point d’entrée de récupération de mot de passe, validée par stress test local
+- [x] Éliminer ou encadrer les références client sensibles et diagnostics techniques révélés par le scan de sources
+- [x] Corriger les faiblesses critiques identifiées et ajouter les régressions correspondantes
+- [x] Bloquer explicitement les mutations tRPC provenant d’une origine étrangère et couvrir le refus CSRF par test HTTP
+- [ ] Définir le périmètre minimum de la PWA B2B et le plan Capacitor iOS/Android pour les stores

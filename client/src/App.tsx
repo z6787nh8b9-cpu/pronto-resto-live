@@ -1,7 +1,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
+import { Route, Switch, useParams } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import SuperAdmin from "./pages/SuperAdmin";
@@ -12,6 +12,7 @@ import PublicRestaurantPage from "./pages/PublicRestaurantPage";
 import LandingPage from "./pages/LandingPage";
 import RestaurantHomePage from "./pages/RestaurantHomePage";
 import RestaurantMenuPage from "./pages/RestaurantMenuPage";
+import BusinessPublicPage from "./pages/BusinessPublicPage";
 import RestaurantLogin from "./pages/RestaurantLogin";
 import PasswordReset from "./pages/PasswordReset";
 import InviteAccept from "./pages/InviteAccept";
@@ -62,6 +63,7 @@ function Router() {
       <Route path="/:slug/dashboard" component={RestaurantDashboard} />
       
       {/* Restaurant menu page (all tiers) */}
+      <Route path="/b/:slug" component={BusinessPublicPage} />
       <Route path="/:slug/menu" component={RestaurantMenuPage} />
       
       {/* Restaurant home page (PREMIUM only, auto-redirects to /menu for MENU/PRO) */}

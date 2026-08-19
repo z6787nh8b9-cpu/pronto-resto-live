@@ -98,7 +98,6 @@ export function configureSessionMiddleware(app: Express) {
       secret: ENV.cookieSecret,
       resave: false, // Don't save session if unmodified
       saveUninitialized: false, // Don't create session until something stored
-      rolling: true, // Renew the idle deadline only for an active, authenticated browser session
       name: 'pronto.sid', // Custom cookie name (security: avoid default "connect.sid")
       store: sessionStore, // Use MySQL store instead of MemoryStore
       cookie: {

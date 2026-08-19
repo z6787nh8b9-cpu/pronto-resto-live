@@ -5,12 +5,11 @@
 
 import { Express, Request, Response } from "express";
 import passport from "passport";
-import { oauthLimiter, ownerEmailLoginLimiter } from "./rate-limiters";
+import { oauthLimiter, ownerEmailLoginLimiter, passwordHelpLimiter, passwordResetLimiter } from "./rate-limiters";
 import { recordSecurityEvent } from "./security-events";
 import { passwordPolicyError } from "./password-policy";
 import { notifyOwner } from "./_core/notification";
 import { createPasswordResetSecret, hashPasswordResetSecret, isPasswordResetExpired, PASSWORD_RESET_TTL_MS } from "./password-reset";
-import { requireSameOrigin } from "./_core/origin-guard";
 
 
 /**
@@ -165,7 +164,6 @@ app.get("/api/auth/logout", (req: Request, res: Response) => {
         if (err) {
           return res.status(500).json({ error: "Session destruction failed" });
         }
-        res.clearCookie("pronto.sid", { path: "/" });
         res.redirect("/");
       });
   });
@@ -176,7 +174,7 @@ app.get("/api/auth/logout", (req: Request, res: Response) => {
       if (logoutError) return res.status(500).json({ error: "Logout failed" });
       req.session.destroy((sessionError) => {
         if (sessionError) return res.status(500).json({ error: "Session destruction failed" });
-        res.clearCookie("pronto.sid", { path: "/" });
+        res.clearCookie("connect.sid");
         return res.json({ success: true });
       });
     });
@@ -201,8 +199,7 @@ declare global {
       name: string;
       avatarUrl: string | null;
       provider?: "google" | "facebook" | "email"; // Optional for admins
-      providerId?: string | null; // For admins
-      authVersion: number; // Credential version checked by Passport on every request
+      providerId?: string | null; // Optional for admins
       googleId?: string; // For admins
       invitationId?: number; // For admins
       restaurantId?: number; // For restaurant owners
@@ -217,7 +214,6 @@ declare global {
 declare module "express-session" {
   interface SessionData {
     adminId?: number; // For email/password admin authentication
-    adminAuthVersion?: number; // Matches the account credential version for server-side session invalidation
     invitationToken?: string; // For restaurant owner invitation flow
     claimedRestaurantId?: number; // For restaurant owner invitation flow
   }
@@ -307,7 +303,7 @@ export function registerEmailLoginRoute(app: Express) {
     }
   });
 
-  app.post("/api/auth/change-password", requireSameOrigin, ownerEmailLoginLimiter, async (req: Request, res: Response) => {
+  app.post("/api/auth/change-password", ownerEmailLoginLimiter, async (req: Request, res: Response) => {
     const ownerId = req.user?.id;
     const { currentPassword, newPassword } = req.body;
     if (!ownerId) return res.status(401).json({ error: "Connexion requise" });
@@ -333,14 +329,7 @@ export function registerEmailLoginRoute(app: Express) {
         return res.status(401).json({ error: "Mot de passe actuel incorrect" });
       }
 
-      const nextAuthVersion = owner.authVersion + 1;
-      await db.update(restaurantOwners).set({
-        passwordHash: await bcrypt.hash(newPassword, 10),
-        authVersion: nextAuthVersion,
-      }).where(eq(restaurantOwners.id, owner.id));
-      await new Promise<void>((resolve, reject) => req.session.regenerate((error) => error ? reject(error) : resolve()));
-      const refreshedOwner = { ...owner, authVersion: nextAuthVersion } as unknown as Express.User;
-      await new Promise<void>((resolve, reject) => req.login(refreshedOwner, (error) => error ? reject(error) : resolve()));
+      await db.update(restaurantOwners).set({ passwordHash: await bcrypt.hash(newPassword, 10) }).where(eq(restaurantOwners.id, owner.id));
       await recordSecurityEvent({ req, principalType: "owner", principalId: owner.id, eventType: "owner.password_change", outcome: "success" });
       return res.json({ success: true });
     } catch {
@@ -349,7 +338,7 @@ export function registerEmailLoginRoute(app: Express) {
     }
   });
 
-  app.post("/api/auth/password-help", ownerEmailLoginLimiter, async (req: Request, res: Response) => {
+  app.post("/api/auth/password-help", passwordHelpLimiter, async (req: Request, res: Response) => {
     const email = typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
     const genericResponse = { success: true, message: "Si un compte peut être associé à cette adresse, notre équipe vous contactera prochainement." };
 
@@ -385,7 +374,7 @@ export function registerEmailLoginRoute(app: Express) {
     return res.status(200).json(genericResponse);
   });
 
-  app.post("/api/auth/reset-password", ownerEmailLoginLimiter, async (req: Request, res: Response) => {
+  app.post("/api/auth/reset-password", passwordResetLimiter, async (req: Request, res: Response) => {
     const token = typeof req.body?.token === "string" ? req.body.token : "";
     const newPassword = typeof req.body?.newPassword === "string" ? req.body.newPassword : "";
     const policyError = passwordPolicyError(newPassword);
@@ -413,10 +402,7 @@ export function registerEmailLoginRoute(app: Express) {
       const [owner] = await db.select().from(restaurantOwners).where(eq(restaurantOwners.id, resetToken.ownerId)).limit(1);
       if (!owner || owner.provider !== "email") return res.status(400).json({ error: "Lien invalide ou expiré" });
 
-      await db.update(restaurantOwners).set({
-        passwordHash: await bcrypt.hash(newPassword, 10),
-        authVersion: owner.authVersion + 1,
-      }).where(eq(restaurantOwners.id, owner.id));
+      await db.update(restaurantOwners).set({ passwordHash: await bcrypt.hash(newPassword, 10) }).where(eq(restaurantOwners.id, owner.id));
       await recordSecurityEvent({ req, principalType: "owner", principalId: owner.id, eventType: "owner.password_reset", outcome: "success" });
       return res.json({ success: true });
     } catch {

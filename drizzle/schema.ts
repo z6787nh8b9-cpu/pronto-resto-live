@@ -30,7 +30,6 @@ export const restaurantOwners = mysqlTable("restaurant_owners", {
   provider: mysqlEnum("provider", ["google", "facebook", "email"]).notNull(), // OAuth provider or email/password
   providerId: varchar("providerId", { length: 255 }), // ID from OAuth provider (nullable for email accounts)
   passwordHash: varchar("passwordHash", { length: 255 }), // Bcrypt hash for email/password accounts
-  authVersion: int("authVersion").default(1).notNull(), // Invalidates serialized sessions after a security-sensitive credential change
   
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -154,28 +153,6 @@ export const businessMembers = mysqlTable("business_members", {
 
 export type BusinessMember = typeof businessMembers.$inferSelect;
 export type InsertBusinessMember = typeof businessMembers.$inferInsert;
-
-/** Invitation pending until the targeted owner account explicitly accepts it. */
-export const businessMemberInvitations = mysqlTable("business_member_invitations", {
-  id: int("id").autoincrement().primaryKey(),
-  businessId: int("businessId").notNull(),
-  email: varchar("email", { length: 320 }).notNull(),
-  role: mysqlEnum("role", ["administrator", "editor", "publisher", "analyst", "support"]).notNull(),
-  tokenHash: varchar("tokenHash", { length: 64 }).notNull().unique(),
-  status: mysqlEnum("status", ["pending", "accepted", "expired", "revoked"]).default("pending").notNull(),
-  invitedByPrincipalId: int("invitedByPrincipalId").notNull(),
-  expiresAt: timestamp("expiresAt").notNull(),
-  acceptedByPrincipalId: int("acceptedByPrincipalId"),
-  acceptedAt: timestamp("acceptedAt"),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
-  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
-}, (table) => [
-  index("business_member_invites_business_status_idx").on(table.businessId, table.status),
-  index("business_member_invites_email_status_idx").on(table.email, table.status),
-]);
-
-export type BusinessMemberInvitation = typeof businessMemberInvitations.$inferSelect;
-export type InsertBusinessMemberInvitation = typeof businessMemberInvitations.$inferInsert;
 
 /** Publishable business content: menus, services, products, price lists or portfolios. */
 export const catalogs = mysqlTable("catalogs", {
@@ -813,7 +790,6 @@ export const adminAccounts = mysqlTable("admin_accounts", {
   passwordHash: varchar("passwordHash", { length: 255 }).notNull(), // Bcrypt hashed password
   avatarUrl: text("avatarUrl"),
   invitationToken: varchar("invitationToken", { length: 64 }), // Token used to create this account (nullable for legacy admins)
-  authVersion: int("authVersion").default(1).notNull(), // Invalidates pre-change session records after password rotation
   
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

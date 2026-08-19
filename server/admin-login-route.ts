@@ -110,7 +110,6 @@ adminLoginRouter.post("/login", adminLoginLimiter, async (req, res) => {
     // Rotate session before privilege elevation to prevent session fixation.
     await new Promise<void>((resolve, reject) => req.session.regenerate((err) => err ? reject(err) : resolve()));
     req.session.adminId = admin.id;
-    req.session.adminAuthVersion = admin.authVersion;
 
     // Save session and redirect
     req.session.save((err) => {

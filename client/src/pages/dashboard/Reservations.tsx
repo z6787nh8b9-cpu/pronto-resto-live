@@ -457,7 +457,7 @@ function BookingsTab({ restaurantId }: { restaurantId: number }) {
       <Card>
         <CardHeader>
           <CardTitle>Liste des réservations</CardTitle>
-          <CardDescription>Gérez toutes les réservations de votre établissement</CardDescription>
+          <CardDescription>Gérez toutes les réservations de votre restaurant</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="mb-4">

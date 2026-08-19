@@ -250,7 +250,7 @@ export default function Events({ restaurantId }: EventsProps) {
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Nouvel événement</DialogTitle>
-            <DialogDescription>Créez un événement spécial pour votre entreprise</DialogDescription>
+            <DialogDescription>Créez un événement spécial pour votre restaurant</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleCreate}>
             <div className="space-y-4 py-4">

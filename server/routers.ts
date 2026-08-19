@@ -24,10 +24,8 @@ export const appRouter = router({
   adminAuth: adminAuthRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
-    logout: publicProcedure.mutation(async ({ ctx }) => {
+    logout: publicProcedure.mutation(({ ctx }) => {
       const cookieOptions = getSessionCookieOptions(ctx.req);
-      await new Promise<void>((resolve, reject) => ctx.req.session.destroy((error) => error ? reject(error) : resolve()));
-      ctx.res.clearCookie("pronto.sid", { path: "/" });
       ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 });
       return {
         success: true,

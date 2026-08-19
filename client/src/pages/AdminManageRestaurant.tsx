@@ -79,7 +79,7 @@ export default function AdminManageRestaurant() {
   // Mutations
   const createCategoryMutation = trpc.restaurant.createCategory.useMutation({
     onSuccess: () => {
-      toast.success("Collection créée");
+      toast.success("Catégorie créée");
       setIsAddCategoryOpen(false);
       refetchCategories();
     },
@@ -87,7 +87,7 @@ export default function AdminManageRestaurant() {
 
   const createItemMutation = trpc.restaurant.createMenuItem.useMutation({
     onSuccess: () => {
-      toast.success("Élément ajouté");
+      toast.success("Plat ajouté");
       setIsAddItemOpen(false);
       refetchItems();
     },
@@ -107,7 +107,7 @@ export default function AdminManageRestaurant() {
 
   const updateItemMutation = trpc.restaurant.updateMenuItem.useMutation({
     onSuccess: () => {
-      toast.success("Élément mis à jour");
+      toast.success("Plat mis à jour");
       setIsEditItemOpen(false);
       setSelectedItem(null);
       refetchItems();
@@ -116,21 +116,21 @@ export default function AdminManageRestaurant() {
 
   const deleteItemMutation = trpc.restaurant.deleteMenuItem.useMutation({
     onSuccess: () => {
-      toast.success("Élément supprimé");
+      toast.success("Plat supprimé");
       refetchItems();
     },
   });
 
   const reorderCategoriesMutation = trpc.restaurant.reorderCategories.useMutation({
     onSuccess: () => {
-      toast.success("Ordre des collections mis à jour");
+      toast.success("Ordre des catégories mis à jour");
       refetchCategories();
     },
   });
 
   const reorderItemsMutation = trpc.restaurant.reorderItems.useMutation({
     onSuccess: () => {
-      toast.success("Ordre des éléments mis à jour");
+      toast.success("Ordre des plats mis à jour");
       refetchItems();
     },
   });
@@ -239,7 +239,7 @@ export default function AdminManageRestaurant() {
                 Voir la page publique
               </Button>
               <Badge variant={restaurant.subscriptionTier === "premium" ? "default" : "secondary"}>
-                {restaurant.subscriptionTier === "premium" ? "Premium" : restaurant.subscriptionTier === "pro" ? "Pro" : "Essentiel"}
+                {restaurant.subscriptionTier === "premium" ? "Premium" : "Basic"}
               </Badge>
             </div>
           </div>
@@ -249,7 +249,7 @@ export default function AdminManageRestaurant() {
       <main className="container py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="menu">Catalogue</TabsTrigger>
+            <TabsTrigger value="menu">Menu</TabsTrigger>
             <TabsTrigger value="settings">Paramètres</TabsTrigger>
             <TabsTrigger value="chatbot">Chatbot IA</TabsTrigger>
             <TabsTrigger value="analytics">Statistiques</TabsTrigger>
@@ -259,12 +259,12 @@ export default function AdminManageRestaurant() {
           <TabsContent value="menu" className="space-y-6">
             <div className="flex justify-between items-center">
               <div>
-                <h2 className="text-2xl font-bold">Gestion du catalogue</h2>
-                <p className="text-muted-foreground">Organisez vos collections et vos éléments</p>
+                <h2 className="text-2xl font-bold">Gestion du Menu</h2>
+                <p className="text-muted-foreground">Organisez les catégories et plats</p>
               </div>
               <Button onClick={() => setIsAddCategoryOpen(true)}>
                 <Plus className="mr-2 h-4 w-4" />
-                Nouvelle collection
+                Nouvelle Catégorie
               </Button>
             </div>
 
@@ -324,7 +324,7 @@ export default function AdminManageRestaurant() {
                         }}
                       >
                         <Plus className="mr-2 h-4 w-4" />
-                        Ajouter un élément
+                        Ajouter un plat
                       </Button>
                     </div>
                   </CardHeader>
@@ -586,7 +586,7 @@ export default function AdminManageRestaurant() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-sm font-medium">Éléments du catalogue</CardTitle>
+                  <CardTitle className="text-sm font-medium">Plats au menu</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <div className="text-2xl font-bold">{menuItems?.length || 0}</div>
@@ -602,14 +602,14 @@ export default function AdminManageRestaurant() {
       <Dialog open={isAddCategoryOpen} onOpenChange={setIsAddCategoryOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Nouvelle collection</DialogTitle>
-            <DialogDescription>Ajoutez une nouvelle collection à votre catalogue</DialogDescription>
+            <DialogTitle>Nouvelle Catégorie</DialogTitle>
+            <DialogDescription>Ajoutez une nouvelle catégorie au menu</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleCreateCategory}>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
-                <Label htmlFor="cat-name">Nom de la collection *</Label>
-                <Input id="cat-name" name="name" placeholder="Collections, gammes, catégories..." required />
+                <Label htmlFor="cat-name">Nom de la catégorie *</Label>
+                <Input id="cat-name" name="name" placeholder="Entrées, Plats, Desserts..." required />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="cat-desc">Description</Label>
@@ -630,14 +630,14 @@ export default function AdminManageRestaurant() {
       <Dialog open={isAddItemOpen} onOpenChange={setIsAddItemOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Nouvel élément</DialogTitle>
-            <DialogDescription>Ajoutez un nouvel élément à votre catalogue</DialogDescription>
+            <DialogTitle>Nouveau Plat</DialogTitle>
+            <DialogDescription>Ajoutez un nouveau plat au menu</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleCreateItem}>
             <div className="space-y-4 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="item-name">Nom de l’élément *</Label>
+                  <Label htmlFor="item-name">Nom du plat *</Label>
                   <Input id="item-name" name="name" required />
                 </div>
                 <div className="space-y-2">
@@ -735,8 +735,8 @@ export default function AdminManageRestaurant() {
       <Dialog open={isEditItemOpen} onOpenChange={setIsEditItemOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Éditer l’élément</DialogTitle>
-            <DialogDescription>Modifiez les informations de l’élément</DialogDescription>
+            <DialogTitle>Éditer le Plat</DialogTitle>
+            <DialogDescription>Modifiez les informations du plat</DialogDescription>
           </DialogHeader>
           <form onSubmit={(e) => {
             e.preventDefault();
@@ -770,7 +770,7 @@ export default function AdminManageRestaurant() {
             <div className="space-y-4 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="edit-item-name">Nom de l’élément *</Label>
+                  <Label htmlFor="edit-item-name">Nom du plat *</Label>
                   <Input id="edit-item-name" name="name" defaultValue={selectedItem?.name} required />
                 </div>
                 <div className="space-y-2">

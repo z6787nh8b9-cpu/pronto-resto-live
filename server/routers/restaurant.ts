@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { router } from "../_core/trpc";
-import type { TrpcContext } from "../_core/context";
 // Removed obsolete tenantMiddleware import
 import { publicProcedure, restaurantOwnerProcedure } from "../_core/trpc";
 import {
@@ -20,83 +19,10 @@ import {
   upsertChatbotConfig,
   getPageViewsByRestaurantId,
   getChatbotConversationsByRestaurantId,
-  getRestaurantAnalyticsSummary,
   getDb,
 } from "../db";
 import { menuCategories, menuItems, restaurants } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
-
-type RestaurantAccessContext = TrpcContext & { isAdmin?: boolean };
-
-async function assertRestaurantAccess(ctx: RestaurantAccessContext, restaurantId: number) {
-  const db = await getDb();
-  if (!db) {
-    throw new Error("Database not available");
-  }
-
-  const [restaurant] = await db
-    .select()
-    .from(restaurants)
-    .where(eq(restaurants.id, restaurantId))
-    .limit(1);
-
-  if (!restaurant) {
-    throw new TRPCError({ code: "NOT_FOUND", message: "Restaurant non trouvé" });
-  }
-
-  if (ctx.isAdmin) {
-    return restaurant;
-  }
-
-  if (ctx.restaurantOwner?.id === restaurant.ownerId) {
-    return restaurant;
-  }
-
-  throw new TRPCError({
-    code: "FORBIDDEN",
-    message: "Vous n'avez pas accès à ce restaurant",
-  });
-}
-
-async function assertCategoryAccess(ctx: RestaurantAccessContext, categoryId: number) {
-  const db = await getDb();
-  if (!db) {
-    throw new Error("Database not available");
-  }
-
-  const [category] = await db
-    .select()
-    .from(menuCategories)
-    .where(eq(menuCategories.id, categoryId))
-    .limit(1);
-
-  if (!category) {
-    throw new TRPCError({ code: "NOT_FOUND", message: "Collection introuvable" });
-  }
-
-  await assertRestaurantAccess(ctx, category.restaurantId);
-  return category;
-}
-
-async function assertMenuItemAccess(ctx: RestaurantAccessContext, itemId: number) {
-  const db = await getDb();
-  if (!db) {
-    throw new Error("Database not available");
-  }
-
-  const [item] = await db
-    .select()
-    .from(menuItems)
-    .where(eq(menuItems.id, itemId))
-    .limit(1);
-
-  if (!item) {
-    throw new TRPCError({ code: "NOT_FOUND", message: "Élément introuvable" });
-  }
-
-  await assertRestaurantAccess(ctx, item.restaurantId);
-  return item;
-}
 
 export const restaurantRouter = router({
   /**
@@ -110,8 +36,39 @@ export const restaurantRouter = router({
       })
     )
     .query(async ({ ctx, input }) => {
-      const restaurant = await assertRestaurantAccess(ctx, input.restaurantId);
-      return { authorized: true, restaurant, isAdmin: Boolean(ctx.isAdmin) };
+      const db = await getDb();
+      if (!db) {
+        throw new Error("Database not available");
+      }
+
+      // Get restaurant
+      const [restaurant] = await db
+        .select()
+        .from(restaurants)
+        .where(eq(restaurants.id, input.restaurantId))
+        .limit(1);
+
+      if (!restaurant) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Restaurant non trouvé" });
+      }
+
+      // Super Admin has access to all restaurants
+      if (ctx.user && ctx.user.role === 'admin') {
+        return { authorized: true, restaurant, isAdmin: true };
+      }
+
+      // Restaurant owner can only access their own restaurant
+      if (ctx.restaurantOwner) {
+        if (restaurant.ownerId !== ctx.restaurantOwner.id) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "Vous n'avez pas accès à ce restaurant",
+          });
+        }
+        return { authorized: true, restaurant, isAdmin: false };
+      }
+
+      throw new TRPCError({ code: "UNAUTHORIZED", message: "Non autorisé" });
     }),
 
   // Get current restaurant (based on tenant context) - DEPRECATED
@@ -121,8 +78,8 @@ export const restaurantRouter = router({
 
   // Get restaurants owned by current user
   getMyRestaurants: restaurantOwnerProcedure.query(async ({ ctx }) => {
-    if (!ctx.restaurantOwner) return [];
-    return await getRestaurantsByOwnerId(ctx.restaurantOwner.id);
+    if (!ctx.user) return [];
+    return await getRestaurantsByOwnerId(ctx.user.id);
   }),
 
   // Update restaurant settings
@@ -147,7 +104,19 @@ export const restaurantRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      await assertRestaurantAccess(ctx, input.restaurantId);
+      // Verify ownership
+      const userId = ctx.restaurantOwner?.id || ctx.user?.id;
+      if (!userId) {
+        throw new Error("Unauthorized");
+      }
+      const restaurants = await getRestaurantsByOwnerId(userId);
+      const ownsRestaurant = restaurants.some((r) => r.id === input.restaurantId);
+
+      // Super admin can edit any restaurant
+      if (!ownsRestaurant && ctx.user?.role !== "admin") {
+        throw new Error("Unauthorized");
+      }
+
       return await updateRestaurant(input.restaurantId, input.data);
     }),
 
@@ -169,8 +138,7 @@ export const restaurantRouter = router({
         displayOrder: z.number().default(0),
       })
     )
-    .mutation(async ({ input, ctx }) => {
-      await assertRestaurantAccess(ctx, input.restaurantId);
+    .mutation(async ({ input }) => {
       return await createMenuCategory(input);
     }),
 
@@ -188,15 +156,13 @@ export const restaurantRouter = router({
         }),
       })
     )
-    .mutation(async ({ input, ctx }) => {
-      await assertCategoryAccess(ctx, input.id);
+    .mutation(async ({ input }) => {
       return await updateMenuCategory(input.id, input.data);
     }),
 
   deleteCategory: restaurantOwnerProcedure
     .input(z.object({ id: z.number() }))
-    .mutation(async ({ input, ctx }) => {
-      await assertCategoryAccess(ctx, input.id);
+    .mutation(async ({ input }) => {
       await deleteMenuCategory(input.id);
       return { success: true };
     }),
@@ -237,12 +203,7 @@ export const restaurantRouter = router({
         displayOrder: z.number().default(0),
       })
     )
-    .mutation(async ({ input, ctx }) => {
-      await assertRestaurantAccess(ctx, input.restaurantId);
-      const category = await assertCategoryAccess(ctx, input.categoryId);
-      if (category.restaurantId !== input.restaurantId) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: "La collection ne correspond pas à cette entreprise" });
-      }
+    .mutation(async ({ input }) => {
       return await createMenuItem(input);
     }),
 
@@ -272,15 +233,13 @@ export const restaurantRouter = router({
         }),
       })
     )
-    .mutation(async ({ input, ctx }) => {
-      await assertMenuItemAccess(ctx, input.id);
+    .mutation(async ({ input }) => {
       return await updateMenuItem(input.id, input.data);
     }),
 
   deleteMenuItem: restaurantOwnerProcedure
     .input(z.object({ id: z.number() }))
-    .mutation(async ({ input, ctx }) => {
-      await assertMenuItemAccess(ctx, input.id);
+    .mutation(async ({ input }) => {
       await deleteMenuItem(input.id);
       return { success: true };
     }),
@@ -302,33 +261,21 @@ export const restaurantRouter = router({
         welcomeMessage: z.string().optional(),
       })
     )
-    .mutation(async ({ input, ctx }) => {
-      await assertRestaurantAccess(ctx, input.restaurantId);
+    .mutation(async ({ input }) => {
       return await upsertChatbotConfig(input);
     }),
 
   // Analytics
   getPageViews: restaurantOwnerProcedure
     .input(z.object({ restaurantId: z.number(), limit: z.number().default(1000) }))
-    .query(async ({ input, ctx }) => {
-      await assertRestaurantAccess(ctx, input.restaurantId);
+    .query(async ({ input }) => {
       return await getPageViewsByRestaurantId(input.restaurantId, input.limit);
     }),
 
   getChatbotConversations: restaurantOwnerProcedure
     .input(z.object({ restaurantId: z.number(), limit: z.number().default(100) }))
-    .query(async ({ input, ctx }) => {
-      await assertRestaurantAccess(ctx, input.restaurantId);
+    .query(async ({ input }) => {
       return await getChatbotConversationsByRestaurantId(input.restaurantId, input.limit);
-    }),
-
-  getAnalyticsSummary: restaurantOwnerProcedure
-    .input(z.object({ restaurantId: z.number() }))
-    .query(async ({ input, ctx }) => {
-      await assertRestaurantAccess(ctx, input.restaurantId);
-      const now = new Date();
-      const periodStart = new Date(now.getFullYear(), now.getMonth(), 1);
-      return await getRestaurantAnalyticsSummary(input.restaurantId, periodStart);
     }),
 
   // Reorder Categories
@@ -339,18 +286,12 @@ export const restaurantRouter = router({
         categoryIds: z.array(z.number()),
       })
     )
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input }) => {
       // Update displayOrder for each category
       const db = await getDb();
       if (!db) throw new Error("Database not available");
 
-      await assertRestaurantAccess(ctx, input.restaurantId);
-
       for (let i = 0; i < input.categoryIds.length; i++) {
-        const category = await assertCategoryAccess(ctx, input.categoryIds[i]);
-        if (category.restaurantId !== input.restaurantId) {
-          throw new TRPCError({ code: "BAD_REQUEST", message: "Une collection ne correspond pas à cette entreprise" });
-        }
         await db
           .update(menuCategories)
           .set({ displayOrder: i })
@@ -368,18 +309,12 @@ export const restaurantRouter = router({
         itemIds: z.array(z.number()),
       })
     )
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input }) => {
       // Update displayOrder for each item
       const db = await getDb();
       if (!db) throw new Error("Database not available");
 
-      const category = await assertCategoryAccess(ctx, input.categoryId);
-
       for (let i = 0; i < input.itemIds.length; i++) {
-        const item = await assertMenuItemAccess(ctx, input.itemIds[i]);
-        if (item.categoryId !== input.categoryId || item.restaurantId !== category.restaurantId) {
-          throw new TRPCError({ code: "BAD_REQUEST", message: "Un élément ne correspond pas à cette collection" });
-        }
         await db
           .update(menuItems)
           .set({ displayOrder: i })
@@ -407,8 +342,8 @@ export const restaurantRouter = router({
 
       // Generate unique filename
       const ext = input.filename.split(".").pop();
-      // Use the authenticated principal identifier to keep uploaded paths attributable.
-      const userId = ctx.restaurantOwner?.id || ctx.user?.id || ctx.adminAccount?.id || "unknown";
+      // Use restaurantOwner ID if available, otherwise use super admin user ID
+      const userId = ctx.restaurantOwner?.id || ctx.user?.id || 'unknown';
       const key = `restaurants/${userId}/${nanoid()}.${ext}`;
 
       // Upload to S3

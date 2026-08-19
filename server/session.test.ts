@@ -84,31 +84,10 @@ describe('Session Management', () => {
       .set('Cookie', cookie);
     
     expect(meResponse.status).toBe(200);
-    expect(meResponse.headers['set-cookie']?.some((value: string) => value.includes('pronto.sid'))).toBe(true);
     expect(meResponse.body.result.data.json).toMatchObject({
       email: 'test.session@pronto.admin',
       name: 'Test Session Admin',
     });
-  });
-
-  it('should invalidate an existing admin session when the credential version changes', async () => {
-    const loginResponse = await request(app)
-      .post('/api/admin/login')
-      .send('email=test.session@pronto.admin&password=TestSession123!')
-      .set('Content-Type', 'application/x-www-form-urlencoded');
-    const cookie = loginResponse.headers['set-cookie'][0];
-
-    const db = await getDb();
-    if (!db) throw new Error('Database not available');
-    const [account] = await db.select().from(adminAccounts).where(eq(adminAccounts.email, 'test.session@pronto.admin')).limit(1);
-    await db.update(adminAccounts).set({ authVersion: account.authVersion + 1 }).where(eq(adminAccounts.id, account.id));
-
-    const meResponse = await request(app)
-      .get('/api/trpc/adminAuth.me')
-      .set('Cookie', cookie);
-
-    expect(meResponse.status).toBe(200);
-    expect(meResponse.body.result.data.json).toBeNull();
   });
   
   it('should reject requests without session', async () => {

@@ -1,10 +1,9 @@
 import { TRPCError } from "@trpc/server";
-import { and, asc, desc, eq, isNotNull, isNull } from "drizzle-orm";
-import { createHash, randomBytes, randomUUID } from "crypto";
+import { and, asc, desc, eq, isNull } from "drizzle-orm";
+import { randomUUID } from "crypto";
 import { z } from "zod";
 import {
   businesses,
-  businessMemberInvitations,
   businessMembers,
   businessOnboarding,
   businessProfiles,
@@ -12,14 +11,12 @@ import {
   catalogItems,
   catalogs,
   mediaAssets,
-  restaurantOwners,
 } from "../../drizzle/schema";
 import { getDb } from "../db";
 import { adminProcedure, publicProcedure, restaurantOwnerProcedure, router } from "../_core/trpc";
 import type { TrpcContext } from "../_core/context";
 import { storagePut } from "../storage";
 import { acceptedMediaTypes, hasValidMediaSignature } from "../media-validation";
-import { recordSecurityEvent } from "../security-events";
 
 const businessVertical = z.enum(["restaurant", "beauty", "retail", "service", "events", "other"]);
 const catalogType = z.enum(["menu", "services", "products", "price_list", "portfolio", "events"]);
@@ -55,32 +52,6 @@ export async function requireBusinessAccess(ctx: TrpcContext, businessId: number
     throw new TRPCError({ code: "FORBIDDEN", message: "Vous n'avez pas accès à cette entreprise." });
   }
 }
-
-async function requireBusinessRoleManagement(ctx: TrpcContext, businessId: number) {
-  if (isPlatformAdmin(ctx)) return;
-  if (!ctx.restaurantOwner) {
-    throw new TRPCError({ code: "UNAUTHORIZED", message: "Connexion requise." });
-  }
-
-  const db = await getDb();
-  if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
-  const [membership] = await db
-    .select({ role: businessMembers.role })
-    .from(businessMembers)
-    .where(and(
-      eq(businessMembers.businessId, businessId),
-      eq(businessMembers.principalType, "restaurant_owner"),
-      eq(businessMembers.principalId, ctx.restaurantOwner.id),
-      eq(businessMembers.status, "active"),
-    ))
-    .limit(1);
-
-  if (membership?.role !== "owner") {
-    throw new TRPCError({ code: "FORBIDDEN", message: "Seul le propriétaire peut gérer les membres." });
-  }
-}
-
-const managedMemberRole = z.enum(["administrator", "editor", "publisher", "analyst", "support"]);
 
 export const businessesRouter = router({
   /** Public identity: intentionally excludes owners, account IDs and internal statuses. */
@@ -121,6 +92,37 @@ export const businessesRouter = router({
 
       if (!record) throw new TRPCError({ code: "NOT_FOUND", message: "Entreprise introuvable." });
       return record;
+    }),
+
+  /** Public catalog contract for non-restaurant verticals; only published records are exposed. */
+  getPublicCatalogBySlug: publicProcedure
+    .input(z.object({ slug: z.string().trim().min(2).max(100) }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
+
+      const [business] = await db.select({ id: businesses.id, vertical: businesses.vertical })
+        .from(businesses)
+        .where(and(eq(businesses.slug, input.slug), eq(businesses.status, "published"), eq(businesses.isActive, true)))
+        .limit(1);
+      if (!business) throw new TRPCError({ code: "NOT_FOUND", message: "Entreprise introuvable." });
+
+      const [catalog] = await db.select().from(catalogs).where(and(
+        eq(catalogs.businessId, business.id),
+        eq(catalogs.status, "published"),
+        eq(catalogs.isPrimary, true),
+      )).orderBy(asc(catalogs.displayOrder)).limit(1);
+      if (!catalog) return { catalog: null, collections: [], items: [] };
+
+      const collections = await db.select().from(catalogCollections).where(and(
+        eq(catalogCollections.catalogId, catalog.id),
+        eq(catalogCollections.status, "active"),
+      )).orderBy(asc(catalogCollections.displayOrder));
+      const items = await db.select().from(catalogItems).where(and(
+        eq(catalogItems.catalogId, catalog.id),
+        eq(catalogItems.status, "active"),
+      )).orderBy(asc(catalogItems.displayOrder));
+      return { catalog, collections, items };
     }),
 
   getByLegacyRestaurant: restaurantOwnerProcedure
@@ -177,160 +179,6 @@ export const businessesRouter = router({
       const [profile] = await db.select().from(businessProfiles).where(eq(businessProfiles.businessId, input.businessId)).limit(1);
       const businessCatalogs = await db.select().from(catalogs).where(eq(catalogs.businessId, input.businessId)).orderBy(asc(catalogs.displayOrder));
       return { business, profile: profile ?? null, catalogs: businessCatalogs };
-    }),
-
-  listMembers: restaurantOwnerProcedure
-    .input(z.object({ businessId: z.number().int().positive() }))
-    .query(async ({ ctx, input }) => {
-      await requireBusinessRoleManagement(ctx, input.businessId);
-      const db = await getDb();
-      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
-
-      return db
-        .select({
-          id: businessMembers.id,
-          principalType: businessMembers.principalType,
-          principalId: businessMembers.principalId,
-          role: businessMembers.role,
-          status: businessMembers.status,
-          joinedAt: businessMembers.joinedAt,
-          createdAt: businessMembers.createdAt,
-          name: restaurantOwners.name,
-          email: restaurantOwners.email,
-        })
-        .from(businessMembers)
-        .leftJoin(restaurantOwners, and(
-          eq(restaurantOwners.id, businessMembers.principalId),
-          eq(businessMembers.principalType, "restaurant_owner"),
-        ))
-        .where(eq(businessMembers.businessId, input.businessId))
-        .orderBy(asc(businessMembers.createdAt));
-    }),
-
-  updateMember: restaurantOwnerProcedure
-    .input(z.object({
-      businessId: z.number().int().positive(),
-      memberId: z.number().int().positive(),
-      role: managedMemberRole.optional(),
-      status: z.enum(["active", "suspended"]).optional(),
-    }).refine((value) => value.role !== undefined || value.status !== undefined, {
-      message: "Aucune modification de membre demandée.",
-    }))
-    .mutation(async ({ ctx, input }) => {
-      await requireBusinessRoleManagement(ctx, input.businessId);
-      const db = await getDb();
-      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
-
-      const [member] = await db
-        .select()
-        .from(businessMembers)
-        .where(and(eq(businessMembers.id, input.memberId), eq(businessMembers.businessId, input.businessId)))
-        .limit(1);
-      if (!member) throw new TRPCError({ code: "NOT_FOUND", message: "Membre introuvable." });
-      if (member.role === "owner") {
-        throw new TRPCError({ code: "FORBIDDEN", message: "Le propriétaire ne peut pas être modifié depuis cette action." });
-      }
-
-      const changes = {
-        ...(input.role ? { role: input.role } : {}),
-        ...(input.status ? { status: input.status } : {}),
-      };
-      await db.update(businessMembers).set(changes).where(eq(businessMembers.id, member.id));
-      const [updated] = await db.select().from(businessMembers).where(eq(businessMembers.id, member.id)).limit(1);
-      return updated!;
-    }),
-
-  createMemberInvitation: restaurantOwnerProcedure
-    .input(z.object({
-      businessId: z.number().int().positive(),
-      email: z.string().trim().toLowerCase().email().max(320),
-      role: managedMemberRole,
-    }))
-    .mutation(async ({ ctx, input }) => {
-      await requireBusinessRoleManagement(ctx, input.businessId);
-      const db = await getDb();
-      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
-      const token = randomBytes(32).toString("hex");
-      await db.insert(businessMemberInvitations).values({
-        businessId: input.businessId,
-        email: input.email,
-        role: input.role,
-        tokenHash: createHash("sha256").update(token).digest("hex"),
-        invitedByPrincipalId: ctx.restaurantOwner?.id ?? 0,
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-      });
-      if (ctx.req.headers) {
-        await recordSecurityEvent({
-          req: ctx.req,
-          principalType: isPlatformAdmin(ctx) ? "admin" : "owner",
-          principalId: ctx.restaurantOwner?.id ?? ctx.adminAccount?.id ?? ctx.user?.id,
-          eventType: "business.member_invitation_created",
-          outcome: "success",
-        });
-      }
-      return { token, expiresInDays: 7 };
-    }),
-
-  acceptMemberInvitation: restaurantOwnerProcedure
-    .input(z.object({ token: z.string().regex(/^[a-f0-9]{64}$/i) }))
-    .mutation(async ({ ctx, input }) => {
-      const acceptingOwner = ctx.restaurantOwner;
-      if (!acceptingOwner) throw new TRPCError({ code: "UNAUTHORIZED", message: "Connexion requise." });
-      const db = await getDb();
-      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
-      const hash = createHash("sha256").update(input.token).digest("hex");
-      const accepted = await db.transaction(async (tx) => {
-        const [invite] = await tx.select().from(businessMemberInvitations)
-          .where(and(eq(businessMemberInvitations.tokenHash, hash), eq(businessMemberInvitations.status, "pending"))).limit(1);
-        if (!invite || invite.expiresAt <= new Date()) {
-          throw new TRPCError({ code: "NOT_FOUND", message: "Invitation invalide ou expirée." });
-        }
-        if (invite.email.toLowerCase() !== acceptingOwner.email.toLowerCase()) {
-          throw new TRPCError({ code: "FORBIDDEN", message: "Cette invitation est destinée à une autre adresse email." });
-        }
-
-        const [existingMembership] = await tx.select({ id: businessMembers.id }).from(businessMembers).where(and(
-          eq(businessMembers.businessId, invite.businessId),
-          eq(businessMembers.principalType, "restaurant_owner"),
-          eq(businessMembers.principalId, acceptingOwner.id),
-        )).limit(1);
-        if (existingMembership) {
-          throw new TRPCError({ code: "CONFLICT", message: "Ce compte est déjà membre de cette entreprise." });
-        }
-
-        const acceptedAt = new Date();
-        const [claimResult] = await tx.update(businessMemberInvitations).set({
-          status: "accepted",
-          acceptedByPrincipalId: acceptingOwner.id,
-          acceptedAt,
-        }).where(and(
-          eq(businessMemberInvitations.id, invite.id),
-          eq(businessMemberInvitations.status, "pending"),
-        ));
-        if (claimResult.affectedRows !== 1) {
-          throw new TRPCError({ code: "CONFLICT", message: "Cette invitation vient déjà d’être utilisée." });
-        }
-
-        await tx.insert(businessMembers).values({
-          businessId: invite.businessId,
-          principalType: "restaurant_owner",
-          principalId: acceptingOwner.id,
-          role: invite.role,
-          status: "active",
-          joinedAt: acceptedAt,
-        });
-        return { businessId: invite.businessId, role: invite.role };
-      });
-      if (ctx.req.headers) {
-        await recordSecurityEvent({
-          req: ctx.req,
-          principalType: "owner",
-          principalId: acceptingOwner.id,
-          eventType: "business.member_invitation_accepted",
-          outcome: "success",
-        });
-      }
-      return accepted;
     }),
 
   create: adminProcedure
@@ -476,15 +324,6 @@ export const businessesRouter = router({
       return db.select().from(mediaAssets).where(and(eq(mediaAssets.businessId, input.businessId), isNull(mediaAssets.archivedAt))).orderBy(desc(mediaAssets.createdAt));
     }),
 
-  listArchivedMedia: restaurantOwnerProcedure
-    .input(z.object({ businessId: z.number().int().positive() }))
-    .query(async ({ ctx, input }) => {
-      await requireBusinessAccess(ctx, input.businessId);
-      const db = await getDb();
-      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
-      return db.select().from(mediaAssets).where(and(eq(mediaAssets.businessId, input.businessId), isNotNull(mediaAssets.archivedAt))).orderBy(desc(mediaAssets.archivedAt));
-    }),
-
   uploadMedia: restaurantOwnerProcedure
     .input(z.object({
       businessId: z.number().int().positive(),
@@ -527,18 +366,6 @@ export const businessesRouter = router({
       const [asset] = await db.select().from(mediaAssets).where(and(eq(mediaAssets.id, input.assetId), eq(mediaAssets.businessId, input.businessId), isNull(mediaAssets.archivedAt))).limit(1);
       if (!asset) throw new TRPCError({ code: "NOT_FOUND", message: "Média introuvable." });
       await db.update(mediaAssets).set({ archivedAt: new Date() }).where(eq(mediaAssets.id, asset.id));
-      return { success: true };
-    }),
-
-  restoreMedia: restaurantOwnerProcedure
-    .input(z.object({ businessId: z.number().int().positive(), assetId: z.number().int().positive() }))
-    .mutation(async ({ ctx, input }) => {
-      await requireBusinessAccess(ctx, input.businessId);
-      const db = await getDb();
-      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
-      const [asset] = await db.select().from(mediaAssets).where(and(eq(mediaAssets.id, input.assetId), eq(mediaAssets.businessId, input.businessId), isNotNull(mediaAssets.archivedAt))).limit(1);
-      if (!asset) throw new TRPCError({ code: "NOT_FOUND", message: "Média archivé introuvable." });
-      await db.update(mediaAssets).set({ archivedAt: null }).where(eq(mediaAssets.id, asset.id));
       return { success: true };
     }),
 });

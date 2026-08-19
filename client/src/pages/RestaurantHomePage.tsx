@@ -15,8 +15,6 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { ReservationFlow } from "@/components/ReservationFlow";
 import { EventRegistrationFlow } from "@/components/EventRegistrationFlow";
 import { AdvertisementDisplay, DishItemAd } from "@/components/AdvertisementDisplay";
-import { PublicVitrineChrome } from "@/components/PublicVitrineChrome";
-import { useRevealOnView } from "@/hooks/useRevealOnView";
 
 export default function RestaurantHomePage() {
   const params: { slug?: string } = useParams();
@@ -29,7 +27,6 @@ export default function RestaurantHomePage() {
   const [chatMessages, setChatMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
   const [chatInput, setChatInput] = useState("");
   const [sessionId] = useState(() => nanoid());
-  const featuredReveal = useRevealOnView<HTMLElement>();
 
   // Get restaurant data
   const { data: restaurant, isLoading } = trpc.public.getRestaurant.useQuery(
@@ -138,8 +135,6 @@ export default function RestaurantHomePage() {
                          menuData?.items?.slice(0, 6) || [];
 
   const daysOfWeek = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
-  const hasContactInfo = Boolean(restaurant.phone || restaurant.email || restaurant.address);
-  const hasOpeningHours = Boolean(openingHours && openingHours.length > 0);
 
   // Séparer les publicités dish_item des autres formats
   const dishItemAds = advertisements?.filter((ad: any) => ad.format === "dish_item") || [];
@@ -147,44 +142,75 @@ export default function RestaurantHomePage() {
 
   return (
     <div className="min-h-screen bg-white relative">
-      <PublicVitrineChrome
-        name={restaurant.name}
-        logoUrl={restaurant.logoUrl}
-        slug={slug}
-        languageControl={<LanguageSelector currentLanguage={currentLanguage} onLanguageChange={setCurrentLanguage} />}
-        onOpenCatalog={() => navigate(`/${slug}/menu`)}
-        onReserve={restaurant.featuresEnabled?.reservations ? () => setIsReservationOpen(true) : undefined}
-      />
+      {/* Header moderne et minimaliste */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-neutral-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20">
+            {/* Logo */}
+            <div className="flex items-center gap-3">
+              {restaurant.logoUrl && (
+                <img 
+                  src={restaurant.logoUrl} 
+                  alt={restaurant.name}
+                  className="h-12 w-12 object-cover rounded-full"
+                />
+              )}
+              <span className="text-xl font-semibold text-neutral-900 tracking-tight">
+                {restaurant.name}
+              </span>
+            </div>
+
+            {/* Navigation */}
+            <nav className="hidden md:flex items-center gap-8">
+              <LanguageSelector 
+                currentLanguage={currentLanguage}
+                onLanguageChange={setCurrentLanguage}
+              />
+              <button
+                onClick={() => navigate(`/${slug}/menu`)}
+                className="text-sm font-medium text-neutral-700 hover:text-neutral-900 transition-colors"
+              >
+                Menu
+              </button>
+              <button
+                onClick={() => setIsReservationOpen(true)}
+                className="text-sm font-medium text-neutral-700 hover:text-neutral-900 transition-colors"
+              >
+                Réserver
+              </button>
+            </nav>
+          </div>
+        </div>
+      </header>
 
       {/* Hero Section - Design moderne avec overlay subtil */}
-      <section className="relative min-h-[100dvh] overflow-hidden pt-24 sm:pt-28">
+      <section className="relative h-[70vh] min-h-[500px] mt-20">
         {restaurant.heroImageUrl && (
           <div className="absolute inset-0">
             <img
               src={restaurant.heroImageUrl}
               alt={restaurant.name}
-              className="h-full w-full scale-105 object-cover blur-[8px]"
+              className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/45 to-black/20"></div>
+            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-white"></div>
           </div>
         )}
         
         <div className="relative h-full flex items-center justify-center">
-          <div className="mx-auto max-w-3xl px-5 pb-20 pt-28 text-center sm:pt-36">
-            <p className="mb-4 text-xs font-semibold uppercase tracking-[0.22em] text-white/70">Votre vitrine</p>
-            <h1 className="mb-6 font-display text-5xl text-white sm:text-6xl md:text-7xl">
+          <div className="text-center px-4 max-w-3xl mx-auto">
+            <h1 className="text-5xl md:text-7xl font-serif font-bold text-white mb-6 tracking-tight">
               {translate("restaurant", restaurant.id, "name", restaurant.name)}
             </h1>
             {restaurant.description && (
-              <p className="mb-9 text-lg leading-relaxed text-white/90 md:text-xl">
+              <p className="text-lg md:text-xl text-white/90 mb-8 font-light leading-relaxed">
                 {translate("restaurant", restaurant.id, "description", restaurant.description)}
               </p>
             )}
-            <div className="flex flex-col justify-center gap-3 sm:flex-row">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
                 size="lg"
                 onClick={() => navigate(`/${slug}/menu`)}
-                className="h-14 rounded-[1.1rem] border border-white/80 bg-white px-7 text-base font-semibold text-neutral-900 shadow-[0_12px_30px_rgba(0,0,0,0.18)] hover:bg-white/90"
+                className="bg-white text-neutral-900 hover:bg-neutral-100 px-8 py-6 text-base font-medium rounded-none"
               >
                 Découvrir le menu
               </Button>
@@ -193,7 +219,7 @@ export default function RestaurantHomePage() {
                   size="lg"
                   variant="outline"
                   onClick={() => setIsReservationOpen(true)}
-                  className="h-14 rounded-[1.1rem] border border-white/35 bg-white/10 px-7 text-base font-semibold text-white backdrop-blur-sm hover:bg-white hover:text-neutral-900"
+                  className="border-2 border-white text-white hover:bg-white hover:text-neutral-900 px-8 py-6 text-base font-medium rounded-none"
                 >
                   Réserver une table
                 </Button>
@@ -205,7 +231,7 @@ export default function RestaurantHomePage() {
 
       {/* Featured Dishes - Grid moderne */}
       {featuredDishes.length > 0 && (
-        <section ref={featuredReveal.ref} data-visible={featuredReveal.isVisible} className="vitrine-reveal py-24 bg-neutral-50">
+        <section className="py-24 bg-neutral-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-4xl font-serif font-bold text-neutral-900 mb-4">
@@ -225,7 +251,7 @@ export default function RestaurantHomePage() {
                   {/* Plat normal */}
                   <div
                     key={dish.id}
-                    className="group overflow-hidden rounded-[1.45rem] border border-neutral-200/80 bg-[linear-gradient(135deg,#fff,#fbf7f1)] p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_8px_25px_rgba(62,42,25,0.06)] transition-transform duration-300 motion-reduce:transition-none hover:-translate-y-0.5 hover:shadow-[0_16px_32px_rgba(62,42,25,0.11)]"
+                    className="group bg-white overflow-hidden transition-all duration-300 hover:shadow-2xl"
                   >
                   {dish.imageUrl && (
                     <div className="aspect-[4/3] overflow-hidden">
@@ -236,7 +262,7 @@ export default function RestaurantHomePage() {
                       />
                     </div>
                   )}
-                  <div className="rounded-b-[1.05rem] border border-white/70 bg-white p-6">
+                  <div className="p-6">
                     <div className="flex items-start justify-between mb-3">
                       <h3 className="text-xl font-semibold text-neutral-900 flex-1">
                         {translate("item", dish.id, "name", dish.name)}
@@ -376,12 +402,11 @@ export default function RestaurantHomePage() {
       )}
 
       {/* Contact & Info Section */}
-      {(hasContactInfo || hasOpeningHours) && (
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className={hasContactInfo && hasOpeningHours ? "grid grid-cols-1 lg:grid-cols-2 gap-16" : "mx-auto max-w-3xl"}>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
             {/* Contact Info */}
-            {hasContactInfo && (<div>
+            <div>
               <h2 className="text-3xl font-serif font-bold text-neutral-900 mb-8">
                 Nous contacter
               </h2>
@@ -424,10 +449,10 @@ export default function RestaurantHomePage() {
                   </div>
                 )}
               </div>
-            </div>)}
+            </div>
 
             {/* Opening Hours */}
-            {hasOpeningHours && openingHours && (
+            {openingHours && openingHours.length > 0 && (
               <div>
                 <h2 className="text-3xl font-serif font-bold text-neutral-900 mb-8">
                   Horaires d'ouverture
@@ -453,7 +478,6 @@ export default function RestaurantHomePage() {
           </div>
         </div>
       </section>
-      )}
 
       {/* Advertisements - MENU tier only (tous formats sauf dish_item) */}
       {restaurant.subscriptionTier === "menu" && restaurant.showAds && otherFormatAds && otherFormatAds.length > 0 && (
