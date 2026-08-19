@@ -1208,3 +1208,34 @@
 - [x] Renforcé la limite d'erreur front-end afin d'isoler un écran en défaut et guider l'utilisateur vers une reprise sûre
 - [x] Vérifié les parcours publics, propriétaire et Super Admin après les changements transverses
 - [x] Documenté les procédures de reprise, les alertes utiles et les risques résiduels connus
+
+## 🔐 PRIORITÉ ABSOLUE — DURCISSEMENT AUTHENTIFICATION, SESSION ET DROITS (19 août 2026)
+- [x] Écrire les tests d’invitation membre : acceptation unique, expiration, correspondance stricte de l’adresse email et isolation inter-entreprises
+- [ ] Auditer la durée de vie effective du cookie, des sessions MySQL et des sessions Passport en développement et en production
+- [x] Appliquer et tester une expiration glissante bornée pour éviter la déconnexion d’un utilisateur actif tout en conservant une durée de session limitée
+- [x] Vérifier la régénération de session après toute connexion et changement de privilège, ainsi que l’invalidation globale lors d’un changement de mot de passe
+- [x] Mettre en place une version d’authentification contrôlée pour invalider toutes les sessions antérieures après un changement ou une réinitialisation de mot de passe
+- [x] Couvrir par test la rotation de version d’authentification et le rejet d’une session Super Admin antérieure
+- [x] Unifier la destruction serveur et l’effacement du cookie de chaque chemin de déconnexion propriétaire, Super Admin et Manus
+- [x] Vérifier et compléter les protections CSRF des mutations critiques, sans dégrader OAuth ni les formulaires publics légitimes
+- [x] Ajouter un contrôle d’origine explicite aux mutations tRPC et aux changements de mot de passe authentifiés
+- [ ] Auditer les en-têtes de sécurité réellement servis en production : CSP, HSTS, anti-clickjacking, cookies et cache
+- [x] Ajouter et tester une politique CSP de production restrictive, compatible avec reCAPTCHA, polices et médias de vitrines
+- [x] Ajouter des limites de débit et une journalisation minimisée pour la création et l’acceptation d’invitations membres
+- [x] Journaliser la création et l’acceptation d’invitations membres sans persister le jeton ou l’adresse invitée
+- [x] Installer une limite de débit dédiée aux mutations d’invitation membre, plus stricte que le garde-fou tRPC général
+- [ ] Exécuter un protocole de validation manuelle en production : connexion, déconnexion, reconnexion, récupération et changement de mot de passe propriétaire
+- [ ] Exécuter un protocole de validation manuelle en production : connexion Super Admin, isolation des entreprises et refus des accès transverses
+
+## 🎨 REFONTE DES VITRINES D’ÉTABLISSEMENTS — DESIGN APPLE ET HAUT DE GAMME (19 août 2026)
+- [ ] Auditer RestaurantHomePage et RestaurantMenuPage : hiérarchie, espaces, z-index, contrastes, responsive, états vides et sorties de parcours
+- [ ] Définir un socle visuel premium multi-secteurs : typographies sans serif et serif non génériques, rythme vertical, matériaux et tokens cohérents
+- [ ] Refondre le hero public : image 1920×600, flou d’arrière-plan 8px, voile sombre lisible, navigation flottante et hiérarchie de marque
+- [ ] Remplacer les cartes, contrôles et CTA incohérents par des composants à double contour, focus visible et micro-interactions accessibles
+- [ ] Ajouter des entrées de contenu performantes via IntersectionObserver, des transitions interruptibles et le respect de la réduction des animations
+- [ ] Vérifier chaque vitrine restaurateur, beauté, retail et service aux formats mobile, tablette et bureau sans modifier les URL ni données historiques
+
+## 🧭 DÉCISIONS D’ARCHITECTURE ET TRAJECTOIRE MOBILE B2B (19 août 2026)
+- [ ] Produire une recommandation argumentée sur Supabase, Vercel et ManyChat au regard de l’architecture TiDB, Node et React actuelle
+- [ ] Documenter les trajectoires PWA, Capacitor et React Native/Expo pour une application B2B distribuable sur App Store et Google Play
+- [ ] Définir le prototype cible, les prérequis de conformité et une feuille de route de conversion mobile sans duplication prématurée du produit

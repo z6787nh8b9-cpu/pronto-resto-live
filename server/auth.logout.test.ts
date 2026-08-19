@@ -30,6 +30,9 @@ function createAuthContext(): { ctx: TrpcContext; clearedCookies: CookieCall[] }
     req: {
       protocol: "https",
       headers: {},
+      session: {
+        destroy: (callback: (error?: Error) => void) => callback(),
+      },
     } as TrpcContext["req"],
     res: {
       clearCookie: (name: string, options: Record<string, unknown>) => {
@@ -42,16 +45,17 @@ function createAuthContext(): { ctx: TrpcContext; clearedCookies: CookieCall[] }
 }
 
 describe("auth.logout", () => {
-  it("clears the session cookie and reports success", async () => {
+  it("destroys the server session, clears both cookie families and reports success", async () => {
     const { ctx, clearedCookies } = createAuthContext();
     const caller = appRouter.createCaller(ctx);
 
     const result = await caller.auth.logout();
 
     expect(result).toEqual({ success: true });
-    expect(clearedCookies).toHaveLength(1);
-    expect(clearedCookies[0]?.name).toBe(COOKIE_NAME);
-    expect(clearedCookies[0]?.options).toMatchObject({
+    expect(clearedCookies).toHaveLength(2);
+    expect(clearedCookies[0]).toMatchObject({ name: "pronto.sid", options: { path: "/" } });
+    expect(clearedCookies[1]?.name).toBe(COOKIE_NAME);
+    expect(clearedCookies[1]?.options).toMatchObject({
       maxAge: -1,
       secure: true,
       sameSite: "none",

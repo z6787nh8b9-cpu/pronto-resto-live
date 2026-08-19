@@ -232,6 +232,13 @@
       "when": 1787129924799,
       "tag": "0032_happy_nicolaos",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "5",
+      "when": 1787134944181,
+      "tag": "0033_chemical_sleeper",
+      "breakpoints": true
     }
   ]
 }

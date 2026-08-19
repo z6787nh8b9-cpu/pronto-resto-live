@@ -98,8 +98,11 @@ export const adminAuthRouter = router({
         throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Failed to create admin account" });
       }
 
-      // Store admin ID in session
+      // Rotate before privilege elevation so an invitation cannot inherit a
+      // pre-existing anonymous session, then bind the account version.
+      await new Promise<void>((resolve, reject) => ctx.req.session.regenerate((error) => error ? reject(error) : resolve()));
       ctx.req.session.adminId = newAdmin.id;
+      ctx.req.session.adminAuthVersion = newAdmin.authVersion;
       await ctx.req.session.save();
 
       return {
@@ -117,6 +120,7 @@ export const adminAuthRouter = router({
    */
   logout: publicProcedure.mutation(async ({ ctx }) => {
     await new Promise<void>((resolve, reject) => ctx.req.session.destroy((error) => error ? reject(error) : resolve()));
+    ctx.res.clearCookie("pronto.sid", { path: "/" });
     return { success: true };
   }),
 
@@ -142,6 +146,7 @@ export const adminAuthRouter = router({
     if (!admin) {
       // Admin not found, clear session
       ctx.req.session.adminId = undefined;
+      ctx.req.session.adminAuthVersion = undefined;
       await ctx.req.session.save();
       return null;
     }
@@ -169,7 +174,15 @@ export const adminAuthRouter = router({
         throw new TRPCError({ code: "UNAUTHORIZED", message: "Mot de passe actuel incorrect" });
       }
 
-      await db.update(adminAccounts).set({ passwordHash: await bcrypt.hash(input.newPassword, SALT_ROUNDS) }).where(eq(adminAccounts.id, account.id));
+      const nextAuthVersion = account.authVersion + 1;
+      await db.update(adminAccounts).set({
+        passwordHash: await bcrypt.hash(input.newPassword, SALT_ROUNDS),
+        authVersion: nextAuthVersion,
+      }).where(eq(adminAccounts.id, account.id));
+      await new Promise<void>((resolve, reject) => ctx.req.session.regenerate((error) => error ? reject(error) : resolve()));
+      ctx.req.session.adminId = account.id;
+      ctx.req.session.adminAuthVersion = nextAuthVersion;
+      await ctx.req.session.save();
       await recordSecurityEvent({ req: ctx.req, principalType: "admin", principalId: account.id, eventType: "admin.password_change", outcome: "success" });
       return { success: true };
     }),

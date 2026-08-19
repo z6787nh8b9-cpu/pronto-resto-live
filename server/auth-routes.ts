@@ -10,6 +10,7 @@ import { recordSecurityEvent } from "./security-events";
 import { passwordPolicyError } from "./password-policy";
 import { notifyOwner } from "./_core/notification";
 import { createPasswordResetSecret, hashPasswordResetSecret, isPasswordResetExpired, PASSWORD_RESET_TTL_MS } from "./password-reset";
+import { requireSameOrigin } from "./_core/origin-guard";
 
 
 /**
@@ -164,6 +165,7 @@ app.get("/api/auth/logout", (req: Request, res: Response) => {
         if (err) {
           return res.status(500).json({ error: "Session destruction failed" });
         }
+        res.clearCookie("pronto.sid", { path: "/" });
         res.redirect("/");
       });
   });
@@ -174,7 +176,7 @@ app.get("/api/auth/logout", (req: Request, res: Response) => {
       if (logoutError) return res.status(500).json({ error: "Logout failed" });
       req.session.destroy((sessionError) => {
         if (sessionError) return res.status(500).json({ error: "Session destruction failed" });
-        res.clearCookie("connect.sid");
+        res.clearCookie("pronto.sid", { path: "/" });
         return res.json({ success: true });
       });
     });
@@ -199,7 +201,8 @@ declare global {
       name: string;
       avatarUrl: string | null;
       provider?: "google" | "facebook" | "email"; // Optional for admins
-      providerId?: string | null; // Optional for admins
+      providerId?: string | null; // For admins
+      authVersion: number; // Credential version checked by Passport on every request
       googleId?: string; // For admins
       invitationId?: number; // For admins
       restaurantId?: number; // For restaurant owners
@@ -214,6 +217,7 @@ declare global {
 declare module "express-session" {
   interface SessionData {
     adminId?: number; // For email/password admin authentication
+    adminAuthVersion?: number; // Matches the account credential version for server-side session invalidation
     invitationToken?: string; // For restaurant owner invitation flow
     claimedRestaurantId?: number; // For restaurant owner invitation flow
   }
@@ -303,7 +307,7 @@ export function registerEmailLoginRoute(app: Express) {
     }
   });
 
-  app.post("/api/auth/change-password", ownerEmailLoginLimiter, async (req: Request, res: Response) => {
+  app.post("/api/auth/change-password", requireSameOrigin, ownerEmailLoginLimiter, async (req: Request, res: Response) => {
     const ownerId = req.user?.id;
     const { currentPassword, newPassword } = req.body;
     if (!ownerId) return res.status(401).json({ error: "Connexion requise" });
@@ -329,7 +333,14 @@ export function registerEmailLoginRoute(app: Express) {
         return res.status(401).json({ error: "Mot de passe actuel incorrect" });
       }
 
-      await db.update(restaurantOwners).set({ passwordHash: await bcrypt.hash(newPassword, 10) }).where(eq(restaurantOwners.id, owner.id));
+      const nextAuthVersion = owner.authVersion + 1;
+      await db.update(restaurantOwners).set({
+        passwordHash: await bcrypt.hash(newPassword, 10),
+        authVersion: nextAuthVersion,
+      }).where(eq(restaurantOwners.id, owner.id));
+      await new Promise<void>((resolve, reject) => req.session.regenerate((error) => error ? reject(error) : resolve()));
+      const refreshedOwner = { ...owner, authVersion: nextAuthVersion } as unknown as Express.User;
+      await new Promise<void>((resolve, reject) => req.login(refreshedOwner, (error) => error ? reject(error) : resolve()));
       await recordSecurityEvent({ req, principalType: "owner", principalId: owner.id, eventType: "owner.password_change", outcome: "success" });
       return res.json({ success: true });
     } catch {
@@ -402,7 +413,10 @@ export function registerEmailLoginRoute(app: Express) {
       const [owner] = await db.select().from(restaurantOwners).where(eq(restaurantOwners.id, resetToken.ownerId)).limit(1);
       if (!owner || owner.provider !== "email") return res.status(400).json({ error: "Lien invalide ou expiré" });
 
-      await db.update(restaurantOwners).set({ passwordHash: await bcrypt.hash(newPassword, 10) }).where(eq(restaurantOwners.id, owner.id));
+      await db.update(restaurantOwners).set({
+        passwordHash: await bcrypt.hash(newPassword, 10),
+        authVersion: owner.authVersion + 1,
+      }).where(eq(restaurantOwners.id, owner.id));
       await recordSecurityEvent({ req, principalType: "owner", principalId: owner.id, eventType: "owner.password_reset", outcome: "success" });
       return res.json({ success: true });
     } catch {

@@ -48,6 +48,16 @@ export const ownerEmailLoginLimiter = rateLimit({
   handler: (_req, res) => res.status(429).json(authBlockedResponse),
 });
 
+/** Dedicated guardrail for creating or consuming enterprise member invitations. */
+export const memberInvitationLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler: (_req, res) =>
+    res.status(429).json({ error: "Trop de tentatives liées aux invitations. Réessayez dans 15 minutes." }),
+});
+
 /** General guardrail for the tRPC gateway. */
 export const apiLimiter = rateLimit({
   windowMs: 1 * 60 * 1000,

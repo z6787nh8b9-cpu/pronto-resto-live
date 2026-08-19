@@ -19,6 +19,7 @@ import { adminProcedure, publicProcedure, restaurantOwnerProcedure, router } fro
 import type { TrpcContext } from "../_core/context";
 import { storagePut } from "../storage";
 import { acceptedMediaTypes, hasValidMediaSignature } from "../media-validation";
+import { recordSecurityEvent } from "../security-events";
 
 const businessVertical = z.enum(["restaurant", "beauty", "retail", "service", "events", "other"]);
 const catalogType = z.enum(["menu", "services", "products", "price_list", "portfolio", "events"]);
@@ -258,23 +259,78 @@ export const businessesRouter = router({
         invitedByPrincipalId: ctx.restaurantOwner?.id ?? 0,
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       });
+      if (ctx.req.headers) {
+        await recordSecurityEvent({
+          req: ctx.req,
+          principalType: isPlatformAdmin(ctx) ? "admin" : "owner",
+          principalId: ctx.restaurantOwner?.id ?? ctx.adminAccount?.id ?? ctx.user?.id,
+          eventType: "business.member_invitation_created",
+          outcome: "success",
+        });
+      }
       return { token, expiresInDays: 7 };
     }),
 
   acceptMemberInvitation: restaurantOwnerProcedure
     .input(z.object({ token: z.string().regex(/^[a-f0-9]{64}$/i) }))
     .mutation(async ({ ctx, input }) => {
-      if (!ctx.restaurantOwner) throw new TRPCError({ code: "UNAUTHORIZED", message: "Connexion requise." });
+      const acceptingOwner = ctx.restaurantOwner;
+      if (!acceptingOwner) throw new TRPCError({ code: "UNAUTHORIZED", message: "Connexion requise." });
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
       const hash = createHash("sha256").update(input.token).digest("hex");
-      const [invite] = await db.select().from(businessMemberInvitations)
-        .where(and(eq(businessMemberInvitations.tokenHash, hash), eq(businessMemberInvitations.status, "pending"))).limit(1);
-      if (!invite || invite.expiresAt <= new Date()) throw new TRPCError({ code: "NOT_FOUND", message: "Invitation invalide ou expirée." });
-      if (invite.email.toLowerCase() !== ctx.restaurantOwner.email.toLowerCase()) throw new TRPCError({ code: "FORBIDDEN", message: "Cette invitation est destinée à une autre adresse email." });
-      await db.insert(businessMembers).values({ businessId: invite.businessId, principalType: "restaurant_owner", principalId: ctx.restaurantOwner.id, role: invite.role, status: "active" });
-      await db.update(businessMemberInvitations).set({ status: "accepted", acceptedByPrincipalId: ctx.restaurantOwner.id, acceptedAt: new Date() }).where(eq(businessMemberInvitations.id, invite.id));
-      return { businessId: invite.businessId, role: invite.role };
+      const accepted = await db.transaction(async (tx) => {
+        const [invite] = await tx.select().from(businessMemberInvitations)
+          .where(and(eq(businessMemberInvitations.tokenHash, hash), eq(businessMemberInvitations.status, "pending"))).limit(1);
+        if (!invite || invite.expiresAt <= new Date()) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Invitation invalide ou expirée." });
+        }
+        if (invite.email.toLowerCase() !== acceptingOwner.email.toLowerCase()) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Cette invitation est destinée à une autre adresse email." });
+        }
+
+        const [existingMembership] = await tx.select({ id: businessMembers.id }).from(businessMembers).where(and(
+          eq(businessMembers.businessId, invite.businessId),
+          eq(businessMembers.principalType, "restaurant_owner"),
+          eq(businessMembers.principalId, acceptingOwner.id),
+        )).limit(1);
+        if (existingMembership) {
+          throw new TRPCError({ code: "CONFLICT", message: "Ce compte est déjà membre de cette entreprise." });
+        }
+
+        const acceptedAt = new Date();
+        const [claimResult] = await tx.update(businessMemberInvitations).set({
+          status: "accepted",
+          acceptedByPrincipalId: acceptingOwner.id,
+          acceptedAt,
+        }).where(and(
+          eq(businessMemberInvitations.id, invite.id),
+          eq(businessMemberInvitations.status, "pending"),
+        ));
+        if (claimResult.affectedRows !== 1) {
+          throw new TRPCError({ code: "CONFLICT", message: "Cette invitation vient déjà d’être utilisée." });
+        }
+
+        await tx.insert(businessMembers).values({
+          businessId: invite.businessId,
+          principalType: "restaurant_owner",
+          principalId: acceptingOwner.id,
+          role: invite.role,
+          status: "active",
+          joinedAt: acceptedAt,
+        });
+        return { businessId: invite.businessId, role: invite.role };
+      });
+      if (ctx.req.headers) {
+        await recordSecurityEvent({
+          req: ctx.req,
+          principalType: "owner",
+          principalId: acceptingOwner.id,
+          eventType: "business.member_invitation_accepted",
+          outcome: "success",
+        });
+      }
+      return accepted;
     }),
 
   create: adminProcedure

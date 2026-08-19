@@ -27,41 +27,44 @@ console.log('[OAuth Config] Using callback base URL:', callbackBaseURL);
 export function initializePassport() {
   // Serialize user to session (supports both restaurant owners and admin accounts)
   passport.serializeUser((user: any, done) => {
-    console.log('[Passport] Serializing user:', user?.id, user?.email);
     // Differentiate between restaurant owners and admin accounts
+    const authVersion = Number.isInteger(user.authVersion) ? user.authVersion : 1;
     if (user.googleId && !user.facebookId) {
       // Could be either - check if it has invitationId (admin) or restaurantId (owner)
       if (user.invitationId !== undefined) {
-        done(null, `admin:${user.id}`);
+        done(null, `admin:${user.id}:${authVersion}`);
       } else {
-        done(null, `owner:${user.id}`);
+        done(null, `owner:${user.id}:${authVersion}`);
       }
     } else if (user.facebookId) {
-      done(null, `owner:${user.id}`);
+      done(null, `owner:${user.id}:${authVersion}`);
     } else {
-      done(null, `owner:${user.id}`); // Default to owner
+      done(null, `owner:${user.id}:${authVersion}`); // Default to owner
     }
   });
 
   // Deserialize user from session (supports both types)
   passport.deserializeUser(async (id: string, done) => {
-    console.log('[Passport] Deserializing user ID:', id);
     try {
       const db = await getDb();
       if (!db) {
         return done(new Error("Database not available"), null);
       }
 
-      const [type, userId] = id.split(':');
+      const [type, userId, version] = id.split(':');
       const numericId = parseInt(userId, 10);
+      const serializedVersion = parseInt(version, 10);
+      if (!Number.isInteger(numericId) || !Number.isInteger(serializedVersion)) {
+        return done(null, false);
+      }
 
       if (type === 'admin') {
         const { adminAccounts } = await import('../drizzle/schema');
         const [admin] = await db.select().from(adminAccounts).where(eq(adminAccounts.id, numericId)).limit(1);
-        done(null, admin || null);
+        done(null, admin?.authVersion === serializedVersion ? admin : null);
       } else {
         const [owner] = await db.select().from(restaurantOwners).where(eq(restaurantOwners.id, numericId)).limit(1);
-        done(null, owner || null);
+        done(null, owner?.authVersion === serializedVersion ? owner : null);
       }
     } catch (error) {
       done(error, null);
