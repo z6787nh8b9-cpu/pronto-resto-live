@@ -110,6 +110,11 @@ export default function RestaurantDashboard() {
     { enabled: !!restaurant?.id }
   );
 
+  const { data: analyticsSummary } = trpc.restaurant.getAnalyticsSummary.useQuery(
+    { restaurantId: restaurant?.id || 0 },
+    { enabled: !!restaurant?.id && Boolean(accessCheck?.authorized) }
+  );
+
   // Check if feature is available
   const canAccessTranslations = restaurant?.subscriptionTier === "pro" || restaurant?.subscriptionTier === "premium";
   const canAccessPremiumFeatures = restaurant?.subscriptionTier === "premium";
@@ -1042,7 +1047,7 @@ export default function RestaurantDashboard() {
                   <CardTitle className="text-sm font-medium">Vues de la page</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">0</div>
+                  <div className="text-2xl font-bold">{analyticsSummary?.pageViewsThisMonth || 0}</div>
                   <p className="text-xs text-muted-foreground">Ce mois-ci</p>
                 </CardContent>
               </Card>
@@ -1052,8 +1057,8 @@ export default function RestaurantDashboard() {
                   <CardTitle className="text-sm font-medium">Conversations Chatbot</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{chatbotConfig?.totalConversations || 0}</div>
-                  <p className="text-xs text-muted-foreground">Total</p>
+                  <div className="text-2xl font-bold">{analyticsSummary?.conversationsThisMonth || 0}</div>
+                  <p className="text-xs text-muted-foreground">Ce mois-ci · {analyticsSummary?.totalConversations || chatbotConfig?.totalConversations || 0} au total</p>
                 </CardContent>
               </Card>
 
