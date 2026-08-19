@@ -1202,7 +1202,8 @@
 - [x] Classer chaque dépendance Manus : supprimable, à remplacer ou structurellement requise pour l’hébergement actuel
 - [x] Retirer les parcours Manus OAuth et redirections non nécessaires aux accès métier PRONTO — redirections client, runtime Vite, callback OAuth et fallback serveur retirés
 - [x] Supprimer les modules OAuth Manus devenus inactifs après le retrait de leur enregistrement serveur
-- [ ] Remplacer le parcours d’invitation Super Admin hérité par une création locale email/mot de passe sécurisée avant de le réactiver
+- [x] Remplacer le parcours d’invitation Super Admin hérité par une création locale email/mot de passe sécurisée avant de le réactiver
+- [x] Vérifier dans le panneau Super Admin la création, le hachage non exposé et la révocation d’une invitation locale
 - [x] Retirer les mentions et liens Manus visibles depuis les interfaces publiques et d’administration — assets chatbot migrés vers une route PRONTO neutre et bundle public contrôlé
 - [x] Retirer le collecteur de debug et le script analytique Manus encore injectés dans le bundle de production
 - [x] Supprimer les artefacts publics de debug Manus de `client/public` et confirmer un bundle de production sans référence visible

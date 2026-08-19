@@ -3,9 +3,11 @@ import { router, publicProcedure } from "../_core/trpc";
 import { adminProcedure } from "../_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { getDb } from "../db";
-import { advertisements, adminInvitations, adminAccounts } from "../../drizzle/schema";
-import { randomBytes } from "crypto";
-import { eq, sql } from "drizzle-orm";
+import { advertisements, adminInvitations, adminAccounts, localAdminInvitations } from "../../drizzle/schema";
+import { createHash, randomBytes } from "crypto";
+import { and, eq, sql } from "drizzle-orm";
+import bcrypt from "bcrypt";
+import { passwordPolicyError } from "../password-policy";
 import {
   getAllRestaurants,
   createRestaurant,
@@ -239,80 +241,103 @@ export const adminRouter = router({
     return [] as Array<{ id: number; name: string | null; email: string | null; role: "user" | "admin" }>;
   }),
 
-  // Generate admin invitation link (no email required)
-  generateAdminInvitation: adminProcedure
-    .mutation(async ({ ctx }) => {
+  createLocalAdminInvitation: adminProcedure
+    .input(z.object({ email: z.string().email(), name: z.string().trim().min(2).max(255).optional() }))
+    .mutation(async ({ input, ctx }) => {
       const db = await getDb();
-      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
+      const email = input.email.trim().toLowerCase();
+      const [existingAdmin] = await db.select({ id: adminAccounts.id }).from(adminAccounts).where(eq(adminAccounts.email, email)).limit(1);
+      if (existingAdmin) throw new TRPCError({ code: "CONFLICT", message: "Cette adresse possède déjà un accès Super Admin." });
 
-      // Generate unique token
-      const token = randomBytes(32).toString('hex');
-      
-      // Set expiration to 7 days from now
-      const expiresAt = new Date();
-      expiresAt.setDate(expiresAt.getDate() + 7);
-
-      // Create invitation
-      await db.insert(adminInvitations).values({
-        token,
+      await db.update(localAdminInvitations).set({ status: "revoked" }).where(and(
+        eq(localAdminInvitations.email, email),
+        eq(localAdminInvitations.status, "pending"),
+      ));
+      const token = randomBytes(32).toString("hex");
+      const tokenHash = createHash("sha256").update(token).digest("hex");
+      const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+      await db.insert(localAdminInvitations).values({
+        email,
+        name: input.name?.trim() || null,
+        tokenHash,
         expiresAt,
-        createdBy: ctx.adminAccount!.id,
+        createdByAdminId: ctx.adminAccount!.id,
       });
-
-      return { success: true, token };
+      return { token, expiresInDays: 7 };
     }),
 
-  // List admin invitations
-  listAdminInvitations: adminProcedure.query(async () => {
+  listLocalAdminInvitations: adminProcedure.query(async () => {
     const db = await getDb();
-    if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
-
-    const invitations = await db.select().from(adminInvitations).orderBy(adminInvitations.createdAt);
-    return invitations;
+    if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
+    return db.select({
+      id: localAdminInvitations.id,
+      email: localAdminInvitations.email,
+      name: localAdminInvitations.name,
+      status: localAdminInvitations.status,
+      expiresAt: localAdminInvitations.expiresAt,
+      acceptedAt: localAdminInvitations.acceptedAt,
+      createdAt: localAdminInvitations.createdAt,
+    }).from(localAdminInvitations).orderBy(localAdminInvitations.createdAt);
   }),
 
-  // Delete/revoke admin invitation
-  revokeAdminInvitation: adminProcedure
+  revokeLocalAdminInvitation: adminProcedure
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
       const db = await getDb();
-      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
-
-      await db.delete(adminInvitations).where(eq(adminInvitations.id, input.id));
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
+      await db.update(localAdminInvitations).set({ status: "revoked" }).where(and(
+        eq(localAdminInvitations.id, input.id),
+        eq(localAdminInvitations.status, "pending"),
+      ));
       return { success: true };
     }),
 
-  // Check invitation validity (public procedure)
-  checkAdminInvitation: publicProcedure
-    .input(z.object({ token: z.string() }))
+  checkLocalAdminInvitation: publicProcedure
+    .input(z.object({ token: z.string().regex(/^[a-f0-9]{64}$/i) }))
     .query(async ({ input }) => {
       const db = await getDb();
-      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
-
-      const [invitation] = await db.select().from(adminInvitations)
-        .where(eq(adminInvitations.token, input.token))
-        .limit(1);
-
-      if (!invitation) {
-        return { valid: false, reason: "invalid" };
-      }
-
-      if (invitation.usedAt) {
-        return { valid: false, reason: "used" };
-      }
-
-      if (new Date(invitation.expiresAt) < new Date()) {
-        return { valid: false, reason: "expired" };
-      }
-
-      return { valid: true };
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
+      const tokenHash = createHash("sha256").update(input.token).digest("hex");
+      const [invite] = await db.select().from(localAdminInvitations).where(eq(localAdminInvitations.tokenHash, tokenHash)).limit(1);
+      if (!invite || invite.status !== "pending" || invite.expiresAt < new Date()) return { valid: false };
+      return { valid: true, email: invite.email, name: invite.name };
     }),
 
-  // The historical invitation acceptance expected a platform identity. It is
-  // deliberately disabled until a local email/password acceptance flow ships.
-  acceptAdminInvitation: publicProcedure
-    .input(z.object({ token: z.string() }))
-    .mutation(async ({ input, ctx }) => {
-      throw new TRPCError({ code: "BAD_REQUEST", message: "Le parcours d’invitation hérité est désactivé pendant la migration vers les comptes PRONTO locaux." });
+  acceptLocalAdminInvitation: publicProcedure
+    .input(z.object({
+      token: z.string().regex(/^[a-f0-9]{64}$/i),
+      email: z.string().email(),
+      name: z.string().trim().min(2).max(255),
+      password: z.string().min(12).max(128),
+    }))
+    .mutation(async ({ input }) => {
+      const policyIssue = passwordPolicyError(input.password);
+      if (policyIssue) throw new TRPCError({ code: "BAD_REQUEST", message: policyIssue });
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
+      const email = input.email.trim().toLowerCase();
+      const tokenHash = createHash("sha256").update(input.token).digest("hex");
+      const [invite] = await db.select().from(localAdminInvitations).where(eq(localAdminInvitations.tokenHash, tokenHash)).limit(1);
+      if (!invite || invite.status !== "pending" || invite.expiresAt < new Date() || invite.email !== email) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Cette invitation est invalide, expirée ou déjà utilisée." });
+      }
+      const passwordHash = await bcrypt.hash(input.password, 12);
+      await db.transaction(async (tx) => {
+        await tx.insert(adminAccounts).values({
+          email,
+          name: input.name.trim(),
+          passwordHash,
+          invitationToken: null,
+        });
+        const [account] = await tx.select({ id: adminAccounts.id }).from(adminAccounts).where(eq(adminAccounts.email, email)).limit(1);
+        await tx.update(localAdminInvitations).set({
+          status: "accepted",
+          acceptedAt: new Date(),
+          acceptedByAdminId: account.id,
+        }).where(and(eq(localAdminInvitations.id, invite.id), eq(localAdminInvitations.status, "pending")));
+      });
+      return { success: true };
     }),
+
 });

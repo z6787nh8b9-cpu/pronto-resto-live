@@ -779,6 +779,28 @@ export type AdminInvitation = typeof adminInvitations.$inferSelect;
 export type InsertAdminInvitation = typeof adminInvitations.$inferInsert;
 
 /**
+ * Local PRONTO Super Admin invitations. Raw tokens are never persisted and
+ * acceptance is bound to the email selected by the inviting Super Admin.
+ */
+export const localAdminInvitations = mysqlTable("local_admin_invitations", {
+  id: int("id").autoincrement().primaryKey(),
+  email: varchar("email", { length: 320 }).notNull(),
+  name: varchar("name", { length: 255 }),
+  tokenHash: varchar("tokenHash", { length: 64 }).notNull().unique(),
+  status: mysqlEnum("status", ["pending", "accepted", "revoked", "expired"]).notNull().default("pending"),
+  expiresAt: timestamp("expiresAt").notNull(),
+  acceptedAt: timestamp("acceptedAt"),
+  acceptedByAdminId: int("acceptedByAdminId"),
+  createdByAdminId: int("createdByAdminId").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+}, (table) => [
+  index("local_admin_invitations_email_idx").on(table.email, table.status),
+  index("local_admin_invitations_expiry_idx").on(table.expiresAt),
+]);
+
+export type LocalAdminInvitation = typeof localAdminInvitations.$inferSelect;
+
+/**
  * Admin accounts table - For admins who joined via invitation link
  * Uses simple email/password authentication (no OAuth)
  * Separate from users table (Manus OAuth) to support independent authentication

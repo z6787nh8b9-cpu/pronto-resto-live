@@ -3,7 +3,7 @@
  * Allows invited users to create an admin account with email/password
  */
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
@@ -24,15 +24,25 @@ export default function AdminInvite() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
 
-  const registerMutation = trpc.adminAuth.register.useMutation({
+  const { data: invitation, isLoading: isCheckingInvitation } = trpc.admin.checkLocalAdminInvitation.useQuery(
+    { token: token || "" },
+    { enabled: !!token, retry: false },
+  );
+  const registerMutation = trpc.admin.acceptLocalAdminInvitation.useMutation({
     onSuccess: () => {
-      // Redirect to admin panel after successful registration
-      setLocation("/admin");
+      setLocation("/admin/login");
     },
     onError: (err) => {
       setError(err.message);
     },
   });
+
+  useEffect(() => {
+    if (invitation?.valid) {
+      setEmail(invitation.email ?? "");
+      if (invitation.name) setName(invitation.name ?? "");
+    }
+  }, [invitation]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,8 +59,8 @@ export default function AdminInvite() {
       return;
     }
 
-    if (password.length < 8) {
-      setError("Le mot de passe doit contenir au moins 8 caractères");
+    if (password.length < 12 || !/[a-z]/.test(password) || !/[A-Z]/.test(password) || !/\d/.test(password)) {
+      setError("Le mot de passe doit contenir 12 caractères, une majuscule, une minuscule et un chiffre.");
       return;
     }
 
@@ -76,6 +86,14 @@ export default function AdminInvite() {
         </Card>
       </div>
     );
+  }
+
+  if (isCheckingInvitation) {
+    return <div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="h-8 w-8 animate-spin text-pronto-primary" /></div>;
+  }
+
+  if (!invitation?.valid) {
+    return <div className="min-h-screen flex items-center justify-center bg-background p-4"><Card className="w-full max-w-md"><CardHeader><CardTitle>Invitation invalide</CardTitle><CardDescription>Ce lien est expiré, déjà utilisé ou ne correspond plus à une invitation active.</CardDescription></CardHeader></Card></div>;
   }
 
   return (
@@ -117,7 +135,7 @@ export default function AdminInvite() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                disabled={registerMutation.isPending}
+                disabled
               />
             </div>
 
@@ -146,7 +164,7 @@ export default function AdminInvite() {
                 disabled={registerMutation.isPending}
               />
               <p className="text-xs text-muted-foreground">
-                Minimum 8 caractères
+                12 caractères minimum, avec majuscule, minuscule et chiffre
               </p>
             </div>
 

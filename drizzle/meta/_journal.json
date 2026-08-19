@@ -225,6 +225,13 @@
       "when": 1787051329501,
       "tag": "0031_natural_adam_warlock",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "5",
+      "when": 1787156748374,
+      "tag": "0032_opposite_skaar",
+      "breakpoints": true
     }
   ]
 }

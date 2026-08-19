@@ -1,352 +1,60 @@
 import { useState } from "react";
 import { trpc } from "@/lib/trpc";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Shield, ShieldOff, UserPlus, Crown, Link as LinkIcon, Clock, CheckCircle, XCircle, Copy, Trash2, Plus } from "lucide-react";
+import { CheckCircle2, Clock3, Copy, Mail, Shield, Trash2, UserPlus } from "lucide-react";
 import { toast } from "sonner";
 
 export default function Admins() {
-  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
-  const [isGenerating, setIsGenerating] = useState(false);
-
-  // Queries
-  const { data: admins, refetch: refetchAdmins } = trpc.admin.listAdmins.useQuery();
-  const { data: allUsers } = trpc.admin.listAllUsers.useQuery();
-  const { data: invitations, refetch: refetchInvitations } = trpc.admin.listAdminInvitations.useQuery();
-
-  // Mutations
-  const promoteToAdmin = trpc.admin.promoteToAdmin.useMutation({
-    onSuccess: () => {
-      toast.success("Utilisateur promu admin avec succès");
-      refetchAdmins();
-      setSelectedUserId(null);
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [lastInvitationUrl, setLastInvitationUrl] = useState<string | null>(null);
+  const { data: admins } = trpc.admin.listAdmins.useQuery();
+  const { data: invitations, refetch } = trpc.admin.listLocalAdminInvitations.useQuery();
+  const createInvitation = trpc.admin.createLocalAdminInvitation.useMutation({
+    onSuccess: async ({ token }) => {
+      const url = `${window.location.origin}/invite-admin/${token}`;
+      setLastInvitationUrl(url);
+      setEmail("");
+      setName("");
+      await refetch();
+      try { await navigator.clipboard.writeText(url); toast.success("Lien sécurisé copié dans le presse-papiers."); }
+      catch { toast.success("Invitation créée. Copiez le lien affiché ci-dessous."); }
     },
-    onError: (error: any) => {
-      toast.error(error.message || "Erreur lors de la promotion");
-    },
+    onError: (error) => toast.error(error.message),
+  });
+  const revokeInvitation = trpc.admin.revokeLocalAdminInvitation.useMutation({
+    onSuccess: async () => { await refetch(); toast.success("Invitation révoquée."); },
+    onError: (error) => toast.error(error.message),
   });
 
-  const demoteToUser = trpc.admin.demoteToUser.useMutation({
-    onSuccess: () => {
-      toast.success("Admin rétrogradé en utilisateur");
-      refetchAdmins();
-    },
-    onError: (error: any) => {
-      toast.error(error.message || "Erreur lors de la rétrogradation");
-    },
-  });
-
-  const generateInvitation = trpc.admin.generateAdminInvitation.useMutation({
-    onSuccess: (data) => {
-      toast.success("Lien d'invitation généré !");
-      setIsGenerating(false);
-      refetchInvitations();
-      
-      // Copy invitation link to clipboard
-      const invitationUrl = `${window.location.origin}/invite-admin/${data.token}`;
-      navigator.clipboard.writeText(invitationUrl);
-      toast.success("Lien copié dans le presse-papiers");
-    },
-    onError: (error: any) => {
-      toast.error(error.message || "Erreur lors de la génération");
-      setIsGenerating(false);
-    },
-  });
-
-  const revokeInvitation = trpc.admin.revokeAdminInvitation.useMutation({
-    onSuccess: () => {
-      toast.success("Invitation révoquée");
-      refetchInvitations();
-    },
-    onError: (error: any) => {
-      toast.error(error.message || "Erreur lors de la révocation");
-    },
-  });
-
-  const nonAdminUsers = allUsers?.filter(u => u.role !== 'admin') || [];
-
-  const handleGenerateInvitation = () => {
-    setIsGenerating(true);
-    generateInvitation.mutate();
+  const copyLastInvitation = async () => {
+    if (!lastInvitationUrl) return;
+    await navigator.clipboard.writeText(lastInvitationUrl);
+    toast.success("Lien copié.");
+  };
+  const status = (value: "pending" | "accepted" | "revoked" | "expired") => {
+    if (value === "accepted") return <Badge className="bg-emerald-600"><CheckCircle2 className="mr-1 h-3 w-3" />Acceptée</Badge>;
+    if (value === "pending") return <Badge variant="secondary"><Clock3 className="mr-1 h-3 w-3" />En attente</Badge>;
+    return <Badge variant="outline">{value === "revoked" ? "Révoquée" : "Expirée"}</Badge>;
   };
 
-  const handleCopyInviteLink = (token: string) => {
-    const invitationUrl = `${window.location.origin}/invite-admin/${token}`;
-    navigator.clipboard.writeText(invitationUrl);
-    toast.success("Lien copié dans le presse-papiers");
-  };
-
-  const isInvitationExpired = (expiresAt: Date) => {
-    return new Date(expiresAt) < new Date();
-  };
-
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold">Gestion des Administrateurs</h2>
-          <p className="text-muted-foreground">Gérez les comptes administrateurs de la plateforme</p>
-        </div>
-      </div>
-
-      <Tabs defaultValue="active" className="space-y-6">
-        <TabsList>
-          <TabsTrigger value="active">
-            <Shield className="h-4 w-4 mr-2" />
-            Admins Actifs ({admins?.length || 0})
-          </TabsTrigger>
-          <TabsTrigger value="generate">
-            <LinkIcon className="h-4 w-4 mr-2" />
-            Générer Invitation
-          </TabsTrigger>
-          <TabsTrigger value="promote">
-            <UserPlus className="h-4 w-4 mr-2" />
-            Promouvoir Utilisateur
-          </TabsTrigger>
-        </TabsList>
-
-        {/* Active Admins Tab */}
-        <TabsContent value="active">
-          <Card>
-            <CardHeader>
-              <CardTitle>Administrateurs Actifs</CardTitle>
-              <CardDescription>
-                {admins?.length || 0} administrateur(s) avec accès complet à la plateforme
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {admins?.map((admin) => (
-                  <div
-                    key={admin.id}
-                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="h-12 w-12 rounded-full bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
-                        <Crown className="h-6 w-6 text-white" />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <p className="font-semibold">{admin.name || 'Sans nom'}</p>
-                          <Badge variant="default" className="bg-amber-600">
-                            <Shield className="h-3 w-3 mr-1" />
-                            Admin
-                          </Badge>
-                        </div>
-                        <p className="text-sm text-muted-foreground">{admin.email || 'Pas d\'email'}</p>
-                        <p className="text-xs text-muted-foreground">
-                          Dernière connexion : {admin.lastSignedIn ? new Date(admin.lastSignedIn).toLocaleDateString('fr-FR') : 'Jamais'}
-                        </p>
-                      </div>
-                    </div>
-
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        if (confirm(`Êtes-vous sûr de vouloir rétrograder ${admin.name || 'cet utilisateur'} ?`)) {
-                          demoteToUser.mutate({ userId: admin.id });
-                        }
-                      }}
-                      disabled={demoteToUser.isPending}
-                    >
-                      <ShieldOff className="h-4 w-4 mr-2" />
-                      Rétrograder
-                    </Button>
-                  </div>
-                ))}
-
-                {admins?.length === 0 && (
-                  <div className="text-center py-12 text-muted-foreground">
-                    <Shield className="h-12 w-12 mx-auto mb-4 opacity-20" />
-                    <p>Aucun administrateur trouvé</p>
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Generate Invitation Tab */}
-        <TabsContent value="generate" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <LinkIcon className="h-5 w-5" />
-                Générer un lien d'invitation
-              </CardTitle>
-              <CardDescription>
-                Créez un lien unique permettant à n'importe qui de devenir administrateur (valide 7 jours)
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button 
-                onClick={handleGenerateInvitation} 
-                disabled={isGenerating}
-                size="lg"
-                className="w-full"
-              >
-                <Plus className="mr-2 h-5 w-5" />
-                {isGenerating ? "Génération..." : "Générer un nouveau lien"}
-              </Button>
-              <p className="text-sm text-muted-foreground mt-4 text-center">
-                Le lien sera automatiquement copié dans votre presse-papiers
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Pending Invitations */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Clock className="h-5 w-5" />
-                Liens d'invitation ({invitations?.length || 0})
-              </CardTitle>
-              <CardDescription>
-                Tous les liens générés et leur statut
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {invitations && invitations.length > 0 ? (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Token</TableHead>
-                      <TableHead>Statut</TableHead>
-                      <TableHead>Créé le</TableHead>
-                      <TableHead>Expire le</TableHead>
-                      <TableHead className="text-right">Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {invitations.map((invitation) => {
-                      const expired = isInvitationExpired(invitation.expiresAt);
-                      const used = !!invitation.usedAt;
-                      
-                      return (
-                        <TableRow key={invitation.id}>
-                          <TableCell className="font-mono text-xs">
-                            {invitation.token.substring(0, 16)}...
-                          </TableCell>
-                          <TableCell>
-                            {used ? (
-                              <Badge variant="default" className="bg-green-500">
-                                <CheckCircle className="mr-1 h-3 w-3" />
-                                Utilisé
-                              </Badge>
-                            ) : expired ? (
-                              <Badge variant="destructive">
-                                <XCircle className="mr-1 h-3 w-3" />
-                                Expiré
-                              </Badge>
-                            ) : (
-                              <Badge variant="secondary">
-                                <Clock className="mr-1 h-3 w-3" />
-                                Actif
-                              </Badge>
-                            )}
-                          </TableCell>
-                          <TableCell>
-                            {new Date(invitation.createdAt).toLocaleDateString('fr-FR')}
-                          </TableCell>
-                          <TableCell>
-                            {new Date(invitation.expiresAt).toLocaleDateString('fr-FR')}
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <div className="flex gap-2 justify-end">
-                              {!used && !expired && (
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  onClick={() => handleCopyInviteLink(invitation.token)}
-                                >
-                                  <Copy className="h-4 w-4" />
-                                </Button>
-                              )}
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => {
-                                  if (confirm(`Êtes-vous sûr de vouloir révoquer cette invitation ?`)) {
-                                    revokeInvitation.mutate({ id: invitation.id });
-                                  }
-                                }}
-                              >
-                                <Trash2 className="h-4 w-4 text-destructive" />
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              ) : (
-                <p className="text-center text-muted-foreground py-8">
-                  Aucune invitation générée
-                </p>
-              )}
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        {/* Promote User Tab */}
-        <TabsContent value="promote">
-          <Card>
-            <CardHeader>
-              <CardTitle>Promouvoir un utilisateur existant</CardTitle>
-              <CardDescription>
-                Sélectionnez un utilisateur déjà inscrit pour lui donner les droits d'administrateur
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <Select
-                  value={selectedUserId?.toString()}
-                  onValueChange={(value) => setSelectedUserId(parseInt(value))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner un utilisateur" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {nonAdminUsers.map((user) => (
-                      <SelectItem key={user.id} value={user.id.toString()}>
-                        <div className="flex flex-col">
-                          <span>{user.name || 'Sans nom'}</span>
-                          <span className="text-xs text-muted-foreground">{user.email || 'Pas d\'email'}</span>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-
-                {nonAdminUsers.length === 0 && (
-                  <p className="text-sm text-muted-foreground text-center py-4">
-                    Tous les utilisateurs sont déjà administrateurs
-                  </p>
-                )}
-
-                <Button
-                  onClick={() => {
-                    if (selectedUserId) {
-                      promoteToAdmin.mutate({ userId: selectedUserId });
-                    }
-                  }}
-                  disabled={!selectedUserId || promoteToAdmin.isPending}
-                  className="w-full"
-                >
-                  <Shield className="h-4 w-4 mr-2" />
-                  Promouvoir en Admin
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
-  );
+  return <div className="space-y-7">
+    <section className="grid gap-4 lg:grid-cols-3">
+      <Card className="lg:col-span-2"><CardHeader><CardTitle className="flex items-center gap-2"><UserPlus className="h-5 w-5 text-pronto-primary" />Inviter un Super Admin</CardTitle><CardDescription>L’accès est strictement lié à l’adresse renseignée, valable sept jours et consommable une seule fois.</CardDescription></CardHeader><CardContent>
+        <form className="grid gap-4 sm:grid-cols-2" onSubmit={(event) => { event.preventDefault(); createInvitation.mutate({ email, name: name || undefined }); }}>
+          <div className="space-y-2"><Label htmlFor="admin-email">Adresse professionnelle</Label><Input id="admin-email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} placeholder="prenom@entreprise.fr" required disabled={createInvitation.isPending} /></div>
+          <div className="space-y-2"><Label htmlFor="admin-name">Nom <span className="text-muted-foreground">(facultatif)</span></Label><Input id="admin-name" value={name} onChange={(event) => setName(event.target.value)} placeholder="Prénom Nom" disabled={createInvitation.isPending} /></div>
+          <Button type="submit" className="sm:col-span-2" disabled={createInvitation.isPending}><Mail className="mr-2 h-4 w-4" />{createInvitation.isPending ? "Création…" : "Créer l’invitation sécurisée"}</Button>
+        </form>
+        {lastInvitationUrl && <div className="mt-5 rounded-xl border border-pronto-primary/20 bg-pronto-primary/5 p-4"><p className="text-sm font-medium">Lien à transmettre de manière sécurisée</p><div className="mt-2 flex items-center gap-2"><code className="min-w-0 flex-1 break-all text-xs text-muted-foreground">{lastInvitationUrl}</code><Button type="button" size="icon" variant="outline" onClick={copyLastInvitation} aria-label="Copier le lien"><Copy className="h-4 w-4" /></Button></div><p className="mt-2 text-xs text-muted-foreground">Il n’est plus affichable après fermeture de cette page : seul son hachage est conservé.</p></div>}
+      </CardContent></Card>
+      <Card><CardHeader><CardTitle className="flex items-center gap-2"><Shield className="h-5 w-5 text-pronto-primary" />Accès actifs</CardTitle><CardDescription>{admins?.length ?? 0} compte(s) local(aux) habilité(s).</CardDescription></CardHeader><CardContent className="space-y-3">{admins?.map((admin) => <div key={admin.id} className="rounded-xl border p-3"><p className="font-medium">{admin.name || "Sans nom"}</p><p className="truncate text-sm text-muted-foreground">{admin.email}</p></div>)}</CardContent></Card>
+    </section>
+    <Card><CardHeader><CardTitle>Historique des invitations</CardTitle><CardDescription>Les jetons ne sont jamais affichés ni stockés en clair.</CardDescription></CardHeader><CardContent>{invitations?.length ? <Table><TableHeader><TableRow><TableHead>Destinataire</TableHead><TableHead>Statut</TableHead><TableHead>Créée</TableHead><TableHead>Expiration</TableHead><TableHead className="text-right">Action</TableHead></TableRow></TableHeader><TableBody>{invitations.map((invitation) => <TableRow key={invitation.id}><TableCell><p className="font-medium">{invitation.name || "Sans nom"}</p><p className="text-sm text-muted-foreground">{invitation.email}</p></TableCell><TableCell>{status(invitation.status)}</TableCell><TableCell>{new Date(invitation.createdAt).toLocaleDateString("fr-FR")}</TableCell><TableCell>{new Date(invitation.expiresAt).toLocaleDateString("fr-FR")}</TableCell><TableCell className="text-right">{invitation.status === "pending" && <Button size="icon" variant="ghost" onClick={() => revokeInvitation.mutate({ id: invitation.id })} disabled={revokeInvitation.isPending} aria-label="Révoquer l’invitation"><Trash2 className="h-4 w-4 text-destructive" /></Button>}</TableCell></TableRow>)}</TableBody></Table> : <p className="py-7 text-center text-sm text-muted-foreground">Aucune invitation Super Admin n’a été créée.</p>}</CardContent></Card>
+  </div>;
 }
