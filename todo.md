@@ -1135,6 +1135,7 @@
 - [x] Couvert par tests l’archivage et la restauration réversible d’un média d’entreprise autorisé
 - [x] Exposé la restauration contrôlée d’un média archivé dans la médiathèque entreprise
 - [x] Harmonisé les libellés de formule dans la supervision Super Admin sans modifier les souscriptions stockées
+- [x] Harmonisé le badge de formule de la page détaillée Super Admin sans modifier la souscription stockée
 - [x] Rédigé un README professionnel couvrant l’architecture, la sécurité, les parcours et l’exploitation de PRONTO
 - [x] Synchronisé l’état validé du projet vers le dépôt GitHub z6787nh8b9-cpu/pronto-resto-live
 - [x] Supprimé l'identifiant propriétaire codé en dur lors de la création d'une entreprise par le Super Admin

@@ -239,7 +239,7 @@ export default function AdminManageRestaurant() {
                 Voir la page publique
               </Button>
               <Badge variant={restaurant.subscriptionTier === "premium" ? "default" : "secondary"}>
-                {restaurant.subscriptionTier === "premium" ? "Premium" : "Basic"}
+                {restaurant.subscriptionTier === "premium" ? "Premium" : restaurant.subscriptionTier === "pro" ? "Pro" : "Essentiel"}
               </Badge>
             </div>
           </div>
