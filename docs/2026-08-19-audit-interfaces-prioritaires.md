@@ -23,3 +23,7 @@ Les compteurs Collections actives et Éléments publiables affichent désormais 
 La capture à 390 px confirme que le dashboard conserve une colonne de lecture claire : hero, indicateurs, actions principales et onboarding se suivent sans débordement horizontal. Les indicateurs sont volontairement empilés, ce qui préserve leur lisibilité. Les onglets restent compacts et défilables horizontalement ; une future itération pourra rendre plus explicite l’existence des onglets hors champ, mais aucun correctif bloquant n’est requis pour ce jalon.
 
 L’indice de défilement a été ajouté et contrôlé sur smartphone : un fondu latéral ainsi qu’une instruction explicite signalent les sections accessibles hors du premier segment d’onglets. Le contrôle reste non interactif et ne perturbe ni le défilement tactile ni la navigation au clavier.
+
+## Cohérence multi-secteurs du dashboard
+
+Le libellé visible de l’onglet `Catalogue`, son en-tête et son aide contextuelle ont été généralisés. La revue navigateur confirme ce wording dans le dashboard La Voile Rouge, tandis que l’identifiant interne `menu` reste inchangé : les URL, l’état d’onglet et les procédures legacy restent donc compatibles.

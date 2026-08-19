@@ -498,7 +498,7 @@ export default function RestaurantDashboard() {
             <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0" aria-label="Onglets de l’espace entreprise, défilement horizontal disponible">
               <TabsList className="inline-flex lg:grid w-auto lg:w-full grid-cols-5 xl:grid-cols-12 gap-1 lg:gap-2 min-w-full lg:min-w-0">
             <TabsTrigger value="overview">Vue d’ensemble</TabsTrigger>
-            <TabsTrigger value="menu">Menu</TabsTrigger>
+              <TabsTrigger value="menu">Catalogue</TabsTrigger>
             <TabsTrigger value="import">Importer</TabsTrigger>
             <TabsTrigger value="media">Médiathèque</TabsTrigger>
             <TabsTrigger value="settings">Paramètres</TabsTrigger>
@@ -575,7 +575,7 @@ export default function RestaurantDashboard() {
             </section>
 
             <section className="grid gap-4 sm:grid-cols-3">
-              <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Collections actives</p><DashboardMetricValue label="collections actives" isLoading={isCategoriesLoading} value={categories?.length ?? 0} /><p className="mt-2 text-sm text-muted-foreground">Organisez-les dans l’onglet Menu.</p></div>
+              <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Collections actives</p><DashboardMetricValue label="collections actives" isLoading={isCategoriesLoading} value={categories?.length ?? 0} /><p className="mt-2 text-sm text-muted-foreground">Organisez-les dans l’onglet Catalogue.</p></div>
               <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Éléments publiables</p><DashboardMetricValue label="éléments publiables" isLoading={isMenuItemsLoading} value={menuItems?.length ?? 0} /><p className="mt-2 text-sm text-muted-foreground">Plats, produits ou prestations selon votre activité.</p></div>
               <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Formule actuelle</p><p className="mt-2 font-display text-4xl capitalize text-foreground">{restaurant.subscriptionTier}</p><p className="mt-2 text-sm text-muted-foreground">Les fonctions disponibles évoluent avec votre formule.</p></div>
             </section>
@@ -593,12 +593,12 @@ export default function RestaurantDashboard() {
           <TabsContent value="menu" className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
               <div>
-                <h2 className="text-lg sm:text-xl md:text-2xl font-bold">Gestion du Menu</h2>
-                <p className="text-xs sm:text-sm text-muted-foreground">Organisez vos catégories et plats</p>
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold">Gestion du catalogue</h2>
+                <p className="text-xs sm:text-sm text-muted-foreground">Organisez vos collections et éléments</p>
               </div>
               <Button onClick={() => setIsAddCategoryOpen(true)} size="sm" className="w-full sm:w-auto text-xs sm:text-sm">
                 <Plus className="mr-2 h-4 w-4" />
-                Nouvelle Catégorie
+                Nouvelle collection
               </Button>
             </div>
 
