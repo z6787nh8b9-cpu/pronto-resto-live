@@ -1219,7 +1219,7 @@
 - [x] Unifier la destruction serveur et l’effacement du cookie de chaque chemin de déconnexion propriétaire, Super Admin et Manus
 - [x] Vérifier et compléter les protections CSRF des mutations critiques, sans dégrader OAuth ni les formulaires publics légitimes
 - [x] Ajouter un contrôle d’origine explicite aux mutations tRPC et aux changements de mot de passe authentifiés
-- [ ] Auditer les en-têtes de sécurité réellement servis en production : CSP, HSTS, anti-clickjacking, cookies et cache
+- [x] Auditer les en-têtes de sécurité réellement servis en production : CSP, HSTS, anti-clickjacking, cookies et cache — CSP, HSTS, anti-clickjacking, anti-MIME, referrer et permissions-policy confirmés le 19 août 2026
 - [x] Ajouter et tester une politique CSP de production restrictive, compatible avec reCAPTCHA, polices et médias de vitrines
 - [x] Ajouter des limites de débit et une journalisation minimisée pour la création et l’acceptation d’invitations membres
 - [x] Journaliser la création et l’acceptation d’invitations membres sans persister le jeton ou l’adresse invitée
