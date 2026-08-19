@@ -37,7 +37,7 @@ export const openingHoursRouter = router({
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
       const [restaurant] = await db.select().from(restaurants).where(eq(restaurants.id, input.restaurantId)).limit(1);
-      const isAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      const isAdmin = Boolean(ctx.adminAccount);
       if (!restaurant || (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id)) throw new TRPCError({ code: "FORBIDDEN" });
 
       // Check if entry exists
@@ -96,7 +96,7 @@ export const openingHoursRouter = router({
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
       const [restaurant] = await db.select().from(restaurants).where(eq(restaurants.id, input.restaurantId)).limit(1);
-      const isAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      const isAdmin = Boolean(ctx.adminAccount);
       if (!restaurant || (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id)) throw new TRPCError({ code: "FORBIDDEN" });
 
       // Process each day

@@ -26,6 +26,8 @@ Les contrôles automatisés ciblés couvrent les sessions, la protection de l’
 
 Une analyse des tables `business_members` et `import_jobs` a confirmé qu’aucune donnée active ne reposait sur l’ancienne variante de principal. La migration `0033_glamorous_tusk.sql` limite désormais les deux énumérations aux seuls principaux PRONTO `restaurant_owner` et `admin_account`. Le fallback correspondant a été retiré du routeur d’import ; sa régression vérifie l’absence de cette variante dans le routeur et le schéma.
 
+Les routeurs métier d’horaires et de traduction ne consultent plus non plus le principal historique pour accorder un droit administrateur. Leurs contrôles reposent désormais exclusivement sur `restaurantOwner` pour le propriétaire concerné et `adminAccount` pour le Super Admin PRONTO. Une régression dédiée verrouille cette absence de fallback.
+
 ## Régressions exécutées
 
 | Commande | Résultat |

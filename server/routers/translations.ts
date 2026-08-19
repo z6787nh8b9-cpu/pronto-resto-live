@@ -53,8 +53,8 @@ export const translationsRouter = router({
         throw new Error("Restaurant not found");
       }
 
-      // Check if user owns this restaurant or is admin
-      const isAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      // Check whether the local owner owns this restaurant or a local Super Admin intervenes.
+      const isAdmin = Boolean(ctx.adminAccount);
       if (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id) {
         throw new Error("Unauthorized");
       }
@@ -190,8 +190,8 @@ export const translationsRouter = router({
         throw new Error("Restaurant not found");
       }
 
-      // Check if user owns this restaurant or is admin
-      const isAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      // Check whether the local owner owns this restaurant or a local Super Admin intervenes.
+      const isAdmin = Boolean(ctx.adminAccount);
       if (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id) {
         throw new Error("Unauthorized");
       }
@@ -254,7 +254,7 @@ export const translationsRouter = router({
         throw new Error("Restaurant not found");
       }
 
-      const isPlatformAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      const isPlatformAdmin = Boolean(ctx.adminAccount);
       if (!isPlatformAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id) {
         throw new Error("Unauthorized");
       }
@@ -379,8 +379,8 @@ export const translationsRouter = router({
         throw new Error("Restaurant not found");
       }
 
-      // Check if user owns this restaurant or is admin
-      const isAdmin = Boolean(ctx.adminAccount || ctx.user?.role === "admin");
+      // Check whether the local owner owns this restaurant or a local Super Admin intervenes.
+      const isAdmin = Boolean(ctx.adminAccount);
       if (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id) {
         throw new Error("Unauthorized");
       }
