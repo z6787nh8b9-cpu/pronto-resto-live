@@ -1232,7 +1232,7 @@
 - [x] Créer un chrome public partagé : navigation flottante, actions prioritaires regroupées, profondeur et z-index cohérents
 - [ ] Définir un socle visuel premium multi-secteurs : typographies sans serif et serif non génériques, rythme vertical, matériaux et tokens cohérents
 - [x] Refondre le hero public : image 1920×600, flou d’arrière-plan 8px, voile sombre lisible, navigation flottante et hiérarchie de marque
-- [ ] Remplacer les cartes, contrôles et CTA incohérents par des composants à double contour, focus visible et micro-interactions accessibles
+- [x] Remplacer les cartes, contrôles et CTA incohérents par des composants à double contour, focus visible et micro-interactions accessibles
 - [ ] Ajouter des entrées de contenu performantes via IntersectionObserver, des transitions interruptibles et le respect de la réduction des animations
 - [ ] Vérifier chaque vitrine restaurateur, beauté, retail et service aux formats mobile, tablette et bureau sans modifier les URL ni données historiques
 

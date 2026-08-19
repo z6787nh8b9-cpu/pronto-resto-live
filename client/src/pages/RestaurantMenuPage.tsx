@@ -176,12 +176,12 @@ export default function RestaurantMenuPage() {
           <div className="mx-auto max-w-xl">
             <div className="relative"><Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><Input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Rechercher dans la sélection" className="h-12 rounded-2xl border-border/80 bg-card pl-11 shadow-sm" aria-label="Rechercher dans la sélection" /></div>
           </div>
-          {hasDietaryMetadata && <div className="mt-4 flex flex-wrap justify-center gap-2">
+          {hasDietaryMetadata && <div className="mt-4 flex flex-wrap justify-center gap-2" aria-label="Filtres du catalogue">
             <Button
               variant={filters.vegetarian ? "default" : "outline"}
               size="sm"
               onClick={() => toggleFilter("vegetarian")}
-              className="gap-2"
+              className="h-9 gap-2 rounded-xl border-border/80 bg-card px-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]"
             >
               <Leaf className="h-4 w-4" />
               Végétarien
@@ -190,7 +190,7 @@ export default function RestaurantMenuPage() {
               variant={filters.vegan ? "default" : "outline"}
               size="sm"
               onClick={() => toggleFilter("vegan")}
-              className="gap-2"
+              className="h-9 gap-2 rounded-xl border-border/80 bg-card px-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]"
             >
               <Leaf className="h-4 w-4" />
               Vegan
@@ -199,7 +199,7 @@ export default function RestaurantMenuPage() {
               variant={filters.glutenFree ? "default" : "outline"}
               size="sm"
               onClick={() => toggleFilter("glutenFree")}
-              className="gap-2"
+              className="h-9 gap-2 rounded-xl border-border/80 bg-card px-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]"
             >
               <WheatOff className="h-4 w-4" />
               Sans gluten
@@ -213,9 +213,9 @@ export default function RestaurantMenuPage() {
         <div className="container max-w-5xl">
           {categories.length > 0 ? (
             <Tabs defaultValue={categories[0]?.id.toString()} className="w-full">
-              <TabsList className="mb-8 flex w-full justify-start overflow-x-auto flex-nowrap rounded-2xl bg-secondary/70 p-1.5">
+              <TabsList className="mb-8 flex w-full justify-start overflow-x-auto flex-nowrap rounded-[1.35rem] border border-border/70 bg-card/80 p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_10px_30px_rgba(62,42,25,0.05)]">
                 {categories.map((category) => (
-                  <TabsTrigger key={category.id} value={category.id.toString()} className="whitespace-nowrap rounded-xl px-4 py-2.5">
+                  <TabsTrigger key={category.id} value={category.id.toString()} className="whitespace-nowrap rounded-[1rem] px-4 py-2.5 text-sm font-medium text-muted-foreground transition-all data-[state=active]:bg-pronto-primary data-[state=active]:text-white data-[state=active]:shadow-[0_4px_12px_rgba(93,50,31,0.24)]">
                     {category.name}
                   </TabsTrigger>
                 ))}
@@ -236,8 +236,8 @@ export default function RestaurantMenuPage() {
                             {index > 0 && index % 4 === 0 && dishItemAds[Math.floor(index / 4) - 1] && (
                               <DishItemAd key={`ad-${dishItemAds[Math.floor(index / 4) - 1].id}`} advertisement={dishItemAds[Math.floor(index / 4) - 1]} />
                             )}
-                            <Card className="overflow-hidden border-border/80 bg-card shadow-[0_1px_2px_oklch(0.22_0.025_53_/_0.05)] transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-0.5 hover:shadow-[0_14px_28px_oklch(0.22_0.025_53_/_0.09)]">
-                          <CardContent className="p-5 sm:p-6">
+                            <Card className="overflow-hidden rounded-[1.45rem] border border-border/75 bg-[linear-gradient(135deg,rgba(255,255,255,0.92),rgba(251,247,241,0.94))] p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_8px_25px_rgba(62,42,25,0.06)] transition-transform duration-300 motion-reduce:transition-none hover:-translate-y-0.5 hover:shadow-[0_16px_32px_rgba(62,42,25,0.11)]">
+                          <CardContent className="rounded-[1.05rem] border border-white/70 bg-card p-5 sm:p-6">
                             <div className="flex items-start justify-between gap-4">
                               <div className="flex-1">
                                 <div className="flex items-start gap-3 mb-2">

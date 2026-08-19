@@ -28,3 +28,5 @@ La refonte ne doit pas modifier les routes existantes, les URLs des médias, les
 Le 19 août 2026, la vitrine de développement de La Voile Rouge a été contrôlée après introduction du chrome partagé. La barre est désormais une surface flottante lisible au-dessus de l’image, le hero respecte une hauteur mobile `100dvh`, l’arrière-plan flouté ne révèle pas de bord blanc et le titre conserve un contraste suffisant. Le catalogue reste à aligner sur ce même langage avant validation finale.
 
 Le catalogue a ensuite été contrôlé avec ce même chrome. La barre, le hero et l’ancrage des collections sont cohérents avec l’accueil. Les cartes, filtres, actions contextuelles et formats publicitaires restent à uniformiser dans la suite de la refonte.
+
+Après l’itération suivante, les filtres, l’onglet actif et les cartes de catalogue utilisent des contours concentriques et une profondeur légère cohérente avec le chrome. Le contraste reste lisible et les collections conservent leur défilement horizontal sans changer de données ni de route.

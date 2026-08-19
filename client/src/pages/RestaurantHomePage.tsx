@@ -223,7 +223,7 @@ export default function RestaurantHomePage() {
                   {/* Plat normal */}
                   <div
                     key={dish.id}
-                    className="group bg-white overflow-hidden transition-all duration-300 hover:shadow-2xl"
+                    className="group overflow-hidden rounded-[1.45rem] border border-neutral-200/80 bg-[linear-gradient(135deg,#fff,#fbf7f1)] p-1.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.9),0_8px_25px_rgba(62,42,25,0.06)] transition-transform duration-300 motion-reduce:transition-none hover:-translate-y-0.5 hover:shadow-[0_16px_32px_rgba(62,42,25,0.11)]"
                   >
                   {dish.imageUrl && (
                     <div className="aspect-[4/3] overflow-hidden">
@@ -234,7 +234,7 @@ export default function RestaurantHomePage() {
                       />
                     </div>
                   )}
-                  <div className="p-6">
+                  <div className="rounded-b-[1.05rem] border border-white/70 bg-white p-6">
                     <div className="flex items-start justify-between mb-3">
                       <h3 className="text-xl font-semibold text-neutral-900 flex-1">
                         {translate("item", dish.id, "name", dish.name)}
