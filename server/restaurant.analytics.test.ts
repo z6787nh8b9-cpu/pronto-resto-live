@@ -31,6 +31,8 @@ describe("Restaurant analytics isolation", () => {
       .limit(1);
 
     expect(restaurant).toBeDefined();
+    const access = await adminCaller.restaurant.checkDashboardAccess({ restaurantId: restaurant.id });
+    expect(access).toMatchObject({ authorized: true, isAdmin: true });
     const summary = await adminCaller.restaurant.getAnalyticsSummary({ restaurantId: restaurant.id });
     expect(summary).toMatchObject({
       pageViewsThisMonth: expect.any(Number),
@@ -50,6 +52,7 @@ describe("Restaurant analytics isolation", () => {
     await expect(unrelatedOwnerCaller.restaurant.getPageViews({ restaurantId: restaurant.id, limit: 1 })).rejects.toBeInstanceOf(TRPCError);
     await expect(unrelatedOwnerCaller.restaurant.getChatbotConversations({ restaurantId: restaurant.id, limit: 1 })).rejects.toBeInstanceOf(TRPCError);
     await expect(unrelatedOwnerCaller.restaurant.getAnalyticsSummary({ restaurantId: restaurant.id })).rejects.toBeInstanceOf(TRPCError);
+    await expect(unrelatedOwnerCaller.restaurant.updateSettings({ restaurantId: restaurant.id, data: {} })).rejects.toBeInstanceOf(TRPCError);
     await expect(unrelatedOwnerCaller.restaurant.updateChatbotConfig({ restaurantId: restaurant.id, isEnabled: false })).rejects.toBeInstanceOf(TRPCError);
   });
 });

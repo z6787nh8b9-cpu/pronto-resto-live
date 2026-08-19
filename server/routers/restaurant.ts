@@ -107,19 +107,7 @@ export const restaurantRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      // Verify ownership
-      const userId = ctx.restaurantOwner?.id || ctx.user?.id;
-      if (!userId) {
-        throw new Error("Unauthorized");
-      }
-      const restaurants = await getRestaurantsByOwnerId(userId);
-      const ownsRestaurant = restaurants.some((r) => r.id === input.restaurantId);
-
-      // Super admin can edit any restaurant
-      if (!ownsRestaurant && ctx.user?.role !== "admin") {
-        throw new Error("Unauthorized");
-      }
-
+      await assertRestaurantAccess(ctx, input.restaurantId);
       return await updateRestaurant(input.restaurantId, input.data);
     }),
 
@@ -357,8 +345,8 @@ export const restaurantRouter = router({
 
       // Generate unique filename
       const ext = input.filename.split(".").pop();
-      // Use restaurantOwner ID if available, otherwise use super admin user ID
-      const userId = ctx.restaurantOwner?.id || ctx.user?.id || 'unknown';
+      // Use the authenticated principal identifier to keep uploaded paths attributable.
+      const userId = ctx.restaurantOwner?.id || ctx.user?.id || ctx.adminAccount?.id || "unknown";
       const key = `restaurants/${userId}/${nanoid()}.${ext}`;
 
       // Upload to S3
