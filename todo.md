@@ -1130,6 +1130,9 @@
 - [x] Renommé les propriétés d’interface restaurantName en businessName sans modifier les identifiants API legacy
 - [x] Généralisé l’intitulé de destination dans la liste d’invitations Super Admin
 - [x] Retiré la propriété businessName inutilisée du parcours d’inscription événementielle
+- [ ] Généraliser les libellés visibles « Menu » du dashboard en « Catalogue » sans modifier l’onglet legacy
+- [ ] Rédiger un README professionnel couvrant l’architecture, la sécurité, les parcours et l’exploitation de PRONTO
+- [ ] Synchroniser l’état validé du projet vers le dépôt GitHub z6787nh8b9-cpu/pronto-resto-live
 - [x] Supprimé l'identifiant propriétaire codé en dur lors de la création d'une entreprise par le Super Admin
 - [x] Remplacé les procédures publiques de gestion des réservations par des contrôles propriétaire ou Super Admin et vérifié l'accès au restaurant ciblé
 - [x] Ajouté un test garantissant qu'un visiteur anonyme ne peut plus gérer paramètres, zones ni réservations
