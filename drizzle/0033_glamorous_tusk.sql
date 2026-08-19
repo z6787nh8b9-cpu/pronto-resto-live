@@ -1,0 +1,2 @@
+ALTER TABLE `business_members` MODIFY COLUMN `principalType` enum('restaurant_owner','admin_account') NOT NULL;--> statement-breakpoint
+ALTER TABLE `import_jobs` MODIFY COLUMN `createdByPrincipalType` enum('restaurant_owner','admin_account') NOT NULL;

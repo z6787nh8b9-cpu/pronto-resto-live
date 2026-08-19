@@ -22,6 +22,10 @@ Les contrôles automatisés ciblés couvrent les sessions, la protection de l’
 
 > Les dépendances serveur et d’hébergement recensées dans l’audit de découplage demeurent explicitement hors périmètre. Elles ne sont ni chargées par le navigateur ni nécessaires aux parcours d’authentification, mais exigent un remplacement fournisseur planifié avant une migration d’infrastructure complète.
 
+## Nettoyage des contrats de principal
+
+Une analyse des tables `business_members` et `import_jobs` a confirmé qu’aucune donnée active ne reposait sur l’ancienne variante de principal. La migration `0033_glamorous_tusk.sql` limite désormais les deux énumérations aux seuls principaux PRONTO `restaurant_owner` et `admin_account`. Le fallback correspondant a été retiré du routeur d’import ; sa régression vérifie l’absence de cette variante dans le routeur et le schéma.
+
 ## Régressions exécutées
 
 | Commande | Résultat |

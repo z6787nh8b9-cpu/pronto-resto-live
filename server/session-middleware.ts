@@ -88,7 +88,7 @@ sessionStore.on('error', (error) => {
 export function configureSessionMiddleware(app: Express) {
   console.log('[Session] Configuring MySQL session store with SSL');
   
-  // CRITICAL: Trust first proxy (required for HTTPS behind proxy like Manus deployment)
+  // Trust the first reverse proxy for secure cookies behind HTTPS.
   app.set('trust proxy', 1);
   console.log('[Session] Trust proxy enabled');
   

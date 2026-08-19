@@ -199,7 +199,6 @@ async function draftFromAi(sourceUrl: string, source: z.infer<typeof sourceType>
 function principalFromContext(ctx: any) {
   if (ctx.restaurantOwner) return { type: "restaurant_owner" as const, id: ctx.restaurantOwner.id };
   if (ctx.adminAccount) return { type: "admin_account" as const, id: ctx.adminAccount.id };
-  if (ctx.user) return { type: "manus_user" as const, id: ctx.user.id };
   throw new TRPCError({ code: "UNAUTHORIZED", message: "Connexion requise." });
 }
 

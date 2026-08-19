@@ -19,8 +19,8 @@ export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 
 /**
- * Restaurant owners table - for Google/Facebook OAuth authentication
- * Separate from users table which is reserved for Manus OAuth (Super Admins)
+ * Restaurant owners table for Google/Facebook OAuth and local email authentication.
+ * It is separate from the legacy compatibility account table.
  */
 export const restaurantOwners = mysqlTable("restaurant_owners", {
   id: int("id").autoincrement().primaryKey(),
@@ -138,7 +138,7 @@ export type InsertBusinessProfile = typeof businessProfiles.$inferInsert;
 export const businessMembers = mysqlTable("business_members", {
   id: int("id").autoincrement().primaryKey(),
   businessId: int("businessId").notNull(),
-  principalType: mysqlEnum("principalType", ["restaurant_owner", "admin_account", "manus_user"]).notNull(),
+  principalType: mysqlEnum("principalType", ["restaurant_owner", "admin_account"]).notNull(),
   principalId: int("principalId").notNull(),
   role: mysqlEnum("role", ["owner", "administrator", "editor", "publisher", "analyst", "support"]).default("editor").notNull(),
   status: mysqlEnum("status", ["active", "invited", "suspended"]).default("active").notNull(),
@@ -243,7 +243,7 @@ export const importJobs = mysqlTable("import_jobs", {
   status: mysqlEnum("status", ["uploaded", "analyzing", "review_required", "applying", "applied", "failed"]).default("uploaded").notNull(),
   draft: json("draft").$type<Record<string, unknown>>(),
   validationErrors: json("validationErrors").$type<Array<{ path: string; message: string }>>(),
-  createdByPrincipalType: mysqlEnum("createdByPrincipalType", ["restaurant_owner", "admin_account", "manus_user"]).notNull(),
+  createdByPrincipalType: mysqlEnum("createdByPrincipalType", ["restaurant_owner", "admin_account"]).notNull(),
   createdByPrincipalId: int("createdByPrincipalId").notNull(),
   appliedAt: timestamp("appliedAt"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -803,7 +803,7 @@ export type LocalAdminInvitation = typeof localAdminInvitations.$inferSelect;
 /**
  * Admin accounts table - For admins who joined via invitation link
  * Uses simple email/password authentication (no OAuth)
- * Separate from users table (Manus OAuth) to support independent authentication
+ * Separate from the legacy compatibility table to support independent authentication.
  */
 export const adminAccounts = mysqlTable("admin_accounts", {
   id: int("id").autoincrement().primaryKey(),

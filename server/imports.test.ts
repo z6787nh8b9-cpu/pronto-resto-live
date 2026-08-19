@@ -1,4 +1,6 @@
 import { afterAll, describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { TRPCError } from "@trpc/server";
 import { and, eq } from "drizzle-orm";
 import { appRouter } from "./routers";
@@ -43,6 +45,14 @@ afterAll(async () => {
 });
 
 describe("Controlled catalog imports", () => {
+  it("accepts only local owner or Super Admin principals", () => {
+    const routerSource = readFileSync(resolve(process.cwd(), "server/routers/imports.ts"), "utf8");
+    const schemaSource = readFileSync(resolve(process.cwd(), "drizzle/schema.ts"), "utf8");
+
+    expect(routerSource).not.toContain("manus_user");
+    expect(schemaSource).not.toContain("manus_user");
+  });
+
   it("parses French CSV headers into a reviewable draft without inventing data", () => {
     const input = Buffer.from(
       "Catégorie;Nom;Description;Prix;Durée\nSoins visage;Soin éclat;Nettoyage doux;49,90;60\nSoins visage;Massage express;;35;30\n",
