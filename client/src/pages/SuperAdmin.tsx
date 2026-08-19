@@ -285,12 +285,12 @@ export default function SuperAdmin() {
               columns={[
                 { key: "name", label: "Nom" },
                 { key: "slug", label: "Slug", render: (value) => <code className="text-xs bg-muted px-2 py-1 rounded">{value}</code> },
-                { key: "subscriptionTier", label: "Plan", render: (value) => (
+                { key: "subscriptionTier", label: "Formule", render: (value) => (
                   <Badge 
                     variant={value === "premium" ? "default" : value === "pro" ? "outline" : "secondary"} 
                     className="text-xs"
                   >
-                    {value === "premium" ? "Premium - 39€" : value === "pro" ? "Pro - 29€" : "Menu - 19€"}
+                    {value === "premium" ? "Premium - 39€" : value === "pro" ? "Pro - 29€" : "Essentiel - 19€"}
                   </Badge>
                 ) },
                 { key: "subscriptionStatus", label: "Statut", render: (value) => (
@@ -374,7 +374,7 @@ export default function SuperAdmin() {
                     variant={row.subscriptionTier === "premium" ? "default" : row.subscriptionTier === "pro" ? "outline" : "secondary"} 
                     className="text-xs"
                   >
-                        {row.subscriptionTier === "premium" ? "Premium - 39€" : row.subscriptionTier === "pro" ? "Pro - 29€" : "Menu - 19€"}
+                        {row.subscriptionTier === "premium" ? "Premium - 39€" : row.subscriptionTier === "pro" ? "Pro - 29€" : "Essentiel - 19€"}
                       </Badge>
                       <Badge variant={row.subscriptionStatus === "active" ? "default" : row.subscriptionStatus === "trial" ? "secondary" : "destructive"} className="text-xs">
                         {row.subscriptionStatus}
