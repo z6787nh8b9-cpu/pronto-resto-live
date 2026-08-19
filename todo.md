@@ -1231,3 +1231,4 @@
 
 ## AUDIT DASHBOARD ENTREPRISE (19 août 2026)
 - [x] Remplacer les compteurs à zéro transitoires du dashboard entreprise par des états de chargement non trompeurs
+- [x] Rendre plus explicite le défilement horizontal des onglets du dashboard entreprise sur smartphone

@@ -11,5 +11,7 @@ describe("business dashboard loading metrics", () => {
     expect(source).toContain("DashboardMetricValue");
     expect(source).toContain("aria-label={`Chargement : ${label}`}");
     expect(source).toContain("animate-pulse");
+    expect(source).toContain("défilement horizontal disponible");
+    expect(source).toContain("Faites défiler pour voir toutes les sections");
   });
 });

@@ -17,3 +17,9 @@ Le prochain correctif doit traiter l’état de chargement des indicateurs d’e
 ## Validation du correctif P0
 
 Les compteurs Collections actives et Éléments publiables affichent désormais une surface de chargement dédiée tant que leurs requêtes ne sont pas résolues. Une fois les données reçues, la revue navigateur confirme l’affichage des valeurs réelles `15` et `101` dans la hiérarchie existante. L’état vide réel reste donc distingué de l’état de chargement.
+
+## Revue smartphone
+
+La capture à 390 px confirme que le dashboard conserve une colonne de lecture claire : hero, indicateurs, actions principales et onboarding se suivent sans débordement horizontal. Les indicateurs sont volontairement empilés, ce qui préserve leur lisibilité. Les onglets restent compacts et défilables horizontalement ; une future itération pourra rendre plus explicite l’existence des onglets hors champ, mais aucun correctif bloquant n’est requis pour ce jalon.
+
+L’indice de défilement a été ajouté et contrôlé sur smartphone : un fondu latéral ainsi qu’une instruction explicite signalent les sections accessibles hors du premier segment d’onglets. Le contrôle reste non interactif et ne perturbe ni le défilement tactile ni la navigation au clavier.

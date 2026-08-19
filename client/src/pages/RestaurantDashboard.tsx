@@ -494,8 +494,9 @@ export default function RestaurantDashboard() {
 
       <main className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
-            <TabsList className="inline-flex lg:grid w-auto lg:w-full grid-cols-5 xl:grid-cols-12 gap-1 lg:gap-2 min-w-full lg:min-w-0">
+          <div className="relative">
+            <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0" aria-label="Onglets de l’espace entreprise, défilement horizontal disponible">
+              <TabsList className="inline-flex lg:grid w-auto lg:w-full grid-cols-5 xl:grid-cols-12 gap-1 lg:gap-2 min-w-full lg:min-w-0">
             <TabsTrigger value="overview">Vue d’ensemble</TabsTrigger>
             <TabsTrigger value="menu">Menu</TabsTrigger>
             <TabsTrigger value="import">Importer</TabsTrigger>
@@ -550,7 +551,10 @@ export default function RestaurantDashboard() {
               {!canAccessPremiumFeatures && <Lock className="h-3 w-3 ml-1 text-amber-500" />}
             </TabsTrigger>
             <TabsTrigger value="analytics">Statistiques</TabsTrigger>
-          </TabsList>
+              </TabsList>
+            </div>
+            <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 w-14 bg-gradient-to-l from-background via-background/80 to-transparent sm:hidden" />
+            <p className="mt-0.5 text-right text-[11px] font-medium text-muted-foreground sm:hidden">Faites défiler pour voir toutes les sections</p>
           </div>
 
           <TabsContent value="overview" className="space-y-6">
