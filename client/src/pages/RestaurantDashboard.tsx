@@ -143,7 +143,7 @@ export default function RestaurantDashboard() {
 
   const createItemMutation = trpc.restaurant.createMenuItem.useMutation({
     onSuccess: () => {
-      toast.success("Plat ajouté");
+      toast.success("Élément ajouté");
       setIsAddItemOpen(false);
       refetchItems();
     },
@@ -159,7 +159,7 @@ export default function RestaurantDashboard() {
 
   const updateItemMutation = trpc.restaurant.updateMenuItem.useMutation({
     onSuccess: () => {
-      toast.success("Plat modifié");
+      toast.success("Élément modifié");
       setIsEditItemOpen(false);
       refetchItems();
     },
@@ -167,7 +167,7 @@ export default function RestaurantDashboard() {
 
   const deleteItemMutation = trpc.restaurant.deleteMenuItem.useMutation({
     onSuccess: () => {
-      toast.success("Plat supprimé");
+      toast.success("Élément supprimé");
       refetchItems();
     },
   });
@@ -187,7 +187,7 @@ export default function RestaurantDashboard() {
 
   const reorderItemsMutation = trpc.restaurant.reorderItems.useMutation({
     onSuccess: () => {
-      toast.success("Ordre des plats mis à jour");
+      toast.success("Ordre des éléments mis à jour");
       refetchItems();
     },
   });
@@ -573,7 +573,7 @@ export default function RestaurantDashboard() {
 
             <section className="grid gap-4 sm:grid-cols-3">
               <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Collections actives</p><p className="mt-2 font-display text-5xl text-foreground">{categories?.length ?? 0}</p><p className="mt-2 text-sm text-muted-foreground">Organisez-les dans l’onglet Catalogue.</p></div>
-              <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Éléments publiables</p><p className="mt-2 font-display text-5xl text-foreground">{menuItems?.length ?? 0}</p><p className="mt-2 text-sm text-muted-foreground">Plats, produits ou prestations selon votre activité.</p></div>
+              <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Éléments publiables</p><p className="mt-2 font-display text-5xl text-foreground">{menuItems?.length ?? 0}</p><p className="mt-2 text-sm text-muted-foreground">Produits, services ou autres éléments selon votre activité.</p></div>
               <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Formule actuelle</p><p className="mt-2 font-display text-4xl text-foreground">{currentTierLabel}</p><p className="mt-2 text-sm text-muted-foreground">Les fonctions disponibles évoluent avec votre formule.</p></div>
             </section>
 
@@ -590,12 +590,12 @@ export default function RestaurantDashboard() {
           <TabsContent value="menu" className="space-y-6">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
               <div>
-                <h2 className="text-lg sm:text-xl md:text-2xl font-bold">Gestion du Menu</h2>
-                <p className="text-xs sm:text-sm text-muted-foreground">Organisez vos catégories et plats</p>
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold">Gestion du catalogue</h2>
+                <p className="text-xs sm:text-sm text-muted-foreground">Organisez vos collections et vos éléments</p>
               </div>
               <Button onClick={() => setIsAddCategoryOpen(true)} size="sm" className="w-full sm:w-auto text-xs sm:text-sm">
                 <Plus className="mr-2 h-4 w-4" />
-                Nouvelle Catégorie
+                Nouvelle collection
               </Button>
             </div>
 
@@ -687,7 +687,7 @@ export default function RestaurantDashboard() {
                           }}
                         >
                           <Plus className="mr-2 h-4 w-4" />
-                          Ajouter un plat
+                          Ajouter un élément
                         </Button>
                       </div>
                     </div>
@@ -1140,14 +1140,14 @@ export default function RestaurantDashboard() {
       <Dialog open={isAddCategoryOpen} onOpenChange={setIsAddCategoryOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Nouvelle Catégorie</DialogTitle>
-            <DialogDescription>Ajoutez une nouvelle catégorie à votre menu</DialogDescription>
+            <DialogTitle>Nouvelle collection</DialogTitle>
+            <DialogDescription>Ajoutez une nouvelle collection à votre catalogue</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleCreateCategory}>
             <div className="space-y-4 py-4">
               <div className="space-y-2">
                 <Label htmlFor="cat-name">Nom de la catégorie *</Label>
-                <Input id="cat-name" name="name" placeholder="Entrées, Plats, Desserts..." required />
+                <Input id="cat-name" name="name" placeholder="Collections, gammes, catégories..." required />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="cat-desc">Description</Label>
@@ -1182,14 +1182,14 @@ export default function RestaurantDashboard() {
       <Dialog open={isAddItemOpen} onOpenChange={setIsAddItemOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Nouveau Plat</DialogTitle>
-            <DialogDescription>Ajoutez un nouveau plat à votre menu</DialogDescription>
+            <DialogTitle>Nouvel élément</DialogTitle>
+            <DialogDescription>Ajoutez un nouvel élément à votre catalogue</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleCreateItem}>
             <div className="space-y-4 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="item-name">Nom du plat *</Label>
+                  <Label htmlFor="item-name">Nom de l’élément *</Label>
                   <Input id="item-name" name="name" required />
                 </div>
                 <div className="space-y-2">
@@ -1251,7 +1251,7 @@ export default function RestaurantDashboard() {
               </div>
 
               <ImageUploader
-                label="Image du plat"
+                label="Image de l’élément"
                 currentImageUrl={itemImageUrl}
                 onUploadComplete={setItemImageUrl}
               />
@@ -1322,14 +1322,14 @@ export default function RestaurantDashboard() {
       <Dialog open={isEditItemOpen} onOpenChange={setIsEditItemOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Modifier le Plat</DialogTitle>
-            <DialogDescription>Modifiez les informations du plat</DialogDescription>
+            <DialogTitle>Modifier l’élément</DialogTitle>
+            <DialogDescription>Modifiez les informations de l’élément</DialogDescription>
           </DialogHeader>
           <form onSubmit={handleUpdateItem}>
             <div className="space-y-4 py-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="edit-item-name">Nom du plat *</Label>
+                  <Label htmlFor="edit-item-name">Nom de l’élément *</Label>
                   <Input
                     id="edit-item-name"
                     name="name"
@@ -1399,7 +1399,7 @@ export default function RestaurantDashboard() {
                     defaultChecked={editingItem?.isFeatured}
                     className="rounded"
                   />
-                  <Label htmlFor="edit-featured">⭐ Plat en favori</Label>
+                  <Label htmlFor="edit-featured">Élément mis en avant</Label>
                 </div>
               </div>
 
@@ -1474,7 +1474,7 @@ export default function RestaurantDashboard() {
               </div>
 
               <ImageUploader
-                label="Image du plat"
+                label="Image de l’élément"
                 currentImageUrl={itemImageUrl}
                 onUploadComplete={setItemImageUrl}
               />
