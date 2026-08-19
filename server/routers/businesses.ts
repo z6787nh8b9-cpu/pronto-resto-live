@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { and, asc, desc, eq, isNull } from "drizzle-orm";
+import { and, asc, desc, eq, isNotNull, isNull } from "drizzle-orm";
 import { randomUUID } from "crypto";
 import { z } from "zod";
 import {
@@ -293,6 +293,15 @@ export const businessesRouter = router({
       return db.select().from(mediaAssets).where(and(eq(mediaAssets.businessId, input.businessId), isNull(mediaAssets.archivedAt))).orderBy(desc(mediaAssets.createdAt));
     }),
 
+  listArchivedMedia: restaurantOwnerProcedure
+    .input(z.object({ businessId: z.number().int().positive() }))
+    .query(async ({ ctx, input }) => {
+      await requireBusinessAccess(ctx, input.businessId);
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
+      return db.select().from(mediaAssets).where(and(eq(mediaAssets.businessId, input.businessId), isNotNull(mediaAssets.archivedAt))).orderBy(desc(mediaAssets.archivedAt));
+    }),
+
   uploadMedia: restaurantOwnerProcedure
     .input(z.object({
       businessId: z.number().int().positive(),
@@ -335,6 +344,18 @@ export const businessesRouter = router({
       const [asset] = await db.select().from(mediaAssets).where(and(eq(mediaAssets.id, input.assetId), eq(mediaAssets.businessId, input.businessId), isNull(mediaAssets.archivedAt))).limit(1);
       if (!asset) throw new TRPCError({ code: "NOT_FOUND", message: "Média introuvable." });
       await db.update(mediaAssets).set({ archivedAt: new Date() }).where(eq(mediaAssets.id, asset.id));
+      return { success: true };
+    }),
+
+  restoreMedia: restaurantOwnerProcedure
+    .input(z.object({ businessId: z.number().int().positive(), assetId: z.number().int().positive() }))
+    .mutation(async ({ ctx, input }) => {
+      await requireBusinessAccess(ctx, input.businessId);
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
+      const [asset] = await db.select().from(mediaAssets).where(and(eq(mediaAssets.id, input.assetId), eq(mediaAssets.businessId, input.businessId), isNotNull(mediaAssets.archivedAt))).limit(1);
+      if (!asset) throw new TRPCError({ code: "NOT_FOUND", message: "Média archivé introuvable." });
+      await db.update(mediaAssets).set({ archivedAt: null }).where(eq(mediaAssets.id, asset.id));
       return { success: true };
     }),
 });

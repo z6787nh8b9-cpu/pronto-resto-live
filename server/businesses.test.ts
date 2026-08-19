@@ -101,7 +101,7 @@ describe("Generic business core", () => {
     await expect(unrelatedOwnerCaller.businesses.listMedia({ businessId: business.id })).rejects.toBeInstanceOf(TRPCError);
   });
 
-  it("archives a media record without exposing it in the active library", async () => {
+  it("archives and restores a media record without exposing it to an unrelated owner", async () => {
     const db = await getDb();
     const [business] = await db!
       .select()
@@ -124,8 +124,16 @@ describe("Generic business core", () => {
     const activeAssets = await adminCaller.businesses.listMedia({ businessId: business.id });
     expect(activeAssets.find((asset) => asset.id === assetId)).toBeUndefined();
 
-    const [archived] = await db!.select().from(mediaAssets).where(eq(mediaAssets.id, assetId)).limit(1);
-    expect(archived.archivedAt).toBeInstanceOf(Date);
+    const archivedAssets = await adminCaller.businesses.listArchivedMedia({ businessId: business.id });
+    expect(archivedAssets.find((asset) => asset.id === assetId)).toMatchObject({ id: assetId });
+    await expect(unrelatedOwnerCaller.businesses.restoreMedia({ businessId: business.id, assetId })).rejects.toBeInstanceOf(TRPCError);
+
+    await adminCaller.businesses.restoreMedia({ businessId: business.id, assetId });
+    const restoredAssets = await adminCaller.businesses.listMedia({ businessId: business.id });
+    expect(restoredAssets.find((asset) => asset.id === assetId)).toMatchObject({ id: assetId });
+
+    const [restored] = await db!.select().from(mediaAssets).where(eq(mediaAssets.id, assetId)).limit(1);
+    expect(restored.archivedAt).toBeNull();
   });
 
   it("exposes only published business identity to public visitors", async () => {
