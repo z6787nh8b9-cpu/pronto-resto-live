@@ -81,8 +81,8 @@ export const restaurantRouter = router({
 
   // Get restaurants owned by current user
   getMyRestaurants: restaurantOwnerProcedure.query(async ({ ctx }) => {
-    if (!ctx.user) return [];
-    return await getRestaurantsByOwnerId(ctx.user.id);
+    if (!ctx.restaurantOwner) return [];
+    return await getRestaurantsByOwnerId(ctx.restaurantOwner.id);
   }),
 
   // Update restaurant settings

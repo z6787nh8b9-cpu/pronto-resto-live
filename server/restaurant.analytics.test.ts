@@ -31,6 +31,18 @@ describe("Restaurant analytics isolation", () => {
       .limit(1);
 
     expect(restaurant).toBeDefined();
+    const ownerCaller = appRouter.createCaller({
+      adminAccount: null,
+      user: null,
+      restaurantOwner: { id: restaurant.ownerId, email: "owner@pronto.local" },
+      req: { session: {} },
+      res: {},
+    } as any);
+    const ownedRestaurants = await ownerCaller.restaurant.getMyRestaurants();
+    expect(ownedRestaurants.some((ownedRestaurant) => ownedRestaurant.id === restaurant.id)).toBe(true);
+    const unrelatedRestaurants = await unrelatedOwnerCaller.restaurant.getMyRestaurants();
+    expect(unrelatedRestaurants.some((unrelatedRestaurant) => unrelatedRestaurant.id === restaurant.id)).toBe(false);
+
     const access = await adminCaller.restaurant.checkDashboardAccess({ restaurantId: restaurant.id });
     expect(access).toMatchObject({ authorized: true, isAdmin: true });
     const summary = await adminCaller.restaurant.getAnalyticsSummary({ restaurantId: restaurant.id });
