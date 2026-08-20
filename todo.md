@@ -1333,6 +1333,12 @@
 - [x] Refuser les créneaux hors horaires d’ouverture et rendre le contrôle de capacité sûr sous concurrence
 - [x] Ajouter les régressions de visibilité, de validation, d’anti-abus et de capacité
 
+## DROITS MUTATIONS CATALOGUE LEGACY (20 août 2026)
+- [x] Vérifier l’appartenance de l’établissement avant chaque création, modification, suppression ou réorganisation de catalogue
+- [x] Vérifier que chaque catégorie appartient au même établissement lors des opérations sur les produits
+- [x] Protéger les analyses et personnalisations de l’établissement, et retirer la lecture publique complète par identifiant
+- [x] Ajouter des régressions inter-établissement sur toutes les mutations de catalogue et de configuration chatbot
+
 ## INTÉGRITÉ ANALYTIQUE PUBLIQUE (20 août 2026)
 - [x] Dériver côté serveur les métadonnées de vue publique au lieu d’accepter IP, agent et référent déclarés par le navigateur
 - [x] Ajouter une limite de débit dédiée aux vues publiques pour réduire l’inflation analytique artificielle

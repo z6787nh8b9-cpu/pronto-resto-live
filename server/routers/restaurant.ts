@@ -22,7 +22,7 @@ import {
   getDb,
 } from "../db";
 import { menuCategories, menuItems, restaurants } from "../../drizzle/schema";
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 
 async function assertCatalogReadAccess(ctx: { adminAccount: unknown; restaurantOwner: { id: number } | null }, restaurantId: number) {
   const db = await getDb();
@@ -31,6 +31,22 @@ async function assertCatalogReadAccess(ctx: { adminAccount: unknown; restaurantO
   if (!restaurant || (!ctx.adminAccount && restaurant.ownerId !== ctx.restaurantOwner?.id)) {
     throw new TRPCError({ code: "FORBIDDEN" });
   }
+}
+
+async function getCategoryRestaurantId(categoryId: number) {
+  const db = await getDb();
+  if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+  const [category] = await db.select({ restaurantId: menuCategories.restaurantId }).from(menuCategories).where(eq(menuCategories.id, categoryId)).limit(1);
+  if (!category) throw new TRPCError({ code: "NOT_FOUND", message: "Catégorie introuvable" });
+  return category.restaurantId;
+}
+
+async function getMenuItemRestaurantId(itemId: number) {
+  const db = await getDb();
+  if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+  const [item] = await db.select({ restaurantId: menuItems.restaurantId }).from(menuItems).where(eq(menuItems.id, itemId)).limit(1);
+  if (!item) throw new TRPCError({ code: "NOT_FOUND", message: "Produit introuvable" });
+  return item.restaurantId;
 }
 
 export const restaurantRouter = router({
@@ -149,7 +165,8 @@ export const restaurantRouter = router({
         displayOrder: z.number().default(0),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      await assertCatalogReadAccess(ctx, input.restaurantId);
       return await createMenuCategory(input);
     }),
 
@@ -167,13 +184,15 @@ export const restaurantRouter = router({
         }),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      await assertCatalogReadAccess(ctx, await getCategoryRestaurantId(input.id));
       return await updateMenuCategory(input.id, input.data);
     }),
 
   deleteCategory: restaurantOwnerProcedure
-    .input(z.object({ id: z.number() }))
-    .mutation(async ({ input }) => {
+    .input(z.object({ id: z.number().int().positive() }))
+    .mutation(async ({ input, ctx }) => {
+      await assertCatalogReadAccess(ctx, await getCategoryRestaurantId(input.id));
       await deleteMenuCategory(input.id);
       return { success: true };
     }),
@@ -220,7 +239,12 @@ export const restaurantRouter = router({
         displayOrder: z.number().default(0),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      await assertCatalogReadAccess(ctx, input.restaurantId);
+      const categoryRestaurantId = await getCategoryRestaurantId(input.categoryId);
+      if (categoryRestaurantId !== input.restaurantId) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "La catégorie ne correspond pas à cet établissement." });
+      }
       return await createMenuItem(input);
     }),
 
@@ -250,13 +274,15 @@ export const restaurantRouter = router({
         }),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      await assertCatalogReadAccess(ctx, await getMenuItemRestaurantId(input.id));
       return await updateMenuItem(input.id, input.data);
     }),
 
   deleteMenuItem: restaurantOwnerProcedure
-    .input(z.object({ id: z.number() }))
-    .mutation(async ({ input }) => {
+    .input(z.object({ id: z.number().int().positive() }))
+    .mutation(async ({ input, ctx }) => {
+      await assertCatalogReadAccess(ctx, await getMenuItemRestaurantId(input.id));
       await deleteMenuItem(input.id);
       return { success: true };
     }),
@@ -303,20 +329,23 @@ export const restaurantRouter = router({
         welcomeMessage: z.string().optional(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      await assertCatalogReadAccess(ctx, input.restaurantId);
       return await upsertChatbotConfig(input);
     }),
 
   // Analytics
   getPageViews: restaurantOwnerProcedure
-    .input(z.object({ restaurantId: z.number(), limit: z.number().default(1000) }))
-    .query(async ({ input }) => {
+    .input(z.object({ restaurantId: z.number().int().positive(), limit: z.number().int().min(1).max(1000).default(1000) }))
+    .query(async ({ input, ctx }) => {
+      await assertCatalogReadAccess(ctx, input.restaurantId);
       return await getPageViewsByRestaurantId(input.restaurantId, input.limit);
     }),
 
   getChatbotConversations: restaurantOwnerProcedure
-    .input(z.object({ restaurantId: z.number(), limit: z.number().default(100) }))
-    .query(async ({ input }) => {
+    .input(z.object({ restaurantId: z.number().int().positive(), limit: z.number().int().min(1).max(1000).default(100) }))
+    .query(async ({ input, ctx }) => {
+      await assertCatalogReadAccess(ctx, input.restaurantId);
       return await getChatbotConversationsByRestaurantId(input.restaurantId, input.limit);
     }),
 
@@ -324,14 +353,21 @@ export const restaurantRouter = router({
   reorderCategories: restaurantOwnerProcedure
     .input(
       z.object({
-        restaurantId: z.number(),
-        categoryIds: z.array(z.number()),
+        restaurantId: z.number().int().positive(),
+        categoryIds: z.array(z.number().int().positive()).max(200),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       // Update displayOrder for each category
       const db = await getDb();
       if (!db) throw new Error("Database not available");
+      await assertCatalogReadAccess(ctx, input.restaurantId);
+      const categories = input.categoryIds.length
+        ? await db.select({ id: menuCategories.id, restaurantId: menuCategories.restaurantId }).from(menuCategories).where(inArray(menuCategories.id, input.categoryIds))
+        : [];
+      if (categories.length !== new Set(input.categoryIds).size || categories.some((category) => category.restaurantId !== input.restaurantId)) {
+        throw new TRPCError({ code: "FORBIDDEN" });
+      }
 
       for (let i = 0; i < input.categoryIds.length; i++) {
         await db
@@ -347,14 +383,22 @@ export const restaurantRouter = router({
   reorderItems: restaurantOwnerProcedure
     .input(
       z.object({
-        categoryId: z.number(),
-        itemIds: z.array(z.number()),
+        categoryId: z.number().int().positive(),
+        itemIds: z.array(z.number().int().positive()).max(500),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       // Update displayOrder for each item
       const db = await getDb();
       if (!db) throw new Error("Database not available");
+      const restaurantId = await getCategoryRestaurantId(input.categoryId);
+      await assertCatalogReadAccess(ctx, restaurantId);
+      const items = input.itemIds.length
+        ? await db.select({ id: menuItems.id, categoryId: menuItems.categoryId, restaurantId: menuItems.restaurantId }).from(menuItems).where(inArray(menuItems.id, input.itemIds))
+        : [];
+      if (items.length !== new Set(input.itemIds).size || items.some((item) => item.categoryId !== input.categoryId || item.restaurantId !== restaurantId)) {
+        throw new TRPCError({ code: "FORBIDDEN" });
+      }
 
       for (let i = 0; i < input.itemIds.length; i++) {
         await db
@@ -394,11 +438,13 @@ export const restaurantRouter = router({
     }),
 
   // Get restaurant by ID
-  getById: publicProcedure
-    .input(z.object({ id: z.number() }))
-    .query(async ({ input }) => {
+  getById: restaurantOwnerProcedure
+    .input(z.object({ id: z.number().int().positive() }))
+    .query(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
+
+      await assertCatalogReadAccess(ctx, input.id);
 
       const [restaurant] = await db
         .select()
@@ -421,9 +467,10 @@ export const restaurantRouter = router({
         theme: z.enum(["pronto-service", "moderne-soho", "beach-boheme", "day-night", "marble-rome"]).optional(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
+      await assertCatalogReadAccess(ctx, input.restaurantId);
 
       await db
         .update(restaurants)
