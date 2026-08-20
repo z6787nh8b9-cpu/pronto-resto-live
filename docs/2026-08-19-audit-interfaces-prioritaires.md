@@ -58,6 +58,8 @@ Le dialogue place le focus sur sa fermeture à l’ouverture, le conserve lors d
 
 L’assistance flottante observe désormais `prefers-reduced-motion`. Lorsque cette préférence est active, son animation d’impulsion et sa séquence d’images restent statiques, sans affecter l’ouverture du dialogue ou sa lisibilité.
 
+Le CTA « Créer ma vitrine » du menu mobile ferme désormais explicitement son panneau de navigation avant d’ouvrir le formulaire de contact. Cette orchestration évite l’empilement de deux dialogues et préserve un parcours clair sur petit écran.
+
 Le menu mobile de la landing s’appuie sur le primitive de feuille accessible, avec un déclencheur libellé et une navigation nommée. Une régression préserve ce contrat de navigation au clavier et aux technologies d’assistance.
 
 La navigation de catégories du catalogue affiche maintenant un état actif renforcé, un fondu latéral sur la rangée défilable et une instruction lisible sous cette rangée. La revue à 390 px confirme que les catégories hors champ sont signalées sans masquer l’instruction ni gêner la sélection existante.

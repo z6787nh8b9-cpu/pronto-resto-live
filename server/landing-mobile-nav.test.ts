@@ -9,5 +9,9 @@ describe("landing mobile navigation", () => {
     expect(source).toContain('<SheetTrigger asChild className="sm:hidden">');
     expect(source).toContain('aria-label="Ouvrir le menu"');
     expect(source).toContain('aria-label="Navigation mobile"');
+    expect(source).toContain("const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)");
+    expect(source).toContain("<Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>");
+    expect(source).toContain("setIsMobileMenuOpen(false)");
+    expect(source).toContain("onClick={openContactFormFromMobileMenu}");
   });
 });

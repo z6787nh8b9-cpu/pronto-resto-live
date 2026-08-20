@@ -1255,6 +1255,7 @@
 
 ## ACCESSIBILITÉ NAVIGATION LANDING (20 août 2026)
 - [x] Ajouter un libellé et un état accessible au déclencheur de menu mobile — le primitive Sheet gère l’état, le libellé et la navigation sont verrouillés par régression
+- [x] Fermer le menu mobile avant l’ouverture du formulaire de contact déclenchée depuis ce menu
 
 ## ACCESSIBILITÉ ASSISTANCE (20 août 2026)
 - [x] Déclarer explicitement la fenêtre d’assistance comme dialogue accessible et nommé

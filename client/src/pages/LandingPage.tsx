@@ -55,10 +55,16 @@ const sectors = [
 export default function LandingPage() {
   const [isContactFormOpen, setIsContactFormOpen] = useState(false);
   const [contactFormSource, setContactFormSource] = useState<"HEADER" | "HERO" | "FOOTER">("HEADER");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const openContactForm = (source: "HEADER" | "HERO" | "FOOTER") => {
     setContactFormSource(source);
     setIsContactFormOpen(true);
+  };
+
+  const openContactFormFromMobileMenu = () => {
+    setIsMobileMenuOpen(false);
+    openContactForm("HEADER");
   };
 
   return (
@@ -81,7 +87,7 @@ export default function LandingPage() {
                   Créer ma vitrine <span className="ml-2 grid h-5 w-5 place-items-center rounded-full bg-white/15 transition-transform duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-px"><ArrowUpRight className="h-3.5 w-3.5" /></span>
                 </Button>
               </div>
-              <Sheet>
+              <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
                 <SheetTrigger asChild className="sm:hidden">
                   <Button variant="ghost" size="icon" className="rounded-full" aria-label="Ouvrir le menu"><Menu className="h-5 w-5" /></Button>
                 </SheetTrigger>
@@ -92,7 +98,7 @@ export default function LandingPage() {
                     <a href="#secteurs" className="rounded-2xl px-4 py-3 text-lg transition-colors hover:bg-secondary">Pour votre activité</a>
                     <a href="#tarifs" className="rounded-2xl px-4 py-3 text-lg transition-colors hover:bg-secondary">Tarifs</a>
                     <a href="/login-restaurant" className="mt-4 rounded-2xl px-4 py-3 text-lg transition-colors hover:bg-secondary">Connexion</a>
-                    <Button onClick={() => openContactForm("HEADER")} className="mt-3 h-12 rounded-2xl bg-pronto-primary">Créer ma vitrine</Button>
+                    <Button onClick={openContactFormFromMobileMenu} className="mt-3 h-12 rounded-2xl bg-pronto-primary">Créer ma vitrine</Button>
                   </nav>
                 </SheetContent>
               </Sheet>
