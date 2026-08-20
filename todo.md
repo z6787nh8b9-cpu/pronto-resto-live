@@ -304,7 +304,7 @@
 - [ ] Tester toutes les redirections et restrictions
 - [ ] Tester le système de traduction complet
 - [ ] Tester le flow de réservation complet
-- [ ] Tester la création d'événements et l'inscription
+- [x] Tester la création d'événements et l'inscription
 - [ ] Vérifier le responsive mobile sur toutes les nouvelles pages
 
 
