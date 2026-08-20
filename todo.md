@@ -301,7 +301,7 @@
 - [x] Onglets grisés avec cadenas doré + Modal d'upgrade
 
 ### PHASE 7 : TESTS ET AJUSTEMENTS FINAUX
-- [ ] Tester toutes les redirections et restrictions
+- [x] Tester toutes les redirections et restrictions
 - [x] Tester le système de traduction complet
 - [x] Tester le flow de réservation complet
 - [x] Tester la création d'événements et l'inscription
