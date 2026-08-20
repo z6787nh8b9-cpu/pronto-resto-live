@@ -84,11 +84,11 @@
 - [x] Corriger l'erreur "Maximum call stack size exceeded" sur la page /admin/manage/:id
 - [x] Corriger les boutons de modification des plats qui ne fonctionnent pas
 - [x] Afficher les allergènes et ingrédients détaillés sur la page publique
-- [ ] Implémenter le drag & drop réel avec @dnd-kit pour réorganiser catégories et plats (nécessite ajout champ displayOrder)
+- [x] Implémenter le drag & drop réel avec @dnd-kit pour réorganiser catégories et plats (nécessite ajout champ displayOrder)
 - [x] Ajouter des filtres sur la page publique (Végétarien, Vegan, Sans gluten)
-- [ ] Ajouter le champ displayOrder aux tables menuCategories et menuItems
-- [ ] Créer les mutations tRPC pour réorganiser les catégories et plats
-- [ ] Implémenter l'interface drag & drop avec @dnd-kit dans AdminManageRestaurant
+- [x] Ajouter le champ displayOrder aux tables menuCategories et menuItems
+- [x] Créer les mutations tRPC pour réorganiser les catégories et plats
+- [x] Implémenter l'interface drag & drop avec @dnd-kit dans RestaurantDashboard (AdminManageRestaurant retiré du parcours unifié)
 - [x] Créer un composant d'upload d'images avec S3
 - [ ] Ajouter l'upload de logo restaurant dans les paramètres (composant prêt)
 - [ ] Ajouter l'upload de photo hero dans les paramètres (composant prêt)
@@ -120,8 +120,8 @@
 - [x] Permettre l'upload d'images pour les catégories (Premium uniquement)
 - [x] Ajouter la fonctionnalité de modification des catégories existantes
 - [x] Ajouter la fonctionnalité de modification des plats existants
-- [ ] Implémenter le drag & drop pour réorganiser les catégories
-- [ ] Implémenter le drag & drop pour réorganiser les plats dans une catégorie
+- [x] Implémenter le drag & drop pour réorganiser les catégories
+- [x] Implémenter le drag & drop pour réorganiser les plats dans une catégorie
 - [x] Ajouter un système d'étoiles pour marquer les plats en favoris
 - [x] Mettre en avant les plats favoris sur le menu public
 - [x] Intégrer les plats favoris dans les suggestions du chatbot IA
@@ -133,7 +133,7 @@
 - [x] Corriger l'application des couleurs personnalisées depuis le dashboard restaurateur
 - [x] Créer un vrai uploader d'images avec drag & drop et import depuis la pellicule
 - [x] Synchroniser le dashboard accessible depuis la nav temporaire et celui depuis le super admin
-- [ ] Implémenter le drag & drop fonctionnel pour réorganiser les catégories et plats
+- [x] Implémenter le drag & drop fonctionnel pour réorganiser les catégories et plats
 - [x] Restaurer tous les champs de personnalisation des plats (ingrédients, allergènes, badges diététiques, valeurs nutritionnelles)
 - [x] Vérifier que les dashboards super admin et restaurateur sont identiques (PreviewRestaurantDashboard redirige vers RestaurantDashboard)
 - [x] S'assurer que le super admin peut gérer tous les éléments à la place du restaurateur (même composant utilisé)
@@ -161,13 +161,13 @@
 - [x] Mettre à jour les queries tRPC pour trier par displayOrder (déjà fait)
 - [x] Créer la mutation reorderCategories dans le router restaurant (déjà présente)
 - [x] Créer la mutation reorderItems dans le router restaurant (déjà présente)
-- [ ] Implémenter DndContext pour les catégories dans RestaurantDashboard
-- [ ] Implémenter SortableContext et useSortable pour les catégories
-- [ ] Implémenter DndContext pour les plats dans RestaurantDashboard
-- [ ] Implémenter SortableContext et useSortable pour les plats
-- [ ] Ajouter les poignées visuelles de drag (GripVertical) avec curseur grab
-- [ ] Tester le drag & drop des catégories
-- [ ] Tester le drag & drop des plats dans chaque catégorie
+- [x] Implémenter DndContext pour les catégories dans RestaurantDashboard
+- [x] Implémenter SortableContext et useSortable pour les catégories
+- [x] Implémenter DndContext pour les plats dans RestaurantDashboard
+- [x] Implémenter SortableContext et useSortable pour les plats
+- [x] Ajouter les poignées visuelles de drag (GripVertical) avec curseur grab
+- [x] Tester le drag & drop des catégories
+- [x] Tester le drag & drop des plats dans chaque catégorie
 
 ## RESPONSIVE MOBILE CRITIQUE (PRIORITÉ ABSOLUE)
 - [x] Corriger le header du dashboard restaurateur : titre déborde complètement
@@ -259,46 +259,46 @@
 ### PHASE 1 : INFRASTRUCTURE BDD ET MIDDLEWARE
 - [x] Ajouter les champs d'abonnement à la table `restaurant`
 - [x] Créer la table `advertisements` pour les pubs externes
-- [ ] Créer le middleware tRPC pour vérifier les permissions selon la formule
+- [x] Créer le middleware tRPC pour vérifier les permissions selon la formule
 - [ ] Créer les procédures tRPC pour gérer les abonnements (Super Admin)
 - [x] Mettre à jour le Super Admin pour gérer les 3 formules (MENU 19€, PRO 29€, PREMIUM 39€)
-- [ ] Mettre à jour le Dashboard restaurateur avec onglets grisés + cadenas doré
+- [x] Mettre à jour le Dashboard restaurateur avec onglets grisés + cadenas doré
 
 ### PHASE 2 : SÉPARATION PAGE D'ACCUEIL / MENU
 - [x] Créer la route `/:slug/menu` (menu complet avec tabs horizontales)
 - [x] Créer la route `/:slug` (page d'accueil, uniquement si PREMIUM)
 - [x] Implémenter la redirection automatique MENU/PRO → `/:slug/menu`
-- [ ] Ajouter le champ `featured` à la table `menu_items`
-- [ ] Créer les procédures tRPC pour la page d'accueil
+- [x] Ajouter le champ `isFeatured` à la table `menuItems` (nom réel du champ de spécialité)
+- [x] Créer les procédures tRPC pour la page d'accueil
 - [x] Créer les composants frontend page d'accueil (Hero, Qui sommes-nous, Spécialités, etc.)
 - [x] Dashboard restaurateur : onglet "Page d'accueil" pour éditer le contenu
 
 ### PHASE 3 : SYSTÈME DE TRADUCTION AUTOMATIQUE
-- [ ] Créer la table `translations`
-- [ ] Créer les procédures tRPC (translate, getTranslations, updateTranslation)
+- [x] Créer la table `translations`
+- [x] Créer les procédures tRPC (translate, getTranslations, updateTranslation)
 - [ ] Ajouter le sélecteur de langue sticky (FR, EN, IT, DE, ES)
-- [ ] Implémenter la traduction automatique via Manus LLM (lazy loading)
-- [ ] Dashboard restaurateur : page "Traductions" pour corriger manuellement
+- [x] Implémenter la traduction automatique via Manus LLM (lazy loading)
+- [x] Dashboard restaurateur : page "Traductions" pour corriger manuellement
 
 ### PHASE 4 : SYSTÈME DE RÉSERVATIONS MULTI-ZONES
-- [ ] Créer les tables BDD (zones, reservations, reservation_settings)
-- [ ] Créer les procédures tRPC (getAvailableSlots, create, createManual, etc.)
-- [ ] Créer le flow frontend (6 modals)
+- [x] Créer les tables BDD (zones, reservations, reservation_settings)
+- [x] Créer les procédures tRPC (getAvailableSlots, create, createManual, etc.)
+- [x] Créer le flow frontend (6 modals)
 - [ ] Intégrer les notifications (Email + WhatsApp)
-- [ ] Dashboard restaurateur : gestion des réservations + zones
+- [x] Dashboard restaurateur : gestion des réservations + zones
 
 ### PHASE 5 : SYSTÈME D'ÉVÉNEMENTS
-- [ ] Créer les tables BDD (events, event_registrations)
-- [ ] Créer les procédures tRPC (getByRestaurant, create, register, etc.)
-- [ ] Section "Prochains événements" sur la page d'accueil
+- [x] Créer les tables BDD (events, event_registrations)
+- [x] Créer les procédures tRPC (getByRestaurant, create, register, etc.)
+- [x] Section "Prochains événements" sur la page d'accueil
 - [ ] Page `/:slug/events` listant tous les événements
-- [ ] Dashboard restaurateur : gestion des événements
+- [x] Dashboard restaurateur : gestion des événements
 
 ### PHASE 6 : PUBLICITÉS ET RESTRICTIONS VISUELLES
-- [ ] Bannière publicité externe (Super Admin) sur forfait 19€
+- [x] Bannière publicité externe (Super Admin) sur forfait 19€
 - [ ] Footer "Propulsé par PRONTO by Altmachine" sur toutes les pages
 - [ ] Bouton WhatsApp flottant configurable
-- [ ] Onglets grisés avec cadenas doré + Modal d'upgrade
+- [x] Onglets grisés avec cadenas doré + Modal d'upgrade
 
 ### PHASE 7 : TESTS ET AJUSTEMENTS FINAUX
 - [ ] Tester toutes les redirections et restrictions
@@ -331,10 +331,10 @@
 
 ### PHASE 8 : DASHBOARD PREMIUM - GESTION COMPLÈTE DU MINI-SITE
 - [x] Onglet "Page d'accueil" : éditer le contenu du hero, qui sommes-nous, etc.
-- [ ] Onglet "Horaires" : gérer les horaires d'ouverture (déjà dans Phase 4)
-- [ ] Onglet "Réservations" : gérer les zones, voir les réservations (déjà dans Phase 5)
-- [ ] Onglet "Événements" : créer et gérer les événements (déjà dans Phase 6)
-- [ ] Onglet "Traductions" : corriger les traductions automatiques (déjà dans Phase 3)
+- [x] Onglet "Horaires" : gérer les horaires d'ouverture (déjà dans Phase 4)
+- [x] Onglet "Réservations" : gérer les zones, voir les réservations (déjà dans Phase 5)
+- [x] Onglet "Événements" : créer et gérer les événements (déjà dans Phase 6)
+- [x] Onglet "Traductions" : corriger les traductions automatiques (déjà dans Phase 3)
 - [x] Restrictions visuelles : griser les onglets inaccessibles avec cadenas doré
 - [x] Toggle ON/OFF pour activer/désactiver les fonctionnalités (ex: événements)
 
@@ -503,14 +503,14 @@
 
 ## 🚨 RESTAURATION FONCTIONNALITÉS PERDUES (URGENT)
 
-- [ ] Restaurer les flèches de déplacement (↑↓) pour réorganiser les catégories dans le dashboard
-- [ ] Restaurer les flèches de déplacement (↑↓) pour réorganiser les plats dans le dashboard
-- [ ] Restaurer la section Événements sur RestaurantHomePage
-- [ ] Restaurer la section Horaires d'ouverture sur RestaurantHomePage
-- [ ] Restaurer la section Réservations sur RestaurantHomePage
-- [ ] Restaurer les stats (vues, conversations) dans le dashboard
+- [x] Restaurer les flèches de déplacement (↑↓) pour réorganiser les catégories dans le dashboard
+- [x] Restaurer les flèches de déplacement (↑↓) pour réorganiser les plats dans le dashboard
+- [x] Restaurer la section Événements sur RestaurantHomePage
+- [x] Restaurer la section Horaires d'ouverture sur RestaurantHomePage
+- [x] Restaurer la section Réservations sur RestaurantHomePage
+- [x] Restaurer les stats (vues, conversations) dans le dashboard
 - [x] Restaurer le toggle de désactivation du chatbot dans le dashboard
-- [ ] Restaurer la configuration des zones/tables/réservations dans le dashboard
+- [x] Restaurer la configuration des zones/tables/réservations dans le dashboard
 - [x] Implémenter la limitation des favoris selon la formule (Basic: 1, Pro: 3, Premium: 5)
 - [x] Ajouter une bulle info quand l'utilisateur atteint la limite de favoris
 - [x] Restaurer la mise en avant visuelle des favoris sur la page publique (étoile dorée + badge)
