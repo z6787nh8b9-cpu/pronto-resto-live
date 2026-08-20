@@ -5,6 +5,8 @@ import { openingHours, restaurants } from "../../drizzle/schema";
 import { eq, and } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 
+const openingTimeSchema = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/).nullable();
+
 export const openingHoursRouter = router({
   // Get opening hours for a restaurant (public)
   getOpeningHours: publicProcedure
@@ -32,10 +34,10 @@ export const openingHoursRouter = router({
   setOpeningHours: restaurantOwnerProcedure
     .input(
       z.object({
-        restaurantId: z.number(),
-        dayOfWeek: z.number().min(0).max(6), // 0 = Sunday, 6 = Saturday
-        openTime: z.string().nullable(),
-        closeTime: z.string().nullable(),
+        restaurantId: z.number().int().positive(),
+        dayOfWeek: z.number().int().min(0).max(6), // 0 = Sunday, 6 = Saturday
+        openTime: openingTimeSchema,
+        closeTime: openingTimeSchema,
         isClosed: z.boolean(),
       })
     )
@@ -87,15 +89,15 @@ export const openingHoursRouter = router({
   batchSetOpeningHours: restaurantOwnerProcedure
     .input(
       z.object({
-        restaurantId: z.number(),
+        restaurantId: z.number().int().positive(),
         hours: z.array(
           z.object({
-            dayOfWeek: z.number().min(0).max(6),
-            openTime: z.string().nullable(),
-            closeTime: z.string().nullable(),
+            dayOfWeek: z.number().int().min(0).max(6),
+            openTime: openingTimeSchema,
+            closeTime: openingTimeSchema,
             isClosed: z.boolean(),
           })
-        ),
+        ).min(1).max(7).refine((hours) => new Set(hours.map((hour) => hour.dayOfWeek)).size === hours.length, "Chaque jour ne peut être défini qu’une seule fois."),
       })
     )
     .mutation(async ({ ctx, input }) => {

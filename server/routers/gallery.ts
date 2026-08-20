@@ -19,7 +19,12 @@ export const galleryRouter = router({
     }),
 
   addPhoto: restaurantOwnerProcedure
-    .input(z.object({ restaurantId: z.number(), imageUrl: z.string().url(), caption: z.string().optional(), displayOrder: z.number().optional() }))
+    .input(z.object({
+      restaurantId: z.number().int().positive(),
+      imageUrl: z.string().url().max(2_000),
+      caption: z.string().trim().max(500).optional(),
+      displayOrder: z.number().int().min(0).max(10_000).optional(),
+    }))
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
@@ -30,7 +35,12 @@ export const galleryRouter = router({
     }),
 
   updatePhoto: restaurantOwnerProcedure
-    .input(z.object({ id: z.number(), caption: z.string().optional(), displayOrder: z.number().optional(), isActive: z.boolean().optional() }))
+    .input(z.object({
+      id: z.number().int().positive(),
+      caption: z.string().trim().max(500).optional(),
+      displayOrder: z.number().int().min(0).max(10_000).optional(),
+      isActive: z.boolean().optional(),
+    }))
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
@@ -42,7 +52,7 @@ export const galleryRouter = router({
     }),
 
   deletePhoto: restaurantOwnerProcedure
-    .input(z.object({ id: z.number() }))
+    .input(z.object({ id: z.number().int().positive() }))
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
