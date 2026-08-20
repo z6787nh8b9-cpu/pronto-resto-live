@@ -9,11 +9,29 @@ import { TRPCError } from "@trpc/server";
 
 export const publicChatbotRequestSchema = z.object({
   type: z.enum(["call_request", "issue_report"]),
-  name: z.string().trim().max(120).optional(),
+  name: z.string().trim().min(1).max(120).optional(),
   email: z.string().trim().email().max(320).optional(),
-  phone: z.string().trim().max(40).optional(),
+  phone: z.string().trim().min(3).max(40).regex(/^[+()0-9 .-]+$/).optional(),
   message: z.string().trim().min(1).max(2_000),
-  recaptchaToken: z.string().min(1),
+  recaptchaToken: z.string().min(1).max(4_096),
+}).superRefine(({ type, email, phone }, ctx) => {
+  if (type === "call_request" && !email && !phone) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["email"],
+      message: "Un email ou un numéro de téléphone est nécessaire pour une demande de rappel.",
+    });
+  }
+});
+
+export const chatbotRequestListSchema = z.object({
+  limit: z.number().int().min(1).max(100).default(50),
+}).optional();
+
+export const chatbotRequestStatusSchema = z.object({
+  id: z.number().int().positive(),
+  status: z.enum(["pending", "contacted", "resolved", "dismissed"]),
+  adminNotes: z.string().trim().max(5_000).optional(),
 });
 
 export const chatbotRequestsRouter = router({
@@ -56,26 +74,21 @@ export const chatbotRequestsRouter = router({
     }),
 
   // Protected procedure - only Super Admins can list requests
-  list: adminProcedure.query(async () => {
+  list: adminProcedure.input(chatbotRequestListSchema).query(async ({ input }) => {
     const db = await getDb();
     if (!db) throw new Error("Database not available");
     const requests = await db
       .select()
       .from(chatbotRequests)
-      .orderBy(desc(chatbotRequests.createdAt));
+      .orderBy(desc(chatbotRequests.createdAt))
+      .limit(input?.limit ?? 50);
 
     return requests;
   }),
 
   // Protected procedure - update request status
   updateStatus: adminProcedure
-    .input(
-      z.object({
-        id: z.number(),
-        status: z.enum(["pending", "contacted", "resolved", "dismissed"]),
-        adminNotes: z.string().optional(),
-      })
-    )
+    .input(chatbotRequestStatusSchema)
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");

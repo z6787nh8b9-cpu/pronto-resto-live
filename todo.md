@@ -1451,3 +1451,9 @@
 ## COMMUNICATION PRODUIT FACTUELLE (20 août 2026)
 - [x] Remplacer la promesse d’essai et de carte bancaire de la landing par un wording vérifiable sur la préparation et la publication
 - [x] Remplacer le prix d’appel non confirmé de la landing par une invitation factuelle à définir l’offre adaptée
+
+## AUDIT DES DEMANDES CHATBOT PUBLIQUES (20 août 2026)
+- [x] Renforcer les bornes et formats des données de contact soumises publiquement
+- [x] Empêcher les demandes de rappel sans moyen de contact exploitable
+- [x] Borner les mises à jour administratives et les lectures de demandes sensibles
+- [x] Ajouter les régressions de schéma et valider le parcours existant
