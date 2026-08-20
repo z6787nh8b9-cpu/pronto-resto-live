@@ -8,10 +8,16 @@ import { TRPCError } from "@trpc/server";
 export const openingHoursRouter = router({
   // Get opening hours for a restaurant (public)
   getOpeningHours: publicProcedure
-    .input(z.object({ restaurantId: z.number() }))
+    .input(z.object({ restaurantId: z.number().int().positive() }))
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const [restaurant] = await db.select({ id: restaurants.id }).from(restaurants).where(and(
+        eq(restaurants.id, input.restaurantId),
+        eq(restaurants.isActive, true),
+      )).limit(1);
+      if (!restaurant) return [];
 
       const hours = await db
         .select()

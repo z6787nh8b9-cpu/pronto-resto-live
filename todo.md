@@ -1300,6 +1300,33 @@
 - [x] Exclure les événements des établissements inactifs des réponses publiques
 - [x] Ajouter les régressions garantissant qu’aucun brouillon ou événement masqué ne peut être lu publiquement
 
+## DURCISSEMENT GALERIE PUBLIQUE (20 août 2026)
+- [x] Borner l’identifiant d’établissement et exclure les médias des établissements inactifs
+- [x] Ajouter une régression d’isolation de la galerie publique
+
+## DURCISSEMENT HORAIRES PUBLICS (20 août 2026)
+- [x] Borner l’identifiant d’établissement et exclure les horaires des établissements inactifs
+- [x] Ajouter une régression d’isolation des horaires publics
+
+## DURCISSEMENT VITRINE ET CATALOGUE PUBLICS LEGACY (20 août 2026)
+- [x] Borner les slugs et identifiants des procédures publiques de vitrine et catalogue
+- [x] Exclure les établissements inactifs de la vitrine, du catalogue et du chatbot legacy
+- [x] Réduire la réponse publique du chatbot aux seuls champs nécessaires à son affichage
+- [x] Ajouter les régressions d’absence de divulgation des établissements et métriques inactifs
+
+## DURCISSEMENT TRADUCTIONS PUBLIQUES (20 août 2026)
+- [x] Borner l’identifiant d’établissement et exclure les traductions des établissements inactifs
+- [x] Ajouter une régression d’isolation des traductions publiques
+
+## RETRAIT DES LECTURES CATALOGUE LEGACY PUBLIQUES (20 août 2026)
+- [x] Réserver les procédures de catégorie et de produit utilisées par les dashboards aux propriétaires et Super Admins autorisés
+- [x] Vérifier l’appartenance du restaurant ou de la catégorie dans toutes les lectures catalogue internes
+- [x] Ajouter les régressions d’interdiction d’accès anonyme et inter-établissement
+
+## DURCISSEMENT PUBLICITÉS PUBLIQUES (20 août 2026)
+- [x] Restreindre les publicités publiques aux campagnes actives dans leur fenêtre de diffusion
+- [x] Ajouter une régression des bornes de début et de fin de campagne
+
 ## INTÉGRITÉ ANALYTIQUE PUBLIQUE (20 août 2026)
 - [x] Dériver côté serveur les métadonnées de vue publique au lieu d’accepter IP, agent et référent déclarés par le navigateur
 - [x] Ajouter une limite de débit dédiée aux vues publiques pour réduire l’inflation analytique artificielle

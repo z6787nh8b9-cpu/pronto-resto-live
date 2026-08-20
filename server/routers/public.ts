@@ -21,10 +21,9 @@ export const publicPageViewSchema = z.object({
   restaurantId: z.number().int().positive(),
   path: z.string().trim().min(1).max(2_048),
 });
-import { advertisements } from "../../drizzle/schema";
-import { eq } from "drizzle-orm";
+import { advertisements, restaurants } from "../../drizzle/schema";
+import { and, eq, gte, isNull, lte, or } from "drizzle-orm";
 import {
-  getRestaurantBySlug,
   getMenuCategoriesByRestaurantId,
   getMenuItemsByRestaurantId,
   getChatbotConfigByRestaurantId,
@@ -36,15 +35,47 @@ import { invokeLLM } from "../_core/llm";
 export const publicRouter = router({
   // Get restaurant by slug
   getRestaurant: publicProcedure
-    .input(z.object({ slug: z.string() }))
+    .input(z.object({ slug: z.string().trim().min(2).max(100) }))
     .query(async ({ input }) => {
-      return await getRestaurantBySlug(input.slug);
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+      const [restaurant] = await db.select({
+        id: restaurants.id,
+        slug: restaurants.slug,
+        name: restaurants.name,
+        description: restaurants.description,
+        whatsapp: restaurants.whatsapp,
+        reservationUrl: restaurants.reservationUrl,
+        email: restaurants.email,
+        phone: restaurants.phone,
+        address: restaurants.address,
+        logoUrl: restaurants.logoUrl,
+        heroImageUrl: restaurants.heroImageUrl,
+        primaryColor: restaurants.primaryColor,
+        accentColor: restaurants.accentColor,
+        fontFamily: restaurants.fontFamily,
+        theme: restaurants.theme,
+        subscriptionTier: restaurants.subscriptionTier,
+        showAds: restaurants.showAds,
+        featuresEnabled: restaurants.featuresEnabled,
+      }).from(restaurants).where(and(
+        eq(restaurants.slug, input.slug),
+        eq(restaurants.isActive, true),
+      )).limit(1);
+      return restaurant;
     }),
 
   // Get restaurant menu
   getMenu: publicProcedure
-    .input(z.object({ restaurantId: z.number() }))
+    .input(z.object({ restaurantId: z.number().int().positive() }))
     .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+      const [restaurant] = await db.select({ id: restaurants.id }).from(restaurants).where(and(
+        eq(restaurants.id, input.restaurantId),
+        eq(restaurants.isActive, true),
+      )).limit(1);
+      if (!restaurant) return { categories: [], items: [] };
       const categories = await getMenuCategoriesByRestaurantId(input.restaurantId);
       const items = await getMenuItemsByRestaurantId(input.restaurantId);
 
@@ -58,6 +89,14 @@ export const publicRouter = router({
   chat: publicProcedure
     .input(publicVenueChatSchema)
     .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new Error("Database not available");
+      const [restaurant] = await db.select({ id: restaurants.id }).from(restaurants).where(and(
+        eq(restaurants.id, input.restaurantId),
+        eq(restaurants.isActive, true),
+      )).limit(1);
+      if (!restaurant) throw new Error("Restaurant unavailable");
+
       // Get restaurant and chatbot config
       const config = await getChatbotConfigByRestaurantId(input.restaurantId);
 
@@ -159,10 +198,16 @@ Instructions:
     const db = await getDb();
     if (!db) return [];
 
+    const now = new Date();
+
     const ads = await db
       .select()
       .from(advertisements)
-      .where(eq(advertisements.isActive, true))
+      .where(and(
+        eq(advertisements.isActive, true),
+        or(isNull(advertisements.startDate), lte(advertisements.startDate, now)),
+        or(isNull(advertisements.endDate), gte(advertisements.endDate, now)),
+      ))
       .orderBy(advertisements.displayOrder);
 
     return ads;

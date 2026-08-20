@@ -11,12 +11,17 @@ export const translationsRouter = router({
    */
   getTranslations: publicProcedure
     .input(z.object({
-      restaurantId: z.number(),
+      restaurantId: z.number().int().positive(),
       language: z.enum(["fr", "en", "it", "de", "es"]),
     }))
     .query(async ({ input }) => {
       const db = await getDb();
-  if (!db) throw new Error('Database not available');
+      if (!db) throw new Error('Database not available');
+      const [restaurant] = await db.select({ id: restaurants.id }).from(restaurants).where(and(
+        eq(restaurants.id, input.restaurantId),
+        eq(restaurants.isActive, true),
+      )).limit(1);
+      if (!restaurant) return [];
       const allTranslations = await db
         .select()
         .from(translations)

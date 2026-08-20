@@ -22,7 +22,16 @@ import {
   getDb,
 } from "../db";
 import { menuCategories, menuItems, restaurants } from "../../drizzle/schema";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
+
+async function assertCatalogReadAccess(ctx: { adminAccount: unknown; restaurantOwner: { id: number } | null }, restaurantId: number) {
+  const db = await getDb();
+  if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+  const [restaurant] = await db.select({ ownerId: restaurants.ownerId }).from(restaurants).where(eq(restaurants.id, restaurantId)).limit(1);
+  if (!restaurant || (!ctx.adminAccount && restaurant.ownerId !== ctx.restaurantOwner?.id)) {
+    throw new TRPCError({ code: "FORBIDDEN" });
+  }
+}
 
 export const restaurantRouter = router({
   /**
@@ -122,9 +131,10 @@ export const restaurantRouter = router({
     }),
 
   // Menu Categories
-  getCategories: publicProcedure
-    .input(z.object({ restaurantId: z.number() }))
-    .query(async ({ input }) => {
+  getCategories: restaurantOwnerProcedure
+    .input(z.object({ restaurantId: z.number().int().positive() }))
+    .query(async ({ input, ctx }) => {
+      await assertCatalogReadAccess(ctx, input.restaurantId);
       return await getMenuCategoriesByRestaurantId(input.restaurantId);
     }),
 
@@ -169,15 +179,21 @@ export const restaurantRouter = router({
     }),
 
   // Menu Items
-  getMenuItems: publicProcedure
-    .input(z.object({ restaurantId: z.number() }))
-    .query(async ({ input }) => {
+  getMenuItems: restaurantOwnerProcedure
+    .input(z.object({ restaurantId: z.number().int().positive() }))
+    .query(async ({ input, ctx }) => {
+      await assertCatalogReadAccess(ctx, input.restaurantId);
       return await getMenuItemsByRestaurantId(input.restaurantId);
     }),
 
-  getItemsByCategory: publicProcedure
-    .input(z.object({ categoryId: z.number() }))
-    .query(async ({ input }) => {
+  getItemsByCategory: restaurantOwnerProcedure
+    .input(z.object({ categoryId: z.number().int().positive() }))
+    .query(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+      const [category] = await db.select({ restaurantId: menuCategories.restaurantId }).from(menuCategories).where(eq(menuCategories.id, input.categoryId)).limit(1);
+      if (!category) throw new TRPCError({ code: "NOT_FOUND" });
+      await assertCatalogReadAccess(ctx, category.restaurantId);
       return await getMenuItemsByCategoryId(input.categoryId);
     }),
 
@@ -245,11 +261,36 @@ export const restaurantRouter = router({
       return { success: true };
     }),
 
-  // Chatbot Configuration
-  getChatbotConfig: publicProcedure
-    .input(z.object({ restaurantId: z.number() }))
-    .query(async ({ input }) => {
+  // Chatbot configuration for the authenticated dashboard only.
+  getChatbotConfig: restaurantOwnerProcedure
+    .input(z.object({ restaurantId: z.number().int().positive() }))
+    .query(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+      const [restaurant] = await db.select({ ownerId: restaurants.ownerId }).from(restaurants).where(eq(restaurants.id, input.restaurantId)).limit(1);
+      if (!restaurant || (!ctx.adminAccount && restaurant.ownerId !== ctx.restaurantOwner?.id)) {
+        throw new TRPCError({ code: "FORBIDDEN" });
+      }
       return await getChatbotConfigByRestaurantId(input.restaurantId);
+    }),
+
+  // Minimal public chatbot presentation state; excludes instructions and analytics.
+  getPublicChatbotConfig: publicProcedure
+    .input(z.object({ restaurantId: z.number().int().positive() }))
+    .query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+      const [restaurant] = await db.select({ id: restaurants.id }).from(restaurants).where(and(
+        eq(restaurants.id, input.restaurantId),
+        eq(restaurants.isActive, true),
+      )).limit(1);
+      if (!restaurant) return null;
+      const config = await getChatbotConfigByRestaurantId(input.restaurantId);
+      return {
+        isEnabled: config.isEnabled,
+        tone: config.tone,
+        welcomeMessage: config.welcomeMessage,
+      };
     }),
 
   updateChatbotConfig: restaurantOwnerProcedure

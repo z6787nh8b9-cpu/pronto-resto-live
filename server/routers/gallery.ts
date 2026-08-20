@@ -6,10 +6,15 @@ import { eq, and } from "drizzle-orm";
 
 export const galleryRouter = router({
   getGalleryPhotos: publicProcedure
-    .input(z.object({ restaurantId: z.number() }))
+    .input(z.object({ restaurantId: z.number().int().positive() }))
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");
+      const [restaurant] = await db.select({ id: restaurants.id }).from(restaurants).where(and(
+        eq(restaurants.id, input.restaurantId),
+        eq(restaurants.isActive, true),
+      )).limit(1);
+      if (!restaurant) return [];
       return db.select().from(galleryPhotos).where(and(eq(galleryPhotos.restaurantId, input.restaurantId), eq(galleryPhotos.isActive, true))).orderBy(galleryPhotos.displayOrder);
     }),
 
