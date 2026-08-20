@@ -60,6 +60,8 @@ L’assistance flottante observe désormais `prefers-reduced-motion`. Lorsque ce
 
 Le défilement automatique qui accompagne les nouveaux messages de l’assistance adopte la même préférence : il devient instantané lorsque le mouvement réduit est demandé et reste fluide dans le cas général.
 
+Les champs du formulaire d’assistance, l’action de retour et le bouton d’envoi disposent maintenant de noms accessibles explicites. Le parcours reste donc compréhensible sans dépendre des placeholders, des icônes ou de la mise en forme visuelle.
+
 Le CTA « Créer ma vitrine » du menu mobile ferme désormais explicitement son panneau de navigation avant d’ouvrir le formulaire de contact. Cette orchestration évite l’empilement de deux dialogues et préserve un parcours clair sur petit écran.
 
 Le chatbot public a été aligné sur les activités de restauration, beauté, retail et services. Ses questions suggérées portent désormais sur l’adaptation à l’activité, les contenus de catalogue et la démonstration. Les promesses tarifaires, de délai ou de comparaison ont été retirées, et la mention non vérifiable de non-rétention a été remplacée par une invitation claire à ne pas partager d’informations sensibles.

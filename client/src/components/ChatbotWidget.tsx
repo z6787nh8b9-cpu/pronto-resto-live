@@ -282,6 +282,7 @@ export default function ChatbotWidget() {
                   variant="ghost"
                   size="sm"
                   onClick={() => setShowRequestForm(false)}
+                  aria-label="Revenir aux actions d’assistance"
                   className="h-6 w-6 p-0"
                 >
                   <X className="h-4 w-4" />
@@ -289,6 +290,7 @@ export default function ChatbotWidget() {
               </div>
               <input
                 type="text"
+                aria-label="Nom"
                 placeholder="Nom"
                 value={requestData.name}
                 onChange={(e) => setRequestData({ ...requestData, name: e.target.value })}
@@ -296,6 +298,7 @@ export default function ChatbotWidget() {
               />
               <input
                 type="email"
+                aria-label="Email"
                 placeholder="Email"
                 value={requestData.email}
                 onChange={(e) => setRequestData({ ...requestData, email: e.target.value })}
@@ -304,6 +307,7 @@ export default function ChatbotWidget() {
               {requestType === "call_request" && (
                 <input
                   type="tel"
+                  aria-label="Téléphone"
                   placeholder="Téléphone"
                   value={requestData.phone}
                   onChange={(e) => setRequestData({ ...requestData, phone: e.target.value })}
@@ -311,6 +315,7 @@ export default function ChatbotWidget() {
                 />
               )}
               <textarea
+                aria-label="Votre message"
                 placeholder="Votre message..."
                 value={requestData.message}
                 onChange={(e) => setRequestData({ ...requestData, message: e.target.value })}
@@ -354,6 +359,7 @@ export default function ChatbotWidget() {
                 onClick={handleSend}
                 disabled={!input.trim() || chatMutation.isPending}
                 size="icon"
+                aria-label="Envoyer le message"
                 className="bg-pronto-primary hover:bg-pronto-primary/90"
               >
                 <Send className="h-4 w-4" />
