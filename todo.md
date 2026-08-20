@@ -90,8 +90,8 @@
 - [x] Créer les mutations tRPC pour réorganiser les catégories et plats
 - [x] Implémenter l'interface drag & drop avec @dnd-kit dans RestaurantDashboard (AdminManageRestaurant retiré du parcours unifié)
 - [x] Créer un composant d'upload d'images avec S3
-- [ ] Ajouter l'upload de logo restaurant dans les paramètres (composant prêt)
-- [ ] Ajouter l'upload de photo hero dans les paramètres (composant prêt)
+- [x] Ajouter l'upload de logo restaurant dans les paramètres (composant prêt)
+- [x] Ajouter l'upload de photo hero dans les paramètres (composant prêt)
 - [ ] Ajouter l'upload d'images de plats dans le formulaire d'ajout/édition (composant prêt)
 - [x] Créer la landing page PRONTO avec section Hero
 - [x] Ajouter la section Fonctionnalités à la landing page

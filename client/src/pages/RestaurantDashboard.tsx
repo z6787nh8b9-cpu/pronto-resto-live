@@ -320,8 +320,8 @@ export default function RestaurantDashboard() {
         phone: formData.get("phone") as string,
         whatsapp: formData.get("whatsapp") as string,
         address: formData.get("address") as string,
-        logoUrl: logoUrl ?? restaurant?.logoUrl ?? undefined,
-        heroImageUrl: heroImageUrl ?? restaurant?.heroImageUrl ?? undefined,
+        logoUrl: logoUrl || restaurant?.logoUrl || undefined,
+        heroImageUrl: heroImageUrl || restaurant?.heroImageUrl || undefined,
       },
     });
   };
@@ -1066,7 +1066,7 @@ export default function RestaurantDashboard() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <ImageUploader
                       label="Logo de l’entreprise"
-                      currentImageUrl={logoUrl ?? restaurant.logoUrl ?? undefined}
+                      currentImageUrl={logoUrl || restaurant.logoUrl || undefined}
                       onUploadComplete={setLogoUrl}
                       recommendedWidth={200}
                       recommendedHeight={200}
@@ -1074,7 +1074,7 @@ export default function RestaurantDashboard() {
                     />
                     <ImageUploader
                       label="Photo de couverture"
-                      currentImageUrl={heroImageUrl ?? restaurant.heroImageUrl ?? undefined}
+                      currentImageUrl={heroImageUrl || restaurant.heroImageUrl || undefined}
                       onUploadComplete={setHeroImageUrl}
                       recommendedWidth={1920}
                       recommendedHeight={600}
