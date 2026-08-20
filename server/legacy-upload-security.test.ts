@@ -14,5 +14,7 @@ describe("legacy upload security", () => {
       expect(source).toContain("mediaExtension");
     }
     expect(genericUpload).toContain("base64Match[1] !== input.mimeType");
+    expect(catalogUpload).toContain('import { acceptedMediaTypes } from "../media-validation"');
+    expect(catalogUpload).toContain("z.enum(acceptedMediaTypes)");
   });
 });

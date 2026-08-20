@@ -1457,3 +1457,6 @@
 - [x] Empêcher les demandes de rappel sans moyen de contact exploitable
 - [x] Borner les mises à jour administratives et les lectures de demandes sensibles
 - [x] Ajouter les régressions de schéma et valider le parcours existant
+
+## STABILITÉ DU CHARGEMENT DES MÉDIAS (20 août 2026)
+- [x] Confirmer la résolution de la référence historique acceptedMediaTypes et prévenir sa réintroduction
