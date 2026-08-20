@@ -40,7 +40,7 @@ export const translationsRouter = router({
    */
   translateAll: restaurantOwnerProcedure
     .input(z.object({
-      restaurantId: z.number(),
+      restaurantId: z.number().int().positive(),
       targetLanguage: z.enum(["en", "it", "de", "es"]),
     }))
     .mutation(async ({ input, ctx }) => {
@@ -166,8 +166,8 @@ export const translationsRouter = router({
    */
   updateTranslation: restaurantOwnerProcedure
     .input(z.object({
-      translationId: z.number(),
-      translatedText: z.string(),
+      translationId: z.number().int().positive(),
+      translatedText: z.string().trim().min(1).max(5_000),
     }))
     .mutation(async ({ input, ctx }) => {
       const db = await getDb();
@@ -220,35 +220,14 @@ export const translationsRouter = router({
    */
   autoTranslatePublic: restaurantOwnerProcedure
     .input(z.object({
-      restaurantId: z.number(),
+      restaurantId: z.number().int().positive(),
       targetLanguage: z.enum(["en", "it", "de", "es"]),
     }))
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new Error('Database not available');
       
-      // Check if translations already exist for this language
-      const existing = await db
-        .select()
-        .from(translations)
-        .where(
-          and(
-            eq(translations.restaurantId, input.restaurantId),
-            eq(translations.language, input.targetLanguage)
-          )
-        )
-        .limit(1);
-
-      // If translations exist, don't re-translate
-      if (existing.length > 0) {
-        return {
-          success: true,
-          alreadyTranslated: true,
-          translationsCount: 0,
-        };
-      }
-
-      // Get restaurant
+      // Authorize before any existence check to avoid leaking translation metadata.
       const [restaurant] = await db
         .select()
         .from(restaurants)
@@ -262,6 +241,25 @@ export const translationsRouter = router({
       const isPlatformAdmin = Boolean(ctx.adminAccount);
       if (!isPlatformAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id) {
         throw new Error("Unauthorized");
+      }
+
+      const existing = await db
+        .select()
+        .from(translations)
+        .where(
+          and(
+            eq(translations.restaurantId, input.restaurantId),
+            eq(translations.language, input.targetLanguage)
+          )
+        )
+        .limit(1);
+
+      if (existing.length > 0) {
+        return {
+          success: true,
+          alreadyTranslated: true,
+          translationsCount: 0,
+        };
       }
 
       const results = [];
@@ -367,7 +365,7 @@ export const translationsRouter = router({
    */
   getTranslationsForManagement: restaurantOwnerProcedure
     .input(z.object({
-      restaurantId: z.number(),
+      restaurantId: z.number().int().positive(),
     }))
     .query(async ({ input, ctx }) => {
       const db = await getDb();
