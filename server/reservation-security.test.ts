@@ -107,4 +107,35 @@ describe("public reservation security", () => {
     expect(outcomes.filter((outcome) => outcome.status === "fulfilled")).toHaveLength(1);
     expect(outcomes.filter((outcome) => outcome.status === "rejected")).toHaveLength(1);
   });
+
+  it("computes public availability against the selected zone rather than aggregate venue capacity", async () => {
+    const restaurant = await createReservationRestaurant("zone-slots");
+    const db = await getDb();
+    if (!db) throw new Error("Database unavailable");
+    const [terraceResult] = await db.insert(reservationZones).values({ restaurantId: restaurant.id, name: "Terrasse", capacity: 2, isActive: true, displayOrder: 0 });
+    const [roomResult] = await db.insert(reservationZones).values({ restaurantId: restaurant.id, name: "Salle", capacity: 2, isActive: true, displayOrder: 1 });
+    const terraceId = Number(terraceResult.insertId);
+    const roomId = Number(roomResult.insertId);
+    const reservationDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
+    reservationDate.setHours(12, 0, 0, 0);
+    await db.insert(openingHours).values({ restaurantId: restaurant.id, dayOfWeek: reservationDate.getDay(), openTime: "10:00", closeTime: "20:00", isClosed: false });
+    await db.insert(reservations).values({
+      restaurantId: restaurant.id,
+      zoneId: terraceId,
+      customerName: "Terrasse complète",
+      customerEmail: `terrace-${runId}@example.test`,
+      customerPhone: "+33612345678",
+      partySize: 2,
+      reservationDate,
+      confirmationToken: `zone-${runId}`,
+      status: "confirmed",
+    });
+
+    const date = reservationDate.toISOString().slice(0, 10);
+    const terraceSlots = await publicCaller.reservations.getAvailableSlots({ restaurantId: restaurant.id, date, partySize: 1, zoneId: terraceId });
+    const roomSlots = await publicCaller.reservations.getAvailableSlots({ restaurantId: restaurant.id, date, partySize: 1, zoneId: roomId });
+
+    expect(terraceSlots).not.toContain("12:00");
+    expect(roomSlots).toContain("12:00");
+  });
 });

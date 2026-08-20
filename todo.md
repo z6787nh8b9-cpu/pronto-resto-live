@@ -327,7 +327,7 @@
 - [x] Créer le composant ReservationFlow (flux en 6 étapes)
 - [x] Intégrer le bouton de réservation sur RestaurantHomePage
 - [ ] Implémenter les notifications WhatsApp/Email pour les réservations
-- [ ] Améliorer la logique de disponibilité des créneaux horaires
+- [x] Améliorer la logique de disponibilité des créneaux horaires
 
 ### PHASE 8 : DASHBOARD PREMIUM - GESTION COMPLÈTE DU MINI-SITE
 - [ ] Onglet "Page d'accueil" : éditer le contenu du hero, qui sommes-nous, etc.

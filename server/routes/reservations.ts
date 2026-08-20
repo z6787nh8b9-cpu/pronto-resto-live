@@ -391,6 +391,7 @@ export const reservationsRouter = router({
       restaurantId: z.number().int().positive(),
       date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
       partySize: z.number().int().min(1).max(20),
+      zoneId: z.number().int().positive().optional(),
     }))
     .query(async ({ input }) => {
       const db = await requirePublicReservationRestaurant(input.restaurantId);
@@ -423,15 +424,18 @@ export const reservationsRouter = router({
       const [opening] = await db.select().from(openingHours).where(and(eq(openingHours.restaurantId, input.restaurantId), eq(openingHours.dayOfWeek, reservationDay.getDay()))).limit(1);
       if (!opening || opening.isClosed || !opening.openTime || !opening.closeTime) return [];
       const zones = await db.select().from(reservationZones).where(and(eq(reservationZones.restaurantId, input.restaurantId), eq(reservationZones.isActive, true)));
-      const capacity = zones.reduce((total, zone) => total + zone.capacity, 0);
+      const selectedZone = input.zoneId ? zones.find((zone) => zone.id === input.zoneId) : null;
+      if (input.zoneId && !selectedZone) return [];
+      const capacity = selectedZone ? selectedZone.capacity : zones.reduce((total, zone) => total + zone.capacity, 0);
       if (capacity < input.partySize) return [];
 
       const startOfDay = new Date(`${input.date}T00:00:00`);
       const endOfDay = new Date(`${input.date}T23:59:59.999`);
-      const existing = await db.select({ reservationDate: reservations.reservationDate, partySize: reservations.partySize, status: reservations.status }).from(reservations).where(and(eq(reservations.restaurantId, input.restaurantId), gte(reservations.reservationDate, startOfDay), lte(reservations.reservationDate, endOfDay)));
+      const existing = await db.select({ reservationDate: reservations.reservationDate, partySize: reservations.partySize, status: reservations.status, zoneId: reservations.zoneId }).from(reservations).where(and(eq(reservations.restaurantId, input.restaurantId), gte(reservations.reservationDate, startOfDay), lte(reservations.reservationDate, endOfDay)));
       const occupancy = new Map<number, number>();
       for (const entry of existing) {
         if (entry.status === "cancelled" || entry.status === "no_show") continue;
+        if (selectedZone && entry.zoneId !== selectedZone.id) continue;
         const key = entry.reservationDate.getTime();
         occupancy.set(key, (occupancy.get(key) || 0) + entry.partySize);
       }

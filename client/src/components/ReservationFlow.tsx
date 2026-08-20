@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -37,13 +37,20 @@ export function ReservationFlow({ restaurantId, businessName, onClose }: Reserva
       restaurantId,
       date: selectedDate ? format(selectedDate, "yyyy-MM-dd") : "",
       partySize: parseInt(partySize),
+      zoneId: selectedZone ? parseInt(selectedZone) : undefined,
     },
     { enabled: !!selectedDate }
   );
 
+  useEffect(() => {
+    if (selectedTime && availableSlots && !availableSlots.includes(selectedTime)) {
+      setSelectedTime("");
+    }
+  }, [availableSlots, selectedTime]);
+
   const createReservation = trpc.reservations.create.useMutation({
     onSuccess: () => {
-      toast.success("Réservation confirmée ! Vous recevrez un email de confirmation.");
+      toast.success("Votre demande de réservation a été enregistrée.");
       setStep(7); // Success step
     },
     onError: () => {
@@ -402,10 +409,10 @@ export function ReservationFlow({ restaurantId, businessName, onClose }: Reserva
                 <Check className="w-8 h-8 text-green-600" />
               </div>
               <p className="text-lg">
-                Votre réservation a été enregistrée avec succès !
+                Votre demande de réservation a été enregistrée.
               </p>
               <p className="text-muted-foreground">
-                Un email de confirmation a été envoyé à <strong>{customerEmail}</strong>
+                L’établissement vous confirmera la réservation à l’adresse <strong>{customerEmail}</strong>.
               </p>
               {settings?.autoConfirm ? (
                 <p className="text-green-600 font-semibold">
