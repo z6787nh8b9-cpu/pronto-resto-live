@@ -18,6 +18,8 @@ Le prochain correctif doit traiter l’état de chargement des indicateurs d’e
 
 Les compteurs Collections actives et Éléments publiables affichent désormais une surface de chargement dédiée tant que leurs requêtes ne sont pas résolues. Une fois les données reçues, la revue navigateur confirme l’affichage des valeurs réelles `15` et `101` dans la hiérarchie existante. L’état vide réel reste donc distingué de l’état de chargement.
 
+La carte de formule ne révèle plus la valeur interne `menu`. Le dashboard traduit désormais les valeurs de tiers en libellés métier cohérents : `Essentiel`, `Pro`, `Premium` ou `Sur mesure`. La revue propriétaire de La Voile Rouge confirme l’affichage de `Essentiel` sans changement de ses droits ni de sa configuration.
+
 ## Revue smartphone
 
 La capture à 390 px confirme que le dashboard conserve une colonne de lecture claire : hero, indicateurs, actions principales et onboarding se suivent sans débordement horizontal. Les indicateurs sont volontairement empilés, ce qui préserve leur lisibilité. Les onglets restent compacts et défilables horizontalement ; une future itération pourra rendre plus explicite l’existence des onglets hors champ, mais aucun correctif bloquant n’est requis pour ce jalon.

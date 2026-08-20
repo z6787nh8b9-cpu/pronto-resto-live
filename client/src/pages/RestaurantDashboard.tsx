@@ -31,6 +31,17 @@ import { LockedFeatureOverlay } from "@/components/LockedFeatureOverlay";
 import { CatalogImportCard } from "@/components/CatalogImportCard";
 import { LoadingState } from "@/components/LoadingState";
 import { BusinessOnboardingCard } from "@/components/BusinessOnboardingCard";
+
+const subscriptionTierLabels: Record<string, string> = {
+  basic: "Essentiel",
+  menu: "Essentiel",
+  pro: "Pro",
+  premium: "Premium",
+};
+
+function subscriptionTierLabel(tier: string | null | undefined) {
+  return subscriptionTierLabels[tier?.toLowerCase() ?? ""] ?? "Sur mesure";
+}
 import { BusinessMediaLibrary } from "@/components/BusinessMediaLibrary";
 import { PwaInstallControl } from "@/components/PwaInstallControl";
 
@@ -577,7 +588,7 @@ export default function RestaurantDashboard() {
             <section className="grid gap-4 sm:grid-cols-3">
               <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Collections actives</p><DashboardMetricValue label="collections actives" isLoading={isCategoriesLoading} value={categories?.length ?? 0} /><p className="mt-2 text-sm text-muted-foreground">Organisez-les dans l’onglet Catalogue.</p></div>
               <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Éléments publiables</p><DashboardMetricValue label="éléments publiables" isLoading={isMenuItemsLoading} value={menuItems?.length ?? 0} /><p className="mt-2 text-sm text-muted-foreground">Plats, produits ou prestations selon votre activité.</p></div>
-              <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Formule actuelle</p><p className="mt-2 font-display text-4xl capitalize text-foreground">{restaurant.subscriptionTier}</p><p className="mt-2 text-sm text-muted-foreground">Les fonctions disponibles évoluent avec votre formule.</p></div>
+              <div className="pronto-panel p-5"><p className="text-sm text-muted-foreground">Formule actuelle</p><p className="mt-2 font-display text-4xl text-foreground">{subscriptionTierLabel(restaurant.subscriptionTier)}</p><p className="mt-2 text-sm text-muted-foreground">Les fonctions disponibles évoluent avec votre formule.</p></div>
             </section>
 
             <section className="grid gap-4 lg:grid-cols-3">
