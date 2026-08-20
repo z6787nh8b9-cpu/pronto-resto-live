@@ -1434,6 +1434,11 @@
 - [x] Afficher un annuaire Super Admin des propriétaires et de leurs établissements sans données d’authentification
 - [x] Clarifier les opérations autorisées et ajouter les régressions de droits associées
 
+## APERÇU SYNCHRONISÉ DE LA VITRINE (20 août 2026)
+- [x] Ajouter un aperçu public accessible depuis le dashboard après les mutations de catalogue et de personnalisation
+- [x] Préserver les parcours publics, les états de chargement et les préférences d’accessibilité
+- [x] Ajouter les régressions structurelles de l’aperçu synchronisé
+
 ## INTÉGRITÉ ANALYTIQUE PUBLIQUE (20 août 2026)
 - [x] Dériver côté serveur les métadonnées de vue publique au lieu d’accepter IP, agent et référent déclarés par le navigateur
 - [x] Ajouter une limite de débit dédiée aux vues publiques pour réduire l’inflation analytique artificielle

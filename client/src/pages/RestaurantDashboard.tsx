@@ -90,6 +90,10 @@ export default function RestaurantDashboard() {
   const [heroImageUrl, setHeroImageUrl] = useState("");
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
   const [upgradeFeature, setUpgradeFeature] = useState<{ name: string; tier: "pro" | "premium" }>({ name: "", tier: "pro" });
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [previewVersion, setPreviewVersion] = useState(0);
+
+  const refreshPublicPreview = () => setPreviewVersion((version) => version + 1);
 
   // Drag & Drop sensors
   const sensors = useSensors(
@@ -164,6 +168,7 @@ export default function RestaurantDashboard() {
       toast.success("Catégorie créée");
       setIsAddCategoryOpen(false);
       refetchCategories();
+      refreshPublicPreview();
     },
   });
 
@@ -172,6 +177,7 @@ export default function RestaurantDashboard() {
       toast.success("Plat ajouté");
       setIsAddItemOpen(false);
       refetchItems();
+      refreshPublicPreview();
     },
   });
 
@@ -180,6 +186,7 @@ export default function RestaurantDashboard() {
       toast.success("Catégorie modifiée");
       setIsEditCategoryOpen(false);
       refetchCategories();
+      refreshPublicPreview();
     },
   });
 
@@ -188,6 +195,7 @@ export default function RestaurantDashboard() {
       toast.success("Plat modifié");
       setIsEditItemOpen(false);
       refetchItems();
+      refreshPublicPreview();
     },
   });
 
@@ -195,6 +203,7 @@ export default function RestaurantDashboard() {
     onSuccess: () => {
       toast.success("Plat supprimé");
       refetchItems();
+      refreshPublicPreview();
     },
   });
 
@@ -208,6 +217,7 @@ export default function RestaurantDashboard() {
     onSuccess: () => {
       toast.success("Ordre des catégories mis à jour");
       refetchCategories();
+      refreshPublicPreview();
     },
   });
 
@@ -215,13 +225,14 @@ export default function RestaurantDashboard() {
     onSuccess: () => {
       toast.success("Ordre des plats mis à jour");
       refetchItems();
+      refreshPublicPreview();
     },
   });
 
   const updateRestaurantMutation = trpc.restaurant.updateSettings.useMutation({
     onSuccess: () => {
       toast.success("Informations mises à jour");
-      window.location.reload(); // Reload to see changes
+      refreshPublicPreview();
     },
   });
 
@@ -507,8 +518,8 @@ export default function RestaurantDashboard() {
           </Badge>
         }
         primaryAction={{
-          label: "Voir la vitrine",
-          onClick: () => window.open(`/${restaurant.slug}`, '_blank'),
+          label: "Aperçu",
+          onClick: () => setIsPreviewOpen(true),
           icon: <Eye className="h-4 w-4" />,
         }}
         backButton={{
@@ -518,6 +529,27 @@ export default function RestaurantDashboard() {
         breadcrumbs={["Espace entreprise", restaurant.name]}
       />
       <PwaInstallControl />
+
+      <Dialog open={isPreviewOpen} onOpenChange={setIsPreviewOpen}>
+        <DialogContent className="flex h-[88dvh] max-w-6xl flex-col gap-0 overflow-hidden p-0">
+          <DialogHeader className="border-b px-5 py-4 text-left sm:px-6">
+            <DialogTitle>Aperçu de la vitrine</DialogTitle>
+            <DialogDescription>Le rendu public se synchronise après chaque sauvegarde effectuée dans ce dashboard.</DialogDescription>
+          </DialogHeader>
+          <div className="min-h-0 flex-1 bg-muted/30 p-2 sm:p-3">
+            <iframe
+              key={previewVersion}
+              title={`Aperçu public de ${restaurant.name}`}
+              src={`/${restaurant.slug}?dashboardPreview=${previewVersion}`}
+              className="h-full w-full rounded-xl border bg-background"
+            />
+          </div>
+          <DialogFooter className="border-t px-5 py-3 sm:px-6">
+            <Button asChild variant="outline"><a href={`/${restaurant.slug}`} target="_blank" rel="noreferrer">Ouvrir dans un nouvel onglet</a></Button>
+            <DialogClose asChild><Button>Fermer</Button></DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <main className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <Tabs value={activeTab} onValueChange={setActiveTab}>
