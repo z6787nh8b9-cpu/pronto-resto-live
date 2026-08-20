@@ -18,6 +18,9 @@ describe("landing assistance placement", () => {
     expect(source).toContain('event.key === "Escape"');
     expect(source).toContain('event.key !== "Tab"');
     expect(source).toContain("triggerRef.current?.focus()");
+    expect(source).toContain('window.matchMedia("(prefers-reduced-motion: reduce)")');
+    expect(source).toContain('prefersReducedMotion ? "none" : "chatbotPulse');
+    expect(source).toContain('prefersReducedMotion ? "none" : "chatbotFrames');
     expect(source).not.toContain("fixed bottom-24 right-6 h-20 w-20");
   });
 });

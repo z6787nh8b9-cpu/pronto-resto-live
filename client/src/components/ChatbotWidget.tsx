@@ -22,6 +22,7 @@ export default function ChatbotWidget() {
   const [showRequestForm, setShowRequestForm] = useState(false);
   const [requestType, setRequestType] = useState<"call_request" | "issue_report">("call_request");
   const [requestData, setRequestData] = useState({ name: "", email: "", phone: "", message: "" });
+  const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -63,6 +64,14 @@ export default function ChatbotWidget() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updatePreference = () => setPrefersReducedMotion(media.matches);
+    updatePreference();
+    media.addEventListener("change", updatePreference);
+    return () => media.removeEventListener("change", updatePreference);
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -134,7 +143,7 @@ export default function ChatbotWidget() {
           aria-haspopup="dialog"
           className="fixed bottom-4 right-4 h-16 w-16 rounded-full border-none bg-transparent shadow-2xl transition-transform duration-300 hover:scale-110 sm:bottom-6 sm:right-6 sm:h-20 sm:w-20 z-50 cursor-pointer"
           style={{
-            animation: 'chatbotPulse 2s ease-in-out infinite',
+            animation: prefersReducedMotion ? "none" : "chatbotPulse 2s ease-in-out infinite",
           }}
         >
           <style>{`
@@ -156,7 +165,7 @@ export default function ChatbotWidget() {
               backgroundSize: 'contain',
               backgroundPosition: 'center',
               backgroundRepeat: 'no-repeat',
-              animation: 'chatbotFrames 1.2s steps(1) infinite',
+              animation: prefersReducedMotion ? "none" : "chatbotFrames 1.2s steps(1) infinite",
             }}
           />
         </button>
