@@ -99,4 +99,15 @@ describe("public storefront chrome", () => {
     expect(styles).toContain("prefers-reduced-motion: reduce");
     expect(styles).toContain("--pronto-ease-out");
   });
+
+  it("distinguishes explicit signature dishes from a neutral catalogue selection", () => {
+    const homeStorefront = source("client/src/pages/RestaurantHomePage.tsx");
+    const publicRouter = source("server/routers/public.ts");
+
+    expect(homeStorefront).toContain("const signatureDishes = menuData?.items?.filter");
+    expect(homeStorefront).toContain('hasSignatureDishes ? "Nos Spécialités" : "Une sélection du moment"');
+    expect(homeStorefront).toContain("★ Signature");
+    expect(homeStorefront).toContain("rounded-[calc(2rem-0.375rem)]");
+    expect(publicRouter).toContain("NOS SPÉCIALITÉS (plats favoris à recommander en priorité)");
+  });
 });

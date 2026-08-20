@@ -140,9 +140,10 @@ export default function RestaurantHomePage() {
     );
   }
 
-  // Afficher quelques plats signatures (max 6)
-  const featuredDishes = menuData?.items?.filter((item: any) => item.isFeatured).slice(0, 6) || 
-                         menuData?.items?.slice(0, 6) || [];
+  // Afficher quelques plats signatures (max 6) ; à défaut, proposer une sélection neutre du catalogue.
+  const signatureDishes = menuData?.items?.filter((item: any) => item.isFeatured).slice(0, 6) || [];
+  const featuredDishes = signatureDishes.length > 0 ? signatureDishes : menuData?.items?.slice(0, 6) || [];
+  const hasSignatureDishes = signatureDishes.length > 0;
 
   const daysOfWeek = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
   const storefrontTheme = resolveStorefrontTheme(restaurant.theme, restaurant.subscriptionTier);
@@ -213,8 +214,11 @@ export default function RestaurantHomePage() {
         <section className="storefront-section storefront-section--soft py-24 bg-neutral-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
-              <h2 className="text-4xl font-serif font-bold text-neutral-900 mb-4">
-                Nos Spécialités
+              <span className="inline-flex rounded-full bg-neutral-900/[0.06] px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-neutral-700">
+                {hasSignatureDishes ? "Sélection maison" : "À découvrir"}
+              </span>
+              <h2 className="mt-4 text-4xl font-serif font-bold text-neutral-900 mb-4">
+                {hasSignatureDishes ? "Nos Spécialités" : "Une sélection du moment"}
               </h2>
               <div className="w-24 h-1 bg-neutral-900 mx-auto"></div>
             </div>
@@ -230,15 +234,21 @@ export default function RestaurantHomePage() {
                   {/* Plat normal */}
                   <div
                     key={dish.id}
-                    className="storefront-card group bg-white overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1"
+                    className="storefront-card group overflow-hidden rounded-[2rem] bg-neutral-900/[0.05] p-1.5 transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1"
                   >
+                  <div className="h-full overflow-hidden rounded-[calc(2rem-0.375rem)] bg-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.8)]">
                   {dish.imageUrl && (
-                    <div className="aspect-[4/3] overflow-hidden">
+                    <div className="relative aspect-[4/3] overflow-hidden">
                       <img
                         src={dish.imageUrl}
                         alt={dish.name}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                       />
+                      {dish.isFeatured && (
+                        <span className="absolute left-4 top-4 rounded-full bg-[#2b160c]/85 px-3 py-1.5 text-[10px] font-medium uppercase tracking-[0.18em] text-[#fff8ea] shadow-[0_8px_24px_rgba(43,22,12,0.16)]">
+                          ★ Signature
+                        </span>
+                      )}
                     </div>
                   )}
                   <div className="p-6">
@@ -272,6 +282,7 @@ export default function RestaurantHomePage() {
                         </Badge>
                       )}
                     </div>
+                  </div>
                   </div>
                   </div>
                 </>

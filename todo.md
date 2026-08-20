@@ -513,8 +513,8 @@
 - [ ] Restaurer la configuration des zones/tables/réservations dans le dashboard
 - [x] Implémenter la limitation des favoris selon la formule (Basic: 1, Pro: 3, Premium: 5)
 - [x] Ajouter une bulle info quand l'utilisateur atteint la limite de favoris
-- [ ] Restaurer la mise en avant visuelle des favoris sur la page publique (étoile dorée + badge)
-- [ ] Intégrer subtilement les favoris dans les suggestions du chatbot IA
+- [x] Restaurer la mise en avant visuelle des favoris sur la page publique (étoile dorée + badge)
+- [x] Intégrer subtilement les favoris dans les suggestions du chatbot IA
 
 ## 🔐 SYSTÈME D'AUTHENTIFICATION OAUTH (EN COURS)
 
