@@ -22,7 +22,7 @@ import {
   getDb,
 } from "../db";
 import { menuCategories, menuItems, restaurants } from "../../drizzle/schema";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import { acceptedMediaTypes } from "../media-validation";
 import { requireSubscriptionFeature } from "../subscription-access";
 
@@ -50,6 +50,8 @@ async function getMenuItemRestaurantId(itemId: number) {
   if (!item) throw new TRPCError({ code: "NOT_FOUND", message: "Produit introuvable" });
   return item.restaurantId;
 }
+
+const featuredItemLimitByTier = { menu: 1, pro: 3, premium: 5 } as const;
 
 export const restaurantRouter = router({
   /**
@@ -331,7 +333,28 @@ export const restaurantRouter = router({
       })
     )
     .mutation(async ({ input, ctx }) => {
-      await assertCatalogReadAccess(ctx, await getMenuItemRestaurantId(input.id));
+      const restaurantId = await getMenuItemRestaurantId(input.id);
+      await assertCatalogReadAccess(ctx, restaurantId);
+      if (input.data.isFeatured === true && !ctx.adminAccount) {
+        const db = await getDb();
+        if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+        await db.transaction(async (tx) => {
+          const [restaurant] = await tx.select({ subscriptionTier: restaurants.subscriptionTier }).from(restaurants).where(eq(restaurants.id, restaurantId)).limit(1);
+          if (!restaurant) throw new TRPCError({ code: "NOT_FOUND", message: "Établissement introuvable." });
+          const [item] = await tx.select({ isFeatured: menuItems.isFeatured }).from(menuItems).where(eq(menuItems.id, input.id)).limit(1);
+          if (!item) throw new TRPCError({ code: "NOT_FOUND", message: "Plat introuvable." });
+          if (!item.isFeatured) {
+            await tx.execute(sql`SELECT id FROM menuItems WHERE restaurantId = ${restaurantId} AND isFeatured = true FOR UPDATE`);
+            const featuredItems = await tx.select({ id: menuItems.id }).from(menuItems).where(and(eq(menuItems.restaurantId, restaurantId), eq(menuItems.isFeatured, true)));
+            const limit = featuredItemLimitByTier[restaurant.subscriptionTier];
+            if (featuredItems.length >= limit) {
+              throw new TRPCError({ code: "FORBIDDEN", message: `Votre formule permet jusqu’à ${limit} spécialité${limit > 1 ? "s" : ""} mise${limit > 1 ? "s" : ""} en avant.` });
+            }
+          }
+          await tx.update(menuItems).set(input.data).where(eq(menuItems.id, input.id));
+        });
+        return { success: true };
+      }
       return await updateMenuItem(input.id, input.data);
     }),
 

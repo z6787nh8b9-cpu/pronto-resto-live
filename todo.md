@@ -511,8 +511,8 @@
 - [ ] Restaurer les stats (vues, conversations) dans le dashboard
 - [x] Restaurer le toggle de désactivation du chatbot dans le dashboard
 - [ ] Restaurer la configuration des zones/tables/réservations dans le dashboard
-- [ ] Implémenter la limitation des favoris selon la formule (Basic: 1, Pro: 3, Premium: 5)
-- [ ] Ajouter une bulle info quand l'utilisateur atteint la limite de favoris
+- [x] Implémenter la limitation des favoris selon la formule (Basic: 1, Pro: 3, Premium: 5)
+- [x] Ajouter une bulle info quand l'utilisateur atteint la limite de favoris
 - [ ] Restaurer la mise en avant visuelle des favoris sur la page publique (étoile dorée + badge)
 - [ ] Intégrer subtilement les favoris dans les suggestions du chatbot IA
 

@@ -153,6 +153,8 @@ export default function RestaurantDashboard() {
   // Check if feature is available
   const canAccessTranslations = restaurant?.subscriptionTier === "pro" || restaurant?.subscriptionTier === "premium";
   const canAccessPremiumFeatures = restaurant?.subscriptionTier === "premium";
+  const featuredItemLimit = restaurant?.subscriptionTier === "premium" ? 5 : restaurant?.subscriptionTier === "pro" ? 3 : 1;
+  const featuredItemCount = menuItems?.filter((item) => item.isFeatured).length ?? 0;
 
   // Handle locked tab click
   const handleLockedTabClick = (featureName: string, requiredTier: "pro" | "premium", e: React.MouseEvent) => {
@@ -197,6 +199,7 @@ export default function RestaurantDashboard() {
       refetchItems();
       refreshPublicPreview();
     },
+    onError: (error) => toast.error(error.message),
   });
 
   const deleteItemMutation = trpc.restaurant.deleteMenuItem.useMutation({
@@ -700,6 +703,9 @@ export default function RestaurantDashboard() {
               <div>
                 <h2 className="text-lg sm:text-xl md:text-2xl font-bold">Gestion du catalogue</h2>
                 <p className="text-xs sm:text-sm text-muted-foreground">Organisez vos collections et éléments</p>
+                <p className="mt-2 inline-flex rounded-full border border-amber-500/20 bg-amber-500/10 px-2.5 py-1 text-xs font-medium text-amber-900" title="Les spécialités sont affichées en priorité sur votre vitrine et suggérées au chatbot.">
+                  Spécialités : {featuredItemCount}/{featuredItemLimit}
+                </p>
               </div>
               <Button onClick={() => setIsAddCategoryOpen(true)} size="sm" className="w-full sm:w-auto text-xs sm:text-sm">
                 <Plus className="mr-2 h-4 w-4" />

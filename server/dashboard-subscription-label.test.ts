@@ -23,6 +23,8 @@ describe("dashboard subscription label", () => {
     expect(dashboard).toContain("trpc.restaurant.updateFeatureActivation.useMutation");
     expect(dashboard).toContain('feature: "events", enabled');
     expect(dashboard).toContain('feature: "reservations", enabled');
+    expect(dashboard).toContain("Spécialités : {featuredItemCount}/{featuredItemLimit}");
+    expect(dashboard).toContain("onError: (error) => toast.error(error.message)");
     expect(dashboard).not.toContain("<LockedFeatureOverlay\n                featureName=\"Gestion d'événements\"\n                tier=\"premium\"\n                businessName={restaurant?.name || \"\"}\n              >\n                {restaurant && <Events restaurantId={restaurant.id} />}");
     expect(overlay).toContain("export function LockedFeaturePreview()");
     expect(overlay).toContain('aria-hidden="true"');
