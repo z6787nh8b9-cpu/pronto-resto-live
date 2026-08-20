@@ -91,3 +91,18 @@ export const apiLimiter = rateLimit({
   handler: (_req, res) =>
     res.status(429).json({ error: "Trop de requêtes. Ralentissez." }),
 });
+
+/** Limits the public LLM entry point separately from the general API budget. */
+export const publicChatLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => ipKeyGenerator(req.ip || "unknown"),
+  handler: (_req, res) => res.status(429).json({ error: "Trop de messages. Réessayez dans une minute." }),
+});
+
+/** Apply the expensive public-chat budget only to its tRPC procedure. */
+export function limitPublicChat(req: Request, res: Response, next: NextFunction) {
+  return req.path === "/chat.sendMessage" ? publicChatLimiter(req, res, next) : next();
+}

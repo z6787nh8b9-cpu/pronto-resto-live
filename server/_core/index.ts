@@ -7,7 +7,7 @@ import { registerAssetProxy } from "./storageProxy";
 import { registerRestaurantAuthRoutes, registerEmailLoginRoute } from "../auth-routes";
 import { adminLoginRouter } from "../admin-login-route";
 import { configureSessionMiddleware } from "../session-middleware";
-import { apiLimiter, requireSameOrigin } from "../rate-limiters";
+import { apiLimiter, limitPublicChat, requireSameOrigin } from "../rate-limiters";
 import { applySecurityHeaders, healthPayload } from "./security";
 
 import { appRouter } from "../routers";
@@ -68,6 +68,7 @@ async function startServer() {
     "/api/trpc",
     requireSameOrigin,
     apiLimiter,
+    limitPublicChat,
     createExpressMiddleware({
       router: appRouter,
       createContext,

@@ -44,3 +44,7 @@ Le 20 août 2026, le parcours propriétaire authentifié de La Voile Rouge a ana
 Le catalogue temporaire, son élément, sa collection, ses lignes d’import et son job appliqué ont ensuite été supprimés de manière ciblée. Un contrôle SQL final confirme `0` catalogue temporaire, `0` job temporaire et `0` catalogue de validation publié.
 
 > **Limite explicitement conservée :** l’adaptateur de stockage actuellement disponible sait écrire et lire un objet, mais ne fournit pas encore de suppression physique. Le fichier CSV de validation peut donc subsister comme objet de stockage non référencé ; il n’est plus accessible depuis l’application ni depuis la base. La suppression physique et la rétention des sources d’import sont désormais suivies comme un chantier distinct, avant toute promesse de purge complète.
+
+## Protection anti-abus du chatbot public
+
+Le point d’entrée public `chat.sendMessage` dispose désormais d’un budget distinct de **10 messages par minute et par adresse IP**. Cette limite s’applique avant l’exécution du routeur tRPC, ne consomme pas le budget des autres procédures et renvoie une réponse `429` explicite après épuisement. La régression vérifie à la fois le blocage du onzième message et l’absence d’impact sur une procédure tRPC différente.

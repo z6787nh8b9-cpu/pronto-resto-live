@@ -1,7 +1,7 @@
 import express from "express";
 import request from "supertest";
 import { describe, expect, it } from "vitest";
-import { passwordHelpLimiter, requireSameOrigin } from "./rate-limiters";
+import { limitPublicChat, passwordHelpLimiter, requireSameOrigin } from "./rate-limiters";
 
 describe("password help rate limiting", () => {
   it("limits neutral recovery requests even though the normal reply is successful", async () => {
@@ -23,5 +23,19 @@ describe("same-origin mutation guard", () => {
 
     await request(app).post("/mutation").set("Origin", "https://evil.example").expect(403);
     await request(app).post("/mutation").set("Host", "pronto.test").set("Origin", "http://pronto.test").expect(200);
+  });
+});
+
+describe("public chatbot rate limiting", () => {
+  it("limits the expensive chatbot procedure without consuming the budget of other procedures", async () => {
+    const app = express();
+    app.use("/api/trpc", limitPublicChat);
+    app.post("/api/trpc/:procedure", (_req, res) => res.status(200).json({ success: true }));
+
+    for (let attempt = 0; attempt < 10; attempt += 1) {
+      await request(app).post("/api/trpc/chat.sendMessage").expect(200);
+    }
+    await request(app).post("/api/trpc/chat.sendMessage").expect(429);
+    await request(app).post("/api/trpc/businesses.getPublicBusinessCatalog").expect(200);
   });
 });
