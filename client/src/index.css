@@ -552,8 +552,33 @@
 }
 
 @media (max-width: 767px) {
+  .public-storefront {
+    overflow-x: clip;
+  }
+
+  .public-storefront .storefront-section,
+  .public-storefront .storefront-collection,
+  .public-storefront .storefront-toolbar,
+  .public-storefront .storefront-footer {
+    min-width: 0;
+  }
+
   .public-storefront .storefront-card { border-radius: 1.4rem !important; }
   .public-storefront .storefront-card::before { border-radius: calc(1.4rem - 0.4rem); }
+
+  .public-storefront .storefront-tabs {
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    touch-action: pan-x;
+  }
+
+  .public-storefront .storefront-tabs::-webkit-scrollbar { display: none; }
+
+  .public-storefront .storefront-cta {
+    min-height: 2.75rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

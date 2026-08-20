@@ -1475,6 +1475,11 @@
 - [x] Propager la mise à jour d’aperçu à chaque module public pertinent (horaires, galerie, événements, réservations, personnalisation et traductions visibles)
 - [x] Ajouter des régressions de synchronisation instantanée et de couverture de toutes les mutations publiques
 
+## GARDE-FOUS MOBILES DES THÈMES (20 août 2026)
+- [x] Ajouter un socle mobile commun contre le débordement horizontal, pour les onglets tactiles et les actions accessibles
+- [x] Ajouter une régression structurelle couvrant le thème par défaut, les quatre variantes et la réduction de mouvement
+- [ ] Réaliser une revue visuelle mobile de chaque thème sur un appareil ou émulateur représentatif
+
 ## ATTRIBUTION DES VITRINES LEGACY (20 août 2026)
 - [x] Appliquer l’attribution PRONTO by ALTMachine à la vitrine legacy PublicRestaurantPage
 - [x] Étendre la régression d’attribution à toutes les vitrines publiques, y compris la vitrine legacy
