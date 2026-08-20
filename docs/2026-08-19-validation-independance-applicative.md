@@ -42,3 +42,5 @@ Les routeurs métier d’horaires et de traduction ne consultent plus non plus l
 Le 20 août 2026, le parcours propriétaire authentifié de La Voile Rouge a analysé un CSV minimal dans un catalogue de validation explicitement nommé. Le brouillon affichait une catégorie et un élément, puis son application a confirmé que le catalogue restait au statut `draft` et **non publié**. Aucun contenu n’a été envoyé vers la vitrine publique.
 
 Le catalogue temporaire, son élément, sa collection, ses lignes d’import et son job appliqué ont ensuite été supprimés de manière ciblée. Un contrôle SQL final confirme `0` catalogue temporaire, `0` job temporaire et `0` catalogue de validation publié.
+
+> **Limite explicitement conservée :** l’adaptateur de stockage actuellement disponible sait écrire et lire un objet, mais ne fournit pas encore de suppression physique. Le fichier CSV de validation peut donc subsister comme objet de stockage non référencé ; il n’est plus accessible depuis l’application ni depuis la base. La suppression physique et la rétention des sources d’import sont désormais suivies comme un chantier distinct, avant toute promesse de purge complète.

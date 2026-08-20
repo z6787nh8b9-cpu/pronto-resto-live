@@ -1110,6 +1110,7 @@
 - [x] Ajouté les tests de parsing, d'autorisation et de validation de fichier du flux d'import
 - [x] Tester manuellement un import authentifié CSV avant mise en production du parcours d'import — validation propriétaire réalisée, analyse et application en brouillon non publié confirmées
 - [x] Exécuter un import CSV contrôlé sur un espace de test, vérifier le brouillon créé puis nettoyer toutes les données de validation
+- [ ] Ajouter une suppression physique et une rétention bornée des fichiers sources d’import, après migration vers un adaptateur de stockage compatible
 - [x] Mis en place une médiathèque avec contrôle de type, taille, propriété et archivage réversible par entreprise
 - [x] Créé une table media_assets et un routeur d'upload rattaché à une entreprise avec validation de MIME, taille et propriété
 - [x] Ajouté une bibliothèque de médias dans le dashboard, avec aperçu, copie d'URL et archivage confirmé (la suppression physique du stockage sera ajoutée avec l'API de suppression)
