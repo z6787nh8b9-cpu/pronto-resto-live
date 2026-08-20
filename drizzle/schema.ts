@@ -713,7 +713,7 @@ export type InsertGalleryPhoto = typeof galleryPhotos.$inferInsert;
 export const invitations = mysqlTable("invitations", {
   id: int("id").autoincrement().primaryKey(),
   restaurantId: int("restaurantId").notNull(), // Restaurant to associate with
-  token: varchar("token", { length: 255 }).notNull().unique(), // Unique invitation token (UUID)
+  tokenHash: varchar("tokenHash", { length: 64 }).notNull().unique(), // SHA-256 of the unique invitation token
   
   // Status
   status: mysqlEnum("status", ["pending", "accepted", "expired"]).default("pending").notNull(),

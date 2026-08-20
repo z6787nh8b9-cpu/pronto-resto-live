@@ -1289,6 +1289,12 @@
 - [x] Conserver un parcours d’authentification et de changement de mot de passe Super Admin local, borné et protégé
 - [x] Ajouter les régressions attestant que seul le flux d’invitation locale hachée peut créer un Super Admin
 
+## DURCISSEMENT INVITATIONS PROPRIÉTAIRES (20 août 2026)
+- [x] Remplacer le stockage en clair des jetons d’invitation propriétaire par des empreintes hachées compatibles avec les invitations existantes
+- [x] Borner la lecture publique d’invitation et empêcher toute mutation d’état dans une requête de consultation
+- [x] Rendre atomique la revendication OAuth d’une invitation afin d’empêcher toute attribution concurrente d’établissement
+- [x] Ajouter les régressions du hachage, de la compatibilité, des bornes et de la revendication unique
+
 ## INTÉGRITÉ ANALYTIQUE PUBLIQUE (20 août 2026)
 - [x] Dériver côté serveur les métadonnées de vue publique au lieu d’accepter IP, agent et référent déclarés par le navigateur
 - [x] Ajouter une limite de débit dédiée aux vues publiques pour réduire l’inflation analytique artificielle

@@ -10,6 +10,7 @@ import { recordSecurityEvent } from "./security-events";
 import { passwordPolicyError } from "./password-policy";
 import { notifyOwner } from "./_core/notification";
 import { createPasswordResetSecret, hashPasswordResetSecret, isPasswordResetExpired, PASSWORD_RESET_TTL_MS } from "./password-reset";
+import { isOwnerInvitationToken } from "./owner-invitation-token";
 
 
 /**
@@ -25,8 +26,8 @@ export function registerRestaurantAuthRoutes(app: Express) {
     oauthLimiter,
     (req: Request, res: Response, next) => {
       // Store invitation token in session if provided
-      const invitationToken = req.query.token as string;
-      if (invitationToken) {
+      const invitationToken = req.query.token;
+      if (isOwnerInvitationToken(invitationToken)) {
         req.session.invitationToken = invitationToken;
       }
       next();
@@ -99,8 +100,8 @@ export function registerRestaurantAuthRoutes(app: Express) {
     oauthLimiter,
     (req: Request, res: Response, next) => {
       // Store invitation token in session if provided
-      const invitationToken = req.query.token as string;
-      if (invitationToken) {
+      const invitationToken = req.query.token;
+      if (isOwnerInvitationToken(invitationToken)) {
         req.session.invitationToken = invitationToken;
       }
       next();

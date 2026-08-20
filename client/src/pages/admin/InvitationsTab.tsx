@@ -8,25 +8,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Copy, Check, ExternalLink } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
+import { ExternalLink } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 
 export default function InvitationsTab() {
-  const [copiedToken, setCopiedToken] = useState<string | null>(null);
-
   // Fetch all invitations
   const { data: invitations, isLoading } = trpc.invitations.listAll.useQuery();
-
-  const handleCopyInvitation = (token: string) => {
-    const invitationUrl = `${window.location.origin}/invite/${token}`;
-    navigator.clipboard.writeText(invitationUrl);
-    setCopiedToken(token);
-    toast.success("Lien copié dans le presse-papier");
-    setTimeout(() => setCopiedToken(null), 2000);
-  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -104,25 +92,6 @@ export default function InvitationsTab() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                        {invitation.status === "pending" && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => handleCopyInvitation(invitation.token)}
-                          >
-                            {copiedToken === invitation.token ? (
-                              <>
-                                <Check className="h-4 w-4 mr-1" />
-                                Copié
-                              </>
-                            ) : (
-                              <>
-                                <Copy className="h-4 w-4 mr-1" />
-                                Copier
-                              </>
-                            )}
-                          </Button>
-                        )}
                         <Button
                           size="sm"
                           variant="ghost"

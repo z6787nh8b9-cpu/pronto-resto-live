@@ -239,6 +239,13 @@
       "when": 1787159711070,
       "tag": "0033_glamorous_tusk",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "5",
+      "when": 1787241914375,
+      "tag": "0034_whole_lethal_legion",
+      "breakpoints": true
     }
   ]
 }

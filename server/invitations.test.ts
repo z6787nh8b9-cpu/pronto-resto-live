@@ -6,10 +6,12 @@
 
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { TRPCError } from "@trpc/server";
-import { inArray } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { getDb } from "./db";
 import { appRouter } from "./routers";
 import { invitations, restaurants } from "../drizzle/schema";
+import { hashOwnerInvitationToken } from "./owner-invitation-token";
+import { claimRestaurantInvitation } from "./auth-config";
 
 const runId = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 const createdRestaurantIds: number[] = [];
@@ -68,10 +70,14 @@ describe("Invitation access control", () => {
     const restaurant = await createTestRestaurant("create");
     const invitation = await adminCaller.invitations.create({ restaurantId: restaurant.id });
 
-    expect(invitation.token).toMatch(
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
-    );
+    expect(invitation.token).toMatch(/^[0-9a-f]{64}$/i);
     expect(invitation.invitationUrl).toContain(invitation.token);
+
+    const db = await getDb();
+    if (!db) throw new Error("Database unavailable");
+    const [stored] = await db.select().from(invitations).where(eq(invitations.id, Number(invitation.id))).limit(1);
+    expect(stored?.tokenHash).toBe(hashOwnerInvitationToken(invitation.token));
+    expect(stored).not.toHaveProperty("token");
 
     const expiresInHours = (new Date(invitation.expiresAt).getTime() - Date.now()) / 3_600_000;
     expect(expiresInHours).toBeGreaterThan(23.9);
@@ -97,9 +103,55 @@ describe("Invitation access control", () => {
 
   it("rejects an unknown public invitation token without exposing internal data", async () => {
     const result = await anonymousCaller.invitations.getByToken({
-      token: "00000000-0000-0000-0000-000000000000",
+      token: "0".repeat(64),
     });
 
     expect(result).toEqual({ valid: false, reason: "not_found" });
+  });
+
+  it("reports an expired invitation without mutating its persisted status from a public read", async () => {
+    const restaurant = await createTestRestaurant("expired-view");
+    const db = await getDb();
+    if (!db) throw new Error("Database unavailable");
+    const token = "a".repeat(64);
+    const [created] = await db.insert(invitations).values({
+      restaurantId: restaurant.id,
+      tokenHash: hashOwnerInvitationToken(token),
+      status: "pending",
+      expiresAt: new Date(Date.now() - 60_000),
+    });
+    const invitationId = Number(created.insertId);
+
+    await expect(anonymousCaller.invitations.getByToken({ token })).resolves.toEqual({ valid: false, reason: "expired" });
+    const [stored] = await db.select({ status: invitations.status }).from(invitations).where(eq(invitations.id, invitationId)).limit(1);
+    expect(stored?.status).toBe("pending");
+  });
+
+  it("allows only one concurrent owner to claim the same pending invitation", async () => {
+    const restaurant = await createTestRestaurant("atomic-claim");
+    const db = await getDb();
+    if (!db) throw new Error("Database unavailable");
+    const token = "b".repeat(64);
+    await db.insert(invitations).values({
+      restaurantId: restaurant.id,
+      tokenHash: hashOwnerInvitationToken(token),
+      status: "pending",
+      expiresAt: new Date(Date.now() + 60_000),
+    });
+
+    const claims = await Promise.all([
+      claimRestaurantInvitation(db, token, 900_001),
+      claimRestaurantInvitation(db, token, 900_002),
+    ]);
+    expect(claims.filter((claim) => claim === restaurant.id)).toHaveLength(1);
+    expect(claims.filter((claim) => claim === null)).toHaveLength(1);
+
+    const [storedInvitation] = await db.select({ acceptedBy: invitations.acceptedBy, status: invitations.status })
+      .from(invitations).where(eq(invitations.tokenHash, hashOwnerInvitationToken(token))).limit(1);
+    const [storedRestaurant] = await db.select({ ownerId: restaurants.ownerId })
+      .from(restaurants).where(eq(restaurants.id, restaurant.id)).limit(1);
+    expect(storedInvitation?.status).toBe("accepted");
+    expect(storedInvitation?.acceptedBy).toBe(storedRestaurant?.ownerId);
+    expect([900_001, 900_002]).toContain(storedRestaurant?.ownerId);
   });
 });

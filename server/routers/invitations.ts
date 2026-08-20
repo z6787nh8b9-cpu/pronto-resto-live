@@ -8,7 +8,7 @@ import { z } from "zod";
 import { getDb } from "../db";
 import { invitations, restaurants } from "../../drizzle/schema";
 import { eq, and } from "drizzle-orm";
-import { randomUUID } from "crypto";
+import { createOwnerInvitationToken, hashOwnerInvitationToken, OWNER_INVITATION_TOKEN_PATTERN } from "../owner-invitation-token";
 
 export const invitationsRouter = router({
   /**
@@ -17,7 +17,7 @@ export const invitationsRouter = router({
   create: adminProcedure
     .input(
       z.object({
-        restaurantId: z.number(),
+        restaurantId: z.number().int().positive(),
       })
     )
     .mutation(async ({ input }) => {
@@ -38,7 +38,7 @@ export const invitationsRouter = router({
       }
 
       // Generate unique token
-      const token = randomUUID();
+      const token = createOwnerInvitationToken();
 
       // Set expiration to 24 hours from now
       const expiresAt = new Date();
@@ -47,7 +47,7 @@ export const invitationsRouter = router({
       // Create invitation
       const [invitation] = await db.insert(invitations).values({
         restaurantId: input.restaurantId,
-        token,
+        tokenHash: hashOwnerInvitationToken(token),
         expiresAt,
         status: "pending",
       });
@@ -69,7 +69,7 @@ export const invitationsRouter = router({
   getByToken: publicProcedure
     .input(
       z.object({
-        token: z.string(),
+        token: z.string().regex(OWNER_INVITATION_TOKEN_PATTERN),
       })
     )
     .query(async ({ input }) => {
@@ -81,28 +81,21 @@ export const invitationsRouter = router({
       const [invitation] = await db
         .select()
         .from(invitations)
-        .where(eq(invitations.token, input.token))
+        .where(eq(invitations.tokenHash, hashOwnerInvitationToken(input.token)))
         .limit(1);
 
       if (!invitation) {
         return { valid: false, reason: "not_found" };
       }
 
-      // Check if already used
-      if (invitation.status === "accepted") {
-        return { valid: false, reason: "already_used" };
-      }
-
       // Check if expired
       const now = new Date();
       if (invitation.expiresAt < now) {
-        // Mark as expired
-        await db
-          .update(invitations)
-          .set({ status: "expired" })
-          .where(eq(invitations.id, invitation.id));
-
         return { valid: false, reason: "expired" };
+      }
+
+      if (invitation.status !== "pending") {
+        return { valid: false, reason: "already_used" };
       }
 
       // Get restaurant details
@@ -139,7 +132,6 @@ export const invitationsRouter = router({
       const invitationsList = await db
         .select({
           id: invitations.id,
-          token: invitations.token,
           restaurantId: invitations.restaurantId,
           restaurantName: restaurants.name,
           restaurantSlug: restaurants.slug,
@@ -187,7 +179,15 @@ export const invitationsRouter = router({
       }
 
       const invitationsList = await db
-        .select()
+        .select({
+          id: invitations.id,
+          restaurantId: invitations.restaurantId,
+          status: invitations.status,
+          acceptedBy: invitations.acceptedBy,
+          acceptedAt: invitations.acceptedAt,
+          expiresAt: invitations.expiresAt,
+          createdAt: invitations.createdAt,
+        })
         .from(invitations)
         .where(eq(invitations.restaurantId, input.restaurantId))
         .orderBy(invitations.createdAt);
