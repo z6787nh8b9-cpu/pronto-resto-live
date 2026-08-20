@@ -16,6 +16,7 @@ import { useTranslation } from "@/hooks/useTranslation";
 import { AdvertisementDisplay, DishItemAd } from "@/components/AdvertisementDisplay";
 import { LoadingState } from "@/components/LoadingState";
 import { PublicVitrineChrome } from "@/components/PublicVitrineChrome";
+import { usePublicSeo } from "@/lib/public-seo";
 
 export default function RestaurantMenuPage() {
   const params: { slug?: string } = useParams();
@@ -38,6 +39,13 @@ export default function RestaurantMenuPage() {
     { slug },
     { enabled: !!slug }
   );
+
+  usePublicSeo({
+    title: restaurant ? `${restaurant.name} — Carte et menu` : "PRONTO — Catalogue d’établissement",
+    description: restaurant?.description || "Découvrez la carte et le catalogue de cet établissement sur PRONTO.",
+    pathname: slug ? `/${slug}/menu` : "/",
+    imageUrl: restaurant?.heroImageUrl || restaurant?.logoUrl,
+  });
 
   // Translation hook
   const { currentLanguage, setCurrentLanguage, translate } = useTranslation(restaurant?.id);

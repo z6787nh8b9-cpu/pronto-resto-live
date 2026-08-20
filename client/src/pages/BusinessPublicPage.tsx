@@ -6,6 +6,7 @@ import { trpc } from "@/lib/trpc";
 import { LoadingState } from "@/components/LoadingState";
 import { PublicVitrineChrome } from "@/components/PublicVitrineChrome";
 import { ScrollReveal } from "@/components/ScrollReveal";
+import { usePublicSeo } from "@/lib/public-seo";
 
 const verticalLabel: Record<string, string> = {
   beauty: "Beauté & bien-être",
@@ -32,6 +33,15 @@ export default function BusinessPublicPage({ preview = false }: { preview?: bool
   const previewCatalog = trpc.businesses.getPreviewBySlug.useQuery({ slug }, { retry: false, enabled: preview });
   const business = preview ? previewCatalog.data?.business : publicBusiness.data;
   const catalog = preview ? previewCatalog.data : publicCatalog.data;
+  const profile = business?.profile;
+  const displayName = profile?.displayName || business?.slug || "Vitrine PRONTO";
+  usePublicSeo({
+    title: preview ? `${displayName} — Aperçu PRONTO` : `${displayName} — PRONTO`,
+    description: profile?.shortDescription || `Découvrez le catalogue de ${displayName}.`,
+    pathname: `/b/${slug}`,
+    imageUrl: profile?.heroImageUrl || profile?.logoUrl,
+    noIndex: preview,
+  });
   const itemsByCollection = useMemo(() => {
     const items = catalog?.items ?? [];
     const groups = new Map<number | null, typeof items>();
@@ -42,7 +52,6 @@ export default function BusinessPublicPage({ preview = false }: { preview?: bool
   if (publicBusiness.isLoading || publicCatalog.isLoading || previewCatalog.isLoading) return <main className="min-h-[100dvh] bg-[#fbf8f3]"><LoadingState label="Ouverture de la vitrine" /></main>;
   if (!business) return <main className="min-h-[100dvh] bg-[#fbf8f3]"><div className="mx-auto flex min-h-[100dvh] max-w-xl items-center px-6 text-center"><p className="w-full text-sm font-medium text-muted-foreground">Cette vitrine n’est pas disponible.</p></div></main>;
 
-  const profile = business.profile;
   return (
     <main className="min-h-[100dvh] bg-[#fbf8f3] text-foreground">
       <PublicVitrineChrome

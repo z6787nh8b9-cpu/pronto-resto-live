@@ -16,6 +16,7 @@ import { ReservationFlow } from "@/components/ReservationFlow";
 import { EventRegistrationFlow } from "@/components/EventRegistrationFlow";
 import { AdvertisementDisplay, DishItemAd } from "@/components/AdvertisementDisplay";
 import { PublicVitrineChrome } from "@/components/PublicVitrineChrome";
+import { usePublicSeo } from "@/lib/public-seo";
 
 export default function RestaurantHomePage() {
   const params: { slug?: string } = useParams();
@@ -34,6 +35,13 @@ export default function RestaurantHomePage() {
     { slug },
     { enabled: !!slug }
   );
+
+  usePublicSeo({
+    title: restaurant ? `${restaurant.name} — PRONTO` : "PRONTO — Vitrine d’établissement",
+    description: restaurant?.description || "Découvrez cette vitrine et son catalogue sur PRONTO.",
+    pathname: slug ? `/${slug}` : "/",
+    imageUrl: restaurant?.heroImageUrl || restaurant?.logoUrl,
+  });
 
   // Translation hook
   const { currentLanguage, setCurrentLanguage, translate } = useTranslation(restaurant?.id);

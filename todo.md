@@ -1407,6 +1407,11 @@
 - [x] Retirer ou remplacer tout contenu social non vérifiable par une information factuelle
 - [x] Ajouter une régression empêchant la réintroduction de témoignages fictifs
 
+## SEO DES VITRINES PUBLIQUES (20 août 2026)
+- [x] Vérifier les métadonnées globales et les titres dynamiques des vitrines et catalogues publics
+- [x] Appliquer des titres, descriptions et images de partage cohérents avec les données publiées
+- [x] Ajouter les régressions de métadonnées publiques sans exposer de données d’établissement inactif
+
 ## INTÉGRITÉ ANALYTIQUE PUBLIQUE (20 août 2026)
 - [x] Dériver côté serveur les métadonnées de vue publique au lieu d’accepter IP, agent et référent déclarés par le navigateur
 - [x] Ajouter une limite de débit dédiée aux vues publiques pour réduire l’inflation analytique artificielle
