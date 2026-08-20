@@ -7,7 +7,7 @@ import { registerAssetProxy } from "./storageProxy";
 import { registerRestaurantAuthRoutes, registerEmailLoginRoute } from "../auth-routes";
 import { adminLoginRouter } from "../admin-login-route";
 import { configureSessionMiddleware } from "../session-middleware";
-import { apiLimiter, limitPublicChat, limitPublicChatbotRequests, limitPublicContactForm, limitPublicEventRegistrations, limitPublicPageViews, limitPublicVenueChat, requireSameOrigin } from "../rate-limiters";
+import { apiLimiter, limitPublicChat, limitPublicChatbotRequests, limitPublicContactForm, limitPublicEventRegistrations, limitPublicPageViews, limitPublicReservations, limitPublicVenueChat, requireSameOrigin } from "../rate-limiters";
 import { applySecurityHeaders, healthPayload } from "./security";
 
 import { appRouter } from "../routers";
@@ -74,6 +74,7 @@ async function startServer() {
     limitPublicContactForm,
     limitPublicPageViews,
     limitPublicEventRegistrations,
+    limitPublicReservations,
     createExpressMiddleware({
       router: appRouter,
       createContext,

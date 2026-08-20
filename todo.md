@@ -1327,6 +1327,12 @@
 - [x] Restreindre les publicités publiques aux campagnes actives dans leur fenêtre de diffusion
 - [x] Ajouter une régression des bornes de début et de fin de campagne
 
+## DURCISSEMENT RÉSERVATIONS PUBLIQUES (20 août 2026)
+- [x] Exclure les établissements inactifs des réglages, zones, créneaux et créations de réservation publics
+- [x] Limiter le débit, borner les données et vérifier reCAPTCHA avant toute création de réservation
+- [x] Refuser les créneaux hors horaires d’ouverture et rendre le contrôle de capacité sûr sous concurrence
+- [x] Ajouter les régressions de visibilité, de validation, d’anti-abus et de capacité
+
 ## INTÉGRITÉ ANALYTIQUE PUBLIQUE (20 août 2026)
 - [x] Dériver côté serveur les métadonnées de vue publique au lieu d’accepter IP, agent et référent déclarés par le navigateur
 - [x] Ajouter une limite de débit dédiée aux vues publiques pour réduire l’inflation analytique artificielle

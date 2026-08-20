@@ -11,6 +11,7 @@ import { ChevronLeft, ChevronRight, Check, Calendar as CalendarIcon, Clock, User
 import { toast } from "sonner";
 import { format, addDays, isBefore, startOfDay } from "date-fns";
 import { fr } from "date-fns/locale";
+import { executeRecaptcha } from "@/lib/recaptcha";
 
 interface ReservationFlowProps {
   restaurantId: number;
@@ -29,8 +30,8 @@ export function ReservationFlow({ restaurantId, businessName, onClose }: Reserva
   const [customerPhone, setCustomerPhone] = useState("");
   const [specialRequests, setSpecialRequests] = useState("");
 
-  const { data: zones } = trpc.reservations.getZones.useQuery({ restaurantId });
-  const { data: settings } = trpc.reservations.getSettings.useQuery({ restaurantId });
+  const { data: zones } = trpc.reservations.getPublicZones.useQuery({ restaurantId });
+  const { data: settings } = trpc.reservations.getPublicSettings.useQuery({ restaurantId });
   const { data: availableSlots } = trpc.reservations.getAvailableSlots.useQuery(
     {
       restaurantId,
@@ -70,7 +71,7 @@ export function ReservationFlow({ restaurantId, businessName, onClose }: Reserva
     setStep(step + 1);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!selectedDate || !selectedTime) {
       toast.error("Informations manquantes");
       return;
@@ -80,16 +81,22 @@ export function ReservationFlow({ restaurantId, businessName, onClose }: Reserva
     const [hours, minutes] = selectedTime.split(":");
     reservationDateTime.setHours(parseInt(hours), parseInt(minutes));
 
-    createReservation.mutate({
-      restaurantId,
-      zoneId: selectedZone ? parseInt(selectedZone) : undefined,
-      customerName,
-      customerEmail,
-      customerPhone,
-      reservationDate: reservationDateTime.toISOString(),
-      partySize: parseInt(partySize),
-      specialRequests,
-    });
+    try {
+      const recaptchaToken = await executeRecaptcha("create_reservation");
+      createReservation.mutate({
+        restaurantId,
+        zoneId: selectedZone ? parseInt(selectedZone) : undefined,
+        customerName: customerName.trim(),
+        customerEmail: customerEmail.trim(),
+        customerPhone: customerPhone.trim(),
+        reservationDate: reservationDateTime.toISOString(),
+        partySize: parseInt(partySize),
+        specialRequests: specialRequests.trim() || undefined,
+        recaptchaToken,
+      });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Protection anti-spam indisponible");
+    }
   };
 
   const minDate = addDays(new Date(), settings?.minAdvanceHours ? Math.ceil(settings.minAdvanceHours / 24) : 0);
@@ -255,9 +262,7 @@ export function ReservationFlow({ restaurantId, businessName, onClose }: Reserva
                     >
                       Aucune préférence
                     </Button>
-                    {zones
-                      .filter((z) => z.isActive)
-                      .map((zone) => (
+                    {zones.map((zone) => (
                         <Button
                           key={zone.id}
                           variant={selectedZone === zone.id.toString() ? "default" : "outline"}
@@ -289,6 +294,7 @@ export function ReservationFlow({ restaurantId, businessName, onClose }: Reserva
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
                   placeholder="Jean Dupont"
+                  maxLength={100}
                 />
               </div>
               <div className="space-y-2">
@@ -301,6 +307,7 @@ export function ReservationFlow({ restaurantId, businessName, onClose }: Reserva
                   value={customerEmail}
                   onChange={(e) => setCustomerEmail(e.target.value)}
                   placeholder="jean.dupont@example.com"
+                  maxLength={254}
                 />
               </div>
               <div className="space-y-2">
@@ -313,6 +320,7 @@ export function ReservationFlow({ restaurantId, businessName, onClose }: Reserva
                   value={customerPhone}
                   onChange={(e) => setCustomerPhone(e.target.value)}
                   placeholder="+33 6 12 34 56 78"
+                  maxLength={20}
                 />
               </div>
               <div className="space-y-2">
@@ -323,6 +331,7 @@ export function ReservationFlow({ restaurantId, businessName, onClose }: Reserva
                   onChange={(e) => setSpecialRequests(e.target.value)}
                   placeholder="Allergies, régime alimentaire, occasion spéciale..."
                   rows={3}
+                  maxLength={500}
                 />
               </div>
             </div>

@@ -176,3 +176,17 @@ export const publicEventRegistrationLimiter = rateLimit({
 export function limitPublicEventRegistrations(req: Request, res: Response, next: NextFunction) {
   return req.path === "/events.registerForEvent" ? publicEventRegistrationLimiter(req, res, next) : next();
 }
+
+/** Restricts public reservation creation independently from general API traffic. */
+export const publicReservationLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => ipKeyGenerator(req.ip || "unknown"),
+  handler: (_req, res) => res.status(429).json({ error: "Trop de demandes de réservation. Réessayez dans 15 minutes." }),
+});
+
+export function limitPublicReservations(req: Request, res: Response, next: NextFunction) {
+  return req.path === "/reservations.create" ? publicReservationLimiter(req, res, next) : next();
+}
