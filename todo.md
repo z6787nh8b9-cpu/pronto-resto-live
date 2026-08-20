@@ -237,7 +237,7 @@
 - [x] Éviter l'erreur 404 quand on accède directement à /admin
 
 ## NETTOYAGE COMPLET DE L'ARCHITECTURE DES URLs (CRITIQUE)
-- [ ] Analyser toutes les routes actuelles et identifier les pages obsolètes
+- [x] Analyser toutes les routes actuelles et identifier les pages obsolètes
 - [x] Concevoir la nouvelle structure d'URLs avec pronto.page
 - [x] Définir les chemins pour : Super Admin, Dashboards restaurants, Pages publiques
 - [x] Supprimer le système de sous-domaines et de preview
@@ -1492,6 +1492,13 @@
 ## EMOJI DE PLAT — PERSISTANCE RUNTIME (20 août 2026)
 - [x] Vérifier et étendre si nécessaire les helpers de persistance et les lectures publiques des plats
 - [x] Ajouter une régression d’intégration de création, édition et lecture publique avec emoji
+
+## AUDIT COMPLET DU ROUTAGE (20 août 2026)
+- [x] Finaliser l’inventaire des routes publiques, administratives, preview et liens historiques
+- [x] Vérifier que les routes réservées précèdent `/:slug` et que les parcours obsolètes ne concurrencent plus la vitrine
+- [x] Valider l’audit par compilation et régression de routage ciblée
+- [x] Corriger la destination interne des conditions d’utilisation depuis la connexion propriétaire
+- [x] Vérifier l’inventaire documenté, les parcours preview/admin/legacy conservés et la régression avant clôture
 
 ## ACTIVATION DES RÉSERVATIONS PREMIUM (20 août 2026)
 - [x] Étendre le contrôle de modules Premium aux réservations depuis le dashboard

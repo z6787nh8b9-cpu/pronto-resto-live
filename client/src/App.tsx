@@ -11,6 +11,7 @@ const AdminManageRestaurant = lazy(() => import("./pages/AdminManageRestaurant")
 const RestaurantDashboard = lazy(() => import("./pages/RestaurantDashboard"));
 const LandingPage = lazy(() => import("./pages/LandingPage"));
 const PricingPage = lazy(() => import("./pages/PricingPage"));
+const TermsPage = lazy(() => import("./pages/TermsPage"));
 const RestaurantHomePage = lazy(() => import("./pages/RestaurantHomePage"));
 const RestaurantMenuPage = lazy(() => import("./pages/RestaurantMenuPage"));
 const RestaurantEventsPage = lazy(() => import("./pages/RestaurantEventsPage"));
@@ -35,9 +36,9 @@ function RouteLoading() {
  * 
  * Routes:
  * /                              → Landing page
- * /admin                         → Super Admin Dashboard
  * /admin/restaurants/:id         → Admin: Manage specific restaurant
- * /:slug                         → Restaurant home page (PREMIUM only, redirects to /menu otherwise)
+ * /admin                         → Super Admin Dashboard
+ * /:slug                         → Restaurant home page selon les modules publiés
  * /:slug/menu                    → Restaurant menu (all tiers)
  * /:slug/dashboard               → Restaurant owner dashboard
  */
@@ -48,6 +49,7 @@ function Router() {
       {/* Landing page */}
       <Route path="/" component={LandingPage} />
       <Route path="/tarifs" component={PricingPage} />
+      <Route path="/terms" component={TermsPage} />
       
       {/* Restaurant owner login */}
       <Route path="/login-restaurant" component={RestaurantLogin} />
@@ -69,8 +71,8 @@ function Router() {
       
       {/* Super Admin routes */}
       <Route path="/admin/preview/:slug">{() => <BusinessPublicPage preview />}</Route>
-      <Route path="/admin" component={SuperAdmin} />
       <Route path="/admin/restaurants/:id" component={AdminManageRestaurant} />
+      <Route path="/admin" component={SuperAdmin} />
       
       {/* Restaurant dashboard - must come before public page to avoid conflict */}
       <Route path="/:slug/dashboard" component={RestaurantDashboard} />
@@ -80,7 +82,7 @@ function Router() {
       <Route path="/:slug/menu" component={RestaurantMenuPage} />
       <Route path="/:slug/events" component={RestaurantEventsPage} />
       
-      {/* Restaurant home page (PREMIUM only, auto-redirects to /menu for MENU/PRO) */}
+      {/* Restaurant home page */}
       <Route path="/:slug" component={RestaurantHomePage} />
       
       {/* 404 */}
