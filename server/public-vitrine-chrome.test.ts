@@ -24,10 +24,11 @@ describe("public storefront chrome", () => {
     const menuStorefront = source("client/src/pages/RestaurantMenuPage.tsx");
     const homeStorefront = source("client/src/pages/RestaurantHomePage.tsx");
     const eventsStorefront = source("client/src/pages/RestaurantEventsPage.tsx");
+    const legacyStorefront = source("client/src/pages/PublicRestaurantPage.tsx");
 
     expect(attribution).toContain("PRONTO");
     expect(attribution).toContain("by ALTMachine");
-    for (const storefront of [genericStorefront, menuStorefront, homeStorefront, eventsStorefront]) {
+    for (const storefront of [genericStorefront, menuStorefront, homeStorefront, eventsStorefront, legacyStorefront]) {
       expect(storefront).toContain("PublicAttribution");
     }
   });

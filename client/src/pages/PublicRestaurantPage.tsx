@@ -11,6 +11,7 @@ import { useParams } from "wouter";
 import { toast } from "sonner";
 import { nanoid } from "nanoid";
 import ReactMarkdown from "react-markdown";
+import { PublicAttribution } from "@/components/PublicAttribution";
 
 export default function PublicRestaurantPage() {
   const params: { slug?: string } = useParams();
@@ -381,7 +382,8 @@ export default function PublicRestaurantPage() {
               RISE AI™
             </a>
           </p>
-          <p className="text-xs text-muted-foreground">Propulsé par RISE IA via Gemini 2.0 Flash</p>
+          <PublicAttribution className="mt-3 text-muted-foreground" />
+          <p className="mt-2 text-xs text-muted-foreground">Propulsé par RISE IA via Gemini 2.0 Flash</p>
         </div>
       </footer>
 

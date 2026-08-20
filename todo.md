@@ -92,7 +92,7 @@
 - [x] Créer un composant d'upload d'images avec S3
 - [x] Ajouter l'upload de logo restaurant dans les paramètres (composant prêt)
 - [x] Ajouter l'upload de photo hero dans les paramètres (composant prêt)
-- [ ] Ajouter l'upload d'images de plats dans le formulaire d'ajout/édition (composant prêt)
+- [x] Ajouter l'upload d'images de plats dans le formulaire d'ajout/édition (composant prêt)
 - [x] Créer la landing page PRONTO avec section Hero
 - [x] Ajouter la section Fonctionnalités à la landing page
 - [x] Ajouter la section Pricing (19€/29€) à la landing page
@@ -1474,6 +1474,10 @@
 - [x] Synchroniser instantanément les champs éditoriaux du dashboard sans attendre leur sauvegarde
 - [x] Propager la mise à jour d’aperçu à chaque module public pertinent (horaires, galerie, événements, réservations, personnalisation et traductions visibles)
 - [x] Ajouter des régressions de synchronisation instantanée et de couverture de toutes les mutations publiques
+
+## ATTRIBUTION DES VITRINES LEGACY (20 août 2026)
+- [x] Appliquer l’attribution PRONTO by ALTMachine à la vitrine legacy PublicRestaurantPage
+- [x] Étendre la régression d’attribution à toutes les vitrines publiques, y compris la vitrine legacy
 
 ## ACTIVATION DES RÉSERVATIONS PREMIUM (20 août 2026)
 - [x] Étendre le contrôle de modules Premium aux réservations depuis le dashboard
