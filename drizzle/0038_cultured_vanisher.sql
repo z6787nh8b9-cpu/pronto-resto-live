@@ -1,0 +1,1 @@
+ALTER TABLE `restaurant_owners` ADD `isSuspended` boolean DEFAULT false NOT NULL;

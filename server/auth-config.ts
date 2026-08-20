@@ -18,6 +18,7 @@ const FACEBOOK_APP_SECRET = process.env.FACEBOOK_APP_SECRET!;
 const callbackBaseURL = process.env.PUBLIC_URL || "http://localhost:3000";
 
 class InvitationClaimUnavailableError extends Error {}
+class OwnerSuspendedError extends Error {}
 
 export async function claimRestaurantInvitation(
   db: NonNullable<Awaited<ReturnType<typeof getDb>>>,
@@ -77,6 +78,7 @@ async function upsertGoogleOwner(profile: any) {
     .where(and(eq(restaurantOwners.email, email), eq(restaurantOwners.provider, "google")))
     .limit(1);
   if (existingOwner) {
+    if (existingOwner.isSuspended) throw new OwnerSuspendedError();
     await db.update(restaurantOwners).set({ lastSignedIn: new Date() }).where(eq(restaurantOwners.id, existingOwner.id));
     return { db, owner: existingOwner, email };
   }
@@ -105,6 +107,7 @@ async function upsertFacebookOwner(profile: any) {
     .where(and(eq(restaurantOwners.email, email), eq(restaurantOwners.provider, "facebook")))
     .limit(1);
   if (existingOwner) {
+    if (existingOwner.isSuspended) throw new OwnerSuspendedError();
     await db.update(restaurantOwners).set({ lastSignedIn: new Date() }).where(eq(restaurantOwners.id, existingOwner.id));
     return { db, owner: existingOwner, email };
   }
@@ -160,7 +163,7 @@ export function initializePassport() {
         return done(null, admin && admin.authVersion === authVersion ? admin : null);
       }
       const [owner] = await db.select().from(restaurantOwners).where(eq(restaurantOwners.id, numericId)).limit(1);
-      return done(null, owner && owner.authVersion === authVersion ? owner : null);
+      return done(null, owner && !owner.isSuspended && owner.authVersion === authVersion ? owner : null);
     } catch (error) {
       return done(error, null);
     }

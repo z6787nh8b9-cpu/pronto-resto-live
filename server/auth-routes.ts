@@ -234,7 +234,7 @@ export function registerEmailLoginRoute(app: Express) {
       // Find owner by email with email provider
       const [owner] = await db.select()
         .from(restaurantOwners)
-        .where(and(eq(restaurantOwners.email, email), eq(restaurantOwners.provider, "email")))
+        .where(and(eq(restaurantOwners.email, email), eq(restaurantOwners.provider, "email"), eq(restaurantOwners.isSuspended, false)))
         .limit(1);
 
       if (!owner || !owner.passwordHash) {
@@ -347,7 +347,7 @@ export function registerEmailLoginRoute(app: Express) {
       const { eq, and } = await import("drizzle-orm");
       const db = await getDb();
       const [owner] = db ? await db.select().from(restaurantOwners)
-        .where(and(eq(restaurantOwners.email, email), eq(restaurantOwners.provider, "email"))).limit(1) : [];
+        .where(and(eq(restaurantOwners.email, email), eq(restaurantOwners.provider, "email"), eq(restaurantOwners.isSuspended, false))).limit(1) : [];
 
       if (owner && db) {
         const secret = createPasswordResetSecret();

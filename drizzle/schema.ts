@@ -31,6 +31,7 @@ export const restaurantOwners = mysqlTable("restaurant_owners", {
   providerId: varchar("providerId", { length: 255 }), // ID from OAuth provider (nullable for email accounts)
   passwordHash: varchar("passwordHash", { length: 255 }), // Bcrypt hash for email/password accounts
   authVersion: int("authVersion").default(1).notNull(), // Invalidates all sessions when credentials change
+  isSuspended: boolean("isSuspended").default(false).notNull(), // Blocks new authentication while retaining establishment ownership
   
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

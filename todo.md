@@ -18,7 +18,7 @@
 - [x] Liste des restaurants avec filtres et recherche
 - [x] Gestion des abonnements (Basic 19€ / Premium 29€)
 - [x] Statistiques : restaurants actifs, revenus, conversations IA
-- [ ] Gestion des utilisateurs restaurateurs
+- [x] Gestion des utilisateurs restaurateurs
 
 ## Phase 4 : Dashboard Restaurateur
 - [x] Page d'accueil du dashboard
@@ -1487,7 +1487,9 @@
 ## GESTION DES PROPRIÉTAIRES (20 août 2026)
 - [x] Fournir un annuaire Super Admin en lecture seule sans données d’authentification ni de session
 - [x] Gérer l’accès initial par invitations propriétaires hachées et révocables
-- [ ] Définir puis implémenter le cycle de vie sensible de propriétaire (transfert, désactivation ou révocation) avant de fermer la gestion complète des utilisateurs restaurateurs
+- [x] Définir puis implémenter le cycle de vie sensible de propriétaire (transfert, désactivation ou révocation) avant de fermer la gestion complète des utilisateurs restaurateurs
+- [x] Ajouter une suspension ou suppression explicite de compte propriétaire, avec révocation de sessions et conservation des établissements
+- [x] Ajouter une régression du refus d’accès après suspension de compte propriétaire
 
 ## EMOJI DE PLAT — PERSISTANCE RUNTIME (20 août 2026)
 - [x] Vérifier et étendre si nécessaire les helpers de persistance et les lectures publiques des plats

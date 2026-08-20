@@ -8,7 +8,7 @@ const ownersTabSource = readFileSync(resolve(process.cwd(), "client/src/pages/ad
 
 describe("annuaire Super Admin des propriétaires", () => {
   it("réserve le répertoire au Super Admin et exclut les secrets d’authentification", () => {
-    const directorySection = adminRouterSource.split("listRestaurantOwners: adminProcedure")[1].split("// ===== ADVERTISEMENTS =====")[0];
+    const directorySection = adminRouterSource.split("listRestaurantOwners: adminProcedure")[1].split("// ===== OWNER LIFECYCLE =====")[0];
 
     expect(directorySection).toContain("restaurantOwners.email");
     expect(directorySection).toContain("restaurants.ownerId");

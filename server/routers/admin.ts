@@ -124,11 +124,70 @@ export const adminRouter = router({
         restaurantName: restaurants.name,
         restaurantSlug: restaurants.slug,
         restaurantIsActive: restaurants.isActive,
+        isSuspended: restaurantOwners.isSuspended,
       })
       .from(restaurantOwners)
       .leftJoin(restaurants, eq(restaurants.ownerId, restaurantOwners.id))
       .orderBy(restaurantOwners.createdAt);
   }),
+
+  // ===== OWNER LIFECYCLE =====
+  transferRestaurantOwner: adminProcedure
+    .input(z.object({ restaurantId: z.number(), targetOwnerId: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
+
+      return db.transaction(async (tx) => {
+        const [restaurant] = await tx.select({ id: restaurants.id, ownerId: restaurants.ownerId })
+          .from(restaurants).where(eq(restaurants.id, input.restaurantId)).limit(1);
+        const [targetOwner] = await tx.select({ id: restaurantOwners.id, isSuspended: restaurantOwners.isSuspended })
+          .from(restaurantOwners).where(eq(restaurantOwners.id, input.targetOwnerId)).limit(1);
+        if (!restaurant || !targetOwner) throw new TRPCError({ code: "NOT_FOUND", message: "Établissement ou propriétaire introuvable." });
+        if (targetOwner.isSuspended) throw new TRPCError({ code: "BAD_REQUEST", message: "Un compte propriétaire suspendu ne peut pas recevoir d’établissement." });
+        if (restaurant.ownerId === targetOwner.id) throw new TRPCError({ code: "BAD_REQUEST", message: "Ce propriétaire est déjà associé à l’établissement." });
+
+        const result = await tx.update(restaurants)
+          .set({ ownerId: targetOwner.id })
+          .where(and(eq(restaurants.id, restaurant.id), restaurant.ownerId === null ? sql`${restaurants.ownerId} IS NULL` : eq(restaurants.ownerId, restaurant.ownerId)));
+        if (!result[0]?.affectedRows) throw new TRPCError({ code: "CONFLICT", message: "L’association propriétaire a changé. Réessayez." });
+        return { restaurantId: restaurant.id, previousOwnerId: restaurant.ownerId, ownerId: targetOwner.id };
+      });
+    }),
+
+  unassignRestaurantOwner: adminProcedure
+    .input(z.object({ restaurantId: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
+
+      return db.transaction(async (tx) => {
+        const [restaurant] = await tx.select({ id: restaurants.id, ownerId: restaurants.ownerId })
+          .from(restaurants).where(eq(restaurants.id, input.restaurantId)).limit(1);
+        if (!restaurant) throw new TRPCError({ code: "NOT_FOUND", message: "Établissement introuvable." });
+        if (restaurant.ownerId === null) throw new TRPCError({ code: "BAD_REQUEST", message: "Cet établissement n’a pas de propriétaire associé." });
+
+        const result = await tx.update(restaurants).set({ ownerId: null })
+          .where(and(eq(restaurants.id, restaurant.id), eq(restaurants.ownerId, restaurant.ownerId)));
+        if (!result[0]?.affectedRows) throw new TRPCError({ code: "CONFLICT", message: "L’association propriétaire a changé. Réessayez." });
+        return { restaurantId: restaurant.id, previousOwnerId: restaurant.ownerId };
+      });
+    }),
+
+  setRestaurantOwnerSuspension: adminProcedure
+    .input(z.object({ ownerId: z.number(), isSuspended: z.boolean() }))
+    .mutation(async ({ input }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
+      const [owner] = await db.select({ id: restaurantOwners.id, authVersion: restaurantOwners.authVersion, isSuspended: restaurantOwners.isSuspended })
+        .from(restaurantOwners).where(eq(restaurantOwners.id, input.ownerId)).limit(1);
+      if (!owner) throw new TRPCError({ code: "NOT_FOUND", message: "Propriétaire introuvable." });
+      if (owner.isSuspended === input.isSuspended) return { ownerId: owner.id, isSuspended: owner.isSuspended };
+      const result = await db.update(restaurantOwners).set({ isSuspended: input.isSuspended, authVersion: owner.authVersion + 1 })
+        .where(and(eq(restaurantOwners.id, owner.id), eq(restaurantOwners.authVersion, owner.authVersion)));
+      if (!result[0]?.affectedRows) throw new TRPCError({ code: "CONFLICT", message: "Le compte propriétaire a changé. Réessayez." });
+      return { ownerId: owner.id, isSuspended: input.isSuspended };
+    }),
 
   // ===== ADVERTISEMENTS =====
 
