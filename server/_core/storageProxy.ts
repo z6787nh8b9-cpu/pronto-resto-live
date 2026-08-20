@@ -1,10 +1,25 @@
 import type { Express } from "express";
 import { ENV } from "./env";
+
+const MAX_ASSET_KEY_LENGTH = 512;
+const SAFE_ASSET_KEY = /^[A-Za-z0-9][A-Za-z0-9._/-]*$/;
+
+export function isSafeAssetKey(key: string): boolean {
+  return key.length > 0
+    && key.length <= MAX_ASSET_KEY_LENGTH
+    && SAFE_ASSET_KEY.test(key)
+    && !key.startsWith("/")
+    && !key.includes("//")
+    && !key.includes("\\")
+    && !key.includes("..")
+    && !key.split("/").some((segment) => segment.length === 0 || segment === ".");
+}
+
 export function registerAssetProxy(app: Express) {
   app.get("/assets/*", async (req, res) => {
     const key = (req.params as Record<string, string | undefined>)["0"];
-    if (!key) {
-      res.status(400).send("Missing storage key");
+    if (!key || !isSafeAssetKey(key)) {
+      res.status(400).send("Invalid storage key");
       return;
     }
     if (!ENV.forgeApiUrl || !ENV.forgeApiKey) {
