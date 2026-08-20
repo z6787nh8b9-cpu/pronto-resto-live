@@ -9,5 +9,7 @@ describe("generic public vitrine loading states", () => {
     expect(page).toContain('import { LoadingState } from "@/components/LoadingState"');
     expect(page).toContain('<LoadingState label="Ouverture de la vitrine" />');
     expect(page).toContain("Cette vitrine n’est pas disponible.");
+    expect(page).toContain("const isLoading = preview ? previewCatalog.isLoading");
+    expect(page).toContain("const ungroupedItems = itemsByCollection.get(null) ?? [];");
   });
 });

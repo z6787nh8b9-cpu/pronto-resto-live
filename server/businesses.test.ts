@@ -3,7 +3,7 @@ import { TRPCError } from "@trpc/server";
 import { eq } from "drizzle-orm";
 import { appRouter } from "./routers";
 import { getDb } from "./db";
-import { businessOnboarding, businesses, businessProfiles, mediaAssets } from "../drizzle/schema";
+import { businessOnboarding, businesses, businessProfiles, catalogItems, catalogs, mediaAssets } from "../drizzle/schema";
 
 const runId = `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 const testSlug = `business-test-${runId}`;
@@ -37,6 +37,9 @@ afterAll(async () => {
   if (!db) return;
   const [business] = await db.select().from(businesses).where(eq(businesses.slug, testSlug)).limit(1);
   if (!business) return;
+  const businessCatalogs = await db.select({ id: catalogs.id }).from(catalogs).where(eq(catalogs.businessId, business.id));
+  for (const catalog of businessCatalogs) await db.delete(catalogItems).where(eq(catalogItems.catalogId, catalog.id));
+  await db.delete(catalogs).where(eq(catalogs.businessId, business.id));
   await db.delete(mediaAssets).where(eq(mediaAssets.businessId, business.id));
   await db.delete(businessOnboarding).where(eq(businessOnboarding.businessId, business.id));
   await db.delete(businessProfiles).where(eq(businessProfiles.businessId, business.id));
@@ -75,6 +78,36 @@ describe("Generic business core", () => {
   it("never exposes a draft business catalog to an anonymous visitor", async () => {
     await expect(anonymousCaller.businesses.getPublicCatalogBySlug({ slug: testSlug }))
       .rejects.toBeInstanceOf(TRPCError);
+  });
+
+  it("publishes active catalog items that do not belong to a collection", async () => {
+    const db = await getDb();
+    if (!db) throw new Error("Database unavailable");
+    const [business] = await db.select().from(businesses).where(eq(businesses.slug, testSlug)).limit(1);
+    await db.update(businesses).set({ status: "published", isActive: true }).where(eq(businesses.id, business.id));
+    const [catalogResult] = await db.insert(catalogs).values({
+      businessId: business.id,
+      slug: `services-${runId}`,
+      name: "Rituels signature",
+      type: "services",
+      status: "published",
+      isPrimary: true,
+    });
+    const catalogId = Number(catalogResult.insertId);
+    await db.insert(catalogItems).values({
+      catalogId,
+      itemType: "service",
+      name: "Soin éclat sans collection",
+      description: "Une prestation publiable même sans catégorie.",
+      priceType: "fixed",
+      price: "75.00",
+      status: "active",
+    });
+
+    await expect(anonymousCaller.businesses.getPublicCatalogBySlug({ slug: testSlug })).resolves.toMatchObject({
+      catalog: { id: catalogId, name: "Rituels signature" },
+      items: [expect.objectContaining({ name: "Soin éclat sans collection", collectionId: null })],
+    });
   });
 
   it("keeps workspace data private from a non-member owner", async () => {

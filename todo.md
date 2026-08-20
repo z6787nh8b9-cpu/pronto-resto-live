@@ -1465,6 +1465,11 @@
 - [x] Vérifier le contrat de build PWA, Capacitor et les garde-fous de distribution native
 - [x] Documenter les prérequis de synchronisation iOS et Android sans créer de projet natif prématuré
 
+## VITRINE PUBLIQUE MULTI-SECTEURS (20 août 2026)
+- [x] Afficher les éléments de catalogue sans collection et fiabiliser les états de chargement d’aperçu
+- [x] Harmoniser les libellés, les valeurs par défaut et le contraste de hero pour toutes les verticales
+- [x] Ajouter les régressions de contenu générique publiable
+
 ## AUDIT DES ROUTES REST DIRECTES (20 août 2026)
 - [x] Uniformiser la protection CSRF des mutations de récupération et réinitialisation de mot de passe
 - [x] Valider strictement les formats et longueurs des identifiants et mots de passe REST
