@@ -27,6 +27,8 @@ Le deuxième passage nécessitera une décision de fournisseur : stockage S3 ind
 
 Le bundle public, les routes de connexion PRONTO, le callback OAuth applicatif et la supervision métier ne redirigent plus vers Manus. Les références restantes sont confinées aux adaptateurs serveur d’IA, de stockage, de carte et de notification, ainsi qu’aux paramètres d’hébergement nécessaires au déploiement actuel. Elles ne sont pas accessibles dans le bundle navigateur et sont documentées pour migration différée.
 
+Le contrôle HTTP de `pronto.page` confirme les protections de transport attendues — HSTS, politique de permissions, politique de référent, anti-clickjacking et protection MIME. La réponse porte encore l’en-tête technique `x-manus-proxy-mode: transparent/1`, injecté par l’infrastructure d’hébergement. Cet en-tête ne provient pas du code PRONTO, n’est pas rendu par l’interface et ne peut disparaître qu’avec une migration d’hébergement ; il ne remet pas en cause l’autonomie des parcours applicatifs.
+
 La table de compatibilité historique `users` est actuellement inutilisée par les routeurs applicatifs et ne participe plus à une décision de droit. Elle contient néanmoins des enregistrements historiques ; elle est donc conservée en lecture passive jusqu’à validation d’une politique de rétention et d’une suppression ou d’un archivage explicitement décidé. Aucun retrait destructif n’a été effectué dans ce jalon.
 
 > Aucune route métier propriétaire, Super Admin ou vitrine publique ne doit rediriger vers Manus après le premier passage de découplage.
