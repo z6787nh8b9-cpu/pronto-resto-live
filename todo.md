@@ -1258,3 +1258,4 @@
 
 ## ACCESSIBILITÉ ASSISTANCE (20 août 2026)
 - [x] Déclarer explicitement la fenêtre d’assistance comme dialogue accessible et nommé
+- [x] Gérer le focus, Tab et Échap dans le dialogue d’assistance modal

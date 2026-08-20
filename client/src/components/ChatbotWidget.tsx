@@ -23,6 +23,10 @@ export default function ChatbotWidget() {
   const [requestType, setRequestType] = useState<"call_request" | "issue_report">("call_request");
   const [requestData, setRequestData] = useState({ name: "", email: "", phone: "", message: "" });
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const wasOpenRef = useRef(false);
 
   const suggestedQuestions = [
     "Quels sont les tarifs de PRONTO ?",
@@ -60,6 +64,39 @@ export default function ChatbotWidget() {
     scrollToBottom();
   }, [messages]);
 
+  useEffect(() => {
+    if (isOpen) {
+      wasOpenRef.current = true;
+      requestAnimationFrame(() => closeButtonRef.current?.focus());
+      return;
+    }
+    if (wasOpenRef.current) {
+      triggerRef.current?.focus();
+      wasOpenRef.current = false;
+    }
+  }, [isOpen]);
+
+  const handleDialogKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Escape") {
+      event.preventDefault();
+      setIsOpen(false);
+      return;
+    }
+    if (event.key !== "Tab") return;
+
+    const focusable = Array.from(dialogRef.current?.querySelectorAll<HTMLElement>("button:not([disabled]), [href], input:not([disabled]), textarea:not([disabled]), select:not([disabled])") ?? []);
+    if (!focusable.length) return;
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  };
+
   const handleSend = () => {
     if (!input.trim()) return;
 
@@ -91,6 +128,7 @@ export default function ChatbotWidget() {
       {/* Bouton flottant */}
       {!isOpen && (
         <button
+          ref={triggerRef}
           onClick={() => setIsOpen(true)}
           aria-label="Ouvrir l’assistance PRONTO"
           aria-haspopup="dialog"
@@ -126,7 +164,8 @@ export default function ChatbotWidget() {
 
       {/* Fenêtre de chat */}
       {isOpen && (
-        <Card role="dialog" aria-modal="true" aria-labelledby="pronto-assistance-title" className="fixed bottom-4 right-4 left-4 sm:left-auto sm:right-6 sm:w-96 sm:bottom-6 h-[500px] max-h-[85vh] shadow-2xl z-50 flex flex-col border-2 border-pronto-primary">
+        <div ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="pronto-assistance-title" onKeyDown={handleDialogKeyDown}>
+        <Card className="fixed bottom-4 right-4 left-4 sm:left-auto sm:right-6 sm:w-96 sm:bottom-6 h-[500px] max-h-[85vh] shadow-2xl z-50 flex flex-col border-2 border-pronto-primary">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b" style={{ backgroundColor: '#C75B4B' }}>
             <div className="flex items-center gap-2">
@@ -142,6 +181,7 @@ export default function ChatbotWidget() {
             <Button
               variant="ghost"
               size="icon"
+              ref={closeButtonRef}
               onClick={() => setIsOpen(false)}
               aria-label="Fermer l’assistance"
               className="text-white hover:bg-white/20"
@@ -330,6 +370,7 @@ export default function ChatbotWidget() {
           </div>
           )}
         </Card>
+        </div>
       )}
     </>
   );

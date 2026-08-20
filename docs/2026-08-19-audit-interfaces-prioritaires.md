@@ -54,6 +54,8 @@ Le bouton d’assistance expose désormais un libellé et une nature de dialogue
 
 La fenêtre ouverte est désormais déclarée comme un dialogue nommé et modal, relié à son titre « Assistance PRONTO ». Le contrôle navigateur confirme l’ouverture de la conversation et l’action de fermeture explicitement libellée.
 
+Le dialogue place le focus sur sa fermeture à l’ouverture, le conserve lors de la navigation Tab, se ferme avec Échap puis le restitue à son déclencheur. La vérification clavier dans la landing confirme la fermeture effective sans perturber les CTA du hero.
+
 Le menu mobile de la landing s’appuie sur le primitive de feuille accessible, avec un déclencheur libellé et une navigation nommée. Une régression préserve ce contrat de navigation au clavier et aux technologies d’assistance.
 
 La navigation de catégories du catalogue affiche maintenant un état actif renforcé, un fondu latéral sur la rangée défilable et une instruction lisible sous cette rangée. La revue à 390 px confirme que les catégories hors champ sont signalées sans masquer l’instruction ni gêner la sélection existante.

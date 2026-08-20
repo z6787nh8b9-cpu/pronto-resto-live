@@ -14,6 +14,10 @@ describe("landing assistance placement", () => {
     expect(source).toContain('aria-modal="true"');
     expect(source).toContain('aria-labelledby="pronto-assistance-title"');
     expect(source).toContain('aria-label="Fermer l’assistance"');
+    expect(source).toContain("const handleDialogKeyDown");
+    expect(source).toContain('event.key === "Escape"');
+    expect(source).toContain('event.key !== "Tab"');
+    expect(source).toContain("triggerRef.current?.focus()");
     expect(source).not.toContain("fixed bottom-24 right-6 h-20 w-20");
   });
 });
