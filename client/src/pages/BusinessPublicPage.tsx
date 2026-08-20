@@ -3,6 +3,7 @@ import { useLocation, useParams } from "wouter";
 import { Clock3, MessageCircle, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
+import { LoadingState } from "@/components/LoadingState";
 import { PublicVitrineChrome } from "@/components/PublicVitrineChrome";
 import { ScrollReveal } from "@/components/ScrollReveal";
 
@@ -38,8 +39,8 @@ export default function BusinessPublicPage({ preview = false }: { preview?: bool
     return groups;
   }, [catalog]);
 
-  if (publicBusiness.isLoading || publicCatalog.isLoading || previewCatalog.isLoading) return <div className="min-h-[100dvh] bg-background" />;
-  if (!business) return <div className="min-h-[100dvh] bg-background" />;
+  if (publicBusiness.isLoading || publicCatalog.isLoading || previewCatalog.isLoading) return <main className="min-h-[100dvh] bg-[#fbf8f3]"><LoadingState label="Ouverture de la vitrine" /></main>;
+  if (!business) return <main className="min-h-[100dvh] bg-[#fbf8f3]"><div className="mx-auto flex min-h-[100dvh] max-w-xl items-center px-6 text-center"><p className="w-full text-sm font-medium text-muted-foreground">Cette vitrine n’est pas disponible.</p></div></main>;
 
   const profile = business.profile;
   return (

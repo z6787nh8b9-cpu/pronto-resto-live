@@ -1379,6 +1379,11 @@
 - [x] Fractionner les pages lourdes par route afin de réduire le JavaScript initial du dashboard et des parcours publics
 - [x] Préserver les routes, les états de chargement accessibles et la couverture de régression PWA
 
+## REVUE VISUELLE VITRINES MULTI-SECTEURS (20 août 2026)
+- [x] Vérifier la cohérence typographique, les matières et les espacements des vitrines restaurant, beauté, retail et services
+- [x] Vérifier les actions flottantes et le comportement mobile sur les pages d’établissement
+- [x] Ajouter les régressions visuelles ou structurelles nécessaires sans dégrader les préférences de mouvement réduit
+
 ## INTÉGRITÉ ANALYTIQUE PUBLIQUE (20 août 2026)
 - [x] Dériver côté serveur les métadonnées de vue publique au lieu d’accepter IP, agent et référent déclarés par le navigateur
 - [x] Ajouter une limite de débit dédiée aux vues publiques pour réduire l’inflation analytique artificielle
