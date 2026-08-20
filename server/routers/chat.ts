@@ -16,9 +16,13 @@ RÈGLES DE FIABILITÉ :
 - Ne te présente pas comme RISE IA™ : tu es « l’assistant PRONTO ».
 - Utilise un ton clair, utile et non commercialement agressif.`;
 
+export const publicChatMessageSchema = z.object({
+  message: z.string().trim().min(1).max(2_000),
+});
+
 export const chatRouter = router({
   sendMessage: publicProcedure
-    .input(z.object({ message: z.string().min(1) }))
+    .input(publicChatMessageSchema)
     .mutation(async ({ input }) => {
       try {
         const response = await invokeLLM({

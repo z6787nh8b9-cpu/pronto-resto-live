@@ -48,3 +48,5 @@ Le catalogue temporaire, son élément, sa collection, ses lignes d’import et 
 ## Protection anti-abus du chatbot public
 
 Le point d’entrée public `chat.sendMessage` dispose désormais d’un budget distinct de **10 messages par minute et par adresse IP**. Cette limite s’applique avant l’exécution du routeur tRPC, ne consomme pas le budget des autres procédures et renvoie une réponse `429` explicite après épuisement. La régression vérifie à la fois le blocage du onzième message et l’absence d’impact sur une procédure tRPC différente.
+
+Chaque message est aussi normalisé puis limité à **2 000 caractères** avant l’appel au modèle ; un message vide ou plus long est refusé par le schéma de procédure. Le champ navigateur applique la même borne pour prévenir les erreurs de saisie tout en laissant une marge très large à une demande utile.

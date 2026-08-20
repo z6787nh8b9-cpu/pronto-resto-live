@@ -349,6 +349,7 @@ export default function ChatbotWidget() {
               <input
                 type="text"
                 value={input}
+                maxLength={2000}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={handleKeyPress}
                 placeholder="Posez votre question..."
