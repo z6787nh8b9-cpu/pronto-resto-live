@@ -1285,3 +1285,4 @@
 
 ## COMMUNICATION PRODUIT FACTUELLE (20 août 2026)
 - [x] Remplacer la promesse d’essai et de carte bancaire de la landing par un wording vérifiable sur la préparation et la publication
+- [x] Remplacer le prix d’appel non confirmé de la landing par une invitation factuelle à définir l’offre adaptée

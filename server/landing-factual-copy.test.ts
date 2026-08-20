@@ -8,5 +8,7 @@ describe("landing factual product copy", () => {
 
     expect(source).toContain("Préparez votre catalogue · Relisez chaque détail · Publiez quand vous êtes prêt");
     expect(source).not.toContain("Essai accompagné · Sans carte bancaire");
+    expect(source).toContain("Une formule adaptée à votre activité.");
+    expect(source).not.toContain("19€");
   });
 });
