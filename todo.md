@@ -1479,6 +1479,11 @@
 - [x] Appliquer l’attribution PRONTO by ALTMachine à la vitrine legacy PublicRestaurantPage
 - [x] Étendre la régression d’attribution à toutes les vitrines publiques, y compris la vitrine legacy
 
+## GUIDE PROPRIÉTAIRE (20 août 2026)
+- [x] Créer et vérifier le guide de démarrage aligné sur les parcours disponibles
+- [ ] Compléter la documentation utilisateur générale à partir du guide propriétaire validé
+- [ ] Vérifier le guide propriétaire par une régression documentaire et une validation de compilation
+
 ## ACTIVATION DES RÉSERVATIONS PREMIUM (20 août 2026)
 - [x] Étendre le contrôle de modules Premium aux réservations depuis le dashboard
 - [x] Masquer les réglages, zones, créneaux et créations de réservation après désactivation
