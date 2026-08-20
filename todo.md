@@ -1402,6 +1402,11 @@
 - [x] Appliquer les en-têtes navigateur de sécurité compatibles avec les parcours PRONTO
 - [x] Ajouter les régressions de présence et de comportement des en-têtes
 
+## CONFORMITÉ CONTENUS SOCIAUX (20 août 2026)
+- [x] Vérifier l’absence d’avis, notes ou témoignages fictifs dans les interfaces et les données applicatives
+- [x] Retirer ou remplacer tout contenu social non vérifiable par une information factuelle
+- [x] Ajouter une régression empêchant la réintroduction de témoignages fictifs
+
 ## INTÉGRITÉ ANALYTIQUE PUBLIQUE (20 août 2026)
 - [x] Dériver côté serveur les métadonnées de vue publique au lieu d’accepter IP, agent et référent déclarés par le navigateur
 - [x] Ajouter une limite de débit dédiée aux vues publiques pour réduire l’inflation analytique artificielle
