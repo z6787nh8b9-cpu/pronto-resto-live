@@ -1375,6 +1375,10 @@
 - [x] Installer les dépendances Capacitor iOS et Android sans initialiser de projet natif prématurément
 - [x] Ajouter les régressions de manifeste, de contrôle d’installation et de configuration Capacitor
 
+## PERFORMANCE DE CHARGEMENT PWA (20 août 2026)
+- [x] Fractionner les pages lourdes par route afin de réduire le JavaScript initial du dashboard et des parcours publics
+- [x] Préserver les routes, les états de chargement accessibles et la couverture de régression PWA
+
 ## INTÉGRITÉ ANALYTIQUE PUBLIQUE (20 août 2026)
 - [x] Dériver côté serveur les métadonnées de vue publique au lieu d’accepter IP, agent et référent déclarés par le navigateur
 - [x] Ajouter une limite de débit dédiée aux vues publiques pour réduire l’inflation analytique artificielle

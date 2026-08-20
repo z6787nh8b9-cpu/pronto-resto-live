@@ -1,24 +1,32 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import NotFound from "@/pages/NotFound";
-import { Route, Switch, useParams } from "wouter";
+import { lazy, Suspense } from "react";
+import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
-import SuperAdmin from "./pages/SuperAdmin";
-import AdminManageRestaurant from "./pages/AdminManageRestaurant";
 
-import RestaurantDashboard from "./pages/RestaurantDashboard";
-import PublicRestaurantPage from "./pages/PublicRestaurantPage";
-import LandingPage from "./pages/LandingPage";
-import RestaurantHomePage from "./pages/RestaurantHomePage";
-import RestaurantMenuPage from "./pages/RestaurantMenuPage";
-import BusinessPublicPage from "./pages/BusinessPublicPage";
-import RestaurantLogin from "./pages/RestaurantLogin";
-import PasswordReset from "./pages/PasswordReset";
-import InviteAccept from "./pages/InviteAccept";
-import AdminInvite from "./pages/AdminInvite";
-import AdminLogin from "./pages/AdminLogin";
-import AdminMagicLogin from "./pages/AdminMagicLogin";
+const NotFound = lazy(() => import("@/pages/NotFound"));
+const SuperAdmin = lazy(() => import("./pages/SuperAdmin"));
+const AdminManageRestaurant = lazy(() => import("./pages/AdminManageRestaurant"));
+const RestaurantDashboard = lazy(() => import("./pages/RestaurantDashboard"));
+const LandingPage = lazy(() => import("./pages/LandingPage"));
+const RestaurantHomePage = lazy(() => import("./pages/RestaurantHomePage"));
+const RestaurantMenuPage = lazy(() => import("./pages/RestaurantMenuPage"));
+const BusinessPublicPage = lazy(() => import("./pages/BusinessPublicPage"));
+const RestaurantLogin = lazy(() => import("./pages/RestaurantLogin"));
+const PasswordReset = lazy(() => import("./pages/PasswordReset"));
+const InviteAccept = lazy(() => import("./pages/InviteAccept"));
+const AdminInvite = lazy(() => import("./pages/AdminInvite"));
+const AdminLogin = lazy(() => import("./pages/AdminLogin"));
+const AdminMagicLogin = lazy(() => import("./pages/AdminMagicLogin"));
+
+function RouteLoading() {
+  return (
+    <main className="min-h-[100dvh] bg-[#fbf8f3] px-6 py-10 text-[#301d15]" role="status" aria-live="polite">
+      <p className="mx-auto max-w-6xl text-sm font-medium">Chargement de votre espace PRONTO…</p>
+    </main>
+  );
+}
 
 /**
  * PRONTO Router - Clean URL Structure
@@ -33,7 +41,8 @@ import AdminMagicLogin from "./pages/AdminMagicLogin";
  */
 function Router() {
   return (
-    <Switch>
+    <Suspense fallback={<RouteLoading />}>
+      <Switch>
       {/* Landing page */}
       <Route path="/" component={LandingPage} />
       
@@ -72,8 +81,9 @@ function Router() {
       
       {/* 404 */}
       <Route path="/404" component={NotFound} />
-      <Route component={NotFound} />
-    </Switch>
+        <Route component={NotFound} />
+      </Switch>
+    </Suspense>
   );
 }
 
