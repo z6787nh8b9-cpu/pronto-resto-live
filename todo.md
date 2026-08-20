@@ -1368,6 +1368,13 @@
 - [x] Appliquer le contrôle d’origine aux mutations REST authentifiées sensibles
 - [x] Ajouter les régressions de refus des requêtes cross-origin
 
+## PWA B2B ET TRAJECTOIRE CAPACITOR (20 août 2026)
+- [x] Fournir des icônes PWA carrées, maskables et adaptées aux stores sans réutiliser le logo horizontal
+- [x] Améliorer les états d’installation, de mise à jour et d’application déjà installée dans le dashboard B2B
+- [x] Conserver les API et mutations authentifiées hors cache, et valider le bundle web Capacitor sans créer de projet natif avant les identités stores
+- [x] Installer les dépendances Capacitor iOS et Android sans initialiser de projet natif prématurément
+- [x] Ajouter les régressions de manifeste, de contrôle d’installation et de configuration Capacitor
+
 ## INTÉGRITÉ ANALYTIQUE PUBLIQUE (20 août 2026)
 - [x] Dériver côté serveur les métadonnées de vue publique au lieu d’accepter IP, agent et référent déclarés par le navigateur
 - [x] Ajouter une limite de débit dédiée aux vues publiques pour réduire l’inflation analytique artificielle

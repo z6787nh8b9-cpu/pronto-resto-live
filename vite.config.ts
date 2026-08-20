@@ -11,17 +11,20 @@ const plugins = [
   jsxLocPlugin(),
   VitePWA({
     registerType: "prompt",
-    includeAssets: ["pronto-logo-white.png"],
     manifest: {
+      id: "/",
       name: "PRONTO B2B",
       short_name: "PRONTO",
       description: "Pilotage sécurisé de votre vitrine et catalogue professionnel.",
+      lang: "fr-FR",
+      categories: ["business", "productivity"],
       theme_color: "#5d321f",
       background_color: "#fbf8f3",
       display: "standalone",
+      display_override: ["standalone", "minimal-ui"],
       start_url: "/",
       scope: "/",
-      icons: [{ src: "/pronto-logo-white.png", sizes: "3334x2829", type: "image/png", purpose: "any" }],
+      icons: [{ src: "/manus-storage/pronto-b2b-app-icon_a2cd4ea0.png", sizes: "1024x1024", type: "image/png", purpose: "any maskable" }],
     },
     workbox: {
       navigateFallback: "/index.html",

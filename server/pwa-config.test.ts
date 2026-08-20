@@ -11,8 +11,13 @@ describe("PWA and Capacitor configuration", () => {
 
     expect(viteConfig).toContain("VitePWA");
     expect(viteConfig).toContain('runtimeCaching: []');
+    expect(viteConfig).toContain('purpose: "any maskable"');
+    expect(viteConfig).toContain('sizes: "1024x1024"');
+    expect(viteConfig).toContain('categories: ["business", "productivity"]');
     expect(pwaRegistration).toContain("import.meta.env.PROD");
     expect(installControl).toContain("beforeinstallprompt");
+    expect(installControl).toContain("display-mode: standalone");
+    expect(installControl).toContain("PRONTO est installé sur cet appareil");
     expect(installControl).toContain("pronto:pwa-update");
     expect(capacitorConfig).toContain('webDir: "dist/public"');
     expect(capacitorConfig).toContain('appId: "page.pronto.b2b"');
