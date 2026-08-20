@@ -92,6 +92,8 @@ export default function ChatbotWidget() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
+          aria-label="Ouvrir l’assistance PRONTO"
+          aria-haspopup="dialog"
           className="fixed bottom-4 right-4 h-16 w-16 rounded-full border-none bg-transparent shadow-2xl transition-transform duration-300 hover:scale-110 sm:bottom-6 sm:right-6 sm:h-20 sm:w-20 z-50 cursor-pointer"
           style={{
             animation: 'chatbotPulse 2s ease-in-out infinite',

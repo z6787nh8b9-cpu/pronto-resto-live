@@ -1242,6 +1242,7 @@
 
 ## AUDIT LANDING MOBILE (20 août 2026)
 - [x] Éviter que l’assistance flottante recouvre l’action secondaire du hero au premier viewport mobile
+- [x] Ajouter un libellé accessible au bouton d’assistance flottant de la landing
 
 ## NAVIGATION CATALOGUE MOBILE (20 août 2026)
 - [x] Ajouter un indice de défilement et une instruction accessible aux catégories horizontales du catalogue public
