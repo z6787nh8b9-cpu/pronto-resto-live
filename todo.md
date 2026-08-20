@@ -1484,6 +1484,11 @@
 - [ ] Compléter la documentation utilisateur générale à partir du guide propriétaire validé
 - [ ] Vérifier le guide propriétaire par une régression documentaire et une validation de compilation
 
+## GESTION DES PROPRIÉTAIRES (20 août 2026)
+- [x] Fournir un annuaire Super Admin en lecture seule sans données d’authentification ni de session
+- [x] Gérer l’accès initial par invitations propriétaires hachées et révocables
+- [ ] Définir puis implémenter le cycle de vie sensible de propriétaire (transfert, désactivation ou révocation) avant de fermer la gestion complète des utilisateurs restaurateurs
+
 ## ACTIVATION DES RÉSERVATIONS PREMIUM (20 août 2026)
 - [x] Étendre le contrôle de modules Premium aux réservations depuis le dashboard
 - [x] Masquer les réglages, zones, créneaux et créations de réservation après désactivation
