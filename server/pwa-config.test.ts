@@ -8,6 +8,7 @@ describe("PWA and Capacitor configuration", () => {
     const pwaRegistration = readFileSync(resolve(process.cwd(), "client/src/lib/pwa.ts"), "utf8");
     const installControl = readFileSync(resolve(process.cwd(), "client/src/components/PwaInstallControl.tsx"), "utf8");
     const capacitorConfig = readFileSync(resolve(process.cwd(), "capacitor.config.ts"), "utf8");
+    const packageJson = readFileSync(resolve(process.cwd(), "package.json"), "utf8");
 
     expect(viteConfig).toContain("VitePWA");
     expect(viteConfig).toContain('runtimeCaching: []');
@@ -21,5 +22,8 @@ describe("PWA and Capacitor configuration", () => {
     expect(installControl).toContain("pronto:pwa-update");
     expect(capacitorConfig).toContain('webDir: "dist/public"');
     expect(capacitorConfig).toContain('appId: "page.pronto.b2b"');
+    expect(capacitorConfig).not.toContain("server:");
+    expect(packageJson).toContain('"pwa:build": "vite build"');
+    expect(packageJson).toContain('"cap:sync": "pnpm pwa:build && cap sync"');
   });
 });
