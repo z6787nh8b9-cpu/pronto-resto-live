@@ -1351,6 +1351,10 @@
 - [x] Vérifier l’appartenance de l’établissement avant chaque gestion de traduction
 - [x] Ajouter les régressions inter-établissement des procédures de traduction
 
+## DROITS GESTION RÉSERVATIONS (20 août 2026)
+- [x] Vérifier l’appartenance de l’établissement avant toute gestion, liste ou export de réservation
+- [x] Ajouter les régressions inter-établissement des procédures de gestion de réservation
+
 ## INTÉGRITÉ ANALYTIQUE PUBLIQUE (20 août 2026)
 - [x] Dériver côté serveur les métadonnées de vue publique au lieu d’accepter IP, agent et référent déclarés par le navigateur
 - [x] Ajouter une limite de débit dédiée aux vues publiques pour réduire l’inflation analytique artificielle

@@ -103,17 +103,17 @@ export const reservationsRouter = router({
    */
   updateSettings: restaurantOwnerProcedure
     .input(z.object({
-      restaurantId: z.number(),
-      slotDuration: z.number().optional(),
-      advanceBookingDays: z.number().optional(),
-      minAdvanceHours: z.number().optional(),
-      defaultTableSize: z.number().optional(),
-      maxPartySize: z.number().optional(),
+      restaurantId: z.number().int().positive(),
+      slotDuration: z.number().int().min(15).max(240).optional(),
+      advanceBookingDays: z.number().int().min(1).max(365).optional(),
+      minAdvanceHours: z.number().int().min(0).max(720).optional(),
+      defaultTableSize: z.number().int().min(1).max(100).optional(),
+      maxPartySize: z.number().int().min(1).max(100).optional(),
       notifyByEmail: z.boolean().optional(),
       notifyByWhatsApp: z.boolean().optional(),
       autoConfirm: z.boolean().optional(),
-      confirmationMessage: z.string().optional(),
-      cancellationPolicy: z.string().optional(),
+      confirmationMessage: z.string().trim().max(1_000).optional(),
+      cancellationPolicy: z.string().trim().max(2_000).optional(),
     }))
     .mutation(async ({ ctx, input }) => {
       const db = await requireReservationManagementAccess(ctx, input.restaurantId);
@@ -175,10 +175,10 @@ export const reservationsRouter = router({
    */
   createZone: restaurantOwnerProcedure
     .input(z.object({
-      restaurantId: z.number(),
-      name: z.string(),
-      capacity: z.number(),
-      displayOrder: z.number().optional(),
+      restaurantId: z.number().int().positive(),
+      name: z.string().trim().min(1).max(100),
+      capacity: z.number().int().min(1).max(500),
+      displayOrder: z.number().int().min(0).max(10_000).optional(),
     }))
     .mutation(async ({ ctx, input }) => {
       const db = await requireReservationManagementAccess(ctx, input.restaurantId);
@@ -191,11 +191,11 @@ export const reservationsRouter = router({
    */
   updateZone: restaurantOwnerProcedure
     .input(z.object({
-      id: z.number(),
-      name: z.string().optional(),
-      capacity: z.number().optional(),
+      id: z.number().int().positive(),
+      name: z.string().trim().min(1).max(100).optional(),
+      capacity: z.number().int().min(1).max(500).optional(),
       isActive: z.boolean().optional(),
-      displayOrder: z.number().optional(),
+      displayOrder: z.number().int().min(0).max(10_000).optional(),
     }))
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
@@ -216,7 +216,7 @@ export const reservationsRouter = router({
    * Delete a zone
    */
   deleteZone: restaurantOwnerProcedure
-    .input(z.object({ id: z.number() }))
+    .input(z.object({ id: z.number().int().positive() }))
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
@@ -309,9 +309,9 @@ export const reservationsRouter = router({
    */
   getByRestaurant: restaurantOwnerProcedure
     .input(z.object({
-      restaurantId: z.number(),
-      startDate: z.string().optional(),
-      endDate: z.string().optional(),
+      restaurantId: z.number().int().positive(),
+      startDate: z.string().datetime({ offset: true }).optional(),
+      endDate: z.string().datetime({ offset: true }).optional(),
       status: z.enum(["pending", "confirmed", "cancelled", "completed", "no_show"]).optional(),
     }))
     .query(async ({ ctx, input }) => {
@@ -346,9 +346,9 @@ export const reservationsRouter = router({
    */
   updateStatus: restaurantOwnerProcedure
     .input(z.object({
-      id: z.number(),
+      id: z.number().int().positive(),
       status: z.enum(["pending", "confirmed", "cancelled", "completed", "no_show"]),
-      cancellationReason: z.string().optional(),
+      cancellationReason: z.string().trim().max(500).optional(),
     }))
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
