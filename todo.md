@@ -1496,6 +1496,11 @@
 - [x] Ajouter une suspension ou suppression explicite de compte propriétaire, avec révocation de sessions et conservation des établissements
 - [x] Ajouter une régression du refus d’accès après suspension de compte propriétaire
 
+## CRÉATION OAUTH DES PROPRIÉTAIRES (20 août 2026)
+- [x] Exiger une invitation propriétaire valide avant toute création de compte OAuth
+- [x] Conserver la connexion OAuth des propriétaires existants sans invitation
+- [x] Ajouter les régressions de refus d’inscription OAuth non invitée
+
 ## EMOJI DE PLAT — PERSISTANCE RUNTIME (20 août 2026)
 - [x] Vérifier et étendre si nécessaire les helpers de persistance et les lectures publiques des plats
 - [x] Ajouter une régression d’intégration de création, édition et lecture publique avec emoji

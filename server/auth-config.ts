@@ -19,6 +19,26 @@ const callbackBaseURL = process.env.PUBLIC_URL || "http://localhost:3000";
 
 class InvitationClaimUnavailableError extends Error {}
 class OwnerSuspendedError extends Error {}
+class OwnerInvitationRequiredError extends Error {}
+
+async function createOAuthOwnerFromInvitation(db: NonNullable<Awaited<ReturnType<typeof getDb>>>, invitationToken: string | undefined, owner: { email: string; name: string; avatarUrl: string | null; provider: "google" | "facebook"; providerId: string }) {
+  if (!isOwnerInvitationToken(invitationToken)) throw new OwnerInvitationRequiredError();
+  const tokenHash = hashOwnerInvitationToken(invitationToken);
+  return await db.transaction(async (tx) => {
+    const [created] = await tx.insert(restaurantOwners).values(owner);
+    const ownerId = Number(created.insertId);
+    const now = new Date();
+    const claim = await tx.update(invitations).set({ status: "accepted", acceptedBy: ownerId, acceptedAt: now })
+      .where(and(eq(invitations.tokenHash, tokenHash), eq(invitations.status, "pending"), gt(invitations.expiresAt, now)));
+    if (Number(claim[0]?.affectedRows) !== 1) throw new InvitationClaimUnavailableError();
+    const [invitation] = await tx.select({ restaurantId: invitations.restaurantId }).from(invitations).where(eq(invitations.tokenHash, tokenHash)).limit(1);
+    const restaurantClaim = invitation && await tx.update(restaurants).set({ ownerId }).where(and(eq(restaurants.id, invitation.restaurantId), isNull(restaurants.ownerId)));
+    if (!restaurantClaim || Number(restaurantClaim[0]?.affectedRows) !== 1) throw new InvitationClaimUnavailableError();
+    const [createdOwner] = await tx.select().from(restaurantOwners).where(eq(restaurantOwners.id, ownerId)).limit(1);
+    if (!createdOwner) throw new InvitationClaimUnavailableError();
+    return { owner: createdOwner, restaurantId: invitation.restaurantId };
+  });
+}
 
 export async function claimRestaurantInvitation(
   db: NonNullable<Awaited<ReturnType<typeof getDb>>>,
@@ -66,7 +86,7 @@ export async function claimRestaurantInvitation(
   }
 }
 
-async function upsertGoogleOwner(profile: any) {
+async function upsertGoogleOwner(profile: any, invitationToken?: string) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   const email = profile.emails?.[0]?.value;
@@ -83,19 +103,17 @@ async function upsertGoogleOwner(profile: any) {
     return { db, owner: existingOwner, email };
   }
 
-  const [created] = await db.insert(restaurantOwners).values({
+  const created = await createOAuthOwnerFromInvitation(db, invitationToken, {
     email,
     name: profile.displayName || email,
     avatarUrl: profile.photos?.[0]?.value || null,
     provider: "google",
     providerId: profile.id,
   });
-  const [owner] = await db.select().from(restaurantOwners).where(eq(restaurantOwners.id, Number(created.insertId))).limit(1);
-  if (!owner) throw new Error("Restaurant owner creation failed");
-  return { db, owner, email };
+  return { db, owner: created.owner, email, claimedRestaurantId: created.restaurantId };
 }
 
-async function upsertFacebookOwner(profile: any) {
+async function upsertFacebookOwner(profile: any, invitationToken?: string) {
   const db = await getDb();
   if (!db) throw new Error("Database not available");
   const email = profile.emails?.[0]?.value;
@@ -113,16 +131,14 @@ async function upsertFacebookOwner(profile: any) {
   }
 
   const displayName = `${profile.name?.givenName || ""} ${profile.name?.familyName || ""}`.trim() || email;
-  const [created] = await db.insert(restaurantOwners).values({
+  const created = await createOAuthOwnerFromInvitation(db, invitationToken, {
     email,
     name: displayName,
     avatarUrl: profile.photos?.[0]?.value || null,
     provider: "facebook",
     providerId: profile.id,
   });
-  const [owner] = await db.select().from(restaurantOwners).where(eq(restaurantOwners.id, Number(created.insertId))).limit(1);
-  if (!owner) throw new Error("Restaurant owner creation failed");
-  return { db, owner, email };
+  return { db, owner: created.owner, email, claimedRestaurantId: created.restaurantId };
 }
 
 async function claimSessionInvitation(req: any, db: NonNullable<Awaited<ReturnType<typeof getDb>>>, ownerId: number) {
@@ -176,8 +192,9 @@ export function initializePassport() {
     passReqToCallback: true,
   }, async (req: any, _accessToken, _refreshToken, profile, done) => {
     try {
-      const { db, owner } = await upsertGoogleOwner(profile);
-      await claimSessionInvitation(req, db, owner.id);
+      const { db, owner, claimedRestaurantId } = await upsertGoogleOwner(profile, req.session?.invitationToken);
+      if (claimedRestaurantId) req.session.claimedRestaurantId = claimedRestaurantId;
+      else await claimSessionInvitation(req, db, owner.id);
       return done(null, owner);
     } catch (error) {
       return done(error as Error, undefined);
@@ -192,8 +209,9 @@ export function initializePassport() {
     passReqToCallback: true,
   }, async (req: any, _accessToken, _refreshToken, profile, done) => {
     try {
-      const { db, owner } = await upsertFacebookOwner(profile);
-      await claimSessionInvitation(req, db, owner.id);
+      const { db, owner, claimedRestaurantId } = await upsertFacebookOwner(profile, req.session?.invitationToken);
+      if (claimedRestaurantId) req.session.claimedRestaurantId = claimedRestaurantId;
+      else await claimSessionInvitation(req, db, owner.id);
       return done(null, owner);
     } catch (error) {
       return done(error as Error, undefined);
