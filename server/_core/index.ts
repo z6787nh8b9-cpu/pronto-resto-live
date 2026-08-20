@@ -9,6 +9,7 @@ import { adminLoginRouter } from "../admin-login-route";
 import { configureSessionMiddleware } from "../session-middleware";
 import { apiLimiter, limitPublicChat, limitPublicChatbotRequests, limitPublicContactForm, limitPublicEventRegistrations, limitPublicPageViews, limitPublicReservations, limitPublicVenueChat, requireSameOrigin } from "../rate-limiters";
 import { applySecurityHeaders, healthPayload } from "./security";
+import { registerSeoRoutes } from "./seo";
 
 import { appRouter } from "../routers";
 import { createContext } from "./context";
@@ -45,6 +46,7 @@ async function startServer() {
   app.set('trust proxy', 1);
   app.use(applySecurityHeaders);
   app.get("/healthz", (_req, res) => res.status(200).json(healthPayload()));
+  registerSeoRoutes(app);
   // JSON is kept intentionally bounded. Media uploads move to a dedicated,
   // signed storage flow rather than expanding the global API attack surface.
   app.use(express.json({ limit: "10mb" }));
