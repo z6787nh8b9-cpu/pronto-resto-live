@@ -25,11 +25,11 @@ const publicReservationIdSchema = z.object({ restaurantId: z.number().int().posi
 async function requirePublicReservationRestaurant(restaurantId: number) {
   const db = await getDb();
   if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
-  const [restaurant] = await db.select({ id: restaurants.id, subscriptionTier: restaurants.subscriptionTier }).from(restaurants).where(and(
+  const [restaurant] = await db.select({ id: restaurants.id, subscriptionTier: restaurants.subscriptionTier, featuresEnabled: restaurants.featuresEnabled }).from(restaurants).where(and(
     eq(restaurants.id, restaurantId),
     eq(restaurants.isActive, true),
   )).limit(1);
-  if (!restaurant || restaurant.subscriptionTier !== "premium") {
+  if (!restaurant || restaurant.subscriptionTier !== "premium" || restaurant.featuresEnabled?.reservations === false) {
     throw new TRPCError({ code: "NOT_FOUND", message: "Établissement indisponible." });
   }
   return db;

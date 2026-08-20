@@ -237,8 +237,9 @@ export default function RestaurantDashboard() {
   });
 
   const updateFeatureActivationMutation = trpc.restaurant.updateFeatureActivation.useMutation({
-    onSuccess: ({ enabled }) => {
-      toast.success(enabled ? "Les événements sont désormais visibles publiquement." : "Les événements sont désormais masqués publiquement.");
+    onSuccess: ({ enabled, feature }) => {
+      const label = feature === "reservations" ? "Les réservations" : "Les événements";
+      toast.success(enabled ? `${label} sont désormais visibles publiquement.` : `${label} sont désormais masqués publiquement.`);
       refreshPublicPreview();
     },
     onError: () => toast.error("La mise à jour du module a échoué."),
@@ -1275,7 +1276,26 @@ export default function RestaurantDashboard() {
           {/* Reservations Tab */}
           <TabsContent value="reservations">
             {canAccessPremiumFeatures ? (
-              restaurant && <Reservations restaurantId={restaurant.id} />
+              restaurant && <div className="space-y-6">
+                <section className="pronto-shell p-1.5">
+                  <div className="flex flex-col gap-4 rounded-[calc(1.5rem-0.375rem)] bg-card px-5 py-5 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="space-y-1">
+                      <p className="font-display text-lg text-foreground">Visibilité des réservations</p>
+                      <p className="text-sm text-muted-foreground">Désactivez ce module pour masquer le parcours de réservation et ses créneaux, sans supprimer vos zones ni votre historique.</p>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-3">
+                      <span className="text-sm font-medium text-foreground">{restaurant.featuresEnabled?.reservations !== false ? "Activé" : "Masqué"}</span>
+                      <Switch
+                        checked={restaurant.featuresEnabled?.reservations !== false}
+                        disabled={updateFeatureActivationMutation.isPending}
+                        aria-label="Activer ou masquer les réservations publiques"
+                        onCheckedChange={(enabled) => updateFeatureActivationMutation.mutate({ restaurantId: restaurant.id, feature: "reservations", enabled })}
+                      />
+                    </div>
+                  </div>
+                </section>
+                <Reservations restaurantId={restaurant.id} />
+              </div>
             ) : (
               <LockedFeatureOverlay
                 featureName="Système de réservations"

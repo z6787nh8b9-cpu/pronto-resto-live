@@ -1470,6 +1470,11 @@
 - [x] Harmoniser les libellés, les valeurs par défaut et le contraste de hero pour toutes les verticales
 - [x] Ajouter les régressions de contenu générique publiable
 
+## ACTIVATION DES RÉSERVATIONS PREMIUM (20 août 2026)
+- [x] Étendre le contrôle de modules Premium aux réservations depuis le dashboard
+- [x] Masquer les réglages, zones, créneaux et créations de réservation après désactivation
+- [x] Ajouter les régressions de désactivation publique des réservations
+
 ## AUDIT DES ROUTES REST DIRECTES (20 août 2026)
 - [x] Uniformiser la protection CSRF des mutations de récupération et réinitialisation de mot de passe
 - [x] Valider strictement les formats et longueurs des identifiants et mots de passe REST

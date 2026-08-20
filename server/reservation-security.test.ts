@@ -75,6 +75,15 @@ describe("public reservation security", () => {
     await expect(publicCaller.reservations.getPublicZones({ restaurantId: restaurant.id })).rejects.toThrow();
   });
 
+  it("hides settings, zones and availability when a Premium establishment disables reservations", async () => {
+    const restaurant = await createReservationRestaurant("feature-toggle");
+    await adminCaller.restaurant.updateFeatureActivation({ restaurantId: restaurant.id, feature: "reservations", enabled: false });
+
+    await expect(publicCaller.reservations.getPublicSettings({ restaurantId: restaurant.id })).rejects.toThrow();
+    await expect(publicCaller.reservations.getPublicZones({ restaurantId: restaurant.id })).rejects.toThrow();
+    await expect(publicCaller.reservations.getAvailableSlots({ restaurantId: restaurant.id, date: "2026-08-26", partySize: 2 })).rejects.toThrow();
+  });
+
   it("accepts only one concurrent claim when two reservations exceed the same zone capacity", async () => {
     const restaurant = await createReservationRestaurant("capacity");
     const db = await getDb();

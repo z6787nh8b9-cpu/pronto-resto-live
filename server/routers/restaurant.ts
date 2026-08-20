@@ -151,7 +151,7 @@ export const restaurantRouter = router({
   updateFeatureActivation: restaurantOwnerProcedure
     .input(z.object({
       restaurantId: z.number().int().positive(),
-      feature: z.literal("events"),
+      feature: z.enum(["events", "reservations"]),
       enabled: z.boolean(),
     }))
     .mutation(async ({ input, ctx }) => {
@@ -166,7 +166,13 @@ export const restaurantRouter = router({
         throw new TRPCError({ code: "FORBIDDEN", message: "Vous n'avez pas accès à cet établissement." });
       }
       requireSubscriptionFeature(ctx, restaurant.subscriptionTier, "premium");
-      const featuresEnabled = { reservations: true, translations: true, ...(restaurant.featuresEnabled || {}), events: input.enabled };
+      const featuresEnabled: { events?: boolean; reservations?: boolean; translations?: boolean } = {
+        events: true,
+        reservations: true,
+        translations: true,
+        ...(restaurant.featuresEnabled || {}),
+      };
+      featuresEnabled[input.feature] = input.enabled;
       await updateRestaurant(input.restaurantId, { featuresEnabled });
       return { feature: input.feature, enabled: input.enabled };
     }),
