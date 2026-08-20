@@ -1261,3 +1261,7 @@
 - [x] Déclarer explicitement la fenêtre d’assistance comme dialogue accessible et nommé
 - [x] Gérer le focus, Tab et Échap dans le dialogue d’assistance modal
 - [x] Respecter la préférence de mouvement réduit dans l’animation de l’assistance flottante
+
+## ALIGNEMENT CHATBOT PUBLIC (20 août 2026)
+- [x] Remplacer les promesses tarifaires, concurrentielles et restauration-only du chatbot par des réponses factuelles multi-secteurs
+- [x] Retirer l’affirmation non vérifiable de non-rétention des messages dans l’interface publique

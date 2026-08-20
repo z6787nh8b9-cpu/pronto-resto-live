@@ -60,6 +60,8 @@ L’assistance flottante observe désormais `prefers-reduced-motion`. Lorsque ce
 
 Le CTA « Créer ma vitrine » du menu mobile ferme désormais explicitement son panneau de navigation avant d’ouvrir le formulaire de contact. Cette orchestration évite l’empilement de deux dialogues et préserve un parcours clair sur petit écran.
 
+Le chatbot public a été aligné sur les activités de restauration, beauté, retail et services. Ses questions suggérées portent désormais sur l’adaptation à l’activité, les contenus de catalogue et la démonstration. Les promesses tarifaires, de délai ou de comparaison ont été retirées, et la mention non vérifiable de non-rétention a été remplacée par une invitation claire à ne pas partager d’informations sensibles.
+
 Le menu mobile de la landing s’appuie sur le primitive de feuille accessible, avec un déclencheur libellé et une navigation nommée. Une régression préserve ce contrat de navigation au clavier et aux technologies d’assistance.
 
 La navigation de catégories du catalogue affiche maintenant un état actif renforcé, un fondu latéral sur la rangée défilable et une instruction lisible sous cette rangée. La revue à 390 px confirme que les catégories hors champ sont signalées sans masquer l’instruction ni gêner la sélection existante.

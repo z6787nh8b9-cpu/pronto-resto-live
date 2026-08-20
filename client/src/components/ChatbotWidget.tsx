@@ -14,7 +14,7 @@ export default function ChatbotWidget() {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "👋 Bonjour ! Je suis l'assistant IA de Pronto. Comment puis-je vous aider ?",
+      content: "Bonjour, je suis l’assistant PRONTO. Je peux vous aider à comprendre comment préparer et publier votre vitrine.",
     },
   ]);
   const [input, setInput] = useState("");
@@ -30,9 +30,9 @@ export default function ChatbotWidget() {
   const wasOpenRef = useRef(false);
 
   const suggestedQuestions = [
-    "Quels sont les tarifs de PRONTO ?",
-    "Comment fonctionne l'essai gratuit ?",
-    "Combien de temps pour créer mon site ?",
+    "Comment PRONTO s’adapte-t-il à mon activité ?",
+    "Quels contenus puis-je préparer dans un catalogue ?",
+    "Comment demander une démonstration ?",
   ];
 
   const chatMutation = trpc.chat.sendMessage.useMutation({
@@ -48,8 +48,8 @@ export default function ChatbotWidget() {
         {
           role: "assistant",
           content: requestType === "call_request" 
-            ? "✅ Merci ! Votre demande d'appel a bien été enregistrée. Nous vous recontacterons très prochainement."
-            : "✅ Merci pour votre signalement ! Notre équipe va l'étudier rapidement.",
+            ? "Merci, votre demande d’appel a bien été enregistrée. Nous reviendrons vers vous avec la suite."
+            : "Merci pour votre signalement. Notre équipe en prendra connaissance.",
         },
       ]);
       setShowRequestForm(false);
@@ -369,11 +369,11 @@ export default function ChatbotWidget() {
                   rel="noopener noreferrer"
                   className="font-medium text-pronto-primary hover:underline"
                 >
-                  RISE IA
+                  RISE IA™
                 </a>
               </p>
               <p className="text-xs text-muted-foreground mt-1">
-                Anonyme • Sans rétention de données • Protégé
+                Évitez de partager des informations sensibles
               </p>
             </div>
           </div>
