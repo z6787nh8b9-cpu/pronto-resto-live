@@ -292,6 +292,7 @@ export default function ChatbotWidget() {
                 type="text"
                 aria-label="Nom"
                 placeholder="Nom"
+                maxLength={120}
                 value={requestData.name}
                 onChange={(e) => setRequestData({ ...requestData, name: e.target.value })}
                 className="w-full px-3 py-2 border rounded-lg text-sm text-foreground bg-background"
@@ -300,6 +301,7 @@ export default function ChatbotWidget() {
                 type="email"
                 aria-label="Email"
                 placeholder="Email"
+                maxLength={320}
                 value={requestData.email}
                 onChange={(e) => setRequestData({ ...requestData, email: e.target.value })}
                 className="w-full px-3 py-2 border rounded-lg text-sm text-foreground bg-background"
@@ -309,6 +311,7 @@ export default function ChatbotWidget() {
                   type="tel"
                   aria-label="Téléphone"
                   placeholder="Téléphone"
+                  maxLength={40}
                   value={requestData.phone}
                   onChange={(e) => setRequestData({ ...requestData, phone: e.target.value })}
                   className="w-full px-3 py-2 border rounded-lg text-sm text-foreground bg-background"
@@ -317,6 +320,7 @@ export default function ChatbotWidget() {
               <textarea
                 aria-label="Votre message"
                 placeholder="Votre message..."
+                maxLength={2000}
                 value={requestData.message}
                 onChange={(e) => setRequestData({ ...requestData, message: e.target.value })}
                 className="w-full px-3 py-2 border rounded-lg text-sm text-foreground bg-background"

@@ -7,7 +7,7 @@ import { registerAssetProxy } from "./storageProxy";
 import { registerRestaurantAuthRoutes, registerEmailLoginRoute } from "../auth-routes";
 import { adminLoginRouter } from "../admin-login-route";
 import { configureSessionMiddleware } from "../session-middleware";
-import { apiLimiter, limitPublicChat, requireSameOrigin } from "../rate-limiters";
+import { apiLimiter, limitPublicChat, limitPublicChatbotRequests, requireSameOrigin } from "../rate-limiters";
 import { applySecurityHeaders, healthPayload } from "./security";
 
 import { appRouter } from "../routers";
@@ -69,6 +69,7 @@ async function startServer() {
     requireSameOrigin,
     apiLimiter,
     limitPublicChat,
+    limitPublicChatbotRequests,
     createExpressMiddleware({
       router: appRouter,
       createContext,

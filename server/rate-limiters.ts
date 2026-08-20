@@ -106,3 +106,17 @@ export const publicChatLimiter = rateLimit({
 export function limitPublicChat(req: Request, res: Response, next: NextFunction) {
   return req.path === "/chat.sendMessage" ? publicChatLimiter(req, res, next) : next();
 }
+
+/** Strict anti-spam budget for public contact and issue requests. */
+export const publicChatbotRequestLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 3,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => ipKeyGenerator(req.ip || "unknown"),
+  handler: (_req, res) => res.status(429).json({ error: "Trop de demandes. Réessayez dans 15 minutes." }),
+});
+
+export function limitPublicChatbotRequests(req: Request, res: Response, next: NextFunction) {
+  return req.path === "/chatbotRequests.submit" ? publicChatbotRequestLimiter(req, res, next) : next();
+}

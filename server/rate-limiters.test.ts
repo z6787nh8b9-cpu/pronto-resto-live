@@ -1,7 +1,7 @@
 import express from "express";
 import request from "supertest";
 import { describe, expect, it } from "vitest";
-import { limitPublicChat, passwordHelpLimiter, requireSameOrigin } from "./rate-limiters";
+import { limitPublicChat, limitPublicChatbotRequests, passwordHelpLimiter, requireSameOrigin } from "./rate-limiters";
 
 describe("password help rate limiting", () => {
   it("limits neutral recovery requests even though the normal reply is successful", async () => {
@@ -37,5 +37,19 @@ describe("public chatbot rate limiting", () => {
     }
     await request(app).post("/api/trpc/chat.sendMessage").expect(429);
     await request(app).post("/api/trpc/businesses.getPublicBusinessCatalog").expect(200);
+  });
+});
+
+describe("public assistance request rate limiting", () => {
+  it("limits contact requests without blocking other tRPC procedures", async () => {
+    const app = express();
+    app.use("/api/trpc", limitPublicChatbotRequests);
+    app.post("/api/trpc/:procedure", (_req, res) => res.status(200).json({ success: true }));
+
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      await request(app).post("/api/trpc/chatbotRequests.submit").expect(200);
+    }
+    await request(app).post("/api/trpc/chatbotRequests.submit").expect(429);
+    await request(app).post("/api/trpc/chat.sendMessage").expect(200);
   });
 });

@@ -5,18 +5,18 @@ import { chatbotRequests } from "../../drizzle/schema";
 import { eq, desc } from "drizzle-orm";
 import { notifyOwner } from "../_core/notification";
 
+export const publicChatbotRequestSchema = z.object({
+  type: z.enum(["call_request", "issue_report"]),
+  name: z.string().trim().max(120).optional(),
+  email: z.string().trim().email().max(320).optional(),
+  phone: z.string().trim().max(40).optional(),
+  message: z.string().trim().min(1).max(2_000),
+});
+
 export const chatbotRequestsRouter = router({
   // Public procedure - anyone can submit a request from the landing page
   submit: publicProcedure
-    .input(
-      z.object({
-        type: z.enum(["call_request", "issue_report"]),
-        name: z.string().optional(),
-        email: z.string().email().optional(),
-        phone: z.string().optional(),
-        message: z.string().min(1),
-      })
-    )
+    .input(publicChatbotRequestSchema)
     .mutation(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new Error("Database not available");

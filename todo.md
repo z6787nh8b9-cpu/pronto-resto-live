@@ -1269,3 +1269,4 @@
 - [x] Retirer l’affirmation non vérifiable de non-rétention des messages dans l’interface publique
 - [x] Ajouter une limite de débit dédiée au chatbot public afin de prévenir l’abus du parcours LLM exposé
 - [x] Limiter la taille des messages chatbot publics avant l’appel au modèle
+- [x] Ajouter une limite de débit et des bornes de saisie au formulaire public de demandes d’assistance
