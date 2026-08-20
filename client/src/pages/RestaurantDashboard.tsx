@@ -1,4 +1,4 @@
-import { useState, useEffect, type PropsWithChildren } from "react";
+import { useState, useEffect, useRef, type PropsWithChildren } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -37,6 +37,13 @@ const subscriptionTierLabels: Record<string, string> = {
   menu: "Essentiel",
   pro: "Pro",
   premium: "Premium",
+};
+
+type HomepagePreviewDraft = {
+  heroHeading?: string;
+  heroTagline?: string;
+  aboutTitle?: string;
+  aboutContent?: string;
 };
 
 function subscriptionTierLabel(tier: string | null | undefined) {
@@ -92,8 +99,38 @@ export default function RestaurantDashboard() {
   const [upgradeFeature, setUpgradeFeature] = useState<{ name: string; tier: "pro" | "premium" }>({ name: "", tier: "pro" });
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewVersion, setPreviewVersion] = useState(0);
+  const previewFrameRef = useRef<HTMLIFrameElement>(null);
+  const homepagePreviewDraftRef = useRef<HomepagePreviewDraft>({});
 
   const refreshPublicPreview = () => setPreviewVersion((version) => version + 1);
+
+  const postHomepagePreviewDraft = (draft = homepagePreviewDraftRef.current) => {
+    previewFrameRef.current?.contentWindow?.postMessage({ type: "pronto:homepage-preview", draft }, window.location.origin);
+  };
+
+  const updateHomepagePreviewDraft = (form: HTMLFormElement) => {
+    const formData = new FormData(form);
+    homepagePreviewDraftRef.current = {
+      heroHeading: String(formData.get("heroHeading") || "").slice(0, 160),
+      heroTagline: String(formData.get("heroTagline") || "").slice(0, 320),
+      aboutTitle: String(formData.get("aboutTitle") || "").slice(0, 160),
+      aboutContent: String(formData.get("aboutContent") || "").slice(0, 5_000),
+    };
+    postHomepagePreviewDraft();
+  };
+
+  useEffect(() => {
+    if (!isPreviewOpen) return;
+    const interval = window.setInterval(refreshPublicPreview, 8_000);
+    return () => window.clearInterval(interval);
+  }, [isPreviewOpen]);
+
+  useEffect(() => {
+    if (!isPreviewOpen) return;
+    const onPublicContentUpdated = () => refreshPublicPreview();
+    window.addEventListener("pronto:public-content-updated", onPublicContentUpdated);
+    return () => window.removeEventListener("pronto:public-content-updated", onPublicContentUpdated);
+  }, [isPreviewOpen]);
 
   // Drag & Drop sensors
   const sensors = useSensors(
@@ -213,6 +250,7 @@ export default function RestaurantDashboard() {
   const updateChatbotMutation = trpc.restaurant.updateChatbotConfig.useMutation({
     onSuccess: () => {
       toast.success("Configuration chatbot mise à jour");
+      refreshPublicPreview();
     },
   });
 
@@ -568,17 +606,20 @@ export default function RestaurantDashboard() {
         <DialogContent className="flex h-[88dvh] max-w-6xl flex-col gap-0 overflow-hidden p-0">
           <DialogHeader className="border-b px-5 py-4 text-left sm:px-6">
             <DialogTitle>Aperçu de la vitrine</DialogTitle>
-            <DialogDescription>Le rendu public se synchronise après chaque sauvegarde effectuée dans ce dashboard.</DialogDescription>
+            <DialogDescription>Le rendu public se synchronise après chaque sauvegarde principale et se vérifie automatiquement tant que cet aperçu est ouvert.</DialogDescription>
           </DialogHeader>
           <div className="min-h-0 flex-1 bg-muted/30 p-2 sm:p-3">
             <iframe
               key={previewVersion}
+              ref={previewFrameRef}
               title={`Aperçu public de ${restaurant.name}`}
               src={`/${restaurant.slug}?dashboardPreview=${previewVersion}`}
+              onLoad={() => postHomepagePreviewDraft()}
               className="h-full w-full rounded-xl border bg-background"
             />
           </div>
           <DialogFooter className="border-t px-5 py-3 sm:px-6">
+            <Button type="button" variant="outline" onClick={refreshPublicPreview}>Actualiser</Button>
             <Button asChild variant="outline"><a href={`/${restaurant.slug}`} target="_blank" rel="noreferrer">Ouvrir dans un nouvel onglet</a></Button>
             <DialogClose asChild><Button>Fermer</Button></DialogClose>
           </DialogFooter>
@@ -1084,7 +1125,7 @@ export default function RestaurantDashboard() {
                     <h2 className="font-display text-3xl tracking-tight text-foreground sm:text-4xl">Composez l’essentiel de votre vitrine.</h2>
                     <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">Ces textes structurent votre hero et votre présentation. Ils restent optionnels : la vitrine conserve automatiquement vos informations actuelles lorsqu’un champ est vide.</p>
                   </div>
-                  <form onSubmit={handleUpdateHomepageContent} className="relative mt-8 grid gap-6 lg:grid-cols-2">
+                  <form onSubmit={handleUpdateHomepageContent} onInput={(event) => updateHomepagePreviewDraft(event.currentTarget)} className="relative mt-8 grid gap-6 lg:grid-cols-2">
                     <div className="space-y-6 rounded-[1.5rem] bg-background/70 p-5 ring-1 ring-black/[0.05]">
                       <div className="space-y-2">
                         <Label htmlFor="homepage-heading">Titre du hero</Label>

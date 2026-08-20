@@ -23,7 +23,7 @@
 ## Phase 4 : Dashboard Restaurateur
 - [x] Page d'accueil du dashboard
 - [x] Éditeur visuel de la page publique
-- [ ] Preview en temps réel
+- [x] Preview en temps réel (brouillon éditorial instantané, synchronisation de mutations et rafraîchissement manuel disponible)
 - [x] Gestion du menu (catégories, items)
 - [x] Drag & Drop pour réorganiser les plats
 - [x] Upload d'images (logo, hero, plats)
@@ -1469,6 +1469,11 @@
 - [x] Afficher les éléments de catalogue sans collection et fiabiliser les états de chargement d’aperçu
 - [x] Harmoniser les libellés, les valeurs par défaut et le contraste de hero pour toutes les verticales
 - [x] Ajouter les régressions de contenu générique publiable
+
+## APERÇU PUBLIC TEMPS RÉEL (20 août 2026)
+- [x] Synchroniser instantanément les champs éditoriaux du dashboard sans attendre leur sauvegarde
+- [x] Propager la mise à jour d’aperçu à chaque module public pertinent (horaires, galerie, événements, réservations, personnalisation et traductions visibles)
+- [x] Ajouter des régressions de synchronisation instantanée et de couverture de toutes les mutations publiques
 
 ## ACTIVATION DES RÉSERVATIONS PREMIUM (20 août 2026)
 - [x] Étendre le contrôle de modules Premium aux réservations depuis le dashboard

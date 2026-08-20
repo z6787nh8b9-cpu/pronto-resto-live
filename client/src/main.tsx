@@ -37,6 +37,10 @@ queryClient.getMutationCache().subscribe(event => {
     redirectToLoginIfUnauthorized(error);
     console.error("[API Mutation Error]", error);
   }
+
+  if (event.type === "updated" && event.action.type === "success" && typeof window !== "undefined") {
+    window.dispatchEvent(new Event("pronto:public-content-updated"));
+  }
 });
 
 const trpcClient = trpc.createClient({

@@ -31,6 +31,7 @@ export default function RestaurantHomePage() {
   const [chatMessages, setChatMessages] = useState<Array<{ role: "user" | "assistant"; content: string }>>([]);
   const [chatInput, setChatInput] = useState("");
   const [sessionId] = useState(() => nanoid());
+  const [homepagePreviewDraft, setHomepagePreviewDraft] = useState<{ heroHeading?: string; heroTagline?: string; aboutTitle?: string; aboutContent?: string }>({});
 
   // Get restaurant data
   const { data: restaurant, isLoading } = trpc.public.getRestaurant.useQuery(
@@ -100,6 +101,23 @@ export default function RestaurantHomePage() {
     }
   }, [restaurant?.id]);
 
+  useEffect(() => {
+    const receivePreviewDraft = (event: MessageEvent) => {
+      if (event.origin !== window.location.origin || event.data?.type !== "pronto:homepage-preview") return;
+      const draft = event.data.draft;
+      if (!draft || typeof draft !== "object") return;
+      const value = (field: "heroHeading" | "heroTagline" | "aboutTitle" | "aboutContent", maximum: number) => typeof draft[field] === "string" ? draft[field].slice(0, maximum) : undefined;
+      setHomepagePreviewDraft({
+        heroHeading: value("heroHeading", 160),
+        heroTagline: value("heroTagline", 320),
+        aboutTitle: value("aboutTitle", 160),
+        aboutContent: value("aboutContent", 5_000),
+      });
+    };
+    window.addEventListener("message", receivePreviewDraft);
+    return () => window.removeEventListener("message", receivePreviewDraft);
+  }, []);
+
   const handleSendMessage = () => {
     if (!chatInput.trim() || !restaurant) return;
 
@@ -149,9 +167,11 @@ export default function RestaurantHomePage() {
   const daysOfWeek = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
   const storefrontTheme = resolveStorefrontTheme(restaurant.theme, restaurant.subscriptionTier);
   const isPremium = restaurant.subscriptionTier === "premium";
-  const heroHeading = isPremium && restaurant.heroHeading?.trim() ? restaurant.heroHeading : restaurant.name;
-  const heroTagline = isPremium && restaurant.heroTagline?.trim() ? restaurant.heroTagline : restaurant.description;
-  const hasAboutSection = isPremium && Boolean(restaurant.aboutContent?.trim());
+  const aboutTitle = homepagePreviewDraft.aboutTitle ?? restaurant.aboutTitle;
+  const aboutContent = homepagePreviewDraft.aboutContent ?? restaurant.aboutContent;
+  const heroHeading = isPremium && (homepagePreviewDraft.heroHeading ?? restaurant.heroHeading)?.trim() ? (homepagePreviewDraft.heroHeading ?? restaurant.heroHeading) : restaurant.name;
+  const heroTagline = isPremium && (homepagePreviewDraft.heroTagline ?? restaurant.heroTagline)?.trim() ? (homepagePreviewDraft.heroTagline ?? restaurant.heroTagline) : restaurant.description;
+  const hasAboutSection = isPremium && Boolean(aboutContent?.trim());
 
   // Séparer les publicités dish_item des autres formats
   const dishItemAds = advertisements?.filter((ad: any) => ad.format === "dish_item") || [];
@@ -315,10 +335,10 @@ export default function RestaurantHomePage() {
           <div className="mx-auto grid max-w-6xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
             <div className="storefront-card p-8 sm:p-10">
               <p className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">L’établissement</p>
-              <h2 className="font-serif text-4xl font-bold tracking-tight text-foreground sm:text-5xl">{restaurant.aboutTitle?.trim() || "Notre histoire"}</h2>
+              <h2 className="font-serif text-4xl font-bold tracking-tight text-foreground sm:text-5xl">{aboutTitle?.trim() || "Notre histoire"}</h2>
             </div>
             <div className="flex items-center rounded-[2rem] bg-background p-8 text-base leading-8 text-muted-foreground ring-1 ring-black/[0.05] sm:p-10">
-              {restaurant.aboutContent}
+              {aboutContent}
             </div>
           </div>
         </section>
