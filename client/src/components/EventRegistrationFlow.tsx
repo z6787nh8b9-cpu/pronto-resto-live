@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Check, User, Mail, Phone, Users } from "lucide-react";
 import { toast } from "sonner";
+import { executeRecaptcha } from "@/lib/recaptcha";
 
 interface EventRegistrationFlowProps {
   event: any;
@@ -22,6 +23,7 @@ export function EventRegistrationFlow({ event, restaurantId, onClose }: EventReg
   const [numberOfPeople, setNumberOfPeople] = useState("1");
   const [specialRequests, setSpecialRequests] = useState("");
   const [isSuccess, setIsSuccess] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
 
   const registerMutation = trpc.events.registerForEvent.useMutation({
     onSuccess: () => {
@@ -33,23 +35,32 @@ export function EventRegistrationFlow({ event, restaurantId, onClose }: EventReg
     },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!customerName || !customerEmail || !customerPhone) {
+    if (!customerName.trim() || !customerEmail.trim() || !customerPhone.trim()) {
       toast.error("Veuillez remplir tous les champs obligatoires");
       return;
     }
 
-    registerMutation.mutate({
-      eventId: event.id,
-      restaurantId,
-      customerName,
-      customerEmail,
-      customerPhone,
-      numberOfPeople: parseInt(numberOfPeople),
-      specialRequests,
-    });
+    setIsVerifying(true);
+    try {
+      const recaptchaToken = await executeRecaptcha("register_for_event");
+      registerMutation.mutate({
+        eventId: event.id,
+        restaurantId,
+        customerName,
+        customerEmail,
+        customerPhone,
+        numberOfPeople: parseInt(numberOfPeople, 10),
+        specialRequests: specialRequests || undefined,
+        recaptchaToken,
+      });
+    } catch {
+      toast.error("La vérification anti-spam est momentanément indisponible. Veuillez réessayer.");
+    } finally {
+      setIsVerifying(false);
+    }
   };
 
   const availableSpots = event.maxAttendees - event.currentAttendees;
@@ -127,6 +138,7 @@ export function EventRegistrationFlow({ event, restaurantId, onClose }: EventReg
                   onChange={(e) => setCustomerName(e.target.value)}
                   placeholder="Jean Dupont"
                   className="pl-10"
+                  maxLength={100}
                   required
                 />
               </div>
@@ -145,6 +157,7 @@ export function EventRegistrationFlow({ event, restaurantId, onClose }: EventReg
                   onChange={(e) => setCustomerEmail(e.target.value)}
                   placeholder="jean.dupont@example.com"
                   className="pl-10"
+                  maxLength={254}
                   required
                 />
               </div>
@@ -163,6 +176,7 @@ export function EventRegistrationFlow({ event, restaurantId, onClose }: EventReg
                   onChange={(e) => setCustomerPhone(e.target.value)}
                   placeholder="+33 6 12 34 56 78"
                   className="pl-10"
+                  maxLength={20}
                   required
                 />
               </div>
@@ -177,7 +191,7 @@ export function EventRegistrationFlow({ event, restaurantId, onClose }: EventReg
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {Array.from({ length: Math.min(availableSpots, 10) }, (_, i) => i + 1).map((num) => (
+                  {Array.from({ length: Math.min(availableSpots, 20) }, (_, i) => i + 1).map((num) => (
                     <SelectItem key={num} value={num.toString()}>
                       {num} {num === 1 ? "personne" : "personnes"}
                     </SelectItem>
@@ -194,6 +208,7 @@ export function EventRegistrationFlow({ event, restaurantId, onClose }: EventReg
                 onChange={(e) => setSpecialRequests(e.target.value)}
                 placeholder="Allergies, régime alimentaire, besoins spécifiques..."
                 rows={3}
+                maxLength={500}
               />
             </div>
 
@@ -213,8 +228,8 @@ export function EventRegistrationFlow({ event, restaurantId, onClose }: EventReg
                   Annuler
                 </Button>
               )}
-              <Button type="submit" className="flex-1" disabled={registerMutation.isPending}>
-                {registerMutation.isPending ? "Inscription en cours..." : "Confirmer l'inscription"}
+              <Button type="submit" className="flex-1" disabled={registerMutation.isPending || isVerifying}>
+                {registerMutation.isPending || isVerifying ? "Inscription en cours..." : "Confirmer l'inscription"}
               </Button>
             </div>
           </form>

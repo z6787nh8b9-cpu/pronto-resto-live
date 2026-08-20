@@ -1279,6 +1279,11 @@
 ## DURCISSEMENT FORMULAIRE DE CONTACT (20 août 2026)
 - [x] Ajouter une limite de débit et des bornes de saisie au formulaire public de contact avant la notification propriétaire
 
+## DURCISSEMENT INSCRIPTIONS ÉVÉNEMENTIELLES (20 août 2026)
+- [x] Vérifier visibilité, publication, activité et appartenance de l’événement avant toute inscription publique
+- [x] Limiter le débit, borner les données et vérifier reCAPTCHA sur les inscriptions événementielles publiques
+- [x] Rendre atomique la réservation de capacité afin de prévenir les surinscriptions concurrentes
+
 ## INTÉGRITÉ ANALYTIQUE PUBLIQUE (20 août 2026)
 - [x] Dériver côté serveur les métadonnées de vue publique au lieu d’accepter IP, agent et référent déclarés par le navigateur
 - [x] Ajouter une limite de débit dédiée aux vues publiques pour réduire l’inflation analytique artificielle

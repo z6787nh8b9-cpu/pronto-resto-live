@@ -162,3 +162,17 @@ export const publicPageViewLimiter = rateLimit({
 export function limitPublicPageViews(req: Request, res: Response, next: NextFunction) {
   return req.path === "/public.trackPageView" ? publicPageViewLimiter(req, res, next) : next();
 }
+
+/** Restricts public event registrations independently from general API traffic. */
+export const publicEventRegistrationLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 5,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => ipKeyGenerator(req.ip || "unknown"),
+  handler: (_req, res) => res.status(429).json({ error: "Trop d’inscriptions. Réessayez dans 15 minutes." }),
+});
+
+export function limitPublicEventRegistrations(req: Request, res: Response, next: NextFunction) {
+  return req.path === "/events.registerForEvent" ? publicEventRegistrationLimiter(req, res, next) : next();
+}

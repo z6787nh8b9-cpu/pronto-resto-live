@@ -3,8 +3,20 @@ import { randomBytes } from "crypto";
 import { publicProcedure, restaurantOwnerProcedure, router } from "../_core/trpc";
 import { getDb } from "../db";
 import { events, eventRegistrations, restaurants } from "../../drizzle/schema";
-import { eq, and, gte, desc } from "drizzle-orm";
+import { eq, and, gte, desc, gt, isNull, or, sql } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
+import { verifyRecaptcha } from "../_core/recaptcha";
+
+export const publicEventRegistrationSchema = z.object({
+  eventId: z.number().int().positive(),
+  restaurantId: z.number().int().positive(),
+  customerName: z.string().trim().min(2).max(100),
+  customerEmail: z.string().trim().email().max(254),
+  customerPhone: z.string().trim().min(6).max(20),
+  numberOfPeople: z.number().int().min(1).max(20),
+  specialRequests: z.string().trim().max(500).optional(),
+  recaptchaToken: z.string().min(1),
+});
 
 export const eventsRouter = router({
   // Public: Get all published events for a restaurant
@@ -46,28 +58,25 @@ export const eventsRouter = router({
 
   // Public: Register for an event
   registerForEvent: publicProcedure
-    .input(
-      z.object({
-        eventId: z.number(),
-        restaurantId: z.number(),
-        customerName: z.string(),
-        customerEmail: z.string().email(),
-        customerPhone: z.string(),
-        numberOfPeople: z.number().min(1),
-        specialRequests: z.string().optional(),
-      })
-    )
+    .input(publicEventRegistrationSchema)
     .mutation(async ({ input }) => {
+      const isHuman = await verifyRecaptcha(input.recaptchaToken, "register_for_event");
+      if (!isHuman) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Vérification anti-spam refusée." });
+      }
+
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
       // Get event details
       const [event] = await db.select().from(events).where(eq(events.id, input.eventId));
-      if (!event) throw new TRPCError({ code: "NOT_FOUND", message: "Event not found" });
+      if (!event || event.restaurantId !== input.restaurantId || event.status !== "published" || !event.isVisible || event.eventDate <= new Date()) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Événement indisponible." });
+      }
 
-      // Check if event is full
-      if (event.currentAttendees + input.numberOfPeople > event.maxAttendees) {
-        throw new TRPCError({ code: "BAD_REQUEST", message: "Event is full" });
+      const [restaurant] = await db.select().from(restaurants).where(eq(restaurants.id, event.restaurantId)).limit(1);
+      if (!restaurant?.isActive) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Événement indisponible." });
       }
 
       // Check registration deadline
@@ -75,29 +84,44 @@ export const eventsRouter = router({
         throw new TRPCError({ code: "BAD_REQUEST", message: "Registration deadline has passed" });
       }
 
-      // Create registration
-      const [registration] = await db.insert(eventRegistrations).values({
-        eventId: input.eventId,
-        restaurantId: input.restaurantId,
-        customerName: input.customerName,
-        customerEmail: input.customerEmail,
-        customerPhone: input.customerPhone,
-        numberOfPeople: input.numberOfPeople,
-        specialRequests: input.specialRequests || null,
-        status: event.requiresApproval ? "pending" : "confirmed",
-        paymentStatus: parseFloat(event.price) > 0 ? "pending" : "paid",
-        paymentAmount: event.price,
-        confirmationToken: randomBytes(32).toString("base64url"),
-        confirmedAt: event.requiresApproval ? null : new Date(),
+      return await db.transaction(async (tx) => {
+        const now = new Date();
+        const capacityClaim = await tx
+          .update(events)
+          .set({ currentAttendees: sql`${events.currentAttendees} + ${input.numberOfPeople}` })
+          .where(
+            and(
+              eq(events.id, input.eventId),
+              eq(events.restaurantId, input.restaurantId),
+              eq(events.status, "published"),
+              eq(events.isVisible, true),
+              gt(events.eventDate, now),
+              or(isNull(events.registrationDeadline), gt(events.registrationDeadline, now)),
+              sql`${events.currentAttendees} + ${input.numberOfPeople} <= ${events.maxAttendees}`
+            )
+          );
+
+        if (Number(capacityClaim[0]?.affectedRows) !== 1) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "Événement complet ou indisponible." });
+        }
+
+        const [registration] = await tx.insert(eventRegistrations).values({
+          eventId: input.eventId,
+          restaurantId: event.restaurantId,
+          customerName: input.customerName,
+          customerEmail: input.customerEmail,
+          customerPhone: input.customerPhone,
+          numberOfPeople: input.numberOfPeople,
+          specialRequests: input.specialRequests || null,
+          status: event.requiresApproval ? "pending" : "confirmed",
+          paymentStatus: parseFloat(event.price) > 0 ? "pending" : "paid",
+          paymentAmount: event.price,
+          confirmationToken: randomBytes(32).toString("base64url"),
+          confirmedAt: event.requiresApproval ? null : new Date(),
+        });
+
+        return registration;
       });
-
-      // Update event attendee count
-      await db
-        .update(events)
-        .set({ currentAttendees: event.currentAttendees + input.numberOfPeople })
-        .where(eq(events.id, input.eventId));
-
-      return registration;
     }),
 
   // Protected: Get all events for restaurant owner
