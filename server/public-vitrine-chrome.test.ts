@@ -18,6 +18,20 @@ describe("public storefront chrome", () => {
     expect(homeStorefront).toContain("PublicVitrineChrome");
   });
 
+  it("uses the same discreet PRONTO by ALTMachine attribution across public storefronts", () => {
+    const attribution = source("client/src/components/PublicAttribution.tsx");
+    const genericStorefront = source("client/src/pages/BusinessPublicPage.tsx");
+    const menuStorefront = source("client/src/pages/RestaurantMenuPage.tsx");
+    const homeStorefront = source("client/src/pages/RestaurantHomePage.tsx");
+    const eventsStorefront = source("client/src/pages/RestaurantEventsPage.tsx");
+
+    expect(attribution).toContain("PRONTO");
+    expect(attribution).toContain("by ALTMachine");
+    for (const storefront of [genericStorefront, menuStorefront, homeStorefront, eventsStorefront]) {
+      expect(storefront).toContain("PublicAttribution");
+    }
+  });
+
   it("keeps restaurant heroes legible when no cover image exists", () => {
     const menuStorefront = source("client/src/pages/RestaurantMenuPage.tsx");
     const homeStorefront = source("client/src/pages/RestaurantHomePage.tsx");

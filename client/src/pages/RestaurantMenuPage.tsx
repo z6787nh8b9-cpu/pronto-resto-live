@@ -19,6 +19,7 @@ import { PublicVitrineChrome } from "@/components/PublicVitrineChrome";
 import { usePublicSeo } from "@/lib/public-seo";
 import { ThemeWrapper, resolveStorefrontTheme } from "@/components/ThemeWrapper";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
+import { PublicAttribution } from "@/components/PublicAttribution";
 
 export default function RestaurantMenuPage() {
   const params: { slug?: string } = useParams();
@@ -325,7 +326,7 @@ export default function RestaurantMenuPage() {
       <footer className="storefront-footer relative z-10 border-t py-8 mt-12 bg-background">
         <div className="container text-center">
           <p className="text-sm text-muted-foreground">
-            Propulsé par <span className="font-semibold">PRONTO by Altmachine</span>
+            <PublicAttribution />
           </p>
         </div>
       </footer>

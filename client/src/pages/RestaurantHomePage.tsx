@@ -19,6 +19,7 @@ import { PublicVitrineChrome } from "@/components/PublicVitrineChrome";
 import { usePublicSeo } from "@/lib/public-seo";
 import { ThemeWrapper, resolveStorefrontTheme } from "@/components/ThemeWrapper";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
+import { PublicAttribution } from "@/components/PublicAttribution";
 
 export default function RestaurantHomePage() {
   const params: { slug?: string } = useParams();
@@ -517,7 +518,7 @@ export default function RestaurantHomePage() {
             © {new Date().getFullYear()} {restaurant.name}. Tous droits réservés.
           </p>
           <p className="text-neutral-500 text-xs mt-2">
-            Propulsé par <span className="font-semibold">PRONTO</span>
+            <PublicAttribution />
           </p>
         </div>
       </footer>

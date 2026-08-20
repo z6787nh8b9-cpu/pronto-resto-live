@@ -296,7 +296,7 @@
 
 ### PHASE 6 : PUBLICITÉS ET RESTRICTIONS VISUELLES
 - [x] Bannière publicité externe (Super Admin) sur forfait 19€
-- [ ] Footer "Propulsé par PRONTO by Altmachine" sur toutes les pages
+- [x] Footer "Propulsé par PRONTO by ALTMachine" sur toutes les vitrines publiques
 - [x] Bouton WhatsApp flottant configurable
 - [x] Onglets grisés avec cadenas doré + Modal d'upgrade
 

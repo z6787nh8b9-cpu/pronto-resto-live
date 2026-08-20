@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { EventRegistrationFlow } from "@/components/EventRegistrationFlow";
 import { PublicVitrineChrome } from "@/components/PublicVitrineChrome";
+import { PublicAttribution } from "@/components/PublicAttribution";
 import { ThemeWrapper, resolveStorefrontTheme } from "@/components/ThemeWrapper";
 import { usePublicSeo } from "@/lib/public-seo";
 
@@ -80,6 +81,7 @@ export default function RestaurantEventsPage() {
           {events.length > 0 ? <div className="grid grid-cols-1 gap-6 pb-10 md:grid-cols-2 xl:grid-cols-3">{events.map((event: any) => <EventCard key={event.id} event={event} onRegister={setSelectedEvent} />)}</div> : <div className="rounded-[2rem] bg-[#2b160c]/[0.05] p-1.5"><div className="rounded-[calc(2rem-0.375rem)] bg-white px-6 py-16 text-center shadow-[inset_0_1px_1px_rgba(255,255,255,0.8)]"><p className="font-serif text-3xl font-bold text-[#2b160c]">Aucun rendez-vous programmé.</p><p className="mx-auto mt-3 max-w-md text-sm leading-6 text-[#6c5548]">Revenez prochainement pour découvrir les prochains temps forts de l’établissement.</p><Button onClick={() => navigate(`/${slug}`)} className="mt-7 rounded-full bg-[#2b160c] px-6 text-[#fff8ea]">Retour à la vitrine</Button></div></div>}
         </section>
       </main>
+      <footer className="border-t border-[#2b160c]/10 bg-[#fbf8f3] px-5 py-8 text-center text-[#2b160c]"><PublicAttribution /></footer>
       <Dialog open={Boolean(selectedEvent)} onOpenChange={(open) => !open && setSelectedEvent(null)}>
         <DialogContent className="max-h-[90dvh] overflow-y-auto sm:max-w-[580px]"><DialogHeader><DialogTitle>Inscription à l’événement</DialogTitle></DialogHeader>{selectedEvent && <EventRegistrationFlow event={selectedEvent} restaurantId={restaurant.id} onClose={() => setSelectedEvent(null)} />}</DialogContent>
       </Dialog>

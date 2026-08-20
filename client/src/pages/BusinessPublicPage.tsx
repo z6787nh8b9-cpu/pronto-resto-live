@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { trpc } from "@/lib/trpc";
 import { LoadingState } from "@/components/LoadingState";
 import { PublicVitrineChrome } from "@/components/PublicVitrineChrome";
+import { PublicAttribution } from "@/components/PublicAttribution";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { usePublicSeo } from "@/lib/public-seo";
 import { getWhatsAppUrl } from "@/lib/whatsapp";
@@ -100,7 +101,7 @@ export default function BusinessPublicPage({ preview = false }: { preview?: bool
         </div>}
         {!catalog?.catalog && <div className="rounded-[1.45rem] border border-dashed p-8 text-muted-foreground">Ce catalogue sera disponible prochainement.</div>}
       </section>
-      <footer className="border-t border-border/70 px-5 py-8 text-center text-sm text-muted-foreground">Propulsé par PRONTO</footer>
+      <footer className="border-t border-border/70 px-5 py-8 text-center text-sm text-muted-foreground"><PublicAttribution /></footer>
     </main>
   );
 }
