@@ -1249,3 +1249,6 @@
 
 ## ACCESSIBILITÉ VITRINE MOBILE (20 août 2026)
 - [x] Ajouter des libellés accessibles aux actions WhatsApp et assistant du catalogue restaurant
+
+## ACCESSIBILITÉ NAVIGATION LANDING (20 août 2026)
+- [x] Ajouter un libellé et un état accessible au déclencheur de menu mobile — le primitive Sheet gère l’état, le libellé et la navigation sont verrouillés par régression
