@@ -1,6 +1,6 @@
 import type { Express, Request } from "express";
 import { and, eq } from "drizzle-orm";
-import { businesses } from "../../drizzle/schema";
+import { businesses, restaurants } from "../../drizzle/schema";
 import { getDb } from "../db";
 
 function escapeXml(value: string) {
@@ -19,9 +19,14 @@ export function getPublicOrigin(req: Request) {
   return `${req.protocol}://${req.get("host")}`;
 }
 
-export function buildSitemapXml(origin: string, slugs: string[]) {
+export function buildSitemapXml(origin: string, businessSlugs: string[], restaurantSlugs: string[] = []) {
   const normalizedOrigin = origin.replace(/\/$/, "");
-  const paths = ["/", ...Array.from(new Set(slugs)).map(slug => `/b/${encodeURIComponent(slug)}`)];
+  const publicBusinessPaths = Array.from(new Set(businessSlugs)).map(slug => `/b/${encodeURIComponent(slug)}`);
+  const legacyRestaurantPaths = Array.from(new Set(restaurantSlugs)).flatMap(slug => {
+    const encodedSlug = encodeURIComponent(slug);
+    return [`/${encodedSlug}`, `/${encodedSlug}/menu`];
+  });
+  const paths = ["/", ...publicBusinessPaths, ...legacyRestaurantPaths];
   const urls = paths.map(path => `  <url><loc>${escapeXml(`${normalizedOrigin}${path}`)}</loc></url>`).join("\n");
 
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>`;
@@ -48,12 +53,21 @@ export function registerSeoRoutes(app: Express) {
 
   app.get("/sitemap.xml", async (req, res) => {
     const db = await getDb();
-    const publicBusinesses = db
-      ? await db.select({ slug: businesses.slug })
-        .from(businesses)
-        .where(and(eq(businesses.status, "published"), eq(businesses.isActive, true)))
-      : [];
+    const [publicBusinesses, activeRestaurants] = db
+      ? await Promise.all([
+        db.select({ slug: businesses.slug })
+          .from(businesses)
+          .where(and(eq(businesses.status, "published"), eq(businesses.isActive, true))),
+        db.select({ slug: restaurants.slug })
+          .from(restaurants)
+          .where(eq(restaurants.isActive, true)),
+      ])
+      : [[], []];
 
-    res.type("application/xml").send(buildSitemapXml(getPublicOrigin(req), publicBusinesses.map(business => business.slug)));
+    res.type("application/xml").send(buildSitemapXml(
+      getPublicOrigin(req),
+      publicBusinesses.map(business => business.slug),
+      activeRestaurants.map(restaurant => restaurant.slug),
+    ));
   });
 }
