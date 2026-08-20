@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, type PropsWithChildren } from "react";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -45,6 +45,22 @@ function subscriptionTierLabel(tier: string | null | undefined) {
 import { BusinessMediaLibrary } from "@/components/BusinessMediaLibrary";
 import { PwaInstallControl } from "@/components/PwaInstallControl";
 
+function SortableCatalogEntry({ id, children }: PropsWithChildren<{ id: number }>) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={{ transform: CSS.Transform.toString(transform), transition }}
+      className={isDragging ? "relative z-20 opacity-60" : undefined}
+      {...attributes}
+      {...listeners}
+    >
+      {children}
+    </div>
+  );
+}
+
 function DashboardMetricValue({ value, isLoading, label }: { value: number; isLoading: boolean; label: string }) {
   if (isLoading) {
     return <span className="mt-3 flex h-12 items-center" role="status" aria-label={`Chargement : ${label}`}><span className="h-10 w-14 animate-pulse rounded-xl bg-muted" /><span className="sr-only">Chargement</span></span>;
@@ -76,7 +92,7 @@ export default function RestaurantDashboard() {
 
   // Drag & Drop sensors
   const sensors = useSensors(
-    useSensor(PointerSensor),
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
@@ -252,16 +268,19 @@ export default function RestaurantDashboard() {
     });
   };
 
-  const handleDragEndItems = (event: DragEndEvent) => {
+  const handleDragEndItems = (categoryId: number, event: DragEndEvent) => {
     const { active, over } = event;
-    if (!over || active.id === over.id || !menuItems || !selectedCategory) return;
+    if (!over || active.id === over.id || !menuItems) return;
 
-    const oldIndex = menuItems.findIndex((item) => item.id === active.id);
-    const newIndex = menuItems.findIndex((item) => item.id === over.id);
+    const categoryItems = menuItems.filter((item) => item.categoryId === categoryId);
 
-    const reordered = arrayMove(menuItems, oldIndex, newIndex);
+    const oldIndex = categoryItems.findIndex((item) => item.id === active.id);
+    const newIndex = categoryItems.findIndex((item) => item.id === over.id);
+    if (oldIndex < 0 || newIndex < 0) return;
+
+    const reordered = arrayMove(categoryItems, oldIndex, newIndex);
     reorderItemsMutation.mutate({
-      categoryId: selectedCategory,
+      categoryId,
       itemIds: reordered.map((item) => item.id),
     });
   };
@@ -614,9 +633,15 @@ export default function RestaurantDashboard() {
             </div>
 
             {/* Categories */}
-            <div className="space-y-4">
-              {categories?.map((category) => (
-                <Card key={category.id}>
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEndCategories}>
+              <SortableContext items={categories?.map(category => category.id) ?? []} strategy={verticalListSortingStrategy}>
+                <div className="space-y-4">
+                  {categories?.map((category) => {
+                    const categoryItems = menuItems?.filter((item) => item.categoryId === category.id) ?? [];
+
+                    return (
+                <SortableCatalogEntry key={category.id} id={category.id}>
+                <Card>
                   <CardHeader className="p-3 sm:p-6">
                     {/* Mobile: Layout vertical */}
                     <div className="flex flex-col gap-3 sm:hidden">
@@ -707,11 +732,12 @@ export default function RestaurantDashboard() {
                     </div>
                   </CardHeader>
                   <CardContent className="p-2 sm:p-6">
+                    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(event) => handleDragEndItems(category.id, event)}>
+                      <SortableContext items={categoryItems.map(item => item.id)} strategy={verticalListSortingStrategy}>
                     <div className="space-y-2">
-                      {menuItems
-                        ?.filter((item) => item.categoryId === category.id)
-                        .map((item) => (
-                          <div key={item.id} className="border rounded-lg hover:bg-accent/50">
+                      {categoryItems.map((item) => (
+                        <SortableCatalogEntry key={item.id} id={item.id}>
+                          <div className="border rounded-lg hover:bg-accent/50">
                             {/* Mobile: Layout vertical */}
                             <div className="flex flex-col gap-2 p-2 sm:hidden">
                               <div className="flex items-start gap-2">
@@ -789,7 +815,7 @@ export default function RestaurantDashboard() {
                                     size="sm"
                                     variant="ghost"
                                     onClick={() => handleMoveItemDown(item.id, category.id)}
-                                    disabled={menuItems?.filter((i: any) => i.categoryId === category.id).findIndex((i: any) => i.id === item.id) === menuItems.filter((i: any) => i.categoryId === category.id).length - 1}
+                                    disabled={categoryItems.findIndex((i: any) => i.id === item.id) === categoryItems.length - 1}
                                     className="h-5 w-5 p-0"
                                   >
                                     <ChevronDown className="h-3 w-3" />
@@ -850,12 +876,19 @@ export default function RestaurantDashboard() {
                               </div>
                             </div>
                           </div>
+                        </SortableCatalogEntry>
                         ))}
                     </div>
+                      </SortableContext>
+                    </DndContext>
                   </CardContent>
                 </Card>
-              ))}
-            </div>
+                </SortableCatalogEntry>
+                    );
+                  })}
+                </div>
+              </SortableContext>
+            </DndContext>
 	          </TabsContent>
 
 	          <TabsContent value="import" className="space-y-6">

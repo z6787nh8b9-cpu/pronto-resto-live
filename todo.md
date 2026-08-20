@@ -1424,6 +1424,11 @@
 - [x] Ne conserver qu’une URL canonique par établissement entre les chemins business et restaurant legacy
 - [x] Ajouter une régression contre les doublons de chemins indexables
 
+## FIABILITÉ GLISSER-DÉPOSER DU CATALOGUE (20 août 2026)
+- [x] Restreindre le réordonnancement des plats à leur catégorie active lors d’un glisser-déposer
+- [x] Ajouter une régression contre les réorganisations inter-catégories involontaires
+- [x] Rendre les catégories et éléments réellement triables au clavier, à la souris et au toucher depuis le dashboard
+
 ## INTÉGRITÉ ANALYTIQUE PUBLIQUE (20 août 2026)
 - [x] Dériver côté serveur les métadonnées de vue publique au lieu d’accepter IP, agent et référent déclarés par le navigateur
 - [x] Ajouter une limite de débit dédiée aux vues publiques pour réduire l’inflation analytique artificielle
