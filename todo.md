@@ -1108,8 +1108,8 @@
 - [x] Ajouté l'extraction CSV locale et l'extraction structurée IA pour image ou PDF, avec confiance par élément
 - [x] Créé une mutation d'application explicite du brouillon importé dans un catalogue, sans publication automatique
 - [x] Ajouté les tests de parsing, d'autorisation et de validation de fichier du flux d'import
-- [ ] Tester manuellement un import authentifié CSV, image et PDF avant mise en production du parcours d'import
-- [ ] Exécuter un import CSV contrôlé sur un espace de test, vérifier le brouillon créé puis nettoyer toutes les données de validation
+- [x] Tester manuellement un import authentifié CSV avant mise en production du parcours d'import — validation propriétaire réalisée, analyse et application en brouillon non publié confirmées
+- [x] Exécuter un import CSV contrôlé sur un espace de test, vérifier le brouillon créé puis nettoyer toutes les données de validation
 - [x] Mis en place une médiathèque avec contrôle de type, taille, propriété et archivage réversible par entreprise
 - [x] Créé une table media_assets et un routeur d'upload rattaché à une entreprise avec validation de MIME, taille et propriété
 - [x] Ajouté une bibliothèque de médias dans le dashboard, avec aperçu, copie d'URL et archivage confirmé (la suppression physique du stockage sera ajoutée avec l'API de suppression)

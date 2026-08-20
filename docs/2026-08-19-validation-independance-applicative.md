@@ -36,3 +36,9 @@ Les routeurs métier d’horaires et de traduction ne consultent plus non plus l
 | `pnpm vitest run server/pwa-config.test.ts` | 1 test passant |
 | `pnpm pwa:build` | Build de production réussi, service worker généré |
 | `pnpm exec tsc` puis `pnpm vitest run` | TypeScript valide et 57 tests passants lors du jalon précédent |
+
+## Validation manuelle contrôlée d’import CSV
+
+Le 20 août 2026, le parcours propriétaire authentifié de La Voile Rouge a analysé un CSV minimal dans un catalogue de validation explicitement nommé. Le brouillon affichait une catégorie et un élément, puis son application a confirmé que le catalogue restait au statut `draft` et **non publié**. Aucun contenu n’a été envoyé vers la vitrine publique.
+
+Le catalogue temporaire, son élément, sa collection, ses lignes d’import et son job appliqué ont ensuite été supprimés de manière ciblée. Un contrôle SQL final confirme `0` catalogue temporaire, `0` job temporaire et `0` catalogue de validation publié.
