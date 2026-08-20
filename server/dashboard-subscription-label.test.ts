@@ -10,5 +10,6 @@ describe("dashboard subscription label", () => {
     expect(source).toContain('pro: "Pro"');
     expect(source).toContain('premium: "Premium"');
     expect(source).toContain("subscriptionTierLabel(restaurant.subscriptionTier)");
+    expect(source).not.toContain('restaurant.subscriptionTier === "premium" ? "Premium" : "Basic"');
   });
 });

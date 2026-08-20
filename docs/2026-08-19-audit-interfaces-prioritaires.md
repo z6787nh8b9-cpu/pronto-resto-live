@@ -20,6 +20,8 @@ Les compteurs Collections actives et Éléments publiables affichent désormais 
 
 La carte de formule ne révèle plus la valeur interne `menu`. Le dashboard traduit désormais les valeurs de tiers en libellés métier cohérents : `Essentiel`, `Pro`, `Premium` ou `Sur mesure`. La revue propriétaire de La Voile Rouge confirme l’affichage de `Essentiel` sans changement de ses droits ni de sa configuration.
 
+Le badge situé dans le header utilise le même mapping. La vue d’ensemble ne mélange donc plus un badge `Basic` et une carte `Essentiel` pour une seule formule : les deux emplacements confirment désormais `Essentiel`.
+
 ## Revue smartphone
 
 La capture à 390 px confirme que le dashboard conserve une colonne de lecture claire : hero, indicateurs, actions principales et onboarding se suivent sans débordement horizontal. Les indicateurs sont volontairement empilés, ce qui préserve leur lisibilité. Les onglets restent compacts et défilables horizontalement ; une future itération pourra rendre plus explicite l’existence des onglets hors champ, mais aucun correctif bloquant n’est requis pour ce jalon.

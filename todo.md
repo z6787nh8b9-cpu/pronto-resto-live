@@ -1234,6 +1234,7 @@
 - [x] Remplacer les compteurs à zéro transitoires du dashboard entreprise par des états de chargement non trompeurs
 - [x] Rendre plus explicite le défilement horizontal des onglets du dashboard entreprise sur smartphone
 - [x] Afficher un libellé de formule lisible dans l’indicateur de plan, au lieu de la valeur interne technique
+- [x] Harmoniser le badge de formule du header avec le même libellé métier
 
 ## AUDIT CATALOGUE PUBLIC (19 août 2026)
 - [x] Remplacer le hero gris du catalogue sans couverture par un repli contrasté cohérent avec la vitrine publique, y compris en cas de chargement d’image échoué

@@ -487,7 +487,7 @@ export default function RestaurantDashboard() {
         subtitle="Espace entreprise"
         badge={
           <Badge variant={restaurant.subscriptionTier === "premium" ? "default" : "secondary"} className="text-xs px-2 py-0.5">
-            {restaurant.subscriptionTier === "premium" ? "Premium" : "Basic"}
+            {subscriptionTierLabel(restaurant.subscriptionTier)}
           </Badge>
         }
         primaryAction={{
