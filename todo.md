@@ -302,7 +302,7 @@
 
 ### PHASE 7 : TESTS ET AJUSTEMENTS FINAUX
 - [ ] Tester toutes les redirections et restrictions
-- [ ] Tester le système de traduction complet
+- [x] Tester le système de traduction complet
 - [x] Tester le flow de réservation complet
 - [x] Tester la création d'événements et l'inscription
 - [ ] Vérifier le responsive mobile sur toutes les nouvelles pages
