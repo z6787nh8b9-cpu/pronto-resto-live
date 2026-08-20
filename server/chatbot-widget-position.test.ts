@@ -10,6 +10,10 @@ describe("landing assistance placement", () => {
     expect(source).toContain("sm:bottom-6 sm:right-6 sm:h-20 sm:w-20");
     expect(source).toContain('aria-label="Ouvrir l’assistance PRONTO"');
     expect(source).toContain('aria-haspopup="dialog"');
+    expect(source).toContain('role="dialog"');
+    expect(source).toContain('aria-modal="true"');
+    expect(source).toContain('aria-labelledby="pronto-assistance-title"');
+    expect(source).toContain('aria-label="Fermer l’assistance"');
     expect(source).not.toContain("fixed bottom-24 right-6 h-20 w-20");
   });
 });

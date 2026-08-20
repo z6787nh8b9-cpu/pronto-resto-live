@@ -126,13 +126,13 @@ export default function ChatbotWidget() {
 
       {/* Fenêtre de chat */}
       {isOpen && (
-        <Card className="fixed bottom-4 right-4 left-4 sm:left-auto sm:right-6 sm:w-96 sm:bottom-6 h-[500px] max-h-[85vh] shadow-2xl z-50 flex flex-col border-2 border-pronto-primary">
+        <Card role="dialog" aria-modal="true" aria-labelledby="pronto-assistance-title" className="fixed bottom-4 right-4 left-4 sm:left-auto sm:right-6 sm:w-96 sm:bottom-6 h-[500px] max-h-[85vh] shadow-2xl z-50 flex flex-col border-2 border-pronto-primary">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b" style={{ backgroundColor: '#C75B4B' }}>
             <div className="flex items-center gap-2">
               <MessageSquare className="h-5 w-5 text-white" />
               <div>
-                <h3 className="font-semibold text-white">Assistance PRONTO</h3>
+                <h3 id="pronto-assistance-title" className="font-semibold text-white">Assistance PRONTO</h3>
                 <div className="flex items-center gap-1.5 mt-0.5">
                   <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
                   <p className="text-xs text-white/90">En ligne</p>
@@ -143,6 +143,7 @@ export default function ChatbotWidget() {
               variant="ghost"
               size="icon"
               onClick={() => setIsOpen(false)}
+              aria-label="Fermer l’assistance"
               className="text-white hover:bg-white/20"
             >
               <X className="h-4 w-4" />

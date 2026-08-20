@@ -52,6 +52,8 @@ L’assistance flottante de la landing a été compactée et déplacée vers le 
 
 Le bouton d’assistance expose désormais un libellé et une nature de dialogue aux technologies d’assistance. Cette amélioration n’affecte pas son animation ni son positionnement, mais rend son rôle explicite sans dépendre de son visuel.
 
+La fenêtre ouverte est désormais déclarée comme un dialogue nommé et modal, relié à son titre « Assistance PRONTO ». Le contrôle navigateur confirme l’ouverture de la conversation et l’action de fermeture explicitement libellée.
+
 Le menu mobile de la landing s’appuie sur le primitive de feuille accessible, avec un déclencheur libellé et une navigation nommée. Une régression préserve ce contrat de navigation au clavier et aux technologies d’assistance.
 
 La navigation de catégories du catalogue affiche maintenant un état actif renforcé, un fondu latéral sur la rangée défilable et une instruction lisible sous cette rangée. La revue à 390 px confirme que les catégories hors champ sont signalées sans masquer l’instruction ni gêner la sélection existante.
