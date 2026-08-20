@@ -311,7 +311,7 @@ export const menuItems = mysqlTable("menuItems", {
   description: text("description"),
   price: decimal("price", { precision: 10, scale: 2 }).notNull(),
   imageUrl: text("imageUrl"),
-  
+  emoji: varchar("emoji", { length: 10 }),
   // Dietary information
   isVegetarian: boolean("isVegetarian").default(false).notNull(),
   isVegan: boolean("isVegan").default(false).notNull(),

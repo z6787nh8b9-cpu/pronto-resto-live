@@ -252,18 +252,22 @@ export default function PublicRestaurantPage() {
                       '/images/dishes/7kjczpWYlPF6.jpg',
                       '/images/dishes/WoaxiacELVR3.jpg',
                     ];
-                    const imageUrl = item.imageUrl || placeholderImages[index % placeholderImages.length];
+                    const imageUrl = item.imageUrl || (item.emoji ? null : placeholderImages[index % placeholderImages.length]);
                     
                     return (
                     <Card key={item.id} className={`overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border-2 ${item.isFeatured ? 'border-yellow-400 ring-2 ring-yellow-400/30' : 'border-pronto-beige/20'}`}>
                       {/* Image du plat - correction de la bande blanche */}
                       <div className="relative h-56 bg-gray-100">
-                        <img 
-                          src={imageUrl} 
-                          alt={item.name}
-                          className="w-full h-full object-cover"
-                          style={{ display: 'block' }}
-                        />
+                        {imageUrl ? (
+                          <img 
+                            src={imageUrl} 
+                            alt={item.name}
+                            className="w-full h-full object-cover"
+                            style={{ display: 'block' }}
+                          />
+                        ) : (
+                          <div className="flex h-full items-center justify-center text-6xl" aria-hidden="true">{item.emoji}</div>
+                        )}
                         {/* Badge favori */}
                         {item.isFeatured && (
                           <div className="absolute top-3 left-3 bg-yellow-400 text-white px-3 py-1.5 rounded-full font-bold text-sm shadow-lg flex items-center gap-1">

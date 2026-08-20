@@ -139,7 +139,7 @@
 - [x] S'assurer que le super admin peut gérer tous les éléments à la place du restaurateur (même composant utilisé)
 - [x] Vérifier que les allergènes, ingrédients et valeurs nutritionnelles s'affichent correctement sur les pages publiques
 - [x] Ajouter l'upload d'images pour les plats (comme pour les catégories)
-- [ ] Ajouter la sélection d'emojis pour les plats (optionnel, comme alternative aux images)
+- [x] Ajouter la sélection d'emojis pour les plats (optionnel, comme alternative aux images)
 - [x] S'assurer que TOUT est strictement identique entre le dashboard et l'affichage public
 - [x] Corriger le responsive du dashboard (marges strictes)
 - [x] Ajouter une croix de fermeture dans le dialog de modification des plats
@@ -1488,6 +1488,10 @@
 - [x] Fournir un annuaire Super Admin en lecture seule sans données d’authentification ni de session
 - [x] Gérer l’accès initial par invitations propriétaires hachées et révocables
 - [ ] Définir puis implémenter le cycle de vie sensible de propriétaire (transfert, désactivation ou révocation) avant de fermer la gestion complète des utilisateurs restaurateurs
+
+## EMOJI DE PLAT — PERSISTANCE RUNTIME (20 août 2026)
+- [x] Vérifier et étendre si nécessaire les helpers de persistance et les lectures publiques des plats
+- [x] Ajouter une régression d’intégration de création, édition et lecture publique avec emoji
 
 ## ACTIVATION DES RÉSERVATIONS PREMIUM (20 août 2026)
 - [x] Étendre le contrôle de modules Premium aux réservations depuis le dashboard

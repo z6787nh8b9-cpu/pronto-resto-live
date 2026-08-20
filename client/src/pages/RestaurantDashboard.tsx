@@ -93,6 +93,7 @@ export default function RestaurantDashboard() {
   const [selectedEmoji, setSelectedEmoji] = useState("🍴");
   const [categoryImageUrl, setCategoryImageUrl] = useState("");
   const [itemImageUrl, setItemImageUrl] = useState("");
+  const [itemEmoji, setItemEmoji] = useState("🍽️");
   const [logoUrl, setLogoUrl] = useState("");
   const [heroImageUrl, setHeroImageUrl] = useState("");
   const [upgradeModalOpen, setUpgradeModalOpen] = useState(false);
@@ -462,6 +463,7 @@ export default function RestaurantDashboard() {
       description: formData.get("description") as string,
       price: formData.get("price") as string,
       imageUrl: itemImageUrl || undefined,
+      emoji: itemEmoji || undefined,
       isVegetarian: formData.get("isVegetarian") === "on",
       isVegan: formData.get("isVegan") === "on",
       isGlutenFree: formData.get("isGlutenFree") === "on",
@@ -470,6 +472,7 @@ export default function RestaurantDashboard() {
       nutritionalInfo,
     });
     setItemImageUrl(""); // Reset after creation
+    setItemEmoji("🍽️");
   };
 
   const handleEditCategory = (category: any) => {
@@ -497,6 +500,7 @@ export default function RestaurantDashboard() {
   const handleEditItem = (item: any) => {
     setEditingItem(item);
     setItemImageUrl(item.imageUrl || "");
+    setItemEmoji(item.emoji || "🍽️");
     setIsEditItemOpen(true);
   };
 
@@ -527,6 +531,7 @@ export default function RestaurantDashboard() {
         description: formData.get("description") as string,
         price: formData.get("price") as string,
         imageUrl: itemImageUrl || undefined,
+        emoji: itemEmoji || undefined,
         isVegetarian: formData.get("isVegetarian") === "on",
         isVegan: formData.get("isVegan") === "on",
         isGlutenFree: formData.get("isGlutenFree") === "on",
@@ -1509,6 +1514,13 @@ export default function RestaurantDashboard() {
                 currentImageUrl={itemImageUrl}
                 onUploadComplete={setItemImageUrl}
               />
+              <div className="space-y-2">
+                <Label>Emoji du plat</Label>
+                <div className="flex items-center gap-4">
+                  <EmojiPicker value={itemEmoji} onChange={setItemEmoji} />
+                  <span className="text-sm text-muted-foreground">Alternative visuelle si vous n’ajoutez pas d’image</span>
+                </div>
+              </div>
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setIsAddItemOpen(false)}>
@@ -1732,6 +1744,13 @@ export default function RestaurantDashboard() {
                 currentImageUrl={itemImageUrl}
                 onUploadComplete={setItemImageUrl}
               />
+              <div className="space-y-2">
+                <Label>Emoji du plat</Label>
+                <div className="flex items-center gap-4">
+                  <EmojiPicker value={itemEmoji} onChange={setItemEmoji} />
+                  <span className="text-sm text-muted-foreground">Alternative visuelle si vous n’ajoutez pas d’image</span>
+                </div>
+              </div>
             </div>
             <DialogFooter>
               <Button type="button" variant="outline" onClick={() => setIsEditItemOpen(false)}>

@@ -284,6 +284,7 @@ export const restaurantRouter = router({
         description: z.string().optional(),
         price: z.string(), // Decimal as string
         imageUrl: z.string().optional(),
+        emoji: z.string().trim().max(10).optional(),
         isVegetarian: z.boolean().default(false),
         isVegan: z.boolean().default(false),
         isGlutenFree: z.boolean().default(false),
@@ -316,6 +317,7 @@ export const restaurantRouter = router({
           description: z.string().optional(),
           price: z.string().optional(),
           imageUrl: z.string().optional(),
+          emoji: z.string().trim().max(10).optional(),
           isVegetarian: z.boolean().optional(),
           isVegan: z.boolean().optional(),
           isGlutenFree: z.boolean().optional(),

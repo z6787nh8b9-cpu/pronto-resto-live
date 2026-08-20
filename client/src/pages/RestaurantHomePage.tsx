@@ -259,7 +259,7 @@ export default function RestaurantHomePage() {
                     className="storefront-card group overflow-hidden rounded-[2rem] bg-neutral-900/[0.05] p-1.5 transition-all duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1"
                   >
                   <div className="h-full overflow-hidden rounded-[calc(2rem-0.375rem)] bg-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.8)]">
-                  {dish.imageUrl && (
+                  {dish.imageUrl ? (
                     <div className="relative aspect-[4/3] overflow-hidden">
                       <img
                         src={dish.imageUrl}
@@ -272,7 +272,9 @@ export default function RestaurantHomePage() {
                         </span>
                       )}
                     </div>
-                  )}
+                  ) : dish.emoji ? (
+                    <div className="flex aspect-[4/3] items-center justify-center bg-black/[0.04] text-6xl" aria-hidden="true">{dish.emoji}</div>
+                  ) : null}
                   <div className="p-6">
                     <div className="flex items-start justify-between mb-3">
                       <h3 className="text-xl font-semibold text-neutral-900 flex-1">

@@ -1,0 +1,1 @@
+ALTER TABLE `menuItems` ADD `emoji` varchar(10);

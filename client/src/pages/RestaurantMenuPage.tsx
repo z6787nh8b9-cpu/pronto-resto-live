@@ -287,13 +287,15 @@ export default function RestaurantMenuPage() {
                               </div>
                               <div className="shrink-0 text-right">
                                 {hasPrice && <p className="text-xl font-bold" style={{ color: primaryColor }}>{itemPrice.toFixed(2)}€</p>}
-                                {item.imageUrl && (
+                                {item.imageUrl ? (
                                   <img
                                     src={item.imageUrl}
                                     alt={item.name}
                                     className="mt-3 h-24 w-24 rounded-xl object-cover shadow-sm"
                                   />
-                                )}
+                                ) : item.emoji ? (
+                                  <span className="mt-3 block text-4xl leading-none" aria-hidden="true">{item.emoji}</span>
+                                ) : null}
                               </div>
                             </div>
                           </CardContent>
