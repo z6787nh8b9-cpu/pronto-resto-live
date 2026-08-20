@@ -62,7 +62,7 @@
 - [x] Sessions sécurisées
 
 ## Phase 8 : Système de Pricing et Paiements
-- [ ] Page de pricing
+- [x] Page de pricing
 - [ ] Intégration Stripe (phase 2)
 - [ ] Gestion des abonnements
 - [ ] Webhooks Stripe

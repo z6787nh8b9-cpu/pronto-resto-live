@@ -79,7 +79,7 @@ export default function LandingPage() {
               <nav className="hidden items-center gap-1 lg:flex" aria-label="Navigation principale">
                 <a className="rounded-full px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground" href="#fonctionnalites">Fonctionnalités</a>
                 <a className="rounded-full px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground" href="#secteurs">Pour votre activité</a>
-                <a className="rounded-full px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground" href="#tarifs">Tarifs</a>
+                <a className="rounded-full px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground" href="/tarifs">Tarifs</a>
               </nav>
               <div className="hidden items-center gap-2 sm:flex">
                 <Button asChild variant="ghost" className="rounded-full px-4"><a href="/login-restaurant">Connexion</a></Button>
@@ -96,7 +96,7 @@ export default function LandingPage() {
                   <nav className="mt-10 flex flex-col gap-2" aria-label="Navigation mobile">
                     <a href="#fonctionnalites" className="rounded-2xl px-4 py-3 text-lg transition-colors hover:bg-secondary">Fonctionnalités</a>
                     <a href="#secteurs" className="rounded-2xl px-4 py-3 text-lg transition-colors hover:bg-secondary">Pour votre activité</a>
-                    <a href="#tarifs" className="rounded-2xl px-4 py-3 text-lg transition-colors hover:bg-secondary">Tarifs</a>
+                    <a href="/tarifs" className="rounded-2xl px-4 py-3 text-lg transition-colors hover:bg-secondary">Tarifs</a>
                     <a href="/login-restaurant" className="mt-4 rounded-2xl px-4 py-3 text-lg transition-colors hover:bg-secondary">Connexion</a>
                     <Button onClick={openContactFormFromMobileMenu} className="mt-3 h-12 rounded-2xl bg-pronto-primary">Créer ma vitrine</Button>
                   </nav>
@@ -163,7 +163,7 @@ export default function LandingPage() {
 
         <section className="container max-w-7xl px-4 pb-24 pt-4 sm:px-6 sm:pb-32"><div className="pronto-shell p-1.5"><div className="rounded-[calc(1.5rem-0.375rem)] bg-card px-6 py-14 text-center sm:px-12 sm:py-20"><span className="pronto-eyebrow">Prêt quand vous l’êtes</span><h2 className="mx-auto mt-6 max-w-4xl text-5xl sm:text-6xl">Une présence en ligne plus claire commence par une première conversation.</h2><p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-muted-foreground">Expliquez-nous votre activité et ce que vous souhaitez montrer. Nous vous aidons à choisir le bon point de départ.</p><Button onClick={() => openContactForm("FOOTER")} size="lg" className="group mt-9 h-14 rounded-full bg-pronto-primary px-6 text-base transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-0.5 hover:bg-pronto-primary-deep active:scale-[0.98]">Démarrer la conversation <span className="ml-3 grid h-7 w-7 place-items-center rounded-full bg-white/15 transition-transform duration-500 group-hover:translate-x-1 group-hover:-translate-y-px"><ArrowUpRight className="h-4 w-4" /></span></Button></div></div></section>
 
-        <footer className="container max-w-7xl px-4 pb-8 sm:px-6 sm:pb-10"><div className="flex flex-col gap-6 border-t border-border/80 pt-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between"><div className="flex items-center gap-4"><img src="/pronto-logo-horizontal.png" alt="PRONTO" className="h-8 w-auto" /><span>© 2026 PRONTO</span></div><div className="flex flex-wrap gap-x-5 gap-y-2"><a className="transition-colors hover:text-foreground" href="#fonctionnalites">Fonctionnalités</a><a className="transition-colors hover:text-foreground" href="#tarifs">Tarifs</a><a className="transition-colors hover:text-foreground" href="/login-restaurant">Connexion</a><a className="transition-colors hover:text-foreground" href="https://altmachine.fr" target="_blank" rel="noreferrer">Une solution ALTMachine</a></div></div></footer>
+        <footer className="container max-w-7xl px-4 pb-8 sm:px-6 sm:pb-10"><div className="flex flex-col gap-6 border-t border-border/80 pt-8 text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between"><div className="flex items-center gap-4"><img src="/pronto-logo-horizontal.png" alt="PRONTO" className="h-8 w-auto" /><span>© 2026 PRONTO</span></div><div className="flex flex-wrap gap-x-5 gap-y-2"><a className="transition-colors hover:text-foreground" href="#fonctionnalites">Fonctionnalités</a><a className="transition-colors hover:text-foreground" href="/tarifs">Tarifs</a><a className="transition-colors hover:text-foreground" href="/login-restaurant">Connexion</a><a className="transition-colors hover:text-foreground" href="https://altmachine.fr" target="_blank" rel="noreferrer">Une solution ALTMachine</a></div></div></footer>
       </main>
       <ChatbotWidget />
       <ContactFormDialog isOpen={isContactFormOpen} onClose={() => setIsContactFormOpen(false)} source={contactFormSource} />

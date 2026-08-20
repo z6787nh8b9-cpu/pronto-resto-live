@@ -10,6 +10,7 @@ const SuperAdmin = lazy(() => import("./pages/SuperAdmin"));
 const AdminManageRestaurant = lazy(() => import("./pages/AdminManageRestaurant"));
 const RestaurantDashboard = lazy(() => import("./pages/RestaurantDashboard"));
 const LandingPage = lazy(() => import("./pages/LandingPage"));
+const PricingPage = lazy(() => import("./pages/PricingPage"));
 const RestaurantHomePage = lazy(() => import("./pages/RestaurantHomePage"));
 const RestaurantMenuPage = lazy(() => import("./pages/RestaurantMenuPage"));
 const RestaurantEventsPage = lazy(() => import("./pages/RestaurantEventsPage"));
@@ -46,6 +47,7 @@ function Router() {
       <Switch>
       {/* Landing page */}
       <Route path="/" component={LandingPage} />
+      <Route path="/tarifs" component={PricingPage} />
       
       {/* Restaurant owner login */}
       <Route path="/login-restaurant" component={RestaurantLogin} />
