@@ -21,10 +21,16 @@ export const publicEventRegistrationSchema = z.object({
 export const eventsRouter = router({
   // Public: Get all published events for a restaurant
   getPublicEvents: publicProcedure
-    .input(z.object({ restaurantId: z.number() }))
+    .input(z.object({ restaurantId: z.number().int().positive() }))
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+
+      const [restaurant] = await db.select({ id: restaurants.id }).from(restaurants).where(and(
+        eq(restaurants.id, input.restaurantId),
+        eq(restaurants.isActive, true),
+      )).limit(1);
+      if (!restaurant) return [];
 
       const now = new Date();
       const eventsList = await db
@@ -45,13 +51,25 @@ export const eventsRouter = router({
 
   // Public: Get a single event by ID
   getEvent: publicProcedure
-    .input(z.object({ eventId: z.number() }))
+    .input(z.object({ eventId: z.number().int().positive() }))
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
-      const [event] = await db.select().from(events).where(eq(events.id, input.eventId));
+      const now = new Date();
+      const [event] = await db.select().from(events).where(and(
+        eq(events.id, input.eventId),
+        eq(events.status, "published"),
+        eq(events.isVisible, true),
+        gte(events.eventDate, now),
+      ));
       if (!event) throw new TRPCError({ code: "NOT_FOUND", message: "Event not found" });
+
+      const [restaurant] = await db.select({ id: restaurants.id }).from(restaurants).where(and(
+        eq(restaurants.id, event.restaurantId),
+        eq(restaurants.isActive, true),
+      )).limit(1);
+      if (!restaurant) throw new TRPCError({ code: "NOT_FOUND", message: "Event not found" });
 
       return event;
     }),

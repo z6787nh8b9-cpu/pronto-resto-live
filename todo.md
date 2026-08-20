@@ -1295,6 +1295,11 @@
 - [x] Rendre atomique la revendication OAuth d’une invitation afin d’empêcher toute attribution concurrente d’établissement
 - [x] Ajouter les régressions du hachage, de la compatibilité, des bornes et de la revendication unique
 
+## DURCISSEMENT LECTURES ÉVÉNEMENTIELLES PUBLIQUES (20 août 2026)
+- [x] Borner les identifiants publics et masquer les événements non publiés, masqués ou passés
+- [x] Exclure les événements des établissements inactifs des réponses publiques
+- [x] Ajouter les régressions garantissant qu’aucun brouillon ou événement masqué ne peut être lu publiquement
+
 ## INTÉGRITÉ ANALYTIQUE PUBLIQUE (20 août 2026)
 - [x] Dériver côté serveur les métadonnées de vue publique au lieu d’accepter IP, agent et référent déclarés par le navigateur
 - [x] Ajouter une limite de débit dédiée aux vues publiques pour réduire l’inflation analytique artificielle
