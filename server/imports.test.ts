@@ -98,6 +98,24 @@ describe("Controlled catalog imports", () => {
       .toThrow("Aucun nom d'élément");
   });
 
+  it("bounds CSV records before constructing an oversized import draft", () => {
+    const header = "Catégorie;Nom;Prix";
+    const rows = Array.from({ length: 1_001 }, (_, index) => `Soins;Prestation ${index};10`);
+    expect(() => draftFromCsv(
+      Buffer.from([header, ...rows].join("\n")),
+      "Test",
+      "services",
+    ))
+      .toThrow("ne peut pas contenir plus de 1000 lignes");
+  });
+
+  it("keeps the import application claim conditional on its review state", () => {
+    const routerSource = readFileSync(resolve(process.cwd(), "server/routers/imports.ts"), "utf8");
+    expect(routerSource).toContain('eq(importJobs.status, "review_required")');
+    expect(routerSource).toContain("claim[0]?.affectedRows");
+    expect(routerSource).toContain("decodeStrictBase64");
+  });
+
   it("applies a reviewed CSV draft only after explicit confirmation and keeps its catalog unpublished", async () => {
     const db = await getDb();
     expect(db).not.toBeNull();

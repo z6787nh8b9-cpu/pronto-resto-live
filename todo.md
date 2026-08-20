@@ -1392,6 +1392,12 @@
 - [x] Borner les uploads base64, valider les médias admis et refuser les fichiers de type actif
 - [x] Ajouter les régressions de taille, MIME et signature de contenu pour les uploads
 
+## DURCISSEMENT IMPORTS CATALOGUE (20 août 2026)
+- [x] Borner les documents et images importés avant tout traitement d’extraction ou d’IA
+- [x] Valider les formats autorisés et l’appartenance de l’établissement sur chaque import
+- [x] Rendre atomique l’application d’un brouillon d’import afin d’éviter les doublons concurrents
+- [x] Ajouter les régressions de taille, MIME et isolation des imports
+
 ## INTÉGRITÉ ANALYTIQUE PUBLIQUE (20 août 2026)
 - [x] Dériver côté serveur les métadonnées de vue publique au lieu d’accepter IP, agent et référent déclarés par le navigateur
 - [x] Ajouter une limite de débit dédiée aux vues publiques pour réduire l’inflation analytique artificielle

@@ -12,11 +12,15 @@ import {
 import { getDb } from "../db";
 import { invokeLLM } from "../_core/llm";
 import { restaurantOwnerProcedure, router } from "../_core/trpc";
+import { decodeStrictBase64 } from "../media-validation";
 import { storagePut } from "../storage";
 import { requireBusinessAccess } from "./businesses";
 
 const catalogType = z.enum(["menu", "services", "products", "price_list", "portfolio", "events"]);
 const sourceType = z.enum(["csv", "pdf", "image"]);
+const MAX_IMPORT_RECORDS = 1_000;
+const MAX_COLLECTIONS_PER_IMPORT = 100;
+const MAX_ITEMS_PER_COLLECTION = 250;
 
 const draftItemSchema = z.object({
   name: z.string().trim().min(1).max(255),
@@ -34,8 +38,8 @@ const draftSchema = z.object({
   collections: z.array(z.object({
     name: z.string().trim().min(1).max(255),
     description: z.string().trim().max(4_000).nullable().optional(),
-    items: z.array(draftItemSchema),
-  })).min(1),
+    items: z.array(draftItemSchema).max(MAX_ITEMS_PER_COLLECTION),
+  })).min(1).max(MAX_COLLECTIONS_PER_IMPORT),
 });
 
 type Draft = z.infer<typeof draftSchema>;
@@ -55,7 +59,9 @@ function slugify(value: string) {
 function decodeBase64(dataUrl: string) {
   const match = dataUrl.match(/^data:([^;]+);base64,([A-Za-z0-9+/=]+)$/);
   if (!match) throw new TRPCError({ code: "BAD_REQUEST", message: "Le fichier doit être encodé en base64 valide." });
-  return { mimeType: match[1].toLowerCase(), buffer: Buffer.from(match[2], "base64") };
+  const buffer = decodeStrictBase64(match[2]);
+  if (!buffer) throw new TRPCError({ code: "BAD_REQUEST", message: "Le fichier doit être encodé en base64 valide." });
+  return { mimeType: match[1].toLowerCase(), buffer };
 }
 
 function isSupportedBinary(source: z.infer<typeof sourceType>, mimeType: string, buffer: Buffer) {
@@ -87,12 +93,18 @@ function csvRows(text: string) {
       if (char === "\r" && next === "\n") index += 1;
       row.push(value.trim());
       if (row.some(cell => cell.length > 0)) rows.push(row);
+      if (rows.length > MAX_IMPORT_RECORDS + 1) {
+        throw new TRPCError({ code: "PAYLOAD_TOO_LARGE", message: `Le CSV ne peut pas contenir plus de ${MAX_IMPORT_RECORDS} lignes de données.` });
+      }
       row = []; value = ""; continue;
     }
     value += char;
   }
   row.push(value.trim());
   if (row.some(cell => cell.length > 0)) rows.push(row);
+  if (rows.length > MAX_IMPORT_RECORDS + 1) {
+    throw new TRPCError({ code: "PAYLOAD_TOO_LARGE", message: `Le CSV ne peut pas contenir plus de ${MAX_IMPORT_RECORDS} lignes de données.` });
+  }
   return rows;
 }
 
@@ -300,12 +312,20 @@ export const importsRouter = router({
       await requireBusinessAccess(ctx, input.businessId);
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
-      const [job] = await db.select().from(importJobs).where(and(eq(importJobs.id, input.importJobId), eq(importJobs.businessId, input.businessId))).limit(1);
-      if (!job) throw new TRPCError({ code: "NOT_FOUND", message: "Import introuvable." });
-      if (job.status !== "review_required") throw new TRPCError({ code: "CONFLICT", message: "Cet import ne peut pas être appliqué dans son état actuel." });
+      const claim = await db.update(importJobs)
+        .set({ status: "applying" })
+        .where(and(
+          eq(importJobs.id, input.importJobId),
+          eq(importJobs.businessId, input.businessId),
+          eq(importJobs.status, "review_required"),
+        ));
+      if (Number(claim[0]?.affectedRows) !== 1) {
+        throw new TRPCError({ code: "CONFLICT", message: "Cet import est introuvable ou ne peut plus être appliqué dans son état actuel." });
+      }
 
+      const [job] = await db.select().from(importJobs).where(and(eq(importJobs.id, input.importJobId), eq(importJobs.businessId, input.businessId))).limit(1);
+      if (!job) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Import introuvable après réservation." });
       const draft = draftSchema.parse(job.draft);
-      await db.update(importJobs).set({ status: "applying" }).where(eq(importJobs.id, job.id));
 
       try {
         const catalogId = job.targetCatalogId ?? Number((await db.insert(catalogs).values({
