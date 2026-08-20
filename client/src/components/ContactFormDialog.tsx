@@ -71,6 +71,7 @@ export function ContactFormDialog({ isOpen, onClose, source }: ContactFormDialog
               id="name"
               name="name"
               placeholder="Atelier Horizon"
+              maxLength={120}
               required
             />
           </div>
@@ -81,6 +82,7 @@ export function ContactFormDialog({ isOpen, onClose, source }: ContactFormDialog
               name="email"
               type="email"
               placeholder="contact@entreprise.fr"
+              maxLength={320}
               required
             />
           </div>
@@ -91,6 +93,7 @@ export function ContactFormDialog({ isOpen, onClose, source }: ContactFormDialog
               name="phone"
               type="tel"
               placeholder="+33 6 12 34 56 78"
+              maxLength={40}
               required
             />
           </div>
@@ -100,6 +103,7 @@ export function ContactFormDialog({ isOpen, onClose, source }: ContactFormDialog
               id="message"
               name="message"
               placeholder="Parlez-nous de votre activité et de vos besoins..."
+              maxLength={2000}
               rows={3}
             />
           </div>

@@ -1275,3 +1275,6 @@
 ## DURCISSEMENT CHATBOT D’ÉTABLISSEMENT (20 août 2026)
 - [x] Limiter le débit et la taille des messages du chatbot d’établissement public avant l’appel au modèle
 - [x] Ne plus faire confiance à l’adresse IP et à l’agent utilisateur fournis par le navigateur au chatbot d’établissement
+
+## DURCISSEMENT FORMULAIRE DE CONTACT (20 août 2026)
+- [x] Ajouter une limite de débit et des bornes de saisie au formulaire public de contact avant la notification propriétaire

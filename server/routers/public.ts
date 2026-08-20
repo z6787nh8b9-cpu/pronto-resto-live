@@ -7,6 +7,15 @@ export const publicVenueChatSchema = z.object({
   sessionId: z.string().trim().min(8).max(128),
   message: z.string().trim().min(1).max(800),
 });
+
+export const publicContactFormSchema = z.object({
+  name: z.string().trim().min(2).max(120),
+  email: z.string().trim().email().max(320),
+  phone: z.string().trim().min(6).max(40),
+  message: z.string().trim().max(2_000).optional(),
+  source: z.enum(["HEADER", "HERO", "FOOTER"]),
+  recaptchaToken: z.string().min(1),
+});
 import { advertisements } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
 import {
@@ -159,16 +168,7 @@ Instructions:
 
   // Submit contact form for free trial
   submitContactForm: publicProcedure
-    .input(
-      z.object({
-        name: z.string(),
-        email: z.string().email(),
-        phone: z.string(),
-        message: z.string().optional(),
-        source: z.enum(["HEADER", "HERO", "FOOTER"]),
-        recaptchaToken: z.string(),
-      })
-    )
+    .input(publicContactFormSchema)
     .mutation(async ({ input }) => {
       // Verify reCAPTCHA token server-side
       const { verifyRecaptcha } = await import("../_core/recaptcha");

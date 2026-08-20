@@ -134,3 +134,17 @@ export const publicChatbotRequestLimiter = rateLimit({
 export function limitPublicChatbotRequests(req: Request, res: Response, next: NextFunction) {
   return req.path === "/chatbotRequests.submit" ? publicChatbotRequestLimiter(req, res, next) : next();
 }
+
+/** Limits public contact notifications even when the caller passes reCAPTCHA. */
+export const publicContactFormLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 3,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => ipKeyGenerator(req.ip || "unknown"),
+  handler: (_req, res) => res.status(429).json({ error: "Trop de demandes de contact. Réessayez dans 15 minutes." }),
+});
+
+export function limitPublicContactForm(req: Request, res: Response, next: NextFunction) {
+  return req.path === "/public.submitContactForm" ? publicContactFormLimiter(req, res, next) : next();
+}
