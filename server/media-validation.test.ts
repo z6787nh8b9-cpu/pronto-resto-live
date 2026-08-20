@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { hasValidMediaSignature, isAcceptedMediaType } from "./media-validation";
+import { decodeStrictBase64, hasValidMediaSignature, isAcceptedMediaType, mediaExtension } from "./media-validation";
 
 describe("media validation", () => {
   it("accepts only explicitly supported media types", () => {
@@ -13,5 +13,12 @@ describe("media validation", () => {
     expect(hasValidMediaSignature(Buffer.from("not-an-image"), "image/png")).toBe(false);
     expect(hasValidMediaSignature(Buffer.from("%PDF-1.7"), "application/pdf")).toBe(true);
     expect(hasValidMediaSignature(Buffer.from("%PDX-1.7"), "application/pdf")).toBe(false);
+  });
+
+  it("strictly decodes base64 and derives extensions from the validated media type", () => {
+    expect(decodeStrictBase64(Buffer.from("safe image bytes").toString("base64"))?.toString()).toBe("safe image bytes");
+    expect(decodeStrictBase64("not base64!!")).toBeNull();
+    expect(mediaExtension("image/jpeg")).toBe("jpg");
+    expect(mediaExtension("application/pdf")).toBe("pdf");
   });
 });

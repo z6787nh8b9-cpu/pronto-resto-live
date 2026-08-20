@@ -4,6 +4,13 @@ import { Upload, X, Loader2 } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 
+const supportedImageTypes = ["image/jpeg", "image/png", "image/webp"] as const;
+type SupportedImageType = typeof supportedImageTypes[number];
+
+function isSupportedImageType(value: string): value is SupportedImageType {
+  return (supportedImageTypes as readonly string[]).includes(value);
+}
+
 interface ImageUploaderProps {
   onUploadComplete: (url: string) => void;
   currentImageUrl?: string;
@@ -49,8 +56,9 @@ export function ImageUploader({
   });
 
   const handleFile = async (file: File) => {
-    if (!file.type.startsWith("image/")) {
-      toast.error("Veuillez sélectionner une image");
+    const contentType = file.type;
+    if (!isSupportedImageType(contentType)) {
+      toast.error("Utilisez une image JPEG, PNG ou WebP");
       return;
     }
 
@@ -136,7 +144,7 @@ export function ImageUploader({
 
     uploadMutation.mutate({
       filename: file.name,
-      contentType: file.type,
+      contentType,
       data: base64,
     });
   };

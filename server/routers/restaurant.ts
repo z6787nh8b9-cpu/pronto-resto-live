@@ -23,6 +23,7 @@ import {
 } from "../db";
 import { menuCategories, menuItems, restaurants } from "../../drizzle/schema";
 import { and, eq, inArray } from "drizzle-orm";
+import { acceptedMediaTypes } from "../media-validation";
 
 async function assertCatalogReadAccess(ctx: { adminAccount: unknown; restaurantOwner: { id: number } | null }, restaurantId: number) {
   const db = await getDb();
@@ -414,22 +415,25 @@ export const restaurantRouter = router({
   uploadImage: restaurantOwnerProcedure
     .input(
       z.object({
-        filename: z.string(),
-        contentType: z.string(),
-        data: z.string(), // base64 encoded
+        filename: z.string().trim().min(1).max(255),
+        contentType: z.enum(acceptedMediaTypes),
+        data: z.string().min(8).max(7_000_000), // base64 encoded
       })
     )
     .mutation(async ({ input, ctx }) => {
       const { storagePut } = await import("../storage");
       const { nanoid } = await import("nanoid");
+      const { decodeStrictBase64, hasValidMediaSignature, mediaExtension } = await import("../media-validation");
 
       // Decode base64
-      const buffer = Buffer.from(input.data, "base64");
+      const buffer = decodeStrictBase64(input.data);
+      if (!buffer || buffer.length > 5 * 1024 * 1024 || !hasValidMediaSignature(buffer, input.contentType)) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Le fichier est invalide, son format ne correspond pas ou il dépasse 5 Mo." });
+      }
 
       // Generate unique filename
-      const ext = input.filename.split(".").pop();
       const userId = ctx.restaurantOwner?.id ?? ctx.adminAccount?.id ?? 'unknown';
-      const key = `restaurants/${userId}/${nanoid()}.${ext}`;
+      const key = `restaurants/${userId}/${nanoid()}.${mediaExtension(input.contentType)}`;
 
       // Upload to S3
       const { url } = await storagePut(key, buffer, input.contentType);
