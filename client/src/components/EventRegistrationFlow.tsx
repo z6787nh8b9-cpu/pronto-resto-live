@@ -73,9 +73,7 @@ export function EventRegistrationFlow({ event, restaurantId, onClose }: EventReg
           <Check className="w-8 h-8 text-green-600" />
         </div>
         <h3 className="text-xl font-semibold">Inscription confirmée !</h3>
-        <p className="text-muted-foreground">
-          Un email de confirmation a été envoyé à <strong>{customerEmail}</strong>
-        </p>
+        <p className="text-muted-foreground">Votre inscription a bien été enregistrée pour <strong>{customerEmail}</strong>.</p>
         {event.requiresApproval ? (
           <p className="text-orange-600">
             Votre inscription est en attente de validation par l’entreprise.

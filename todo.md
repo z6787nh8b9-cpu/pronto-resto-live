@@ -291,7 +291,7 @@
 - [x] Créer les tables BDD (events, event_registrations)
 - [x] Créer les procédures tRPC (getByRestaurant, create, register, etc.)
 - [x] Section "Prochains événements" sur la page d'accueil
-- [ ] Page `/:slug/events` listant tous les événements
+- [x] Page `/:slug/events` listant tous les événements
 - [x] Dashboard restaurateur : gestion des événements
 
 ### PHASE 6 : PUBLICITÉS ET RESTRICTIONS VISUELLES

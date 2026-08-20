@@ -332,6 +332,7 @@ export default function RestaurantHomePage() {
                 Événements à venir
               </h2>
               <div className="w-24 h-1 bg-neutral-900 mx-auto"></div>
+              <button type="button" onClick={() => navigate(`/${slug}/events`)} className="mt-6 rounded-full bg-neutral-900/[0.06] px-4 py-2 text-sm font-medium text-neutral-900 transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-neutral-900 hover:text-white active:scale-[0.98]">Voir tout l’agenda</button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

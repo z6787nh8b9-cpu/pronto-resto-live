@@ -12,6 +12,7 @@ const RestaurantDashboard = lazy(() => import("./pages/RestaurantDashboard"));
 const LandingPage = lazy(() => import("./pages/LandingPage"));
 const RestaurantHomePage = lazy(() => import("./pages/RestaurantHomePage"));
 const RestaurantMenuPage = lazy(() => import("./pages/RestaurantMenuPage"));
+const RestaurantEventsPage = lazy(() => import("./pages/RestaurantEventsPage"));
 const BusinessPublicPage = lazy(() => import("./pages/BusinessPublicPage"));
 const RestaurantLogin = lazy(() => import("./pages/RestaurantLogin"));
 const PasswordReset = lazy(() => import("./pages/PasswordReset"));
@@ -75,6 +76,7 @@ function Router() {
       {/* Restaurant menu page (all tiers) */}
       <Route path="/b/:slug">{() => <BusinessPublicPage />}</Route>
       <Route path="/:slug/menu" component={RestaurantMenuPage} />
+      <Route path="/:slug/events" component={RestaurantEventsPage} />
       
       {/* Restaurant home page (PREMIUM only, auto-redirects to /menu for MENU/PRO) */}
       <Route path="/:slug" component={RestaurantHomePage} />
