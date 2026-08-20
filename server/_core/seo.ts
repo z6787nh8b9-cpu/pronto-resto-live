@@ -19,10 +19,25 @@ export function getPublicOrigin(req: Request) {
   return `${req.protocol}://${req.get("host")}`;
 }
 
-export function buildSitemapXml(origin: string, businessSlugs: string[], restaurantSlugs: string[] = []) {
+export type SitemapBusiness = {
+  slug: string;
+  legacyRestaurantId: number | null;
+};
+
+export type SitemapRestaurant = {
+  id: number;
+  slug: string;
+};
+
+export function buildSitemapXml(origin: string, businessesForSitemap: SitemapBusiness[], restaurantsForSitemap: SitemapRestaurant[] = []) {
   const normalizedOrigin = origin.replace(/\/$/, "");
-  const publicBusinessPaths = Array.from(new Set(businessSlugs)).map(slug => `/b/${encodeURIComponent(slug)}`);
-  const legacyRestaurantPaths = Array.from(new Set(restaurantSlugs)).flatMap(slug => {
+  const activeLegacyIds = new Set(restaurantsForSitemap.map(restaurant => restaurant.id));
+  const publicBusinessPaths = Array.from(new Set(
+    businessesForSitemap
+      .filter(business => !business.legacyRestaurantId || !activeLegacyIds.has(business.legacyRestaurantId))
+      .map(business => business.slug),
+  )).map(slug => `/b/${encodeURIComponent(slug)}`);
+  const legacyRestaurantPaths = Array.from(new Set(restaurantsForSitemap.map(restaurant => restaurant.slug))).flatMap(slug => {
     const encodedSlug = encodeURIComponent(slug);
     return [`/${encodedSlug}`, `/${encodedSlug}/menu`];
   });
@@ -55,10 +70,10 @@ export function registerSeoRoutes(app: Express) {
     const db = await getDb();
     const [publicBusinesses, activeRestaurants] = db
       ? await Promise.all([
-        db.select({ slug: businesses.slug })
+        db.select({ slug: businesses.slug, legacyRestaurantId: businesses.legacyRestaurantId })
           .from(businesses)
           .where(and(eq(businesses.status, "published"), eq(businesses.isActive, true))),
-        db.select({ slug: restaurants.slug })
+        db.select({ id: restaurants.id, slug: restaurants.slug })
           .from(restaurants)
           .where(eq(restaurants.isActive, true)),
       ])
@@ -66,8 +81,8 @@ export function registerSeoRoutes(app: Express) {
 
     res.type("application/xml").send(buildSitemapXml(
       getPublicOrigin(req),
-      publicBusinesses.map(business => business.slug),
-      activeRestaurants.map(restaurant => restaurant.slug),
+      publicBusinesses,
+      activeRestaurants,
     ));
   });
 }

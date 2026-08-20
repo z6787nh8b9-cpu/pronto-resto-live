@@ -5,8 +5,15 @@ describe("SEO discoverability routes", () => {
   it("builds a sitemap from public business and active legacy restaurant slugs", () => {
     const sitemap = buildSitemapXml(
       "https://pronto.page/",
-      ["atelier & spa", "atelier & spa"],
-      ["la-voile-rouge", "la-voile-rouge"],
+      [
+        { slug: "atelier & spa", legacyRestaurantId: null },
+        { slug: "atelier & spa", legacyRestaurantId: null },
+        { slug: "la-voile-rouge", legacyRestaurantId: 7 },
+      ],
+      [
+        { id: 7, slug: "la-voile-rouge" },
+        { id: 7, slug: "la-voile-rouge" },
+      ],
     );
 
     expect(sitemap).toContain("https://pronto.page/");
@@ -14,6 +21,7 @@ describe("SEO discoverability routes", () => {
     expect(sitemap).toContain("https://pronto.page/la-voile-rouge");
     expect(sitemap).toContain("https://pronto.page/la-voile-rouge/menu");
     expect(sitemap.match(/la-voile-rouge\/menu/g)).toHaveLength(1);
+    expect(sitemap).not.toContain("https://pronto.page/b/la-voile-rouge");
     expect(sitemap).not.toContain("/admin");
     expect(sitemap).not.toContain("/invite");
   });

@@ -1420,6 +1420,10 @@
 - [x] Inclure les vitrines et catalogues restaurant legacy actifs sans exposer les établissements désactivés
 - [x] Ajouter les régressions de déduplication et d’exclusion legacy
 
+## CANONICALISATION SITEMAP MULTI-MODÈLE (20 août 2026)
+- [x] Ne conserver qu’une URL canonique par établissement entre les chemins business et restaurant legacy
+- [x] Ajouter une régression contre les doublons de chemins indexables
+
 ## INTÉGRITÉ ANALYTIQUE PUBLIQUE (20 août 2026)
 - [x] Dériver côté serveur les métadonnées de vue publique au lieu d’accepter IP, agent et référent déclarés par le navigateur
 - [x] Ajouter une limite de débit dédiée aux vues publiques pour réduire l’inflation analytique artificielle
