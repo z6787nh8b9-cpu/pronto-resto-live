@@ -30,6 +30,7 @@ export const restaurantOwners = mysqlTable("restaurant_owners", {
   provider: mysqlEnum("provider", ["google", "facebook", "email"]).notNull(), // OAuth provider or email/password
   providerId: varchar("providerId", { length: 255 }), // ID from OAuth provider (nullable for email accounts)
   passwordHash: varchar("passwordHash", { length: 255 }), // Bcrypt hash for email/password accounts
+  authVersion: int("authVersion").default(1).notNull(), // Invalidates all sessions when credentials change
   
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
@@ -812,6 +813,7 @@ export const adminAccounts = mysqlTable("admin_accounts", {
   passwordHash: varchar("passwordHash", { length: 255 }).notNull(), // Bcrypt hashed password
   avatarUrl: text("avatarUrl"),
   invitationToken: varchar("invitationToken", { length: 64 }), // Token used to create this account (nullable for legacy admins)
+  authVersion: int("authVersion").default(1).notNull(), // Invalidates all sessions when credentials change
   
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),

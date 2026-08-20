@@ -1359,6 +1359,11 @@
 - [x] Vérifier les contrôles d’organisation, memberships et médias des procédures entreprise
 - [x] Ajouter les régressions inter-entreprise aux surfaces de gestion restantes
 
+## REVUE AUTHENTIFICATION ET SESSION (20 août 2026)
+- [x] Vérifier les cookies, renouvellements, invalidations et protections de session en production
+- [x] Vérifier les limites et non-divulgations des parcours de connexion et récupération
+- [x] Ajouter ou renforcer les régressions de session et d’authentification restantes
+
 ## INTÉGRITÉ ANALYTIQUE PUBLIQUE (20 août 2026)
 - [x] Dériver côté serveur les métadonnées de vue publique au lieu d’accepter IP, agent et référent déclarés par le navigateur
 - [x] Ajouter une limite de débit dédiée aux vues publiques pour réduire l’inflation analytique artificielle

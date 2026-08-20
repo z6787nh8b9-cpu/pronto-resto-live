@@ -133,10 +133,14 @@ async function claimSessionInvitation(req: any, db: NonNullable<Awaited<ReturnTy
 /** Initialize Passport strategies for restaurant owners. */
 export function initializePassport() {
   passport.serializeUser((user: any, done) => {
+    const authVersion = Number(user.authVersion);
+    if (!Number.isSafeInteger(authVersion) || authVersion < 1) {
+      return done(new Error("Invalid authentication session version"));
+    }
     if (user.googleId && !user.facebookId && user.invitationId !== undefined) {
-      done(null, `admin:${user.id}`);
+      done(null, `admin:${user.id}:${authVersion}`);
     } else {
-      done(null, `owner:${user.id}`);
+      done(null, `owner:${user.id}:${authVersion}`);
     }
   });
 
@@ -144,15 +148,19 @@ export function initializePassport() {
     try {
       const db = await getDb();
       if (!db) return done(new Error("Database not available"), null);
-      const [type, userId] = id.split(":");
+      const [type, userId, serializedAuthVersion] = id.split(":");
       const numericId = Number.parseInt(userId, 10);
+      const authVersion = Number.parseInt(serializedAuthVersion, 10);
+      if (!Number.isSafeInteger(numericId) || !Number.isSafeInteger(authVersion) || authVersion < 1) {
+        return done(null, null);
+      }
       if (type === "admin") {
         const { adminAccounts } = await import("../drizzle/schema");
         const [admin] = await db.select().from(adminAccounts).where(eq(adminAccounts.id, numericId)).limit(1);
-        return done(null, admin || null);
+        return done(null, admin && admin.authVersion === authVersion ? admin : null);
       }
       const [owner] = await db.select().from(restaurantOwners).where(eq(restaurantOwners.id, numericId)).limit(1);
-      return done(null, owner || null);
+      return done(null, owner && owner.authVersion === authVersion ? owner : null);
     } catch (error) {
       return done(error, null);
     }

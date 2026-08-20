@@ -89,7 +89,25 @@ describe('Session Management', () => {
       name: 'Test Session Admin',
     });
   });
-  
+
+  it('invalidates an existing Super Admin session when its authentication version changes', async () => {
+    const loginResponse = await request(app)
+      .post('/api/admin/login')
+      .send('email=test.session@pronto.admin&password=TestSession123!')
+      .set('Content-Type', 'application/x-www-form-urlencoded');
+    const cookie = loginResponse.headers['set-cookie'][0];
+    const db = await getDb();
+    const [admin] = await db!.select().from(adminAccounts).where(eq(adminAccounts.email, 'test.session@pronto.admin')).limit(1);
+    await db!.update(adminAccounts).set({ authVersion: admin.authVersion + 1 }).where(eq(adminAccounts.id, admin.id));
+
+    const meResponse = await request(app)
+      .get('/api/trpc/adminAuth.me')
+      .set('Cookie', cookie);
+
+    expect(meResponse.status).toBe(200);
+    expect(meResponse.body.result.data.json).toBeNull();
+  });
+
   it('should reject requests without session', async () => {
     const response = await request(app)
       .get('/api/trpc/adminAuth.me');

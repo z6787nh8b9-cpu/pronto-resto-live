@@ -32,7 +32,14 @@ export async function createContext(
     const db = await getDb();
     if (db) {
       const [account] = await db.select().from(adminAccounts).where(eq(adminAccounts.id, opts.req.session.adminId)).limit(1);
-      adminAccount = account || null;
+      const sessionAuthVersion = opts.req.session.adminAuthVersion;
+      if (account && sessionAuthVersion === account.authVersion) {
+        adminAccount = account;
+      } else {
+        delete opts.req.session.adminId;
+        delete opts.req.session.adminAuthVersion;
+        void opts.req.session.save(() => undefined);
+      }
     }
   }
 

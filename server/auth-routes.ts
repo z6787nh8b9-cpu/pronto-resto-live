@@ -155,27 +155,12 @@ export function registerRestaurantAuthRoutes(app: Express) {
     }
   );
 
-// Logout route
-app.get("/api/auth/logout", (req: Request, res: Response) => {
-    req.logout((err) => {
-      if (err) {
-        return res.status(500).json({ error: "Logout failed" });
-      }
-      req.session.destroy((err) => {
-        if (err) {
-          return res.status(500).json({ error: "Session destruction failed" });
-        }
-        res.redirect("/");
-      });
-  });
-});
-
   app.post("/api/auth/logout", (req: Request, res: Response) => {
     req.logout((logoutError) => {
       if (logoutError) return res.status(500).json({ error: "Logout failed" });
       req.session.destroy((sessionError) => {
         if (sessionError) return res.status(500).json({ error: "Session destruction failed" });
-        res.clearCookie("connect.sid");
+        res.clearCookie("pronto.sid");
         return res.json({ success: true });
       });
     });
@@ -200,7 +185,8 @@ declare global {
       name: string;
       avatarUrl: string | null;
       provider?: "google" | "facebook" | "email"; // Optional for admins
-      providerId?: string | null; // Optional for admins
+      providerId?: string | null; // For admins
+      authVersion: number;
       googleId?: string; // For admins
       invitationId?: number; // For admins
       restaurantId?: number; // For restaurant owners
@@ -215,6 +201,7 @@ declare global {
 declare module "express-session" {
   interface SessionData {
     adminId?: number; // For email/password admin authentication
+    adminAuthVersion?: number; // Session version, invalidated on Super Admin credential changes
     invitationToken?: string; // For restaurant owner invitation flow
     claimedRestaurantId?: number; // For restaurant owner invitation flow
   }
@@ -330,7 +317,12 @@ export function registerEmailLoginRoute(app: Express) {
         return res.status(401).json({ error: "Mot de passe actuel incorrect" });
       }
 
-      await db.update(restaurantOwners).set({ passwordHash: await bcrypt.hash(newPassword, 10) }).where(eq(restaurantOwners.id, owner.id));
+      const nextAuthVersion = owner.authVersion + 1;
+      const passwordHash = await bcrypt.hash(newPassword, 10);
+      await db.update(restaurantOwners).set({ passwordHash, authVersion: nextAuthVersion }).where(eq(restaurantOwners.id, owner.id));
+      await new Promise<void>((resolve, reject) => req.session.regenerate((error) => error ? reject(error) : resolve()));
+      const { passwordHash: _passwordHash, ...sessionOwner } = owner;
+      await new Promise<void>((resolve, reject) => req.login({ ...sessionOwner, authVersion: nextAuthVersion }, (error) => error ? reject(error) : resolve()));
       await recordSecurityEvent({ req, principalType: "owner", principalId: owner.id, eventType: "owner.password_change", outcome: "success" });
       return res.json({ success: true });
     } catch {
@@ -403,7 +395,10 @@ export function registerEmailLoginRoute(app: Express) {
       const [owner] = await db.select().from(restaurantOwners).where(eq(restaurantOwners.id, resetToken.ownerId)).limit(1);
       if (!owner || owner.provider !== "email") return res.status(400).json({ error: "Lien invalide ou expiré" });
 
-      await db.update(restaurantOwners).set({ passwordHash: await bcrypt.hash(newPassword, 10) }).where(eq(restaurantOwners.id, owner.id));
+      await db.update(restaurantOwners).set({
+        passwordHash: await bcrypt.hash(newPassword, 10),
+        authVersion: owner.authVersion + 1,
+      }).where(eq(restaurantOwners.id, owner.id));
       await recordSecurityEvent({ req, principalType: "owner", principalId: owner.id, eventType: "owner.password_reset", outcome: "success" });
       return res.json({ success: true });
     } catch {
