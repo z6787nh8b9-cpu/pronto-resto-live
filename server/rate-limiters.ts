@@ -148,3 +148,17 @@ export const publicContactFormLimiter = rateLimit({
 export function limitPublicContactForm(req: Request, res: Response, next: NextFunction) {
   return req.path === "/public.submitContactForm" ? publicContactFormLimiter(req, res, next) : next();
 }
+
+/** Keeps public view analytics useful without disrupting ordinary navigation. */
+export const publicPageViewLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => ipKeyGenerator(req.ip || "unknown"),
+  handler: (_req, res) => res.status(429).json({ error: "Trop de vues enregistrées. Réessayez dans une minute." }),
+});
+
+export function limitPublicPageViews(req: Request, res: Response, next: NextFunction) {
+  return req.path === "/public.trackPageView" ? publicPageViewLimiter(req, res, next) : next();
+}

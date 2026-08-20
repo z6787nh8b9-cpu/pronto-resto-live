@@ -1,7 +1,7 @@
 import express from "express";
 import request from "supertest";
 import { describe, expect, it } from "vitest";
-import { limitPublicChat, limitPublicChatbotRequests, limitPublicContactForm, limitPublicVenueChat, passwordHelpLimiter, requireSameOrigin } from "./rate-limiters";
+import { limitPublicChat, limitPublicChatbotRequests, limitPublicContactForm, limitPublicPageViews, limitPublicVenueChat, passwordHelpLimiter, requireSameOrigin } from "./rate-limiters";
 
 describe("password help rate limiting", () => {
   it("limits neutral recovery requests even though the normal reply is successful", async () => {
@@ -79,5 +79,19 @@ describe("public contact form rate limiting", () => {
     }
     await request(app).post("/api/trpc/public.submitContactForm").expect(429);
     await request(app).post("/api/trpc/public.trackPageView").expect(200);
+  });
+});
+
+describe("public page-view rate limiting", () => {
+  it("allows normal navigation while bounding analytics inflation from one IP", async () => {
+    const app = express();
+    app.use("/api/trpc", limitPublicPageViews);
+    app.post("/api/trpc/:procedure", (_req, res) => res.status(200).json({ success: true }));
+
+    for (let attempt = 0; attempt < 20; attempt += 1) {
+      await request(app).post("/api/trpc/public.trackPageView").expect(200);
+    }
+    await request(app).post("/api/trpc/public.trackPageView").expect(429);
+    await request(app).post("/api/trpc/public.getRestaurant").expect(200);
   });
 });
