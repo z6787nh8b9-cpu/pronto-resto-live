@@ -3,14 +3,14 @@ import bcrypt from "bcrypt";
 import { getDb } from "./db";
 import { adminAccounts } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
-import { adminLoginLimiter } from "./rate-limiters";
+import { adminLoginLimiter, requireSameOrigin } from "./rate-limiters";
 import { recordSecurityEvent } from "./security-events";
 
 export const adminLoginRouter = Router();
 
 // POST /api/admin/login - Classic form POST with server redirect
 // SECURITY: Rate limiter applied (5 attempts max per 15 minutes)
-adminLoginRouter.post("/login", adminLoginLimiter, async (req, res) => {
+adminLoginRouter.post("/login", requireSameOrigin, adminLoginLimiter, async (req, res) => {
   try {
     const { email, password } = req.body;
 

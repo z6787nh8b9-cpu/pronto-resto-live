@@ -5,7 +5,7 @@
 
 import { Express, Request, Response } from "express";
 import passport from "passport";
-import { oauthLimiter, ownerEmailLoginLimiter, passwordHelpLimiter, passwordResetLimiter } from "./rate-limiters";
+import { oauthLimiter, ownerEmailLoginLimiter, passwordHelpLimiter, passwordResetLimiter, requireSameOrigin } from "./rate-limiters";
 import { recordSecurityEvent } from "./security-events";
 import { passwordPolicyError } from "./password-policy";
 import { notifyOwner } from "./_core/notification";
@@ -155,7 +155,7 @@ export function registerRestaurantAuthRoutes(app: Express) {
     }
   );
 
-  app.post("/api/auth/logout", (req: Request, res: Response) => {
+  app.post("/api/auth/logout", requireSameOrigin, (req: Request, res: Response) => {
     req.logout((logoutError) => {
       if (logoutError) return res.status(500).json({ error: "Logout failed" });
       req.session.destroy((sessionError) => {
@@ -212,7 +212,7 @@ declare module "express-session" {
  * Validates credentials against restaurant_owners table (provider = 'email')
  */
 export function registerEmailLoginRoute(app: Express) {
-  app.post("/api/auth/email-login", ownerEmailLoginLimiter, async (req: Request, res: Response) => {
+  app.post("/api/auth/email-login", requireSameOrigin, ownerEmailLoginLimiter, async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -291,7 +291,7 @@ export function registerEmailLoginRoute(app: Express) {
     }
   });
 
-  app.post("/api/auth/change-password", ownerEmailLoginLimiter, async (req: Request, res: Response) => {
+  app.post("/api/auth/change-password", requireSameOrigin, ownerEmailLoginLimiter, async (req: Request, res: Response) => {
     const ownerId = req.user?.id;
     const { currentPassword, newPassword } = req.body;
     if (!ownerId) return res.status(401).json({ error: "Connexion requise" });

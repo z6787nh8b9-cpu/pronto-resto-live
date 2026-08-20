@@ -55,7 +55,9 @@ describe('Session Management', () => {
     const response = await request(app)
       .post('/api/admin/login')
       .send('email=test.session@pronto.admin&password=TestSession123!')
-      .set('Content-Type', 'application/x-www-form-urlencoded');
+      .set('Content-Type', 'application/x-www-form-urlencoded')
+      .set('Host', 'pronto.test')
+      .set('Origin', 'http://pronto.test');
     
     expect(response.status).toBe(302); // Redirect to /admin
     expect(response.headers.location).toBe('/admin');
@@ -72,7 +74,9 @@ describe('Session Management', () => {
     const loginResponse = await request(app)
       .post('/api/admin/login')
       .send('email=test.session@pronto.admin&password=TestSession123!')
-      .set('Content-Type', 'application/x-www-form-urlencoded');
+      .set('Content-Type', 'application/x-www-form-urlencoded')
+      .set('Host', 'pronto.test')
+      .set('Origin', 'http://pronto.test');
     
     expect(loginResponse.status).toBe(302);
     
@@ -94,7 +98,9 @@ describe('Session Management', () => {
     const loginResponse = await request(app)
       .post('/api/admin/login')
       .send('email=test.session@pronto.admin&password=TestSession123!')
-      .set('Content-Type', 'application/x-www-form-urlencoded');
+      .set('Content-Type', 'application/x-www-form-urlencoded')
+      .set('Host', 'pronto.test')
+      .set('Origin', 'http://pronto.test');
     const cookie = loginResponse.headers['set-cookie'][0];
     const db = await getDb();
     const [admin] = await db!.select().from(adminAccounts).where(eq(adminAccounts.email, 'test.session@pronto.admin')).limit(1);
@@ -120,10 +126,24 @@ describe('Session Management', () => {
     const response = await request(app)
       .post('/api/admin/login')
       .send('email=test.session@pronto.admin&password=WrongPassword!')
-      .set('Content-Type', 'application/x-www-form-urlencoded');
+      .set('Content-Type', 'application/x-www-form-urlencoded')
+      .set('Host', 'pronto.test')
+      .set('Origin', 'http://pronto.test');
     
     expect(response.status).toBe(401); // Unauthorized
     expect(response.headers['set-cookie']).toBeUndefined(); // No cookie set
+  });
+
+  it('rejects a cross-origin login attempt before credential processing', async () => {
+    const response = await request(app)
+      .post('/api/admin/login')
+      .send('email=test.session@pronto.admin&password=TestSession123!')
+      .set('Content-Type', 'application/x-www-form-urlencoded')
+      .set('Host', 'pronto.test')
+      .set('Origin', 'https://attacker.example');
+
+    expect(response.status).toBe(403);
+    expect(response.body).toMatchObject({ error: 'Origine de requête non autorisée.' });
   });
 });
 
@@ -134,14 +154,18 @@ describe('Rate Limiting', () => {
       await request(app)
         .post('/api/admin/login')
         .send('email=test.session@pronto.admin&password=WrongPassword!')
-        .set('Content-Type', 'application/x-www-form-urlencoded');
+        .set('Content-Type', 'application/x-www-form-urlencoded')
+        .set('Host', 'pronto.test')
+        .set('Origin', 'http://pronto.test');
     }
     
     // 6th attempt should be blocked
     const response = await request(app)
       .post('/api/admin/login')
       .send('email=test.session@pronto.admin&password=WrongPassword!')
-      .set('Content-Type', 'application/x-www-form-urlencoded');
+      .set('Content-Type', 'application/x-www-form-urlencoded')
+      .set('Host', 'pronto.test')
+      .set('Origin', 'http://pronto.test');
     
     expect(response.status).toBe(429); // Too Many Requests
     expect(response.body.error).toContain('Trop de tentatives');
