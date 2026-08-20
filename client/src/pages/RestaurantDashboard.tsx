@@ -44,6 +44,7 @@ function subscriptionTierLabel(tier: string | null | undefined) {
 }
 import { BusinessMediaLibrary } from "@/components/BusinessMediaLibrary";
 import { PwaInstallControl } from "@/components/PwaInstallControl";
+import { reorderedIds } from "@/lib/catalog-order";
 
 function SortableCatalogEntry({ id, children }: PropsWithChildren<{ id: number }>) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
@@ -258,13 +259,12 @@ export default function RestaurantDashboard() {
     const { active, over } = event;
     if (!over || active.id === over.id || !categories || !restaurant) return;
 
-    const oldIndex = categories.findIndex((cat: any) => cat.id === active.id);
-    const newIndex = categories.findIndex((cat: any) => cat.id === over.id);
+    const categoryIds = reorderedIds(categories, active.id, over.id);
+    if (!categoryIds) return;
 
-    const reordered = arrayMove(categories, oldIndex, newIndex);
     reorderCategoriesMutation.mutate({
       restaurantId: restaurant.id,
-      categoryIds: reordered.map((cat: any) => cat.id),
+      categoryIds,
     });
   };
 
@@ -273,15 +273,12 @@ export default function RestaurantDashboard() {
     if (!over || active.id === over.id || !menuItems) return;
 
     const categoryItems = menuItems.filter((item) => item.categoryId === categoryId);
+    const itemIds = reorderedIds(categoryItems, active.id, over.id);
+    if (!itemIds) return;
 
-    const oldIndex = categoryItems.findIndex((item) => item.id === active.id);
-    const newIndex = categoryItems.findIndex((item) => item.id === over.id);
-    if (oldIndex < 0 || newIndex < 0) return;
-
-    const reordered = arrayMove(categoryItems, oldIndex, newIndex);
     reorderItemsMutation.mutate({
       categoryId,
-      itemIds: reordered.map((item) => item.id),
+      itemIds,
     });
   };
 

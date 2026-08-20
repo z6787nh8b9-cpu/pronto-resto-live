@@ -26,7 +26,7 @@
 - [ ] Preview en temps réel
 - [x] Gestion du menu (catégories, items)
 - [x] Drag & Drop pour réorganiser les plats
-- [ ] Upload d'images (logo, hero, plats)
+- [x] Upload d'images (logo, hero, plats)
 - [x] Configuration des couleurs et typographie
 - [x] Configuration du chatbot (ton, infos personnalisées)
 - [x] Gestion des informations de contact (WhatsApp, réservation)
@@ -55,11 +55,11 @@
 
 ## Phase 7 : Authentification OAuth
 - [ ] Configuration OAuth Apple
-- [ ] Configuration OAuth Google
-- [ ] Configuration OAuth Facebook
-- [ ] Gestion des rôles (admin / restaurateur)
-- [ ] Protection des routes
-- [ ] Sessions sécurisées
+- [x] Configuration OAuth Google
+- [x] Configuration OAuth Facebook
+- [x] Gestion des rôles (admin / restaurateur)
+- [x] Protection des routes
+- [x] Sessions sécurisées
 
 ## Phase 8 : Système de Pricing et Paiements
 - [ ] Page de pricing
@@ -70,8 +70,8 @@
 
 ## Phase 9 : Finalisation
 - [ ] Tests de bout en bout
-- [ ] Optimisation des performances
-- [ ] SEO et métadonnées
+- [x] Optimisation des performances
+- [x] SEO et métadonnées
 - [ ] Documentation utilisateur
 - [ ] Déploiement production
 
