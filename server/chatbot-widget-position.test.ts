@@ -21,6 +21,7 @@ describe("landing assistance placement", () => {
     expect(source).toContain('window.matchMedia("(prefers-reduced-motion: reduce)")');
     expect(source).toContain('prefersReducedMotion ? "none" : "chatbotPulse');
     expect(source).toContain('prefersReducedMotion ? "none" : "chatbotFrames');
+    expect(source).toContain('behavior: prefersReducedMotion ? "auto" : "smooth"');
     expect(source).not.toContain("fixed bottom-24 right-6 h-20 w-20");
   });
 });
