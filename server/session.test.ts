@@ -145,6 +145,32 @@ describe('Session Management', () => {
     expect(response.status).toBe(403);
     expect(response.body).toMatchObject({ error: 'Origine de requête non autorisée.' });
   });
+
+  it('rejects malformed credential bodies before attempting an admin lookup', async () => {
+    const response = await request(app)
+      .post('/api/admin/login')
+      .send({ email: { unexpected: 'object' }, password: 'TestSession123!' })
+      .set('Host', 'pronto.test')
+      .set('Origin', 'http://pronto.test');
+
+    expect(response.status).toBe(400);
+  });
+
+  it('rejects cross-origin password recovery and reset mutations', async () => {
+    const recovery = await request(app)
+      .post('/api/auth/password-help')
+      .send({ email: 'test.session@pronto.admin' })
+      .set('Host', 'pronto.test')
+      .set('Origin', 'https://attacker.example');
+    const reset = await request(app)
+      .post('/api/auth/reset-password')
+      .send({ token: 't'.repeat(20), newPassword: 'NewSecret123!' })
+      .set('Host', 'pronto.test')
+      .set('Origin', 'https://attacker.example');
+
+    expect(recovery.status).toBe(403);
+    expect(reset.status).toBe(403);
+  });
 });
 
 describe('Rate Limiting', () => {

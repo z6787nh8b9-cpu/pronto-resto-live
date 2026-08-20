@@ -1460,3 +1460,8 @@
 
 ## STABILITÉ DU CHARGEMENT DES MÉDIAS (20 août 2026)
 - [x] Confirmer la résolution de la référence historique acceptedMediaTypes et prévenir sa réintroduction
+
+## AUDIT DES ROUTES REST DIRECTES (20 août 2026)
+- [x] Uniformiser la protection CSRF des mutations de récupération et réinitialisation de mot de passe
+- [x] Valider strictement les formats et longueurs des identifiants et mots de passe REST
+- [x] Ajouter les régressions de refus inter-origine et de corps malformés

@@ -5,6 +5,7 @@ import { adminAccounts } from "../drizzle/schema";
 import { eq } from "drizzle-orm";
 import { adminLoginLimiter, requireSameOrigin } from "./rate-limiters";
 import { recordSecurityEvent } from "./security-events";
+import { credentialsInputSchema } from "./auth-inputs";
 
 export const adminLoginRouter = Router();
 
@@ -12,10 +13,10 @@ export const adminLoginRouter = Router();
 // SECURITY: Rate limiter applied (5 attempts max per 15 minutes)
 adminLoginRouter.post("/login", requireSameOrigin, adminLoginLimiter, async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const parsedCredentials = credentialsInputSchema.safeParse(req.body);
 
     // Validate inputs
-    if (!email || !password) {
+    if (!parsedCredentials.success) {
       await recordSecurityEvent({ req, principalType: "admin", eventType: "admin.email_login", outcome: "failure" });
       return res.status(400).send(`
         <!DOCTYPE html>
@@ -39,6 +40,7 @@ adminLoginRouter.post("/login", requireSameOrigin, adminLoginLimiter, async (req
         </html>
       `);
     }
+    const { email, password } = parsedCredentials.data;
 
     // Find admin by email
     const db = await getDb();

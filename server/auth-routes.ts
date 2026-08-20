@@ -11,6 +11,7 @@ import { passwordPolicyError } from "./password-policy";
 import { notifyOwner } from "./_core/notification";
 import { createPasswordResetSecret, hashPasswordResetSecret, isPasswordResetExpired, PASSWORD_RESET_TTL_MS } from "./password-reset";
 import { isOwnerInvitationToken } from "./owner-invitation-token";
+import { credentialsInputSchema, passwordChangeInputSchema, passwordHelpInputSchema, passwordResetInputSchema } from "./auth-inputs";
 
 
 /**
@@ -213,12 +214,13 @@ declare module "express-session" {
  */
 export function registerEmailLoginRoute(app: Express) {
   app.post("/api/auth/email-login", requireSameOrigin, ownerEmailLoginLimiter, async (req: Request, res: Response) => {
-    const { email, password } = req.body;
+    const parsedCredentials = credentialsInputSchema.safeParse(req.body);
 
-    if (!email || !password) {
+    if (!parsedCredentials.success) {
       await recordSecurityEvent({ req, principalType: "owner", eventType: "owner.email_login", outcome: "failure" });
       return res.status(400).json({ error: "Email et mot de passe requis" });
     }
+    const { email, password } = parsedCredentials.data;
 
     try {
       const { getDb } = await import("./db");
@@ -293,9 +295,10 @@ export function registerEmailLoginRoute(app: Express) {
 
   app.post("/api/auth/change-password", requireSameOrigin, ownerEmailLoginLimiter, async (req: Request, res: Response) => {
     const ownerId = req.user?.id;
-    const { currentPassword, newPassword } = req.body;
+    const parsedPasswordChange = passwordChangeInputSchema.safeParse(req.body);
     if (!ownerId) return res.status(401).json({ error: "Connexion requise" });
-    if (!currentPassword || !newPassword) return res.status(400).json({ error: "Les deux mots de passe sont requis" });
+    if (!parsedPasswordChange.success) return res.status(400).json({ error: "Les deux mots de passe sont requis" });
+    const { currentPassword, newPassword } = parsedPasswordChange.data;
 
     const policyError = passwordPolicyError(newPassword);
     if (policyError) return res.status(400).json({ error: policyError });
@@ -331,11 +334,12 @@ export function registerEmailLoginRoute(app: Express) {
     }
   });
 
-  app.post("/api/auth/password-help", passwordHelpLimiter, async (req: Request, res: Response) => {
-    const email = typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
+  app.post("/api/auth/password-help", requireSameOrigin, passwordHelpLimiter, async (req: Request, res: Response) => {
+    const parsedPasswordHelp = passwordHelpInputSchema.safeParse(req.body);
     const genericResponse = { success: true, message: "Si un compte peut être associé à cette adresse, notre équipe vous contactera prochainement." };
 
-    if (!/^\S+@\S+\.\S+$/.test(email)) return res.status(200).json(genericResponse);
+    if (!parsedPasswordHelp.success) return res.status(200).json(genericResponse);
+    const { email } = parsedPasswordHelp.data;
 
     try {
       const { getDb } = await import("./db");
@@ -367,9 +371,10 @@ export function registerEmailLoginRoute(app: Express) {
     return res.status(200).json(genericResponse);
   });
 
-  app.post("/api/auth/reset-password", passwordResetLimiter, async (req: Request, res: Response) => {
-    const token = typeof req.body?.token === "string" ? req.body.token : "";
-    const newPassword = typeof req.body?.newPassword === "string" ? req.body.newPassword : "";
+  app.post("/api/auth/reset-password", requireSameOrigin, passwordResetLimiter, async (req: Request, res: Response) => {
+    const parsedPasswordReset = passwordResetInputSchema.safeParse(req.body);
+    if (!parsedPasswordReset.success) return res.status(400).json({ error: "Lien invalide ou expiré" });
+    const { token, newPassword } = parsedPasswordReset.data;
     const policyError = passwordPolicyError(newPassword);
     if (!token || policyError) return res.status(400).json({ error: policyError || "Lien invalide ou expiré" });
 
