@@ -171,6 +171,31 @@ export const restaurantRouter = router({
       return { feature: input.feature, enabled: input.enabled };
     }),
 
+  updateHomepageContent: restaurantOwnerProcedure
+    .input(z.object({
+      restaurantId: z.number().int().positive(),
+      heroHeading: z.string().trim().max(160).optional(),
+      heroTagline: z.string().trim().max(320).optional(),
+      aboutTitle: z.string().trim().max(160).optional(),
+      aboutContent: z.string().trim().max(5_000).optional(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+      const [restaurant] = await db
+        .select({ ownerId: restaurants.ownerId, subscriptionTier: restaurants.subscriptionTier })
+        .from(restaurants)
+        .where(eq(restaurants.id, input.restaurantId))
+        .limit(1);
+      if (!restaurant || (!ctx.adminAccount && restaurant.ownerId !== ctx.restaurantOwner?.id)) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Vous n'avez pas accès à cet établissement." });
+      }
+      requireSubscriptionFeature(ctx, restaurant.subscriptionTier, "premium");
+      const { restaurantId, ...content } = input;
+      await updateRestaurant(restaurantId, content);
+      return { success: true };
+    }),
+
   // Menu Categories
   getCategories: restaurantOwnerProcedure
     .input(z.object({ restaurantId: z.number().int().positive() }))

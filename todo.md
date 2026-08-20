@@ -271,7 +271,7 @@
 - [ ] Ajouter le champ `featured` à la table `menu_items`
 - [ ] Créer les procédures tRPC pour la page d'accueil
 - [x] Créer les composants frontend page d'accueil (Hero, Qui sommes-nous, Spécialités, etc.)
-- [ ] Dashboard restaurateur : onglet "Page d'accueil" pour éditer le contenu
+- [x] Dashboard restaurateur : onglet "Page d'accueil" pour éditer le contenu
 
 ### PHASE 3 : SYSTÈME DE TRADUCTION AUTOMATIQUE
 - [ ] Créer la table `translations`
@@ -330,7 +330,7 @@
 - [x] Améliorer la logique de disponibilité des créneaux horaires
 
 ### PHASE 8 : DASHBOARD PREMIUM - GESTION COMPLÈTE DU MINI-SITE
-- [ ] Onglet "Page d'accueil" : éditer le contenu du hero, qui sommes-nous, etc.
+- [x] Onglet "Page d'accueil" : éditer le contenu du hero, qui sommes-nous, etc.
 - [ ] Onglet "Horaires" : gérer les horaires d'ouverture (déjà dans Phase 4)
 - [ ] Onglet "Réservations" : gérer les zones, voir les réservations (déjà dans Phase 5)
 - [ ] Onglet "Événements" : créer et gérer les événements (déjà dans Phase 6)

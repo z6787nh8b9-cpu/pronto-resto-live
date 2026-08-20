@@ -104,7 +104,7 @@ export default function RestaurantDashboard() {
   );
 
   // Get restaurant data based on slug
-  const { data: restaurant } = trpc.public.getRestaurant.useQuery(
+  const { data: restaurant, refetch: refetchRestaurant } = trpc.public.getRestaurant.useQuery(
     { slug: slug || "" },
     { enabled: !!slug }
   );
@@ -243,6 +243,28 @@ export default function RestaurantDashboard() {
     },
     onError: () => toast.error("La mise à jour du module a échoué."),
   });
+
+  const updateHomepageContentMutation = trpc.restaurant.updateHomepageContent.useMutation({
+    onSuccess: () => {
+      toast.success("La page d’accueil a été mise à jour.");
+      refetchRestaurant();
+      refreshPublicPreview();
+    },
+    onError: () => toast.error("La mise à jour de la page d’accueil a échoué."),
+  });
+
+  const handleUpdateHomepageContent = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!restaurant) return;
+    const formData = new FormData(event.currentTarget);
+    updateHomepageContentMutation.mutate({
+      restaurantId: restaurant.id,
+      heroHeading: (formData.get("heroHeading") as string).trim() || undefined,
+      heroTagline: (formData.get("heroTagline") as string).trim() || undefined,
+      aboutTitle: (formData.get("aboutTitle") as string).trim() || undefined,
+      aboutContent: (formData.get("aboutContent") as string).trim() || undefined,
+    });
+  };
 
   const handleUpdateRestaurantInfo = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -563,12 +585,21 @@ export default function RestaurantDashboard() {
         <Tabs value={activeTab} onValueChange={setActiveTab}>
           <div className="relative">
             <div className="overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0" aria-label="Onglets de l’espace entreprise, défilement horizontal disponible">
-              <TabsList className="inline-flex lg:grid w-auto lg:w-full grid-cols-5 xl:grid-cols-12 gap-1 lg:gap-2 min-w-full lg:min-w-0">
+              <TabsList className="inline-flex lg:grid w-auto lg:w-full grid-cols-5 xl:grid-cols-7 2xl:grid-cols-[repeat(14,minmax(0,1fr))] gap-1 lg:gap-2 min-w-full lg:min-w-0">
             <TabsTrigger value="overview">Vue d’ensemble</TabsTrigger>
               <TabsTrigger value="menu">Catalogue</TabsTrigger>
             <TabsTrigger value="import">Importer</TabsTrigger>
             <TabsTrigger value="media">Médiathèque</TabsTrigger>
             <TabsTrigger value="settings">Paramètres</TabsTrigger>
+            <TabsTrigger
+              value="homepage"
+              className={!canAccessPremiumFeatures ? "opacity-50 relative" : ""}
+              onClick={!canAccessPremiumFeatures ? (event) => handleLockedTabClick("Édition de la page d’accueil", "premium", event) : undefined}
+            >
+              <LayoutDashboard className="h-4 w-4 mr-1" />
+              Page d’accueil
+              {!canAccessPremiumFeatures && <Lock className="h-3 w-3 ml-1 text-amber-500" />}
+            </TabsTrigger>
             <TabsTrigger value="chatbot">Chatbot IA</TabsTrigger>
             <TabsTrigger 
               value="translations" 
@@ -1034,6 +1065,53 @@ export default function RestaurantDashboard() {
                 </form>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="homepage" className="space-y-6">
+            {canAccessPremiumFeatures ? (
+              <section className="pronto-shell overflow-hidden p-1.5">
+                <div className="relative rounded-[calc(1.5rem-0.375rem)] bg-card px-5 py-8 sm:px-8 sm:py-10">
+                  <div className="pointer-events-none absolute -right-16 -top-20 h-48 w-48 rounded-full bg-pronto-accent/10 blur-3xl" />
+                  <div className="relative max-w-3xl">
+                    <p className="mb-3 inline-flex rounded-full bg-pronto-primary/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.18em] text-pronto-primary">Éditorial Premium</p>
+                    <h2 className="font-display text-3xl tracking-tight text-foreground sm:text-4xl">Composez l’essentiel de votre vitrine.</h2>
+                    <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground">Ces textes structurent votre hero et votre présentation. Ils restent optionnels : la vitrine conserve automatiquement vos informations actuelles lorsqu’un champ est vide.</p>
+                  </div>
+                  <form onSubmit={handleUpdateHomepageContent} className="relative mt-8 grid gap-6 lg:grid-cols-2">
+                    <div className="space-y-6 rounded-[1.5rem] bg-background/70 p-5 ring-1 ring-black/[0.05]">
+                      <div className="space-y-2">
+                        <Label htmlFor="homepage-heading">Titre du hero</Label>
+                        <Input id="homepage-heading" name="heroHeading" maxLength={160} defaultValue={restaurant?.heroHeading || ""} placeholder={restaurant?.name || "Votre activité, votre signature"} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="homepage-tagline">Accroche</Label>
+                        <Textarea id="homepage-tagline" name="heroTagline" maxLength={320} rows={4} defaultValue={restaurant?.heroTagline || ""} placeholder={restaurant?.description || "Exprimez en quelques lignes ce qui rend votre établissement singulier."} />
+                      </div>
+                    </div>
+                    <div className="space-y-6 rounded-[1.5rem] bg-background/70 p-5 ring-1 ring-black/[0.05]">
+                      <div className="space-y-2">
+                        <Label htmlFor="homepage-about-title">Titre de présentation</Label>
+                        <Input id="homepage-about-title" name="aboutTitle" maxLength={160} defaultValue={restaurant?.aboutTitle || ""} placeholder="Notre histoire" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="homepage-about-content">Texte de présentation</Label>
+                        <Textarea id="homepage-about-content" name="aboutContent" maxLength={5_000} rows={7} defaultValue={restaurant?.aboutContent || ""} placeholder="Présentez votre savoir-faire, votre équipe, votre univers ou votre approche." />
+                      </div>
+                    </div>
+                    <div className="lg:col-span-2 flex justify-end">
+                      <Button type="submit" disabled={updateHomepageContentMutation.isPending} className="group rounded-full px-6 transition-[transform,background-color] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] active:scale-[0.98]">
+                        {updateHomepageContentMutation.isPending ? "Publication…" : "Mettre à jour la vitrine"}
+                        <span className="ml-3 flex h-7 w-7 items-center justify-center rounded-full bg-white/15 transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-0.5 group-hover:-translate-y-0.5"><ArrowUpRight className="h-4 w-4" /></span>
+                      </Button>
+                    </div>
+                  </form>
+                </div>
+              </section>
+            ) : (
+              <LockedFeatureOverlay featureName="Édition de la page d’accueil" tier="premium" businessName={restaurant?.name || ""}>
+                <LockedFeaturePreview />
+              </LockedFeatureOverlay>
+            )}
           </TabsContent>
 
           {/* Chatbot Tab */}

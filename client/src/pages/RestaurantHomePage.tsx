@@ -146,6 +146,10 @@ export default function RestaurantHomePage() {
 
   const daysOfWeek = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
   const storefrontTheme = resolveStorefrontTheme(restaurant.theme, restaurant.subscriptionTier);
+  const isPremium = restaurant.subscriptionTier === "premium";
+  const heroHeading = isPremium && restaurant.heroHeading?.trim() ? restaurant.heroHeading : restaurant.name;
+  const heroTagline = isPremium && restaurant.heroTagline?.trim() ? restaurant.heroTagline : restaurant.description;
+  const hasAboutSection = isPremium && Boolean(restaurant.aboutContent?.trim());
 
   // Séparer les publicités dish_item des autres formats
   const dishItemAds = advertisements?.filter((ad: any) => ad.format === "dish_item") || [];
@@ -174,11 +178,11 @@ export default function RestaurantHomePage() {
         <div className="relative flex w-full items-center justify-center">
           <div className="text-center px-4 max-w-3xl mx-auto">
             <h1 className="text-5xl md:text-7xl font-serif font-bold text-white mb-6 tracking-tight">
-              {translate("restaurant", restaurant.id, "name", restaurant.name)}
+              {heroHeading}
             </h1>
-            {restaurant.description && (
+            {heroTagline && (
               <p className="text-lg md:text-xl text-white/90 mb-8 font-light leading-relaxed">
-                {translate("restaurant", restaurant.id, "description", restaurant.description)}
+                {heroTagline}
               </p>
             )}
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -289,6 +293,20 @@ export default function RestaurantHomePage() {
                 Voir le menu complet
                 <ChevronRight className="ml-2 h-5 w-5" />
               </Button>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {hasAboutSection && (
+        <section className="storefront-section storefront-section--soft py-24">
+          <div className="mx-auto grid max-w-6xl gap-8 px-4 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:px-8">
+            <div className="storefront-card p-8 sm:p-10">
+              <p className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">L’établissement</p>
+              <h2 className="font-serif text-4xl font-bold tracking-tight text-foreground sm:text-5xl">{restaurant.aboutTitle?.trim() || "Notre histoire"}</h2>
+            </div>
+            <div className="flex items-center rounded-[2rem] bg-background p-8 text-base leading-8 text-muted-foreground ring-1 ring-black/[0.05] sm:p-10">
+              {restaurant.aboutContent}
             </div>
           </div>
         </section>

@@ -60,6 +60,10 @@ export const restaurants = mysqlTable("restaurants", {
   // Visual customization
   logoUrl: text("logoUrl"),
   heroImageUrl: text("heroImageUrl"),
+  heroHeading: varchar("heroHeading", { length: 160 }),
+  heroTagline: varchar("heroTagline", { length: 320 }),
+  aboutTitle: varchar("aboutTitle", { length: 160 }),
+  aboutContent: text("aboutContent"),
   primaryColor: varchar("primaryColor", { length: 7 }).default("#7D3A31"),
   accentColor: varchar("accentColor", { length: 7 }).default("#FF9999"),
   fontFamily: varchar("fontFamily", { length: 100 }).default("Playfair Display"),
