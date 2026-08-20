@@ -18,6 +18,7 @@ import { LoadingState } from "@/components/LoadingState";
 import { PublicVitrineChrome } from "@/components/PublicVitrineChrome";
 import { usePublicSeo } from "@/lib/public-seo";
 import { ThemeWrapper, resolveStorefrontTheme } from "@/components/ThemeWrapper";
+import { getWhatsAppUrl } from "@/lib/whatsapp";
 
 export default function RestaurantMenuPage() {
   const params: { slug?: string } = useParams();
@@ -330,9 +331,9 @@ export default function RestaurantMenuPage() {
       </footer>
 
       {/* Bouton WhatsApp flottant */}
-      {restaurant.whatsapp && (
+      {getWhatsAppUrl(restaurant.whatsapp) && (
         <a
-          href={`https://wa.me/${restaurant.whatsapp.replace(/[^0-9]/g, "")}`}
+          href={getWhatsAppUrl(restaurant.whatsapp)!}
           target="_blank"
           rel="noopener noreferrer"
           aria-label={`Contacter ${restaurant.name} sur WhatsApp`}

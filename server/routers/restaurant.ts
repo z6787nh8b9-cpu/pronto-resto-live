@@ -25,6 +25,7 @@ import { menuCategories, menuItems, restaurants } from "../../drizzle/schema";
 import { and, eq, inArray, sql } from "drizzle-orm";
 import { acceptedMediaTypes } from "../media-validation";
 import { requireSubscriptionFeature } from "../subscription-access";
+import { whatsappInputSchema } from "../contact-inputs";
 
 async function assertCatalogReadAccess(ctx: { adminAccount: unknown; restaurantOwner: { id: number } | null }, restaurantId: number) {
   const db = await getDb();
@@ -119,7 +120,7 @@ export const restaurantRouter = router({
         data: z.object({
           name: z.string().min(1).max(255).optional(),
           description: z.string().optional(),
-          whatsapp: z.string().optional(),
+          whatsapp: whatsappInputSchema.optional(),
           reservationUrl: z.string().optional(),
           email: z.string().email().optional(),
           phone: z.string().optional(),

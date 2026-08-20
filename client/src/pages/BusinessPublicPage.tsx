@@ -7,6 +7,7 @@ import { LoadingState } from "@/components/LoadingState";
 import { PublicVitrineChrome } from "@/components/PublicVitrineChrome";
 import { ScrollReveal } from "@/components/ScrollReveal";
 import { usePublicSeo } from "@/lib/public-seo";
+import { getWhatsAppUrl } from "@/lib/whatsapp";
 
 const verticalLabel: Record<string, string> = {
   restaurant: "Restaurant",
@@ -83,7 +84,7 @@ export default function BusinessPublicPage({ preview = false }: { preview?: bool
       <section id="catalogue" className="mx-auto max-w-5xl px-5 py-16 sm:px-8 sm:py-24">
         <div className="mb-10 flex flex-wrap items-end justify-between gap-5">
           <div><p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">{catalogLabel}</p><h2 className="mt-2 font-display text-4xl">{catalog?.catalog?.name || "Notre sélection"}</h2></div>
-          {profile?.whatsapp && <Button asChild className="rounded-2xl"><a href={`https://wa.me/${profile.whatsapp.replace(/\D/g, "")}`}><MessageCircle className="mr-2 h-4 w-4" />Nous contacter</a></Button>}
+          {getWhatsAppUrl(profile?.whatsapp) && <Button asChild className="rounded-2xl"><a href={getWhatsAppUrl(profile?.whatsapp)!}><MessageCircle className="mr-2 h-4 w-4" />Nous contacter</a></Button>}
         </div>
         {catalog?.collections.map((collection, collectionIndex) => <div key={collection.id} className="mb-12 last:mb-0">
           <ScrollReveal delay={collectionIndex * 60} className="mb-5"><h3 className="text-2xl font-semibold tracking-[-0.025em]">{collection.name}</h3>{collection.description && <p className="mt-1 text-sm text-muted-foreground">{collection.description}</p>}</ScrollReveal>
