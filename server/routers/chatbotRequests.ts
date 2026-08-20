@@ -4,6 +4,8 @@ import { getDb } from "../db";
 import { chatbotRequests } from "../../drizzle/schema";
 import { eq, desc } from "drizzle-orm";
 import { notifyOwner } from "../_core/notification";
+import { verifyRecaptcha } from "../_core/recaptcha";
+import { TRPCError } from "@trpc/server";
 
 export const publicChatbotRequestSchema = z.object({
   type: z.enum(["call_request", "issue_report"]),
@@ -11,6 +13,7 @@ export const publicChatbotRequestSchema = z.object({
   email: z.string().trim().email().max(320).optional(),
   phone: z.string().trim().max(40).optional(),
   message: z.string().trim().min(1).max(2_000),
+  recaptchaToken: z.string().min(1),
 });
 
 export const chatbotRequestsRouter = router({
@@ -18,6 +21,9 @@ export const chatbotRequestsRouter = router({
   submit: publicProcedure
     .input(publicChatbotRequestSchema)
     .mutation(async ({ input }) => {
+      const isHuman = await verifyRecaptcha(input.recaptchaToken, "submit_assistance_request");
+      if (!isHuman) throw new TRPCError({ code: "FORBIDDEN", message: "Vérification anti-spam refusée." });
+
       const db = await getDb();
       if (!db) throw new Error("Database not available");
 

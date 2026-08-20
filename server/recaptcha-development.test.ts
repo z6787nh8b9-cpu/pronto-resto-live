@@ -14,10 +14,11 @@ describe("reCAPTCHA en développement", () => {
   it("ne charge pas le badge Google dans l’entrée de développement", () => {
     const html = readFileSync(resolve(process.cwd(), "client/index.html"), "utf8");
     const contactForm = readFileSync(resolve(process.cwd(), "client/src/components/ContactFormDialog.tsx"), "utf8");
+    const recaptchaClient = readFileSync(resolve(process.cwd(), "client/src/lib/recaptcha.ts"), "utf8");
 
     expect(html).not.toContain("google.com/recaptcha");
-    expect(contactForm).toContain("const isDevelopment = import.meta.env.DEV");
-    expect(contactForm).toContain('"development-bypass"');
-    expect(contactForm).toContain("loadRecaptcha()");
+    expect(contactForm).toContain('executeRecaptcha("submit_contact_form")');
+    expect(recaptchaClient).toContain("if (import.meta.env.DEV) return \"development-bypass\"");
+    expect(recaptchaClient).toContain("google.com/recaptcha/enterprise.js");
   });
 });

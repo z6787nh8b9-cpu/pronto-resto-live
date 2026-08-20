@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { MessageSquare, X, Send } from "lucide-react";
 import { trpc } from "@/lib/trpc";
+import { executeRecaptcha } from "@/lib/recaptcha";
 
 interface Message {
   role: "user" | "assistant";
@@ -129,6 +130,23 @@ export default function ChatbotWidget() {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSend();
+    }
+  };
+
+  const handleRequestSubmit = async () => {
+    if (!requestData.message.trim()) return;
+    try {
+      const recaptchaToken = await executeRecaptcha("submit_assistance_request");
+      requestMutation.mutate({
+        type: requestType,
+        name: requestData.name || undefined,
+        email: requestData.email || undefined,
+        phone: requestData.phone || undefined,
+        message: requestData.message,
+        recaptchaToken,
+      });
+    } catch {
+      setMessages((prev) => [...prev, { role: "assistant", content: "La vérification anti-spam est momentanément indisponible. Veuillez réessayer dans un instant." }]);
     }
   };
 
@@ -327,17 +345,7 @@ export default function ChatbotWidget() {
                 rows={3}
               />
               <Button
-                onClick={() => {
-                  if (requestData.message.trim()) {
-                    requestMutation.mutate({
-                      type: requestType,
-                      name: requestData.name || undefined,
-                      email: requestData.email || undefined,
-                      phone: requestData.phone || undefined,
-                      message: requestData.message,
-                    });
-                  }
-                }}
+                onClick={handleRequestSubmit}
                 disabled={!requestData.message.trim() || requestMutation.isPending}
                 className="w-full bg-pronto-primary hover:bg-pronto-primary/90"
               >

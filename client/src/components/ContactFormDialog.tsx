@@ -6,24 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
-
-const RECAPTCHA_SITE_KEY = "6Lft5G0sAAAAAIJoMS8v8LzHlc9DH4UYHI3P30J_";
-let recaptchaLoader: Promise<void> | undefined;
-
-function loadRecaptcha(): Promise<void> {
-  if ((window as any).grecaptcha?.enterprise) return Promise.resolve();
-  if (recaptchaLoader) return recaptchaLoader;
-
-  recaptchaLoader = new Promise((resolve, reject) => {
-    const script = document.createElement("script");
-    script.src = `https://www.google.com/recaptcha/enterprise.js?render=${RECAPTCHA_SITE_KEY}`;
-    script.async = true;
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error("Impossible de charger la protection anti-spam"));
-    document.head.appendChild(script);
-  });
-  return recaptchaLoader;
-}
+import { executeRecaptcha } from "@/lib/recaptcha";
 
 interface ContactFormDialogProps {
   isOpen: boolean;
@@ -56,14 +39,7 @@ export function ContactFormDialog({ isOpen, onClose, source }: ContactFormDialog
     const message = formData.get("message") as string;
 
     try {
-      const isDevelopment = import.meta.env.DEV;
-      const token = isDevelopment
-        ? "development-bypass"
-        : await loadRecaptcha().then(async () => {
-          const enterprise = (window as any).grecaptcha?.enterprise;
-          if (!enterprise) throw new Error("Protection anti-spam indisponible");
-          return enterprise.execute(RECAPTCHA_SITE_KEY, { action: "submit_contact_form" });
-        });
+      const token = await executeRecaptcha("submit_contact_form");
 
       submitMutation.mutate({
         name,
