@@ -106,6 +106,31 @@ describe("Generic business core", () => {
     await expect(unrelatedOwnerCaller.businesses.listMedia({ businessId: business.id })).rejects.toBeInstanceOf(TRPCError);
   });
 
+  it("refuses profile, catalog and media mutations from a non-member owner", async () => {
+    const db = await getDb();
+    const [business] = await db!
+      .select()
+      .from(businesses)
+      .where(eq(businesses.slug, testSlug))
+      .limit(1);
+    const created = await db!.insert(mediaAssets).values({
+      businessId: business.id,
+      uploadedByType: "admin",
+      uploadedById: 1,
+      originalName: "private.png",
+      mimeType: "image/png",
+      sizeBytes: 8,
+      storageKey: `tests/${runId}/private.png`,
+      url: "https://example.test/private.png",
+    });
+    const assetId = Number(created[0].insertId);
+
+    await expect(unrelatedOwnerCaller.businesses.updateProfile({ businessId: business.id, displayName: "Intrusion" })).rejects.toBeInstanceOf(TRPCError);
+    await expect(unrelatedOwnerCaller.businesses.createCatalog({ businessId: business.id, slug: `intrusion-${runId}`, name: "Intrusion", type: "services" })).rejects.toBeInstanceOf(TRPCError);
+    await expect(unrelatedOwnerCaller.businesses.listCatalogContent({ businessId: business.id, catalogId: 1 })).rejects.toBeInstanceOf(TRPCError);
+    await expect(unrelatedOwnerCaller.businesses.archiveMedia({ businessId: business.id, assetId })).rejects.toBeInstanceOf(TRPCError);
+  });
+
   it("archives a media record without exposing it in the active library", async () => {
     const db = await getDb();
     const [business] = await db!
