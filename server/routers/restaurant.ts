@@ -24,6 +24,7 @@ import {
 import { menuCategories, menuItems, restaurants } from "../../drizzle/schema";
 import { and, eq, inArray } from "drizzle-orm";
 import { acceptedMediaTypes } from "../media-validation";
+import { requireSubscriptionFeature } from "../subscription-access";
 
 async function assertCatalogReadAccess(ctx: { adminAccount: unknown; restaurantOwner: { id: number } | null }, restaurantId: number) {
   const db = await getDb();
@@ -145,6 +146,29 @@ export const restaurantRouter = router({
       }
 
       return await updateRestaurant(input.restaurantId, input.data);
+    }),
+
+  updateFeatureActivation: restaurantOwnerProcedure
+    .input(z.object({
+      restaurantId: z.number().int().positive(),
+      feature: z.literal("events"),
+      enabled: z.boolean(),
+    }))
+    .mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
+      const [restaurant] = await db
+        .select({ ownerId: restaurants.ownerId, subscriptionTier: restaurants.subscriptionTier, featuresEnabled: restaurants.featuresEnabled })
+        .from(restaurants)
+        .where(eq(restaurants.id, input.restaurantId))
+        .limit(1);
+      if (!restaurant || (!ctx.adminAccount && restaurant.ownerId !== ctx.restaurantOwner?.id)) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Vous n'avez pas accès à cet établissement." });
+      }
+      requireSubscriptionFeature(ctx, restaurant.subscriptionTier, "premium");
+      const featuresEnabled = { reservations: true, translations: true, ...(restaurant.featuresEnabled || {}), events: input.enabled };
+      await updateRestaurant(input.restaurantId, { featuresEnabled });
+      return { feature: input.feature, enabled: input.enabled };
     }),
 
   // Menu Categories

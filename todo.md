@@ -336,7 +336,7 @@
 - [ ] Onglet "Événements" : créer et gérer les événements (déjà dans Phase 6)
 - [ ] Onglet "Traductions" : corriger les traductions automatiques (déjà dans Phase 3)
 - [x] Restrictions visuelles : griser les onglets inaccessibles avec cadenas doré
-- [ ] Toggle ON/OFF pour activer/désactiver les fonctionnalités (ex: événements)
+- [x] Toggle ON/OFF pour activer/désactiver les fonctionnalités (ex: événements)
 
 
 ## 🐛 CORRECTIONS URGENTES SUPER ADMIN

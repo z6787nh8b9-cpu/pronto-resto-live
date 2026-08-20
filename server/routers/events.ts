@@ -27,11 +27,11 @@ export const eventsRouter = router({
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
-      const [restaurant] = await db.select({ id: restaurants.id, subscriptionTier: restaurants.subscriptionTier }).from(restaurants).where(and(
+      const [restaurant] = await db.select({ id: restaurants.id, subscriptionTier: restaurants.subscriptionTier, featuresEnabled: restaurants.featuresEnabled }).from(restaurants).where(and(
         eq(restaurants.id, input.restaurantId),
         eq(restaurants.isActive, true),
       )).limit(1);
-      if (!restaurant || restaurant.subscriptionTier !== "premium") return [];
+      if (!restaurant || restaurant.subscriptionTier !== "premium" || restaurant.featuresEnabled?.events === false) return [];
 
       const now = new Date();
       const eventsList = await db
@@ -66,11 +66,11 @@ export const eventsRouter = router({
       ));
       if (!event) throw new TRPCError({ code: "NOT_FOUND", message: "Event not found" });
 
-      const [restaurant] = await db.select({ id: restaurants.id, subscriptionTier: restaurants.subscriptionTier }).from(restaurants).where(and(
+      const [restaurant] = await db.select({ id: restaurants.id, subscriptionTier: restaurants.subscriptionTier, featuresEnabled: restaurants.featuresEnabled }).from(restaurants).where(and(
         eq(restaurants.id, event.restaurantId),
         eq(restaurants.isActive, true),
       )).limit(1);
-      if (!restaurant || restaurant.subscriptionTier !== "premium") throw new TRPCError({ code: "NOT_FOUND", message: "Event not found" });
+      if (!restaurant || restaurant.subscriptionTier !== "premium" || restaurant.featuresEnabled?.events === false) throw new TRPCError({ code: "NOT_FOUND", message: "Event not found" });
 
       return event;
     }),
@@ -94,7 +94,7 @@ export const eventsRouter = router({
       }
 
       const [restaurant] = await db.select().from(restaurants).where(eq(restaurants.id, event.restaurantId)).limit(1);
-      if (!restaurant?.isActive || restaurant.subscriptionTier !== "premium") {
+      if (!restaurant?.isActive || restaurant.subscriptionTier !== "premium" || restaurant.featuresEnabled?.events === false) {
         throw new TRPCError({ code: "NOT_FOUND", message: "Événement indisponible." });
       }
 

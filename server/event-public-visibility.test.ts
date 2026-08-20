@@ -73,4 +73,15 @@ describe("public event visibility", () => {
     await expect(publicCaller.events.getEvent({ eventId })).rejects.toThrow();
     await expect(publicCaller.events.getEvent({ eventId: 0 })).rejects.toThrow();
   });
+
+  it("hides all public event routes when a Premium establishment disables its events module", async () => {
+    const restaurant = await createRestaurant("feature-toggle");
+    const eventId = await createEvent(restaurant.id);
+
+    await expect(publicCaller.events.getPublicEvents({ restaurantId: restaurant.id })).resolves.toHaveLength(1);
+    await adminCaller.restaurant.updateFeatureActivation({ restaurantId: restaurant.id, feature: "events", enabled: false });
+
+    await expect(publicCaller.events.getPublicEvents({ restaurantId: restaurant.id })).resolves.toEqual([]);
+    await expect(publicCaller.events.getEvent({ eventId })).rejects.toThrow();
+  });
 });

@@ -62,7 +62,7 @@ export default function RestaurantHomePage() {
   // Get public events
   const { data: events } = trpc.events.getPublicEvents.useQuery(
     { restaurantId: restaurant?.id || 0 },
-    { enabled: !!restaurant?.id && restaurant?.featuresEnabled?.events }
+    { enabled: !!restaurant?.id && restaurant?.featuresEnabled?.events !== false }
   );
 
   // Get advertisements (only for MENU tier)
@@ -189,7 +189,7 @@ export default function RestaurantHomePage() {
               >
                 Découvrir le menu
               </Button>
-              {restaurant.featuresEnabled?.reservations && (
+              {restaurant.featuresEnabled?.reservations !== false && (
                 <Button
                   size="lg"
                   variant="outline"
@@ -295,7 +295,7 @@ export default function RestaurantHomePage() {
       )}
 
       {/* Events Section - Si activé */}
-      {restaurant.featuresEnabled?.events && events && events.length > 0 && (
+      {restaurant.featuresEnabled?.events !== false && events && events.length > 0 && (
         <section className="storefront-section py-24 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
