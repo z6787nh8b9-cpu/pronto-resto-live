@@ -260,7 +260,7 @@
 - [x] Ajouter les champs d'abonnement à la table `restaurant`
 - [x] Créer la table `advertisements` pour les pubs externes
 - [x] Créer le middleware tRPC pour vérifier les permissions selon la formule
-- [ ] Créer les procédures tRPC pour gérer les abonnements (Super Admin)
+- [x] Créer les procédures tRPC pour gérer les abonnements (Super Admin)
 - [x] Mettre à jour le Super Admin pour gérer les 3 formules (MENU 19€, PRO 29€, PREMIUM 39€)
 - [x] Mettre à jour le Dashboard restaurateur avec onglets grisés + cadenas doré
 
