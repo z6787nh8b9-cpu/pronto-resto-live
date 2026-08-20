@@ -4,6 +4,7 @@ import { getDb } from "../db";
 import { openingHours, restaurants } from "../../drizzle/schema";
 import { eq, and } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
+import { requireSubscriptionFeature } from "../subscription-access";
 
 const openingTimeSchema = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/).nullable();
 
@@ -15,11 +16,11 @@ export const openingHoursRouter = router({
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
-      const [restaurant] = await db.select({ id: restaurants.id }).from(restaurants).where(and(
+      const [restaurant] = await db.select({ id: restaurants.id, subscriptionTier: restaurants.subscriptionTier }).from(restaurants).where(and(
         eq(restaurants.id, input.restaurantId),
         eq(restaurants.isActive, true),
       )).limit(1);
-      if (!restaurant) return [];
+      if (!restaurant || restaurant.subscriptionTier !== "premium") return [];
 
       const hours = await db
         .select()
@@ -47,6 +48,7 @@ export const openingHoursRouter = router({
       const [restaurant] = await db.select().from(restaurants).where(eq(restaurants.id, input.restaurantId)).limit(1);
       const isAdmin = Boolean(ctx.adminAccount);
       if (!restaurant || (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id)) throw new TRPCError({ code: "FORBIDDEN" });
+      requireSubscriptionFeature(ctx, restaurant.subscriptionTier, "premium");
 
       // Check if entry exists
       const existing = await db
@@ -106,6 +108,7 @@ export const openingHoursRouter = router({
       const [restaurant] = await db.select().from(restaurants).where(eq(restaurants.id, input.restaurantId)).limit(1);
       const isAdmin = Boolean(ctx.adminAccount);
       if (!restaurant || (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id)) throw new TRPCError({ code: "FORBIDDEN" });
+      requireSubscriptionFeature(ctx, restaurant.subscriptionTier, "premium");
 
       // Process each day
       for (const dayData of input.hours) {

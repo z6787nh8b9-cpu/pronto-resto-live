@@ -1439,6 +1439,11 @@
 - [x] Préserver les parcours publics, les états de chargement et les préférences d’accessibilité
 - [x] Ajouter les régressions structurelles de l’aperçu synchronisé
 
+## DROITS SERVEUR PAR FORMULE (20 août 2026)
+- [x] Centraliser la lecture de formule et l’exigence de fonctionnalité côté serveur
+- [x] Protéger les mutations Premium des horaires, réservations, événements, galerie et traductions
+- [x] Ajouter les régressions de refus par formule et d’accès Super Admin
+
 ## INTÉGRITÉ ANALYTIQUE PUBLIQUE (20 août 2026)
 - [x] Dériver côté serveur les métadonnées de vue publique au lieu d’accepter IP, agent et référent déclarés par le navigateur
 - [x] Ajouter une limite de débit dédiée aux vues publiques pour réduire l’inflation analytique artificielle

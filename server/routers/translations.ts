@@ -4,6 +4,7 @@ import { getDb } from "../db";
 import { translations, restaurants, menuCategories, menuItems } from "../../drizzle/schema";
 import { eq, and } from "drizzle-orm";
 import { invokeLLM } from "../_core/llm";
+import { requireSubscriptionFeature } from "../subscription-access";
 
 export const translationsRouter = router({
   /**
@@ -17,11 +18,11 @@ export const translationsRouter = router({
     .query(async ({ input }) => {
       const db = await getDb();
       if (!db) throw new Error('Database not available');
-      const [restaurant] = await db.select({ id: restaurants.id }).from(restaurants).where(and(
+      const [restaurant] = await db.select({ id: restaurants.id, subscriptionTier: restaurants.subscriptionTier }).from(restaurants).where(and(
         eq(restaurants.id, input.restaurantId),
         eq(restaurants.isActive, true),
       )).limit(1);
-      if (!restaurant) return [];
+      if (!restaurant || (restaurant.subscriptionTier !== "pro" && restaurant.subscriptionTier !== "premium")) return [];
       const allTranslations = await db
         .select()
         .from(translations)
@@ -63,6 +64,7 @@ export const translationsRouter = router({
       if (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id) {
         throw new Error("Unauthorized");
       }
+      requireSubscriptionFeature(ctx, restaurant.subscriptionTier, "translations");
 
       const results = [];
 
@@ -200,6 +202,7 @@ export const translationsRouter = router({
       if (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id) {
         throw new Error("Unauthorized");
       }
+      requireSubscriptionFeature(ctx, restaurant.subscriptionTier, "translations");
 
       // Update translation
       await db
@@ -242,6 +245,7 @@ export const translationsRouter = router({
       if (!isPlatformAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id) {
         throw new Error("Unauthorized");
       }
+      requireSubscriptionFeature(ctx, restaurant.subscriptionTier, "translations");
 
       const existing = await db
         .select()
@@ -387,6 +391,7 @@ export const translationsRouter = router({
       if (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id) {
         throw new Error("Unauthorized");
       }
+      requireSubscriptionFeature(ctx, restaurant.subscriptionTier, "translations");
 
       const allTranslations = await db
         .select()

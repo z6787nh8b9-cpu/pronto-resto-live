@@ -6,6 +6,7 @@ import { events, eventRegistrations, restaurants } from "../../drizzle/schema";
 import { eq, and, gte, desc, gt, isNull, or, sql } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { verifyRecaptcha } from "../_core/recaptcha";
+import { requireSubscriptionFeature } from "../subscription-access";
 
 export const publicEventRegistrationSchema = z.object({
   eventId: z.number().int().positive(),
@@ -26,11 +27,11 @@ export const eventsRouter = router({
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
 
-      const [restaurant] = await db.select({ id: restaurants.id }).from(restaurants).where(and(
+      const [restaurant] = await db.select({ id: restaurants.id, subscriptionTier: restaurants.subscriptionTier }).from(restaurants).where(and(
         eq(restaurants.id, input.restaurantId),
         eq(restaurants.isActive, true),
       )).limit(1);
-      if (!restaurant) return [];
+      if (!restaurant || restaurant.subscriptionTier !== "premium") return [];
 
       const now = new Date();
       const eventsList = await db
@@ -65,11 +66,11 @@ export const eventsRouter = router({
       ));
       if (!event) throw new TRPCError({ code: "NOT_FOUND", message: "Event not found" });
 
-      const [restaurant] = await db.select({ id: restaurants.id }).from(restaurants).where(and(
+      const [restaurant] = await db.select({ id: restaurants.id, subscriptionTier: restaurants.subscriptionTier }).from(restaurants).where(and(
         eq(restaurants.id, event.restaurantId),
         eq(restaurants.isActive, true),
       )).limit(1);
-      if (!restaurant) throw new TRPCError({ code: "NOT_FOUND", message: "Event not found" });
+      if (!restaurant || restaurant.subscriptionTier !== "premium") throw new TRPCError({ code: "NOT_FOUND", message: "Event not found" });
 
       return event;
     }),
@@ -93,7 +94,7 @@ export const eventsRouter = router({
       }
 
       const [restaurant] = await db.select().from(restaurants).where(eq(restaurants.id, event.restaurantId)).limit(1);
-      if (!restaurant?.isActive) {
+      if (!restaurant?.isActive || restaurant.subscriptionTier !== "premium") {
         throw new TRPCError({ code: "NOT_FOUND", message: "Événement indisponible." });
       }
 
@@ -151,6 +152,7 @@ export const eventsRouter = router({
       const [restaurant] = await db.select().from(restaurants).where(eq(restaurants.id, input.restaurantId)).limit(1);
       const isAdmin = Boolean(ctx.adminAccount);
       if (!restaurant || (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id)) throw new TRPCError({ code: "FORBIDDEN" });
+      requireSubscriptionFeature(ctx, restaurant.subscriptionTier, "premium");
 
       const eventsList = await db
         .select()
@@ -183,6 +185,7 @@ export const eventsRouter = router({
       const [restaurant] = await db.select().from(restaurants).where(eq(restaurants.id, input.restaurantId)).limit(1);
       const isAdmin = Boolean(ctx.adminAccount);
       if (!restaurant || (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id)) throw new TRPCError({ code: "FORBIDDEN" });
+      requireSubscriptionFeature(ctx, restaurant.subscriptionTier, "premium");
 
       const [event] = await db.insert(events).values({
         restaurantId: input.restaurantId,
@@ -228,6 +231,7 @@ export const eventsRouter = router({
       const [restaurant] = event ? await db.select().from(restaurants).where(eq(restaurants.id, event.restaurantId)).limit(1) : [];
       const isAdmin = Boolean(ctx.adminAccount);
       if (!restaurant || (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id)) throw new TRPCError({ code: "FORBIDDEN" });
+      requireSubscriptionFeature(ctx, restaurant.subscriptionTier, "premium");
       if (input.data.maxAttendees !== undefined && input.data.maxAttendees < event.currentAttendees) {
         throw new TRPCError({ code: "BAD_REQUEST", message: "La capacité ne peut pas être inférieure aux inscriptions existantes." });
       }
@@ -263,6 +267,7 @@ export const eventsRouter = router({
       const [restaurant] = event ? await db.select().from(restaurants).where(eq(restaurants.id, event.restaurantId)).limit(1) : [];
       const isAdmin = Boolean(ctx.adminAccount);
       if (!restaurant || (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id)) throw new TRPCError({ code: "FORBIDDEN" });
+      requireSubscriptionFeature(ctx, restaurant.subscriptionTier, "premium");
 
       // Delete all registrations first
       await db.delete(eventRegistrations).where(eq(eventRegistrations.eventId, input.eventId));
@@ -283,6 +288,7 @@ export const eventsRouter = router({
       const [restaurant] = event ? await db.select().from(restaurants).where(eq(restaurants.id, event.restaurantId)).limit(1) : [];
       const isAdmin = Boolean(ctx.adminAccount);
       if (!restaurant || (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id)) throw new TRPCError({ code: "FORBIDDEN" });
+      requireSubscriptionFeature(ctx, restaurant.subscriptionTier, "premium");
 
       const registrations = await db
         .select()
@@ -309,6 +315,7 @@ export const eventsRouter = router({
       const [restaurant] = event ? await db.select().from(restaurants).where(eq(restaurants.id, event.restaurantId)).limit(1) : [];
       const isAdmin = Boolean(ctx.adminAccount);
       if (!restaurant || (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id)) throw new TRPCError({ code: "FORBIDDEN" });
+      requireSubscriptionFeature(ctx, restaurant.subscriptionTier, "premium");
 
       await db
         .update(eventRegistrations)

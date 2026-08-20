@@ -15,7 +15,7 @@ async function createRestaurant(label: string) {
   const restaurant = await adminCaller.admin.createRestaurant({
     name: `Event security ${label}`,
     slug: `event-security-${label}-${runId}`,
-    subscriptionTier: "menu",
+    subscriptionTier: "premium",
     subscriptionStatus: "trial",
   });
   restaurantIds.push(restaurant.id);

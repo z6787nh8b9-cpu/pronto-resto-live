@@ -6,6 +6,7 @@ import { eq, and, gte, lte, desc, sql } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import { randomBytes } from "crypto";
 import { verifyRecaptcha } from "../_core/recaptcha";
+import { requireSubscriptionFeature } from "../subscription-access";
 
 export const publicReservationSchema = z.object({
   restaurantId: z.number().int().positive(),
@@ -24,11 +25,13 @@ const publicReservationIdSchema = z.object({ restaurantId: z.number().int().posi
 async function requirePublicReservationRestaurant(restaurantId: number) {
   const db = await getDb();
   if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
-  const [restaurant] = await db.select({ id: restaurants.id }).from(restaurants).where(and(
+  const [restaurant] = await db.select({ id: restaurants.id, subscriptionTier: restaurants.subscriptionTier }).from(restaurants).where(and(
     eq(restaurants.id, restaurantId),
     eq(restaurants.isActive, true),
   )).limit(1);
-  if (!restaurant) throw new TRPCError({ code: "NOT_FOUND", message: "Établissement indisponible." });
+  if (!restaurant || restaurant.subscriptionTier !== "premium") {
+    throw new TRPCError({ code: "NOT_FOUND", message: "Établissement indisponible." });
+  }
   return db;
 }
 
@@ -49,12 +52,13 @@ function isSlotWithinOpeningHours(reservationDate: Date, opening: { isClosed: bo
 async function requireReservationManagementAccess(ctx: any, restaurantId: number) {
   const db = await getDb();
   if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
-  const [restaurant] = await db.select({ ownerId: restaurants.ownerId }).from(restaurants).where(eq(restaurants.id, restaurantId)).limit(1);
+  const [restaurant] = await db.select({ ownerId: restaurants.ownerId, subscriptionTier: restaurants.subscriptionTier }).from(restaurants).where(eq(restaurants.id, restaurantId)).limit(1);
   if (!restaurant) throw new TRPCError({ code: "NOT_FOUND", message: "Restaurant not found" });
   const isPlatformAdmin = Boolean(ctx.adminAccount);
   if (!isPlatformAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id) {
     throw new TRPCError({ code: "FORBIDDEN", message: "Vous n'avez pas accès à ces réservations." });
   }
+  requireSubscriptionFeature(ctx, restaurant.subscriptionTier, "premium");
   return db;
 }
 

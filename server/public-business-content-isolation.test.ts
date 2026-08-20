@@ -11,11 +11,11 @@ const adminCaller = appRouter.createCaller({
 } as any);
 const publicCaller = appRouter.createCaller({ adminAccount: null, restaurantOwner: null, user: null, req: { session: {} }, res: {} } as any);
 
-async function createRestaurant(label: string) {
+async function createRestaurant(label: string, subscriptionTier: "menu" | "pro" | "premium" = "premium") {
   const restaurant = await adminCaller.admin.createRestaurant({
     name: `Public content ${label}`,
     slug: `public-content-${label}-${runId}`,
-    subscriptionTier: "menu",
+    subscriptionTier,
     subscriptionStatus: "trial",
   });
   restaurantIds.push(restaurant.id);
@@ -61,8 +61,20 @@ describe("public business content isolation", () => {
     await expect(publicCaller.openingHours.getOpeningHours({ restaurantId: restaurant.id })).resolves.toEqual([]);
   });
 
+  it("masks Premium gallery media and hours after a downgrade", async () => {
+    const restaurant = await createRestaurant("downgraded", "premium");
+    const db = await getDb();
+    if (!db) throw new Error("Database unavailable");
+    await db.insert(galleryPhotos).values({ restaurantId: restaurant.id, imageUrl: "https://example.test/premium.jpg" });
+    await db.insert(openingHours).values({ restaurantId: restaurant.id, dayOfWeek: 3, openTime: "10:00", closeTime: "19:00", isClosed: false });
+    await db.update(restaurants).set({ subscriptionTier: "menu" }).where(eq(restaurants.id, restaurant.id));
+
+    await expect(publicCaller.gallery.getGalleryPhotos({ restaurantId: restaurant.id })).resolves.toEqual([]);
+    await expect(publicCaller.openingHours.getOpeningHours({ restaurantId: restaurant.id })).resolves.toEqual([]);
+  });
+
   it("returns translations only while the restaurant remains active", async () => {
-    const restaurant = await createRestaurant("translations");
+    const restaurant = await createRestaurant("translations", "pro");
     const db = await getDb();
     if (!db) throw new Error("Database unavailable");
     await db.insert(translations).values({
