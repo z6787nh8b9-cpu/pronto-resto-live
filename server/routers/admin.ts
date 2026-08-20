@@ -3,7 +3,7 @@ import { router, publicProcedure } from "../_core/trpc";
 import { adminProcedure } from "../_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { getDb } from "../db";
-import { advertisements, adminInvitations, adminAccounts, localAdminInvitations } from "../../drizzle/schema";
+import { advertisements, adminAccounts, localAdminInvitations } from "../../drizzle/schema";
 import { createHash, randomBytes } from "crypto";
 import { and, eq, sql } from "drizzle-orm";
 import bcrypt from "bcrypt";

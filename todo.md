@@ -1284,6 +1284,11 @@
 - [x] Limiter le débit, borner les données et vérifier reCAPTCHA sur les inscriptions événementielles publiques
 - [x] Rendre atomique la réservation de capacité afin de prévenir les surinscriptions concurrentes
 
+## RETRAIT DU FLUX SUPER ADMIN HISTORIQUE (20 août 2026)
+- [x] Désactiver l’inscription Super Admin publique basée sur les jetons historiques en clair
+- [x] Conserver un parcours d’authentification et de changement de mot de passe Super Admin local, borné et protégé
+- [x] Ajouter les régressions attestant que seul le flux d’invitation locale hachée peut créer un Super Admin
+
 ## INTÉGRITÉ ANALYTIQUE PUBLIQUE (20 août 2026)
 - [x] Dériver côté serveur les métadonnées de vue publique au lieu d’accepter IP, agent et référent déclarés par le navigateur
 - [x] Ajouter une limite de débit dédiée aux vues publiques pour réduire l’inflation analytique artificielle
