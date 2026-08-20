@@ -37,6 +37,7 @@ export function LanguageSelector({
         <Button
           variant="outline"
           size="sm"
+          aria-label={`Langue : ${currentLang.name}`}
           className={`gap-2 ${className}`}
         >
           <Globe className="h-4 w-4" />

@@ -153,7 +153,7 @@ export default function RestaurantMenuPage() {
   return (
     <ThemeWrapper theme={storefrontTheme}>
       <PublicVitrineChrome name={restaurant.name} logoUrl={restaurant.logoUrl}>
-        {(restaurant.subscriptionTier === "pro" || restaurant.subscriptionTier === "premium") && <LanguageSelector currentLanguage={currentLanguage} onLanguageChange={setCurrentLanguage} />}
+        {(restaurant.subscriptionTier === "pro" || restaurant.subscriptionTier === "premium") && <LanguageSelector currentLanguage={currentLanguage} onLanguageChange={setCurrentLanguage} className="h-10 rounded-[1rem] border-transparent bg-black/[0.05] px-3 shadow-none hover:bg-black/[0.08]" />}
         {restaurant.subscriptionTier === "premium" && <button type="button" onClick={() => navigate(`/${slug}`)} className="hidden h-10 rounded-[1rem] px-3 text-sm font-medium text-foreground transition-[background-color,transform] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-black/[0.05] active:scale-[0.98] sm:inline-flex">Accueil</button>}
       </PublicVitrineChrome>
 

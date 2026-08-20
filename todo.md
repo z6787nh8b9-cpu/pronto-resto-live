@@ -276,7 +276,7 @@
 ### PHASE 3 : SYSTÈME DE TRADUCTION AUTOMATIQUE
 - [x] Créer la table `translations`
 - [x] Créer les procédures tRPC (translate, getTranslations, updateTranslation)
-- [ ] Ajouter le sélecteur de langue sticky (FR, EN, IT, DE, ES)
+- [x] Ajouter le sélecteur de langue sticky (FR, EN, IT, DE, ES)
 - [x] Implémenter la traduction automatique via Manus LLM (lazy loading)
 - [x] Dashboard restaurateur : page "Traductions" pour corriger manuellement
 
