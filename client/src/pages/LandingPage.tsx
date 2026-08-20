@@ -122,7 +122,7 @@ export default function LandingPage() {
                 </Button>
                 <Button asChild variant="outline" size="lg" className="h-14 rounded-full border-border/90 bg-card/70 px-6 text-base transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-0.5 hover:bg-secondary active:scale-[0.98]"><a href="/la-voile-rouge">Découvrir une vitrine <ChevronRight className="ml-2 h-4 w-4" /></a></Button>
               </div>
-              <p className="mt-5 text-sm text-muted-foreground">Essai accompagné · Sans carte bancaire · Mise en ligne à votre rythme</p>
+              <p className="mt-5 text-sm text-muted-foreground">Préparez votre catalogue · Relisez chaque détail · Publiez quand vous êtes prêt</p>
             </div>
 
             <div className="relative mx-auto w-full max-w-xl lg:max-w-none">

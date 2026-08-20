@@ -1282,3 +1282,6 @@
 ## INTÉGRITÉ ANALYTIQUE PUBLIQUE (20 août 2026)
 - [x] Dériver côté serveur les métadonnées de vue publique au lieu d’accepter IP, agent et référent déclarés par le navigateur
 - [x] Ajouter une limite de débit dédiée aux vues publiques pour réduire l’inflation analytique artificielle
+
+## COMMUNICATION PRODUIT FACTUELLE (20 août 2026)
+- [x] Remplacer la promesse d’essai et de carte bancaire de la landing par un wording vérifiable sur la préparation et la publication
