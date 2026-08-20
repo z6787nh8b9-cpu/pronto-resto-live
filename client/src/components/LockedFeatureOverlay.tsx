@@ -9,6 +9,16 @@ interface LockedFeatureOverlayProps {
   children: React.ReactNode;
 }
 
+export function LockedFeaturePreview() {
+  return (
+    <div aria-hidden="true" className="grid gap-4 sm:grid-cols-2">
+      <div className="h-40 rounded-[1.5rem] bg-muted/70" />
+      <div className="h-40 rounded-[1.5rem] bg-muted/50" />
+      <div className="h-24 rounded-[1.5rem] bg-muted/50 sm:col-span-2" />
+    </div>
+  );
+}
+
 export function LockedFeatureOverlay({ featureName, tier, businessName, children }: LockedFeatureOverlayProps) {
   const tierLabel = tier === "pro" ? "PRO" : "PREMIUM";
   const whatsappNumber = "0749710723";

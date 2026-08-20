@@ -27,7 +27,7 @@ import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSo
 import { CSS } from "@dnd-kit/utilities";
 import { ResponsiveHeader, ResponsiveTabs } from "@/components/responsive";
 import { UpgradeModal } from "@/components/UpgradeModal";
-import { LockedFeatureOverlay } from "@/components/LockedFeatureOverlay";
+import { LockedFeatureOverlay, LockedFeaturePreview } from "@/components/LockedFeatureOverlay";
 import { CatalogImportCard } from "@/components/CatalogImportCard";
 import { LoadingState } from "@/components/LoadingState";
 import { BusinessOnboardingCard } from "@/components/BusinessOnboardingCard";
@@ -565,6 +565,7 @@ export default function RestaurantDashboard() {
             <TabsTrigger 
               value="translations" 
               className={!canAccessTranslations ? "opacity-50 relative" : ""}
+              onClick={!canAccessTranslations ? (event) => handleLockedTabClick("Traductions automatiques", "pro", event) : undefined}
             >
               <Globe className="h-4 w-4 mr-1" />
               Traductions
@@ -573,6 +574,7 @@ export default function RestaurantDashboard() {
             <TabsTrigger 
               value="hours"
               className={!canAccessPremiumFeatures ? "opacity-50 relative" : ""}
+              onClick={!canAccessPremiumFeatures ? (event) => handleLockedTabClick("Horaires d'ouverture", "premium", event) : undefined}
             >
               <Clock className="h-4 w-4 mr-1" />
               Horaires
@@ -581,6 +583,7 @@ export default function RestaurantDashboard() {
             <TabsTrigger 
               value="reservations"
               className={!canAccessPremiumFeatures ? "opacity-50 relative" : ""}
+              onClick={!canAccessPremiumFeatures ? (event) => handleLockedTabClick("Système de réservations", "premium", event) : undefined}
             >
               <CalendarDays className="h-4 w-4 mr-1" />
               Réservations
@@ -589,6 +592,7 @@ export default function RestaurantDashboard() {
             <TabsTrigger 
               value="events"
               className={!canAccessPremiumFeatures ? "opacity-50 relative" : ""}
+              onClick={!canAccessPremiumFeatures ? (event) => handleLockedTabClick("Gestion d'événements", "premium", event) : undefined}
             >
               <PartyPopper className="h-4 w-4 mr-1" />
               Événements
@@ -597,6 +601,7 @@ export default function RestaurantDashboard() {
             <TabsTrigger 
               value="customization"
               className={!canAccessPremiumFeatures ? "opacity-50 relative" : ""}
+              onClick={!canAccessPremiumFeatures ? (event) => handleLockedTabClick("Personnalisation visuelle", "premium", event) : undefined}
             >
               <Star className="h-4 w-4 mr-1" />
               Personnalisation
@@ -605,6 +610,7 @@ export default function RestaurantDashboard() {
             <TabsTrigger 
               value="gallery"
               className={!canAccessPremiumFeatures ? "opacity-50 relative" : ""}
+              onClick={!canAccessPremiumFeatures ? (event) => handleLockedTabClick("Galerie photos", "premium", event) : undefined}
             >
               📸 Galerie
               {!canAccessPremiumFeatures && <Lock className="h-3 w-3 ml-1 text-amber-500" />}
@@ -1095,7 +1101,7 @@ export default function RestaurantDashboard() {
                 tier="premium"
                 businessName={restaurant?.name || ""}
               >
-                {restaurant && <Customization restaurantId={restaurant.id} />}
+                <LockedFeaturePreview />
               </LockedFeatureOverlay>
             )}
           </TabsContent>
@@ -1110,7 +1116,7 @@ export default function RestaurantDashboard() {
                 tier="premium"
                 businessName={restaurant?.name || ""}
               >
-                {restaurant && <Gallery restaurantId={restaurant.id} />}
+                <LockedFeaturePreview />
               </LockedFeatureOverlay>
             )}
           </TabsContent>
@@ -1160,7 +1166,7 @@ export default function RestaurantDashboard() {
                 tier="pro"
                 businessName={restaurant?.name || ""}
               >
-                <Translations />
+                <LockedFeaturePreview />
               </LockedFeatureOverlay>
             )}
           </TabsContent>
@@ -1175,7 +1181,7 @@ export default function RestaurantDashboard() {
                 tier="premium"
                 businessName={restaurant?.name || ""}
               >
-                <OpeningHours />
+                <LockedFeaturePreview />
               </LockedFeatureOverlay>
             )}
           </TabsContent>
@@ -1190,7 +1196,7 @@ export default function RestaurantDashboard() {
                 tier="premium"
                 businessName={restaurant?.name || ""}
               >
-                {restaurant && <Reservations restaurantId={restaurant.id} />}
+                <LockedFeaturePreview />
               </LockedFeatureOverlay>
             )}
           </TabsContent>
@@ -1205,7 +1211,7 @@ export default function RestaurantDashboard() {
                 tier="premium"
                 businessName={restaurant?.name || ""}
               >
-                {restaurant && <Events restaurantId={restaurant.id} />}
+                <LockedFeaturePreview />
               </LockedFeatureOverlay>
             )}
           </TabsContent>
