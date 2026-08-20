@@ -1429,6 +1429,11 @@
 - [x] Ajouter une régression contre les réorganisations inter-catégories involontaires
 - [x] Rendre les catégories et éléments réellement triables au clavier, à la souris et au toucher depuis le dashboard
 
+## GESTION SUPER ADMIN DES PROPRIÉTAIRES (20 août 2026)
+- [x] Auditer les procédures et interfaces existantes de gestion des comptes propriétaires
+- [x] Afficher un annuaire Super Admin des propriétaires et de leurs établissements sans données d’authentification
+- [x] Clarifier les opérations autorisées et ajouter les régressions de droits associées
+
 ## INTÉGRITÉ ANALYTIQUE PUBLIQUE (20 août 2026)
 - [x] Dériver côté serveur les métadonnées de vue publique au lieu d’accepter IP, agent et référent déclarés par le navigateur
 - [x] Ajouter une limite de débit dédiée aux vues publiques pour réduire l’inflation analytique artificielle

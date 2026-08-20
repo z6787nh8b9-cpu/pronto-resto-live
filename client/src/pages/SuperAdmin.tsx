@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, Edit, Trash2, TrendingUp, Store, MessageSquare, Settings, Megaphone, Shield, Mail, Copy, Check, Search, ArrowUpRight, Building2, FileUp } from "lucide-react";
+import { Plus, Edit, Trash2, TrendingUp, Store, MessageSquare, Settings, Megaphone, Shield, Mail, Copy, Check, Search, ArrowUpRight, Building2, FileUp, UsersRound } from "lucide-react";
 import { toast } from "sonner";
 import { useLocation } from "wouter";
 // import { useAuth } from "@/_core/hooks/useAuth"; // Remplacé par trpc.adminAuth.me
@@ -19,6 +19,7 @@ import Advertisements from "./admin/Advertisements";
 import Admins from "./admin/Admins";
 import InvitationsTab from "./admin/InvitationsTab";
 import RequestsTab from "./admin/RequestsTab";
+import RestaurantOwnersTab from "./admin/RestaurantOwnersTab";
 
 export default function SuperAdmin() {
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -180,6 +181,10 @@ export default function SuperAdmin() {
             <TabsTrigger value="restaurants">
               <Store className="h-4 w-4 mr-2" />
               Restaurants
+            </TabsTrigger>
+            <TabsTrigger value="owners">
+              <UsersRound className="h-4 w-4 mr-2" />
+              Propriétaires
             </TabsTrigger>
             <TabsTrigger value="advertisements">
               <Megaphone className="h-4 w-4 mr-2" />
@@ -439,6 +444,10 @@ export default function SuperAdmin() {
           </CardContent>
         </Card>
 
+          </TabsContent>
+
+          <TabsContent value="owners">
+            <RestaurantOwnersTab />
           </TabsContent>
 
           <TabsContent value="advertisements">

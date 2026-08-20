@@ -3,7 +3,7 @@ import { router, publicProcedure } from "../_core/trpc";
 import { adminProcedure } from "../_core/trpc";
 import { TRPCError } from "@trpc/server";
 import { getDb } from "../db";
-import { advertisements, adminAccounts, localAdminInvitations } from "../../drizzle/schema";
+import { advertisements, adminAccounts, localAdminInvitations, restaurantOwners, restaurants } from "../../drizzle/schema";
 import { createHash, randomBytes } from "crypto";
 import { and, eq, sql } from "drizzle-orm";
 import bcrypt from "bcrypt";
@@ -105,6 +105,30 @@ export const adminRouter = router({
     .query(async ({ input }) => {
       return await getUserById(input.id);
     }),
+
+  // List the minimum operational details needed to supervise local owner accounts.
+  // Password hashes, provider identifiers and session state remain server-only.
+  listRestaurantOwners: adminProcedure.query(async () => {
+    const db = await getDb();
+    if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Base de données indisponible." });
+
+    return db
+      .select({
+        id: restaurantOwners.id,
+        name: restaurantOwners.name,
+        email: restaurantOwners.email,
+        provider: restaurantOwners.provider,
+        createdAt: restaurantOwners.createdAt,
+        lastSignedIn: restaurantOwners.lastSignedIn,
+        restaurantId: restaurants.id,
+        restaurantName: restaurants.name,
+        restaurantSlug: restaurants.slug,
+        restaurantIsActive: restaurants.isActive,
+      })
+      .from(restaurantOwners)
+      .leftJoin(restaurants, eq(restaurants.ownerId, restaurantOwners.id))
+      .orderBy(restaurantOwners.createdAt);
+  }),
 
   // ===== ADVERTISEMENTS =====
 
