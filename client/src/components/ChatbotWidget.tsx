@@ -92,7 +92,7 @@ export default function ChatbotWidget() {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-24 right-6 h-20 w-20 rounded-full shadow-2xl hover:scale-110 transition-transform duration-300 z-50 bg-transparent border-none cursor-pointer"
+          className="fixed bottom-4 right-4 h-16 w-16 rounded-full border-none bg-transparent shadow-2xl transition-transform duration-300 hover:scale-110 sm:bottom-6 sm:right-6 sm:h-20 sm:w-20 z-50 cursor-pointer"
           style={{
             animation: 'chatbotPulse 2s ease-in-out infinite',
           }}

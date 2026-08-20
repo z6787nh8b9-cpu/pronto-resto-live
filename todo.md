@@ -1239,3 +1239,6 @@
 
 ## RÉGRESSION RECAPTCHA DÉVELOPPEMENT (19 août 2026)
 - [x] Empêcher le rendu du badge reCAPTCHA invalide sur les hôtes de développement et conserver la vérification de production
+
+## AUDIT LANDING MOBILE (20 août 2026)
+- [x] Éviter que l’assistance flottante recouvre l’action secondaire du hero au premier viewport mobile

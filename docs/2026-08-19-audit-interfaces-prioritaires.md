@@ -43,3 +43,5 @@ La vérification technique a révélé qu’une URL de couverture historique ét
 Les cartes de catalogue n’affichent désormais l’intitulé d’allergènes que si une liste utile est effectivement renseignée. La revue navigateur confirme la suppression des libellés vides sur les entrées de La Voile Rouge, avec des descriptions et prix conservés dans une lecture plus nette.
 
 Le script reCAPTCHA n’est plus injecté globalement dans la landing de développement. La revue navigateur confirme la disparition de l’avertissement de clé de site, tandis que le formulaire conserve son jeton de développement côté client et charge la protection Google uniquement pour une soumission de production.
+
+L’assistance flottante de la landing a été compactée et déplacée vers le bord inférieur mobile. La capture à 390 px confirme que les deux CTA du hero restent entièrement visibles et activables, tout en maintenant un accès rapide à l’assistance.
