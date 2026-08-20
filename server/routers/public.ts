@@ -1,6 +1,12 @@
 import { z } from "zod";
 import { router, publicProcedure } from "../_core/trpc";
 import { getDb } from "../db";
+
+export const publicVenueChatSchema = z.object({
+  restaurantId: z.number().int().positive(),
+  sessionId: z.string().trim().min(8).max(128),
+  message: z.string().trim().min(1).max(800),
+});
 import { advertisements } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
 import {
@@ -36,16 +42,8 @@ export const publicRouter = router({
 
   // Chatbot interaction
   chat: publicProcedure
-    .input(
-      z.object({
-        restaurantId: z.number().int().positive(),
-        sessionId: z.string().trim().min(8).max(128),
-        message: z.string().trim().min(1).max(800),
-        userIp: z.string().max(64).optional(),
-        userAgent: z.string().max(512).optional(),
-      })
-    )
-    .mutation(async ({ input }) => {
+    .input(publicVenueChatSchema)
+    .mutation(async ({ input, ctx }) => {
       // Get restaurant and chatbot config
       const config = await getChatbotConfigByRestaurantId(input.restaurantId);
 
@@ -120,8 +118,8 @@ Instructions:
         sessionId: input.sessionId,
         userMessage: input.message,
         aiResponse,
-        userIp: input.userIp,
-        userAgent: input.userAgent,
+        userIp: ctx.req.ip,
+        userAgent: ctx.req.get("user-agent")?.slice(0, 512),
       });
 
       return {

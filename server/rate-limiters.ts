@@ -107,6 +107,20 @@ export function limitPublicChat(req: Request, res: Response, next: NextFunction)
   return req.path === "/chat.sendMessage" ? publicChatLimiter(req, res, next) : next();
 }
 
+/** Limits each public establishment chatbot before its menu-context model call. */
+export const publicVenueChatLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000,
+  max: 10,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => ipKeyGenerator(req.ip || "unknown"),
+  handler: (_req, res) => res.status(429).json({ error: "Trop de messages. Réessayez dans une minute." }),
+});
+
+export function limitPublicVenueChat(req: Request, res: Response, next: NextFunction) {
+  return req.path === "/public.chat" ? publicVenueChatLimiter(req, res, next) : next();
+}
+
 /** Strict anti-spam budget for public contact and issue requests. */
 export const publicChatbotRequestLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
