@@ -72,7 +72,7 @@
 - [ ] Tests de bout en bout
 - [x] Optimisation des performances
 - [x] SEO et métadonnées
-- [ ] Documentation utilisateur
+- [x] Documentation utilisateur
 - [ ] Déploiement production
 
 ## Bugs à corriger
@@ -1486,8 +1486,13 @@
 
 ## GUIDE PROPRIÉTAIRE (20 août 2026)
 - [x] Créer et vérifier le guide de démarrage aligné sur les parcours disponibles
-- [ ] Compléter la documentation utilisateur générale à partir du guide propriétaire validé
-- [ ] Vérifier le guide propriétaire par une régression documentaire et une validation de compilation
+- [x] Compléter la documentation utilisateur générale à partir du guide propriétaire validé
+- [x] Vérifier le guide propriétaire par une régression documentaire et une validation de compilation
+
+## DOCUMENTATION UTILISATEUR GÉNÉRALE (20 août 2026)
+- [x] Finaliser la structure commune des guides propriétaire, Super Admin et limites de service non configurées
+- [x] Exécuter une régression documentaire couvrant les deux guides et les avertissements de service non activé
+- [x] Ne clôturer la documentation utilisateur qu’après validation des guides et de leur régression
 
 ## GESTION DES PROPRIÉTAIRES (20 août 2026)
 - [x] Fournir un annuaire Super Admin en lecture seule sans données d’authentification ni de session
