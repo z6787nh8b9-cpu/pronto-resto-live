@@ -45,6 +45,27 @@ describe("public storefront chrome", () => {
     expect(menuStorefront).toContain("data-[state=active]:font-semibold");
   });
 
+  it("applies bundled premium storefront themes consistently to the home and catalogue", () => {
+    const themes = source("client/src/components/ThemeWrapper.tsx");
+    const styles = source("client/src/index.css");
+    const menuStorefront = source("client/src/pages/RestaurantMenuPage.tsx");
+    const homeStorefront = source("client/src/pages/RestaurantHomePage.tsx");
+
+    for (const theme of ["pronto-service", "moderne-soho", "beach-boheme", "day-night", "marble-rome"]) {
+      expect(themes).toContain(theme);
+    }
+    expect(themes).not.toContain("/src/themes/");
+    expect(styles).toContain(".public-storefront[data-theme=\"marble-rome\"]");
+    expect(styles).toContain(".public-storefront[data-theme=\"day-night\"]");
+    expect(styles).toContain("@media (max-width: 767px)");
+    expect(styles).toContain(".public-storefront .storefront-card { border-radius: 1.4rem !important; }");
+    expect(styles).toContain("@media (prefers-reduced-motion: reduce)");
+    expect(menuStorefront).toContain("<ThemeWrapper theme={storefrontTheme}>");
+    expect(homeStorefront).toContain("<ThemeWrapper theme={storefrontTheme}>");
+    expect(menuStorefront).toContain("storefront-catalog-card");
+    expect(homeStorefront).toContain("storefront-gallery-item");
+  });
+
   it("labels floating public contact actions for assistive technology", () => {
     const menuStorefront = source("client/src/pages/RestaurantMenuPage.tsx");
 

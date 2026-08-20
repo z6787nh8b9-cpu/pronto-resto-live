@@ -480,8 +480,8 @@
 - [x] Importer statiquement tous les CSS de thèmes dans index.css
 - [x] Créer le CSS complet pour le thème Pronto Service avec toutes les classes nécessaires
 - [x] Tester le thème Pronto Service visuellement (fonctionne correctement)
-- [ ] Finaliser les 4 autres thèmes (Moderne Soho, Beach Bohème, Day n Night, Marble Rome)
-- [ ] Refondre RestaurantMenuPage pour utiliser les classes CSS des thèmes
+- [x] Finaliser les 4 autres thèmes (Moderne Soho, Beach Bohème, Day n Night, Marble Rome)
+- [x] Refondre RestaurantMenuPage pour utiliser les classes CSS des thèmes
 - [ ] Vérifier le responsive mobile pour chaque thème
 
 ## 🎨 MODERNISATION DU DESIGN DES PAGES PUBLIQUES

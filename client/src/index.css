@@ -351,3 +351,216 @@
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(199, 91, 75, 0.3);
 }
+
+/* Public storefront themes: bundled, scoped and independent from dashboard tokens. */
+.public-storefront {
+  --store-bg: #f8f3eb;
+  --store-surface: #fffdf9;
+  --store-soft: #eee3d4;
+  --store-ink: #261612;
+  --store-muted: #745e55;
+  --store-accent: #9a4835;
+  --store-accent-contrast: #fffaf2;
+  --store-line: rgb(38 22 18 / 12%);
+  --store-serif: 'DM Serif Display', Georgia, serif;
+  --store-sans: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+  min-height: 100dvh;
+  background: var(--store-bg);
+  color: var(--store-ink);
+  font-family: var(--store-sans);
+}
+
+.public-storefront[data-theme="moderne-soho"] {
+  --store-bg: #f7f7f5;
+  --store-surface: #ffffff;
+  --store-soft: #e8e8e3;
+  --store-ink: #171717;
+  --store-muted: #686863;
+  --store-accent: #222222;
+  --store-accent-contrast: #ffffff;
+  --store-line: rgb(23 23 23 / 10%);
+  --store-serif: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+}
+
+.public-storefront[data-theme="beach-boheme"] {
+  --store-bg: #fff4de;
+  --store-surface: #fffaf0;
+  --store-soft: #cce7e3;
+  --store-ink: #164551;
+  --store-muted: #50757b;
+  --store-accent: #df6d49;
+  --store-accent-contrast: #fff9ef;
+  --store-line: rgb(22 69 81 / 14%);
+}
+
+.public-storefront[data-theme="day-night"] {
+  --store-bg: #101827;
+  --store-surface: #172236;
+  --store-soft: #222e45;
+  --store-ink: #f3f5ef;
+  --store-muted: #b9c2d1;
+  --store-accent: #d5f25a;
+  --store-accent-contrast: #132036;
+  --store-line: rgb(243 245 239 / 15%);
+  --store-serif: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
+}
+
+.public-storefront[data-theme="marble-rome"] {
+  --store-bg: #121010;
+  --store-surface: #1d1a19;
+  --store-soft: #292421;
+  --store-ink: #f1e5c3;
+  --store-muted: #c7b994;
+  --store-accent: #c9a85a;
+  --store-accent-contrast: #171310;
+  --store-line: rgb(201 168 90 / 25%);
+}
+
+.public-storefront h1,
+.public-storefront h2,
+.public-storefront h3 {
+  font-family: var(--store-serif);
+}
+
+.public-storefront .bg-white,
+.public-storefront .bg-background,
+.public-storefront .bg-card {
+  background-color: var(--store-surface) !important;
+}
+
+.public-storefront .bg-neutral-50,
+.public-storefront .bg-secondary\/70,
+.public-storefront .bg-neutral-100 {
+  background-color: var(--store-soft) !important;
+}
+
+.public-storefront .text-neutral-900,
+.public-storefront .text-foreground,
+.public-storefront .text-card-foreground {
+  color: var(--store-ink) !important;
+}
+
+.public-storefront .text-neutral-600,
+.public-storefront .text-neutral-500,
+.public-storefront .text-muted-foreground {
+  color: var(--store-muted) !important;
+}
+
+.public-storefront .border-neutral-200,
+.public-storefront .border-border,
+.public-storefront .border-border\/80 {
+  border-color: var(--store-line) !important;
+}
+
+.public-storefront .storefront-hero,
+.public-storefront .storefront-menu-hero {
+  color: #fffdf8;
+}
+
+.public-storefront .storefront-hero::after,
+.public-storefront .storefront-menu-hero::after {
+  content: '';
+  position: absolute;
+  inset: auto 0 0;
+  height: 20%;
+  pointer-events: none;
+  background: linear-gradient(transparent, var(--store-bg));
+}
+
+.public-storefront[data-theme="beach-boheme"] .storefront-hero::before,
+.public-storefront[data-theme="beach-boheme"] .storefront-menu-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(135deg, rgb(16 101 111 / 38%), rgb(223 109 73 / 18%));
+}
+
+.public-storefront[data-theme="day-night"] .storefront-hero::after,
+.public-storefront[data-theme="marble-rome"] .storefront-hero::after,
+.public-storefront[data-theme="day-night"] .storefront-menu-hero::after,
+.public-storefront[data-theme="marble-rome"] .storefront-menu-hero::after {
+  background: linear-gradient(transparent, var(--store-bg));
+}
+
+.public-storefront .storefront-section,
+.public-storefront .storefront-collection,
+.public-storefront .storefront-toolbar,
+.public-storefront .storefront-footer {
+  background-color: var(--store-bg) !important;
+  color: var(--store-ink);
+}
+
+.public-storefront .storefront-section--soft {
+  background-color: var(--store-soft) !important;
+}
+
+.public-storefront .storefront-card {
+  position: relative;
+  border: 1px solid var(--store-line) !important;
+  border-radius: 1.75rem !important;
+  background: var(--store-surface) !important;
+  box-shadow: 0 1px 0 rgb(255 255 255 / 32%) inset, 0 18px 45px rgb(31 19 15 / 7%);
+}
+
+.public-storefront .storefront-card::before {
+  content: '';
+  position: absolute;
+  inset: 0.4rem;
+  pointer-events: none;
+  border: 1px solid rgb(255 255 255 / 30%);
+  border-radius: calc(1.75rem - 0.4rem);
+}
+
+.public-storefront[data-theme="day-night"] .storefront-card::before,
+.public-storefront[data-theme="marble-rome"] .storefront-card::before {
+  border-color: rgb(255 255 255 / 8%);
+}
+
+.public-storefront .storefront-gallery-item {
+  border-radius: 1.25rem;
+  border: 1px solid var(--store-line);
+  box-shadow: 0 12px 28px rgb(31 19 15 / 9%);
+}
+
+.public-storefront .storefront-tabs {
+  border: 1px solid var(--store-line);
+  background: var(--store-soft) !important;
+}
+
+.public-storefront .storefront-tab[data-state="active"] {
+  background: var(--store-surface) !important;
+  color: var(--store-ink) !important;
+  box-shadow: 0 1px 1px rgb(31 19 15 / 8%);
+}
+
+.public-storefront .storefront-cta {
+  border-radius: 999px !important;
+  transition: transform 500ms cubic-bezier(0.32, 0.72, 0, 1), background-color 500ms cubic-bezier(0.32, 0.72, 0, 1), color 500ms cubic-bezier(0.32, 0.72, 0, 1) !important;
+}
+
+.public-storefront .storefront-cta:hover { transform: translateY(-2px); }
+.public-storefront .storefront-cta:active { transform: scale(0.98); }
+
+.public-storefront .storefront-footer {
+  border-top: 1px solid var(--store-line);
+}
+
+.public-storefront[data-theme="day-night"] .storefront-footer,
+.public-storefront[data-theme="marble-rome"] .storefront-footer {
+  background: var(--store-surface) !important;
+}
+
+@media (max-width: 767px) {
+  .public-storefront .storefront-card { border-radius: 1.4rem !important; }
+  .public-storefront .storefront-card::before { border-radius: calc(1.4rem - 0.4rem); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .public-storefront .storefront-card,
+  .public-storefront .storefront-cta,
+  .public-storefront .storefront-gallery-item img {
+    transition: opacity 180ms ease !important;
+    transform: none !important;
+  }
+}

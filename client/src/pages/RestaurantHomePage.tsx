@@ -17,6 +17,7 @@ import { EventRegistrationFlow } from "@/components/EventRegistrationFlow";
 import { AdvertisementDisplay, DishItemAd } from "@/components/AdvertisementDisplay";
 import { PublicVitrineChrome } from "@/components/PublicVitrineChrome";
 import { usePublicSeo } from "@/lib/public-seo";
+import { ThemeWrapper, resolveStorefrontTheme } from "@/components/ThemeWrapper";
 
 export default function RestaurantHomePage() {
   const params: { slug?: string } = useParams();
@@ -144,19 +145,20 @@ export default function RestaurantHomePage() {
                          menuData?.items?.slice(0, 6) || [];
 
   const daysOfWeek = ["Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"];
+  const storefrontTheme = resolveStorefrontTheme(restaurant.theme, restaurant.subscriptionTier);
 
   // Séparer les publicités dish_item des autres formats
   const dishItemAds = advertisements?.filter((ad: any) => ad.format === "dish_item") || [];
   const otherFormatAds = advertisements?.filter((ad: any) => ad.format !== "dish_item") || [];
 
   return (
-    <div className="min-h-[100dvh] bg-white relative">
+    <ThemeWrapper theme={storefrontTheme}>
       <PublicVitrineChrome name={restaurant.name} logoUrl={restaurant.logoUrl}>
         <div className="hidden items-center gap-1.5 md:flex"><LanguageSelector currentLanguage={currentLanguage} onLanguageChange={setCurrentLanguage} /><button type="button" onClick={() => navigate(`/${slug}/menu`)} className="h-10 rounded-[1rem] px-3 text-sm font-medium text-foreground transition-[background-color,transform] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-black/[0.05] active:scale-[0.98]">Menu</button><button type="button" onClick={() => setIsReservationOpen(true)} className="h-10 rounded-[1rem] px-3 text-sm font-medium text-foreground transition-[background-color,transform] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-black/[0.05] active:scale-[0.98]">Réserver</button></div>
       </PublicVitrineChrome>
 
       {/* Hero Section - Design moderne avec overlay subtil */}
-      <section className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-[#190d09] px-4 pb-12 pt-28">
+      <section className="storefront-hero relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-[#190d09] px-4 pb-12 pt-28">
         {restaurant.heroImageUrl && (
           <div className="absolute inset-0">
             <img
@@ -183,7 +185,7 @@ export default function RestaurantHomePage() {
               <Button
                 size="lg"
                 onClick={() => navigate(`/${slug}/menu`)}
-                className="bg-white text-neutral-900 hover:bg-neutral-100 px-8 py-6 text-base font-medium rounded-none"
+                className="storefront-cta bg-white text-neutral-900 hover:bg-neutral-100 px-8 py-6 text-base font-medium rounded-full"
               >
                 Découvrir le menu
               </Button>
@@ -192,7 +194,7 @@ export default function RestaurantHomePage() {
                   size="lg"
                   variant="outline"
                   onClick={() => setIsReservationOpen(true)}
-                  className="border-2 border-white text-white hover:bg-white hover:text-neutral-900 px-8 py-6 text-base font-medium rounded-none"
+                  className="storefront-cta storefront-cta--ghost border-2 border-white text-white hover:bg-white hover:text-neutral-900 px-8 py-6 text-base font-medium rounded-full"
                 >
                   Réserver une table
                 </Button>
@@ -204,7 +206,7 @@ export default function RestaurantHomePage() {
 
       {/* Featured Dishes - Grid moderne */}
       {featuredDishes.length > 0 && (
-        <section className="py-24 bg-neutral-50">
+        <section className="storefront-section storefront-section--soft py-24 bg-neutral-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-4xl font-serif font-bold text-neutral-900 mb-4">
@@ -224,7 +226,7 @@ export default function RestaurantHomePage() {
                   {/* Plat normal */}
                   <div
                     key={dish.id}
-                    className="group bg-white overflow-hidden transition-all duration-300 hover:shadow-2xl"
+                    className="storefront-card group bg-white overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1"
                   >
                   {dish.imageUrl && (
                     <div className="aspect-[4/3] overflow-hidden">
@@ -282,7 +284,7 @@ export default function RestaurantHomePage() {
                 size="lg"
                 variant="outline"
                 onClick={() => navigate(`/${slug}/menu`)}
-                className="border-2 border-neutral-900 text-neutral-900 hover:bg-neutral-900 hover:text-white px-8 py-6 text-base font-medium rounded-none"
+                className="storefront-cta border-2 border-neutral-900 text-neutral-900 hover:bg-neutral-900 hover:text-white px-8 py-6 text-base font-medium rounded-full"
               >
                 Voir le menu complet
                 <ChevronRight className="ml-2 h-5 w-5" />
@@ -294,7 +296,7 @@ export default function RestaurantHomePage() {
 
       {/* Events Section - Si activé */}
       {restaurant.featuresEnabled?.events && events && events.length > 0 && (
-        <section className="py-24 bg-white">
+        <section className="storefront-section py-24 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-4xl font-serif font-bold text-neutral-900 mb-4">
@@ -305,7 +307,7 @@ export default function RestaurantHomePage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {events.map((event: any) => (
-                <Card key={event.id} className="overflow-hidden border-0 shadow-lg hover:shadow-2xl transition-shadow">
+                <Card key={event.id} className="storefront-card overflow-hidden border-0 shadow-lg transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-1">
                   {event.imageUrl && (
                     <div className="aspect-video overflow-hidden">
                       <img
@@ -350,7 +352,7 @@ export default function RestaurantHomePage() {
 
       {/* Gallery Section - PREMIUM only */}
       {restaurant.subscriptionTier === "premium" && galleryPhotos && galleryPhotos.length > 0 && (
-        <section className="py-24 bg-neutral-50">
+        <section className="storefront-section storefront-section--soft py-24 bg-neutral-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-4xl font-serif font-bold text-neutral-900 mb-4">
@@ -361,7 +363,7 @@ export default function RestaurantHomePage() {
 
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {galleryPhotos.map((photo: any) => (
-                <div key={photo.id} className="aspect-square overflow-hidden group">
+                <div key={photo.id} className="storefront-gallery-item aspect-square overflow-hidden group">
                   <img
                     src={photo.imageUrl}
                     alt={photo.caption || ""}
@@ -375,7 +377,7 @@ export default function RestaurantHomePage() {
       )}
 
       {/* Contact & Info Section */}
-      <section className="py-24 bg-white">
+      <section className="storefront-section py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
             {/* Contact Info */}
@@ -458,7 +460,7 @@ export default function RestaurantHomePage() {
       )}
 
       {/* Footer */}
-      <footer className="bg-neutral-900 text-white py-12">
+      <footer className="storefront-footer bg-neutral-900 text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-neutral-400 text-sm">
             © {new Date().getFullYear()} {restaurant.name}. Tous droits réservés.
@@ -595,6 +597,6 @@ export default function RestaurantHomePage() {
           </DialogContent>
         </Dialog>
       )}
-    </div>
+    </ThemeWrapper>
   );
 }

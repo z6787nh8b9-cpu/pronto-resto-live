@@ -17,6 +17,7 @@ import { AdvertisementDisplay, DishItemAd } from "@/components/AdvertisementDisp
 import { LoadingState } from "@/components/LoadingState";
 import { PublicVitrineChrome } from "@/components/PublicVitrineChrome";
 import { usePublicSeo } from "@/lib/public-seo";
+import { ThemeWrapper, resolveStorefrontTheme } from "@/components/ThemeWrapper";
 
 export default function RestaurantMenuPage() {
   const params: { slug?: string } = useParams();
@@ -139,6 +140,7 @@ export default function RestaurantMenuPage() {
 
   const primaryColor = restaurant.primaryColor || "#ef4444";
   const accentColor = restaurant.accentColor || "#fbbf24";
+  const storefrontTheme = resolveStorefrontTheme(restaurant.theme, restaurant.subscriptionTier);
   const shouldShowHeroImage = Boolean(restaurant.heroImageUrl) && !heroImageFailed;
 
   // Séparer les publicités dish_item des autres formats
@@ -149,14 +151,14 @@ export default function RestaurantMenuPage() {
   const hasFullpageAd = advertisements?.some((ad: any) => ad.format === "fullpage") || false;
 
   return (
-    <div className="min-h-[100dvh] bg-background relative">
+    <ThemeWrapper theme={storefrontTheme}>
       <PublicVitrineChrome name={restaurant.name} logoUrl={restaurant.logoUrl}>
         {(restaurant.subscriptionTier === "pro" || restaurant.subscriptionTier === "premium") && <LanguageSelector currentLanguage={currentLanguage} onLanguageChange={setCurrentLanguage} />}
         {restaurant.subscriptionTier === "premium" && <button type="button" onClick={() => navigate(`/${slug}`)} className="hidden h-10 rounded-[1rem] px-3 text-sm font-medium text-foreground transition-[background-color,transform] duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:bg-black/[0.05] active:scale-[0.98] sm:inline-flex">Accueil</button>}
       </PublicVitrineChrome>
 
       {/* Hero de vitrine */}
-      <section className="relative z-10 overflow-hidden pb-16 pt-32 md:pb-24 md:pt-40">
+      <section className="storefront-menu-hero relative z-10 overflow-hidden pb-16 pt-32 md:pb-24 md:pt-40">
         {/* Image de fond avec blur */}
         {shouldShowHeroImage ? (
           <img src={restaurant.heroImageUrl!} alt="" aria-hidden="true" onError={() => setHeroImageFailed(true)} className="absolute inset-0 h-full w-full scale-110 object-cover blur-[8px]" />
@@ -175,7 +177,7 @@ export default function RestaurantMenuPage() {
       </section>
 
       {/* Recherche et filtres */}
-      <section className={`relative z-10 py-6 border-b ${!hasFullpageAd ? 'bg-background' : ''}`}>
+      <section className={`storefront-toolbar relative z-10 py-6 border-b ${!hasFullpageAd ? 'bg-background' : ''}`}>
         <div className="container max-w-5xl">
           <div className="mx-auto max-w-xl">
             <div className="relative"><Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" /><Input value={searchQuery} onChange={(event) => setSearchQuery(event.target.value)} placeholder="Rechercher dans la sélection" className="h-12 rounded-2xl border-border/80 bg-card pl-11 shadow-sm" aria-label="Rechercher dans la sélection" /></div>
@@ -213,15 +215,15 @@ export default function RestaurantMenuPage() {
       </section>
 
       {/* Collections de la vitrine */}
-      <section className={`relative z-10 py-12 ${!hasFullpageAd ? 'bg-background' : ''}`}>
+      <section className={`storefront-collection relative z-10 py-12 ${!hasFullpageAd ? 'bg-background' : ''}`}>
         <div className="container max-w-5xl">
           {categories.length > 0 ? (
             <Tabs defaultValue={categories[0]?.id.toString()} className="w-full">
               <div className="mb-8">
                 <div className="relative">
-                  <TabsList aria-label="Catégories de la sélection, défilement horizontal disponible" className="flex w-full justify-start overflow-x-auto flex-nowrap rounded-2xl bg-secondary/70 p-1.5 pr-10">
+                  <TabsList aria-label="Catégories de la sélection, défilement horizontal disponible" className="storefront-tabs flex w-full justify-start overflow-x-auto flex-nowrap rounded-2xl bg-secondary/70 p-1.5 pr-10">
                     {categories.map((category) => (
-                      <TabsTrigger key={category.id} value={category.id.toString()} className="whitespace-nowrap rounded-xl px-4 py-2.5 font-medium text-foreground/75 data-[state=active]:bg-background data-[state=active]:font-semibold data-[state=active]:text-foreground data-[state=active]:shadow-sm">
+                      <TabsTrigger key={category.id} value={category.id.toString()} className="storefront-tab whitespace-nowrap rounded-xl px-4 py-2.5 font-medium text-foreground/75 data-[state=active]:bg-background data-[state=active]:font-semibold data-[state=active]:text-foreground data-[state=active]:shadow-sm">
                         {category.name}
                       </TabsTrigger>
                     ))}
@@ -248,7 +250,7 @@ export default function RestaurantMenuPage() {
                             {index > 0 && index % 4 === 0 && dishItemAds[Math.floor(index / 4) - 1] && (
                               <DishItemAd key={`ad-${dishItemAds[Math.floor(index / 4) - 1].id}`} advertisement={dishItemAds[Math.floor(index / 4) - 1]} />
                             )}
-                            <Card className="overflow-hidden border-border/80 bg-card shadow-[0_1px_2px_oklch(0.22_0.025_53_/_0.05)] transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-0.5 hover:shadow-[0_14px_28px_oklch(0.22_0.025_53_/_0.09)]">
+                            <Card className="storefront-card storefront-catalog-card overflow-hidden border-border/80 bg-card shadow-[0_1px_2px_oklch(0.22_0.025_53_/_0.05)] transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-0.5 hover:shadow-[0_14px_28px_oklch(0.22_0.025_53_/_0.09)]">
                           <CardContent className="p-5 sm:p-6">
                             <div className="flex items-start justify-between gap-4">
                               <div className="flex-1">
@@ -319,7 +321,7 @@ export default function RestaurantMenuPage() {
       </section>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t py-8 mt-12 bg-background">
+      <footer className="storefront-footer relative z-10 border-t py-8 mt-12 bg-background">
         <div className="container text-center">
           <p className="text-sm text-muted-foreground">
             Propulsé par <span className="font-semibold">PRONTO by Altmachine</span>
@@ -422,6 +424,6 @@ export default function RestaurantMenuPage() {
       )}
 
 
-    </div>
+    </ThemeWrapper>
   );
 }
