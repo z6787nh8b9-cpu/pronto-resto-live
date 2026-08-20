@@ -144,7 +144,7 @@ export const eventsRouter = router({
 
   // Protected: Get all events for restaurant owner
   getEvents: restaurantOwnerProcedure
-    .input(z.object({ restaurantId: z.number() }))
+    .input(z.object({ restaurantId: z.number().int().positive() }))
     .query(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
@@ -165,16 +165,16 @@ export const eventsRouter = router({
   createEvent: restaurantOwnerProcedure
     .input(
       z.object({
-        restaurantId: z.number(),
-        title: z.string(),
-        description: z.string(),
-        imageUrl: z.string().optional(),
-        eventDate: z.string(), // ISO date string
-        duration: z.number().default(120),
-        maxAttendees: z.number(),
-        price: z.number().default(0),
+        restaurantId: z.number().int().positive(),
+        title: z.string().trim().min(1).max(200),
+        description: z.string().trim().min(1).max(5_000),
+        imageUrl: z.string().url().max(2_000).optional(),
+        eventDate: z.string().datetime({ offset: true }),
+        duration: z.number().int().min(15).max(1_440).default(120),
+        maxAttendees: z.number().int().min(1).max(20_000),
+        price: z.number().min(0).max(100_000).default(0),
         requiresApproval: z.boolean().default(false),
-        registrationDeadline: z.string().optional(), // ISO date string
+        registrationDeadline: z.string().datetime({ offset: true }).optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -205,19 +205,19 @@ export const eventsRouter = router({
   updateEvent: restaurantOwnerProcedure
     .input(
       z.object({
-        eventId: z.number(),
+        eventId: z.number().int().positive(),
         data: z.object({
-          title: z.string().optional(),
-          description: z.string().optional(),
-          imageUrl: z.string().optional(),
-          eventDate: z.string().optional(),
-          duration: z.number().optional(),
-          maxAttendees: z.number().optional(),
-          price: z.number().optional(),
+          title: z.string().trim().min(1).max(200).optional(),
+          description: z.string().trim().min(1).max(5_000).optional(),
+          imageUrl: z.string().url().max(2_000).optional(),
+          eventDate: z.string().datetime({ offset: true }).optional(),
+          duration: z.number().int().min(15).max(1_440).optional(),
+          maxAttendees: z.number().int().min(1).max(20_000).optional(),
+          price: z.number().min(0).max(100_000).optional(),
           status: z.enum(["draft", "published", "cancelled", "completed"]).optional(),
           isVisible: z.boolean().optional(),
           requiresApproval: z.boolean().optional(),
-          registrationDeadline: z.string().optional(),
+          registrationDeadline: z.string().datetime({ offset: true }).optional(),
         }),
       })
     )
@@ -228,6 +228,9 @@ export const eventsRouter = router({
       const [restaurant] = event ? await db.select().from(restaurants).where(eq(restaurants.id, event.restaurantId)).limit(1) : [];
       const isAdmin = Boolean(ctx.adminAccount);
       if (!restaurant || (!isAdmin && restaurant.ownerId !== ctx.restaurantOwner?.id)) throw new TRPCError({ code: "FORBIDDEN" });
+      if (input.data.maxAttendees !== undefined && input.data.maxAttendees < event.currentAttendees) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "La capacité ne peut pas être inférieure aux inscriptions existantes." });
+      }
 
       const updateData: any = {};
       if (input.data.title) updateData.title = input.data.title;
@@ -252,7 +255,7 @@ export const eventsRouter = router({
 
   // Protected: Delete an event
   deleteEvent: restaurantOwnerProcedure
-    .input(z.object({ eventId: z.number() }))
+    .input(z.object({ eventId: z.number().int().positive() }))
     .mutation(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
@@ -272,7 +275,7 @@ export const eventsRouter = router({
 
   // Protected: Get all registrations for an event
   getEventRegistrations: restaurantOwnerProcedure
-    .input(z.object({ eventId: z.number() }))
+    .input(z.object({ eventId: z.number().int().positive() }))
     .query(async ({ ctx, input }) => {
       const db = await getDb();
       if (!db) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Database not available" });
@@ -294,7 +297,7 @@ export const eventsRouter = router({
   updateRegistrationStatus: restaurantOwnerProcedure
     .input(
       z.object({
-        registrationId: z.number(),
+        registrationId: z.number().int().positive(),
         status: z.enum(["pending", "confirmed", "cancelled", "attended", "no_show"]),
       })
     )

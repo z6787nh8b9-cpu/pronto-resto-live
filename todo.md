@@ -1339,6 +1339,10 @@
 - [x] Protéger les analyses et personnalisations de l’établissement, et retirer la lecture publique complète par identifiant
 - [x] Ajouter des régressions inter-établissement sur toutes les mutations de catalogue et de configuration chatbot
 
+## DROITS GESTION ÉVÉNEMENTS (20 août 2026)
+- [x] Vérifier l’appartenance de l’établissement avant chaque gestion, inscription et export d’événement
+- [x] Ajouter les régressions inter-établissement des procédures de gestion événementielle
+
 ## INTÉGRITÉ ANALYTIQUE PUBLIQUE (20 août 2026)
 - [x] Dériver côté serveur les métadonnées de vue publique au lieu d’accepter IP, agent et référent déclarés par le navigateur
 - [x] Ajouter une limite de débit dédiée aux vues publiques pour réduire l’inflation analytique artificielle
