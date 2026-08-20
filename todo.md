@@ -1246,3 +1246,6 @@
 
 ## NAVIGATION CATALOGUE MOBILE (20 août 2026)
 - [x] Ajouter un indice de défilement et une instruction accessible aux catégories horizontales du catalogue public
+
+## ACCESSIBILITÉ VITRINE MOBILE (20 août 2026)
+- [x] Ajouter des libellés accessibles aux actions WhatsApp et assistant du catalogue restaurant

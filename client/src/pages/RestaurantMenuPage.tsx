@@ -325,6 +325,7 @@ export default function RestaurantMenuPage() {
           href={`https://wa.me/${restaurant.whatsapp.replace(/[^0-9]/g, "")}`}
           target="_blank"
           rel="noopener noreferrer"
+          aria-label={`Contacter ${restaurant.name} sur WhatsApp`}
           className="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white rounded-full p-4 shadow-lg transition-all hover:scale-110"
         >
           <Phone className="h-6 w-6" />
@@ -334,6 +335,8 @@ export default function RestaurantMenuPage() {
       {/* Bouton Chatbot flottant */}
       <Button
         onClick={() => setIsChatOpen(true)}
+        aria-label={`Ouvrir l’assistant de ${restaurant.name}`}
+        aria-haspopup="dialog"
         className="fixed bottom-6 left-6 z-50 rounded-full p-4 shadow-lg"
         style={{ backgroundColor: primaryColor }}
       >

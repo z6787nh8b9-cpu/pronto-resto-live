@@ -49,3 +49,5 @@ L’assistance flottante de la landing a été compactée et déplacée vers le 
 Le bouton d’assistance expose désormais un libellé et une nature de dialogue aux technologies d’assistance. Cette amélioration n’affecte pas son animation ni son positionnement, mais rend son rôle explicite sans dépendre de son visuel.
 
 La navigation de catégories du catalogue affiche maintenant un état actif renforcé, un fondu latéral sur la rangée défilable et une instruction lisible sous cette rangée. La revue à 390 px confirme que les catégories hors champ sont signalées sans masquer l’instruction ni gêner la sélection existante.
+
+Les actions flottantes WhatsApp et assistant du catalogue renseignent maintenant leur destination et leur rôle aux technologies d’assistance. Les liens, leurs positions mobiles et leur comportement ne sont pas modifiés.

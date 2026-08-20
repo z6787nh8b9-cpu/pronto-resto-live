@@ -45,6 +45,14 @@ describe("public storefront chrome", () => {
     expect(menuStorefront).toContain("data-[state=active]:font-semibold");
   });
 
+  it("labels floating public contact actions for assistive technology", () => {
+    const menuStorefront = source("client/src/pages/RestaurantMenuPage.tsx");
+
+    expect(menuStorefront).toContain("Contacter ${restaurant.name} sur WhatsApp");
+    expect(menuStorefront).toContain("Ouvrir l’assistant de ${restaurant.name}");
+    expect(menuStorefront).toContain('aria-haspopup="dialog"');
+  });
+
   it("keeps mobile restaurant action stacks clear of the reCAPTCHA badge", () => {
     const homeStorefront = source("client/src/pages/RestaurantHomePage.tsx");
     const legacyStorefront = source("client/src/pages/PublicRestaurantPage.tsx");
