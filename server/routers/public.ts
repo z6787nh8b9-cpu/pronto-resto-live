@@ -16,6 +16,11 @@ export const publicContactFormSchema = z.object({
   source: z.enum(["HEADER", "HERO", "FOOTER"]),
   recaptchaToken: z.string().min(1),
 });
+
+export const publicPageViewSchema = z.object({
+  restaurantId: z.number().int().positive(),
+  path: z.string().trim().min(1).max(2_048),
+});
 import { advertisements } from "../../drizzle/schema";
 import { eq } from "drizzle-orm";
 import {
@@ -138,17 +143,14 @@ Instructions:
 
   // Track page view
   trackPageView: publicProcedure
-    .input(
-      z.object({
-        restaurantId: z.number(),
-        path: z.string(),
-        visitorIp: z.string().optional(),
-        userAgent: z.string().optional(),
-        referer: z.string().optional(),
-      })
-    )
-    .mutation(async ({ input }) => {
-      await createPageView(input);
+    .input(publicPageViewSchema)
+    .mutation(async ({ input, ctx }) => {
+      await createPageView({
+        ...input,
+        visitorIp: ctx.req.ip,
+        userAgent: ctx.req.get("user-agent")?.slice(0, 512),
+        referer: ctx.req.get("referer")?.slice(0, 2_048),
+      });
       return { success: true };
     }),
 

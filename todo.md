@@ -1278,3 +1278,6 @@
 
 ## DURCISSEMENT FORMULAIRE DE CONTACT (20 août 2026)
 - [x] Ajouter une limite de débit et des bornes de saisie au formulaire public de contact avant la notification propriétaire
+
+## INTÉGRITÉ ANALYTIQUE PUBLIQUE (20 août 2026)
+- [x] Dériver côté serveur les métadonnées de vue publique au lieu d’accepter IP, agent et référent déclarés par le navigateur
