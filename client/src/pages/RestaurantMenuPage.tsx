@@ -343,7 +343,7 @@ export default function RestaurantMenuPage() {
       )}
 
       {/* Bouton Chatbot flottant */}
-      <Button
+      {restaurant.chatbotEnabled && <Button
         onClick={() => setIsChatOpen(true)}
         aria-label={`Ouvrir l’assistant de ${restaurant.name}`}
         aria-haspopup="dialog"
@@ -351,7 +351,7 @@ export default function RestaurantMenuPage() {
         style={{ backgroundColor: primaryColor }}
       >
         <MessageCircle className="h-6 w-6" />
-      </Button>
+      </Button>}
 
       {/* Dialog Chatbot */}
       <Dialog open={isChatOpen} onOpenChange={setIsChatOpen}>

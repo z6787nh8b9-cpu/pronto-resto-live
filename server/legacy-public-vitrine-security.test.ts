@@ -1,5 +1,7 @@
 import { afterAll, describe, expect, it } from "vitest";
 import { eq, inArray } from "drizzle-orm";
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { restaurants } from "../drizzle/schema";
 import { getDb } from "./db";
 import { appRouter } from "./routers";
@@ -59,5 +61,24 @@ describe("legacy public vitrine security", () => {
     await expect(publicCaller.restaurant.getPublicChatbotConfig({ restaurantId: restaurant.id })).resolves.toBeNull();
     await expect(publicCaller.public.chat({ restaurantId: restaurant.id, sessionId: "session-security", message: "Bonjour" })).rejects.toThrow();
     await expect(publicCaller.public.getMenu({ restaurantId: 0 })).rejects.toThrow();
+  });
+
+  it("exposes only the chatbot availability flag and hides chat after an owner disables it", async () => {
+    const restaurant = await adminCaller.admin.createRestaurant({
+      name: "Chatbot désactivé test",
+      slug: `legacy-chat-disabled-${runId}`,
+      subscriptionTier: "menu",
+      subscriptionStatus: "trial",
+    });
+    restaurantIds.push(restaurant.id);
+    await adminCaller.restaurant.updateChatbotConfig({ restaurantId: restaurant.id, isEnabled: false });
+
+    await expect(publicCaller.public.getRestaurant({ slug: restaurant.slug })).resolves.toMatchObject({ chatbotEnabled: false });
+    await expect(publicCaller.public.chat({ restaurantId: restaurant.id, sessionId: "session-chat-disabled", message: "Bonjour" })).rejects.toThrow();
+
+    const home = readFileSync(resolve(process.cwd(), "client/src/pages/RestaurantHomePage.tsx"), "utf8");
+    const menu = readFileSync(resolve(process.cwd(), "client/src/pages/RestaurantMenuPage.tsx"), "utf8");
+    expect(home).toContain("restaurant.chatbotEnabled && <button");
+    expect(menu).toContain("restaurant.chatbotEnabled && <Button");
   });
 });

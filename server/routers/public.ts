@@ -66,7 +66,9 @@ export const publicRouter = router({
         eq(restaurants.slug, input.slug),
         eq(restaurants.isActive, true),
       )).limit(1);
-      return restaurant;
+      if (!restaurant) return undefined;
+      const chatbotConfig = await getChatbotConfigByRestaurantId(restaurant.id);
+      return { ...restaurant, chatbotEnabled: Boolean(chatbotConfig?.isEnabled) };
     }),
 
   // Get restaurant menu

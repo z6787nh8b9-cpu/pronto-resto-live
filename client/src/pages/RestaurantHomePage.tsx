@@ -502,13 +502,13 @@ export default function RestaurantHomePage() {
             <Phone className="h-6 w-6" />
           </a>
         )}
-        <button
+        {restaurant.chatbotEnabled && <button
           onClick={() => setIsChatOpen(true)}
           className="w-14 h-14 bg-neutral-900 hover:bg-neutral-800 text-white rounded-full flex items-center justify-center shadow-lg transition-all hover:scale-110"
           aria-label="Ouvrir le chatbot"
         >
           <MessageCircle className="h-6 w-6" />
-        </button>
+        </button>}
       </div>
 
       {/* Chatbot Dialog */}

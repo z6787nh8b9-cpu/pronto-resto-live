@@ -509,7 +509,7 @@
 - [ ] Restaurer la section Horaires d'ouverture sur RestaurantHomePage
 - [ ] Restaurer la section Réservations sur RestaurantHomePage
 - [ ] Restaurer les stats (vues, conversations) dans le dashboard
-- [ ] Restaurer le toggle de désactivation du chatbot dans le dashboard
+- [x] Restaurer le toggle de désactivation du chatbot dans le dashboard
 - [ ] Restaurer la configuration des zones/tables/réservations dans le dashboard
 - [ ] Implémenter la limitation des favoris selon la formule (Basic: 1, Pro: 3, Premium: 5)
 - [ ] Ajouter une bulle info quand l'utilisateur atteint la limite de favoris
