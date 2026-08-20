@@ -209,13 +209,19 @@ export default function RestaurantMenuPage() {
         <div className="container max-w-5xl">
           {categories.length > 0 ? (
             <Tabs defaultValue={categories[0]?.id.toString()} className="w-full">
-              <TabsList className="mb-8 flex w-full justify-start overflow-x-auto flex-nowrap rounded-2xl bg-secondary/70 p-1.5">
-                {categories.map((category) => (
-                  <TabsTrigger key={category.id} value={category.id.toString()} className="whitespace-nowrap rounded-xl px-4 py-2.5">
-                    {category.name}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
+              <div className="mb-8">
+                <div className="relative">
+                  <TabsList aria-label="Catégories de la sélection, défilement horizontal disponible" className="flex w-full justify-start overflow-x-auto flex-nowrap rounded-2xl bg-secondary/70 p-1.5 pr-10">
+                    {categories.map((category) => (
+                      <TabsTrigger key={category.id} value={category.id.toString()} className="whitespace-nowrap rounded-xl px-4 py-2.5 font-medium text-foreground/75 data-[state=active]:bg-background data-[state=active]:font-semibold data-[state=active]:text-foreground data-[state=active]:shadow-sm">
+                        {category.name}
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                  <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 right-0 w-14 rounded-r-2xl bg-gradient-to-l from-background via-background/80 to-transparent sm:hidden" />
+                </div>
+                <p className="mt-1.5 text-right text-[11px] font-medium text-muted-foreground sm:hidden">Faites défiler les catégories</p>
+              </div>
 
               {categories.map((category) => {
                 const categoryItems = items.filter((item) => item.categoryId === category.id);

@@ -37,6 +37,14 @@ describe("public storefront chrome", () => {
     expect(menuStorefront).toContain("allergens.join(\", \")");
   });
 
+  it("makes horizontal public catalogue categories discoverable on mobile", () => {
+    const menuStorefront = source("client/src/pages/RestaurantMenuPage.tsx");
+
+    expect(menuStorefront).toContain("défilement horizontal disponible");
+    expect(menuStorefront).toContain("Faites défiler les catégories");
+    expect(menuStorefront).toContain("data-[state=active]:font-semibold");
+  });
+
   it("keeps mobile restaurant action stacks clear of the reCAPTCHA badge", () => {
     const homeStorefront = source("client/src/pages/RestaurantHomePage.tsx");
     const legacyStorefront = source("client/src/pages/PublicRestaurantPage.tsx");

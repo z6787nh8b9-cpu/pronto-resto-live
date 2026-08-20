@@ -45,3 +45,5 @@ Les cartes de catalogue n’affichent désormais l’intitulé d’allergènes q
 Le script reCAPTCHA n’est plus injecté globalement dans la landing de développement. La revue navigateur confirme la disparition de l’avertissement de clé de site, tandis que le formulaire conserve son jeton de développement côté client et charge la protection Google uniquement pour une soumission de production.
 
 L’assistance flottante de la landing a été compactée et déplacée vers le bord inférieur mobile. La capture à 390 px confirme que les deux CTA du hero restent entièrement visibles et activables, tout en maintenant un accès rapide à l’assistance.
+
+La navigation de catégories du catalogue affiche maintenant un état actif renforcé, un fondu latéral sur la rangée défilable et une instruction lisible sous cette rangée. La revue à 390 px confirme que les catégories hors champ sont signalées sans masquer l’instruction ni gêner la sélection existante.
